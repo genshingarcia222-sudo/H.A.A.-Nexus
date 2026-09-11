@@ -1,0 +1,26 @@
+{
+  "id": "hpi-fundamentals",
+  "title": "HPI Fundamentals",
+  "category": "Documentation Fundamentals",
+  "version": "1.0",
+  "explanation": "The History of Present Illness (HPI) tells the story of the current complaint in clinically useful order: onset, duration, character, associated symptoms, aggravating/relieving factors, and relevant context (like recent exposures or changes in habits). A complete HPI lets anyone reading the note understand the complaint's full clinical picture without re-interviewing the patient. Omitting HPI elements - even ones that seem minor, like a recent change in caffeine intake - can hide a detail that matters to the differential diagnosis.",
+  "examples": [
+    "Onset: 'Cough began 3 days ago' rather than just 'has a cough'.",
+    "Character: 'non-productive cough' rather than leaving productivity undocumented.",
+    "Associated context: 'reports increased caffeine intake recently' when the patient mentioned it, even if it seems minor - it can be clinically relevant to a complaint like palpitations.",
+    "Do not add detail the encounter didn't provide - if duration wasn't stated, don't invent one."
+  ],
+  "knowledgeChecks": [
+    {
+      "question": "A patient mentions increased coffee intake while describing palpitations. Where does this belong?",
+      "options": ["In the HPI, since it's relevant context for the current complaint", "It should be left out since it's not a symptom", "Only in the Plan section"],
+      "correctOptionIndex": 0
+    },
+    {
+      "question": "The encounter doesn't mention how long a symptom has lasted. What should the HPI say about duration?",
+      "options": ["Estimate a reasonable duration based on the complaint", "Leave duration undocumented rather than inventing it", "Always assume 3 days"],
+      "correctOptionIndex": 1
+    }
+  ],
+  "linkedScenarioIds": ["SCRIBE-FM-014", "SCRIBE-IM-032"]
+}

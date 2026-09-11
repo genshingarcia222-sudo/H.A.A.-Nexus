@@ -1,0 +1,26 @@
+{
+  "id": "medical-terminology",
+  "title": "Medical Terminology",
+  "category": "Terminology",
+  "version": "1.0",
+  "explanation": "Patients describe symptoms in everyday language - 'dry cough,' 'heart racing,' 'throwing up.' Clinical documentation should convert these into standard clinical terms - 'non-productive cough,' 'palpitations,' 'vomiting.' This isn't about sounding formal for its own sake: standard terminology reads unambiguously to any other clinician, and matches how the information will be searched, coded, and billed later. The conversion should preserve the patient's actual meaning exactly - never add precision (like a specific value) that wasn't part of what they said.",
+  "examples": [
+    "'dry cough' -> 'non-productive cough'",
+    "'throwing up' -> 'vomiting'",
+    "'shortness of breath' -> 'dyspnea'",
+    "'heart racing' -> 'palpitations' (not a specific heart rate, unless one was actually measured)"
+  ],
+  "knowledgeChecks": [
+    {
+      "question": "A patient says their heart is 'racing'. What's the correct clinical documentation, assuming no heart rate was measured?",
+      "options": ["HR 110 bpm", "Palpitations", "Tachycardia confirmed"],
+      "correctOptionIndex": 1
+    },
+    {
+      "question": "Why convert lay language to clinical terms at all?",
+      "options": ["To sound more impressive", "So the note reads unambiguously to other clinicians and matches standard coding/search", "It's not actually necessary"],
+      "correctOptionIndex": 1
+    }
+  ],
+  "linkedScenarioIds": ["SCRIBE-FM-014", "SCRIBE-IM-032"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "accuracy-and-unsupported-inference",
+  "title": "Accuracy and Unsupported Inference",
+  "category": "Accuracy",
+  "version": "1.0",
+  "explanation": "The single most important rule in clinical documentation is this: never document information the encounter didn't actually provide. If a patient denies fever, write 'no fever' - not a specific temperature, since none was measured or stated. If a heart rate wasn't measured, don't write one, even if the complaint (like palpitations) makes a number 'sound' plausible. This applies to vital signs, lab values, exam findings, and any other specific clinical fact. Inventing a value - even one that seems clinically reasonable - fabricates information that someone else may rely on for care decisions.",
+  "examples": [
+    "Encounter: 'Patient denies fever.' -> Valid: 'No fever.' -> Invalid: 'Temperature 37.0°C.'",
+    "Encounter: 'reports heart racing' with no measured rate -> Valid: 'Palpitations.' -> Invalid: 'HR 110 bpm.'",
+    "If you're not sure whether a detail was actually stated, leave it out rather than guessing."
+  ],
+  "knowledgeChecks": [
+    {
+      "question": "The encounter states 'patient denies fever' with no temperature given. What should the note say?",
+      "options": ["Temperature 37.0°C", "No fever", "Afebrile, temp within normal limits at 98.6°F"],
+      "correctOptionIndex": 1
+    },
+    {
+      "question": "Why is inventing a plausible-sounding value dangerous, even if it's probably close to correct?",
+      "options": ["It isn't dangerous if it's a reasonable guess", "It fabricates clinical information that others may rely on for care decisions", "It only matters for lab values, not vitals"],
+      "correctOptionIndex": 1
+    }
+  ],
+  "linkedScenarioIds": ["SCRIBE-FM-014", "SCRIBE-IM-032"]
+}
