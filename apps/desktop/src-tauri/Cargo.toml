@@ -1,0 +1,28 @@
+[package]
+name = "haa-nexus-desktop"
+version = "0.1.0"
+description = "H.A.A. Nexus desktop application shell"
+edition = "2021"
+license-file = "../../../LICENSE.md"
+# Tauri's MSRV policy is "current stable minus 3" (already 1.83 as of April
+# 2025, per tauri-apps/tauri#11205 — track their docs for the current figure
+# rather than trusting this comment). This sandbox's only available Rust
+# (apt's 1.75.0) is well below that, which is why cargo check fails here on
+# transitive edition2024 requirements. Build with rustup's current stable on
+# a real machine.
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# "bundled" compiles SQLite itself rather than linking a system libsqlite3,
+# so the app doesn't depend on whatever SQLite version happens to be
+# installed on the user's machine.
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+[[bin]]
+name = "haa-nexus-desktop"
+path = "src/main.rs"
