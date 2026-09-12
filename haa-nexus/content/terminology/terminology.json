@@ -1,0 +1,41 @@
+[
+  {
+    "id": "dry-cough-nonproductive",
+    "layTerm": "dry cough",
+    "clinicalTerm": "non-productive cough",
+    "acceptedAlternatives": ["non-productive cough", "cough without sputum production"],
+    "category": "Respiratory",
+    "context": "Used when a patient reports a cough without producing mucus or sputum.",
+    "explanation": "A non-productive cough does not bring up sputum, as opposed to a productive cough, which does. Documenting productivity is clinically relevant because it narrows the differential (e.g., viral URI vs. bacterial pneumonia).",
+    "commonMistakes": ["Documenting 'dry cough' verbatim instead of converting to clinical terminology."]
+  },
+  {
+    "id": "shortness-of-breath-dyspnea",
+    "layTerm": "shortness of breath",
+    "clinicalTerm": "dyspnea",
+    "acceptedAlternatives": ["dyspnea on exertion", "exertional dyspnea"],
+    "category": "Respiratory",
+    "context": "Used for subjective difficulty breathing, whether at rest or with activity.",
+    "explanation": "Dyspnea is the standard clinical term for the subjective sensation of breathing discomfort. Whether it occurs at rest or only on exertion is itself clinically significant and should be specified when known.",
+    "commonMistakes": ["Writing 'shortness of breath' verbatim.", "Omitting whether it occurs at rest or on exertion when that detail was provided."]
+  },
+  {
+    "id": "heart-racing-palpitations",
+    "layTerm": "heart racing",
+    "clinicalTerm": "palpitations",
+    "acceptedAlternatives": ["palpitations", "racing heart sensation"],
+    "category": "Cardiac",
+    "context": "Used for a patient's subjective awareness of their own heartbeat, whether rapid, irregular, or forceful.",
+    "explanation": "Palpitations describe the sensation itself, not a measured heart rate. Do not convert a palpitations complaint into a specific heart rate value unless one was actually measured and provided.",
+    "commonMistakes": ["Writing 'heart racing' verbatim instead of 'palpitations'.", "Inventing a specific heart rate value that was never measured or stated."]
+  },
+  {
+    "id": "throwing-up-vomiting",
+    "layTerm": "throwing up",
+    "clinicalTerm": "vomiting",
+    "acceptedAlternatives": ["vomiting", "emesis"],
+    "category": "Gastrointestinal",
+    "explanation": "Standard clinical term for the forceful expulsion of stomach contents.",
+    "commonMistakes": ["Writing 'throwing up' verbatim in the note."]
+  }
+]

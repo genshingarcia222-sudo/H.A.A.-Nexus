@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "H.A.A. Nexus",
+  "version": "0.1.0",
+  "identifier": "com.haa.nexus",
+  "build": {
+    "beforeDevCommand": "pnpm --filter @haa-nexus/desktop dev",
+    "beforeBuildCommand": "pnpm --filter @haa-nexus/desktop build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "H.A.A. Nexus",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 1024,
+        "minHeight": 700
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico"
+    ]
+  }
+}
