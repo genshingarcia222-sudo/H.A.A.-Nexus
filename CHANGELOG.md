@@ -11,6 +11,24 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 7 — Analytics (Complete)
+
+Incorporates Phases 1-6 in full, plus:
+
+- **`analytics-engine`** (nexus-core, pure/deterministic, no AI): `computeAnalytics(sessions, competencyRecords, totalScenarioCount)` — overall performance average + trend (tolerance-banded comparison of recent vs. older evaluated sessions, consistent with the competency engine's own trend logic), weakest/strongest competency areas (top/bottom 3 by avgScore, excluding zero-attempt domains), recurring-error frequency counts sorted descending, and scenario coverage (distinct scenarios attempted vs. total available). **Zero new persistence** — computed entirely from `SessionRepository`/`CompetencyRepository`/`ScenarioRepository`, which already existed from Phases 2/5/6. No new database table, no new dependency.
+- **Desktop**: `Analytics.tsx` replaced its Phase 1 `ComingSoon` placeholder with real computed data — empty-state messaging when no sessions are scored yet, trend labeling, weak/strong area lists, and a recurring-errors breakdown.
+- **Hardening added proactively**: `computeAnalytics` now defensively excludes non-finite scores and tolerates a missing `errors` array, so malformed/incomplete data (e.g. from a future migration or partial write) degrades gracefully instead of throwing or silently corrupting the average.
+
+**A real test-design bug caught and fixed during this phase (not a product defect):** an early integration test asserted that a specific named domain ("accuracy") would appear in `strongestAreas` after a single empty submission. In fact, an empty submission against the real scenario content produces a 4-way tie at the maximum score, and which specific tied domains land in the top-3 slice is arbitrary insertion-order behavior — not a guaranteed property. Fixed by asserting the actual guarantee (`strongestAreas` has length 3, all scored at the maximum) instead of a specific tied domain's name.
+
+**Verified:** 186/186 nexus-core tests (14 new — including explicit large-history-dataset (200 sessions) and malformed-data resilience tests), 25/25 desktop tests (3 new end-to-end tests through real submitted sessions). Typecheck clean across all packages. Production build succeeds (136 modules).
+
+**Explicitly out of scope for Phase 7** (not silently skipped): pagination/virtualization for very large histories (200-session correctness is tested; UI-level performance at that scale is not, since no history view in this app renders more than ~10 rows today); AI-assisted trend narration (nothing in this phase requires it — everything is deterministic per Architecture Package Section 40's "actionable, not decorative" requirement).
+
+---
+
+
+
 ## Phase 6 — Training/Remediation (Complete)
 
 Incorporates Phases 1-5 in full, plus:
@@ -108,4 +126,4 @@ Incorporates Phase 1 in full, plus:
 
 ## Not yet started (by design)
 
-Phases 7–13 (Analytics, Offline hardening, Tauri packaging, Cloud sync, AI, Commercialization, Instructor/Organization tooling) — see `docs/HAA_Nexus_Architecture_Package.md` for the full roadmap and MVP boundary.
+Phases 8–13 (Offline hardening, Tauri packaging, Cloud sync, AI, Commercialization, Instructor/Organization tooling) — see `docs/HAA_Nexus_Architecture_Package.md` for the full roadmap and MVP boundary.

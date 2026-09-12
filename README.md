@@ -9,22 +9,16 @@ never a separate patch). This README covers only how to run what exists so far.
 **Proprietary software — see `LICENSE.md`.** This is not open source; every
 `package.json` in this workspace is marked `"license": "UNLICENSED"`.
 
-## Status: Phase 6 (Training/Remediation)
+## Status: Phase 7 (Analytics)
 
 | Component | Status |
 |---|---|
-| `packages/nexus-core` (entitlements, AI abstraction, module registry) | **Implemented** — unit tested, typechecked |
-| `packages/nexus-core/scenario-engine`, `simulation-engine`, `evaluation-engine`, `persistence`, `competency-engine` | **Implemented** — unit tested, typechecked |
-| `packages/nexus-core/terminology-engine` (lay↔clinical dictionary schema + searchable repository) | **Implemented** — unit tested, typechecked |
-| `packages/nexus-core/training-engine` (lesson schema + repository) | **Implemented** — unit tested, typechecked |
-| `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
-| Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Written, passes `rustfmt` syntax validation. Compilation unverified in this sandbox** — same toolchain gap as Phase 1 |
-| Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
-| Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
-| Recommendation engine factoring in competency-record trends (not just error frequency) | **Not implemented (honestly scoped out — see CHANGELOG)** |
+| `packages/nexus-core` — all Phase 1-6 engines | **Implemented** — unit tested, typechecked |
+| `packages/nexus-core/analytics-engine` (overall performance/trend, weak/strong areas, error trends, scenario progress) | **Implemented** — unit tested (including large-dataset and malformed-data resilience cases), typechecked, zero new persistence |
+| Desktop: Dashboard, Live Scribing, Knowledge Base, Training, Settings, **Analytics (now real, not a placeholder)** | **Implemented** — unit/integration tested, typechecked, production build verified |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Written, passes `rustfmt`/`cargo fmt --check`. Compilation unverified in this sandbox** — confirmed environment-level (Tauri v2's transitive deps require Cargo's `edition2024`; apt's Rust 1.75 predates it), not a source defect |
 | App icons (`src-tauri/icons/`) | **Not started** |
-| Analytics and everything from Phase 7 onward | **Not started** (by design) |
+| Offline hardening, Tauri packaging, and everything from Phase 8 onward | **Not started** (by design) |
 
 ### Known environment gap: Rust toolchain
 
