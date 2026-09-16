@@ -1,4 +1,5 @@
 export * from "./types/entitlements.js";
+export * from "./types/subscription.js";
 export * from "./entitlement-engine/index.js";
 export * from "./ai-service/index.js";
 export * from "./module-registry/index.js";
@@ -10,3 +11,4 @@ export * from "./competency-engine/index.js";
 export * from "./terminology-engine/index.js";
 export * from "./training-engine/index.js";
 export * from "./recommendation-engine/index.js";
+export * from "./analytics-engine/index.js";

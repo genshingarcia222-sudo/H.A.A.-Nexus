@@ -7,6 +7,9 @@ pub mod models;
 pub mod profile;
 pub mod sessions;
 
+#[cfg(test)]
+mod tests;
+
 /// Embedded at compile time so the migration ships inside the binary -
 /// no separate file to install alongside the executable.
 const INITIAL_MIGRATION: &str = include_str!("../../migrations/001_initial.sql");

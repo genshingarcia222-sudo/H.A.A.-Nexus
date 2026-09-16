@@ -66,8 +66,9 @@ export function Dashboard() {
     <div style={{ display: "grid", gap: "var(--nexus-space-4)", maxWidth: 720 }}>
       <Card title={`Welcome back, ${displayName}`}>
         <p style={{ margin: 0 }}>
-          This is the application shell. Training, Knowledge Base, and Analytics arrive in later
-          phases, in order — nothing here is faked ahead of schedule.
+          Live Scribing, Training, Knowledge Base, and Analytics are all available. Every figure
+          shown across the app is computed from your own saved attempts — nothing here is faked
+          ahead of schedule.
         </p>
       </Card>
 

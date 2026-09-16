@@ -31,18 +31,21 @@ The repository is a pnpm/TypeScript monorepo with a React frontend and Tauri des
 | 4 | Deterministic evaluation/scoring, fabrication and dangerous-reversal detection, WHAT/WHY/HOW feedback | Complete |
 | 5 | SQLite schema, persistence layer, competency engine, autosave | Complete |
 | 6 | Terminology, lessons, deterministic recommendations | Complete |
-| 7 | Pre-Commercialization Audit & Stabilization Gate; analytics requirements/readiness are audited as part of the gate | **Next — not started** |
+| 6 | Analytics engine (performance, trend, weak/strong areas, error trends, scenario progress) | Complete — audited and confirmed in Phase 7 |
+| 7 | Pre-Commercialization Audit & Stabilization Gate; analytics requirements/readiness are audited as part of the gate | **Closed — PASS WITH CONDITIONS** (see `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`) |
+| 8 | Commercialization Foundation | **Next — not started** |
 
 ### Material gaps before commercial launch
 
-- Tauri/Rust compilation and packaging need real-machine verification.
+- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 14 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
+- No migration runner or `schema_version` tracking exists; required before any new table is added.
+- Content library is only 2 scenarios (difficulty 1 and 3) — not enough to populate a Free tier, let alone justify paid access.
 - No-pause **Assessment mode** is not yet implemented.
 - Web deployment and lightweight cloud persistence are not yet implemented.
 - Entitlement engine is not yet wired to a real payment processor.
 - Cloud sync / multi-device / multi-user infrastructure is not yet implemented.
 - Real AI integration is not yet implemented.
 - Instructor/organization tooling is future work.
-- Content library is currently thin and must expand materially before a real paid launch.
 - Audio/voice simulation is future work; current simulation is text-transcript based.
 
 ---
@@ -76,6 +79,31 @@ The commercialization path is deliberately brought forward so the project can va
 | **Practice Access** | $15/month | Beginner–Intermediate | Budget | Full deterministic scoring breakdown; unlimited attempts within unlocked band |
 | **Exam-Ready Pro** | $20/month | Adds Advanced | Mid-tier | Competency tracking to Mastered; recommendation engine; monthly scenario drops |
 | **Agency Fast-Track** | +$39 one-time, requires active Pro | Adds Expert/Mastery | Premium | Tier-exclusive content; personal 1:1 transcript review; completion certificate |
+
+### Tier capability clarifications (recorded during Phase 8.1)
+
+The table above does not state whether **Practice Access** includes competency
+tracking or analytics — it names neither. Competency and analytics appear in
+only two rows: Free ("competency tracking and analytics remain locked") and
+Pro ("Competency tracking to Mastered").
+
+Phase 8.1 had to resolve this to encode the capability matrix, and recorded the
+**least-assumptive** reading rather than inventing a rule:
+
+| Question | Recorded default | Basis |
+|---|---|---|
+| Does Practice include competency tracking? | **No** | The spec names competency tracking as a Pro unlock and omits it from the Practice row |
+| Does Practice include analytics? | **No** | Analytics is named only as locked on Free, paired with competency; it unlocks where its pair unlocks |
+| Is there a competency *ceiling* per tier? | **No** | "Competency tracking to Mastered" describes Pro's whole feature. No ceiling concept exists anywhere in this document, and capping a *displayed* competency level below a learner's real record would show a figure contradicting stored data, which the no-fabricated-results rule forbids |
+
+This keeps the deliberately small $15 → $20 step carrying visible value, as this
+document asks, without throttling ordinary practice: Practice retains unlimited
+attempts and the full deterministic score breakdown.
+
+**This is a default, not a decision on record.** If Practice is intended to
+include competency or analytics, the single place to change it is
+`packages/nexus-core/src/entitlement-engine/capability-matrix.ts`; the tests
+pin the current reading and will fail loudly if the matrix drifts.
 
 ### Entitlement rules
 

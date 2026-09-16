@@ -11,6 +11,204 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 8.1 — Entitlement Domain Model (Complete)
+
+Incorporates Phases 1-7 in full. The first commercialization increment, and
+deliberately the smallest one that stands alone: a pure domain model, with
+no consumer. **No product behaviour changes in this checkpoint** — nothing
+in the app reads the new model yet, so every screen behaves exactly as it
+did at the Phase 7 gate.
+
+**Added to `packages/nexus-core`:**
+
+- **`types/subscription.ts`** — provider-neutral subscription model:
+  `Tier` (`free` | `practice` | `pro` | `fast_track`), `SubscriptionStatus`
+  (`none` | `active` | `past_due` | `canceled` | `expired`),
+  `SubscriptionState` (`tier`, `status`, `currentPeriodEnd`,
+  `fastTrackPurchased`), and a `NO_SUBSCRIPTION` constant for the local/MVP
+  default. Nothing here knows a payment provider exists; a future adapter's
+  job is to normalize its own vocabulary *into* these types.
+- **`entitlement-engine/capability-matrix.ts`** — the commercial matrix
+  from Business Model Spec Section 4, expressed as frozen data rather than
+  conditionals. One authoritative table; no component reconstructs it.
+- **`entitlement-engine/resolve.ts`** — `isSubscriptionCurrent`,
+  `resolveEffectiveTier`, `resolveEntitlements`, `canAccessDifficulty`. All
+  pure: no I/O, no clock read, no vendor dependency. `now` is an explicit
+  parameter, matching the convention nexus-core already uses elsewhere
+  (`startSession(params, now)`, `updateCompetencyRecord(..., now)`). That
+  purity is what will let the identical function run server-side as the
+  authority later, instead of trusting the client.
+- **`Entitlements`** extended with ten commercial capabilities alongside the
+  six Phase 1 keys: `maxScenarioDifficulty`,
+  `canViewDetailedScoreBreakdown`, `canTrackCompetency`,
+  `canUseRecommendations`, `canViewAnalytics`,
+  `canReceiveMonthlyScenarioDrops`, `canAccessTierExclusiveContent`,
+  `canRequestTranscriptReview`, `canEarnCompletionCertificate`,
+  `voiceQuality`.
+- **`EntitlementService`** gained `static fromSubscription(state, now)` and
+  `canAccessDifficulty(difficulty)`.
+
+**Difficulty gating reuses existing metadata.** Free ≤2 (Beginner),
+Practice ≤3 (Intermediate), Pro ≤4 (Advanced), Fast-Track ≤6
+(Expert/Master) map onto the scenario schema's existing 1-6 `difficulty`
+field. No parallel difficulty system was created, per the spec's explicit
+instruction.
+
+**Fast-Track is modelled as a relationship, not a tier string.**
+`resolveEffectiveTier` is the single place the "requires active Pro" rule
+lives, and it cuts both ways: active Pro + purchase resolves *up* to
+`fast_track`; a record claiming `tier: "fast_track"` without the purchase
+resolves *down* to `pro`, so the add-on cannot be obtained by asserting a
+string; a purchase sitting on Free or Practice confers nothing but is not
+destroyed, so restoring Pro restores Fast-Track without a second payment;
+and any lapse falls back to Free first, so an expired Pro + Fast-Track
+resolves to Free.
+
+**Subscription-status semantics.** `active` is current unless a bounded
+period has passed. `past_due` and `canceled` retain access only for the
+remainder of an already-paid period — standard dunning, so a transient card
+failure does not instantly revoke access — then fall back to Free. `none`
+and `expired` never grant access, and an explicit `expired` overrides a
+stale future period end. The exact period-end instant counts as lapsed.
+
+**Business-rule ambiguity found and resolved during the Phase 8.1 audit.**
+The first implementation of the matrix granted Practice competency tracking
+and analytics, and introduced a per-tier `maxCompetencyLevel` ceiling
+(Practice capped at `advanced`). Auditing this against the specification
+found no basis for any of it: the spec names competency and analytics in
+exactly two rows — Free ("competency tracking and analytics remain locked")
+and Pro ("Competency tracking to Mastered") — and never mentions a
+competency ceiling anywhere. `maxCompetencyLevel` was removed entirely and
+Practice was corrected to lock competency, analytics and recommendations.
+Beyond having no spec basis, a per-tier competency ceiling would display a
+level contradicting the learner's real persisted record, which the
+no-fabricated-results rule (Architecture Package Section 18) forbids. The
+recorded interpretation is now written into
+`docs/BUSINESS_MODEL_PRODUCT_SPEC.md` Section 4 as a documented default,
+explicitly flagged as changeable in one place if the founder intends
+otherwise.
+
+**Honest gaps in the matrix.** `canUseAI`, `canUseCloudSync`, and
+`canAccessPremiumModules` are `false` for *every* tier including Fast-Track,
+because those capabilities do not exist yet (AI is Phase 11+, cloud sync is
+Phase 10, and no second module exists). A test enforces that no tier claims
+them. Turning them on later is an edit to the matrix — a data change, as
+Architecture Package Section 24 promises.
+
+**Compatibility preserved.** `DEFAULT_ENTITLEMENTS`, the
+`new EntitlementService(entitlements)` constructor, the three original
+entitlement tests (unmodified and passing), and `Settings.tsx` behaviour are
+all unchanged; `Settings.tsx` was not edited. One signature narrowed:
+`can()` now accepts `BooleanEntitlementKey` rather than
+`keyof Entitlements`, because `can("maxScenarioDifficulty")` is not a
+yes/no question and would otherwise return a number typed as boolean.
+Limits are read off `all()` or via `canAccessDifficulty()`. The only
+`can()` call site in the repository (`Settings.tsx:43`) passes a boolean
+key and was verified by inspection as well as by typecheck.
+
+**Verified this checkpoint:** 231/231 nexus-core tests (33 files; 45 new
+entitlement tests), 25/25 desktop tests, 14/14 Rust tests — **270 total, 0
+failures**, with the Phase 7 baseline of 225 fully green. `pnpm -r
+typecheck` clean. `pnpm -r build` succeeds. `cargo check --all-targets`
+clean, `cargo fmt --check` clean. New tests are table-driven against a fixed
+clock with no `Date.now()` dependence, and cover every tier's capability
+set, all five lifecycle statuses, period-boundary behaviour, six Fast-Track
+relationship combinations, the full 1-6 difficulty sweep per tier,
+`DEFAULT_ENTITLEMENTS` equivalence with the resolved Free state, matrix
+invariants, and resolver purity (determinism and non-mutation of inputs).
+
+**Explicitly NOT implemented in 8.1** (deferred to 8.2 onward, and verified
+absent from the repository): scenario-library UI gating, paywall/conversion
+states, locked score detail, Assessment mode, subscription persistence,
+SQLite migrations, any `PaymentProvider` interface or implementation,
+PayMongo, cloud authentication, and web deployment.
+
+---
+
+## Phase 7 — Pre-Commercialization Audit & Stabilization Gate (Complete — PASS WITH CONDITIONS)
+
+Incorporates Phases 1-6 in full. Phase 7 added no new product features by
+design; it audited what existed, fixed what the audit broke open, and
+recorded real verification evidence. Full audit findings and the final
+disposition live in `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`.
+
+**Blockers found and fixed:**
+
+- **Analytics was silently broken at HEAD.** The previous commit removed
+  `export * from "./analytics-engine/index.js"` from `nexus-core`'s barrel
+  and reverted `Analytics.tsx` to a placeholder, but left
+  `apps/desktop/src/content/analytics-flow.test.ts` importing
+  `computeAnalytics` from that barrel. Desktop typecheck, production build,
+  and the desktop test suite were all failing as a result — and the
+  `analytics-engine` implementation plus its 14 tests were orphaned in the
+  tree. **Analytics was restored, not rebuilt**: it is an
+  already-implemented Phase-6-era capability that was removed in error while
+  enforcing "Phase 7 is not an Analytics implementation phase." That rule
+  still stands — analytics was *audited* here, not built here.
+- **The aggregate test command could not catch that class of failure.** Root
+  `pnpm test` ran only `nexus-core`, so desktop tests never executed in the
+  aggregate. `test`, `typecheck`, and `build` are now all `pnpm -r`, so no
+  package can be silently omitted.
+- **The Tauri bundle referenced icon files that did not exist.**
+  `tauri.conf.json` pointed at `icons/32x32.png`, `icons/128x128.png`, and
+  `icons/icon.ico` while `src-tauri/icons/` held only a `.gitkeep`. A full
+  icon set was generated with `tauri icon` from a brand source image built
+  on the ui-kit design tokens (deep clinical teal `#0f6e63`, note-line mark).
+  The unused Android/iOS icon trees the generator emits were removed.
+
+**Rust/Tauri verification boundary — closed.** The "apt Rust 1.75 is below
+Tauri's MSRV" limitation carried since Phase 1 is resolved. On a
+rustup-managed toolchain (rustc/cargo 1.98.1, rustup 1.29.1, Windows 11 with
+MSVC build tools):
+
+- `cargo check --all-targets` — clean, no errors, no warnings. **This is the
+  first time the Rust source has ever compiled.**
+- `cargo test` previously reported *0 tests*, which could not support the
+  audit's persistence-integrity requirement. Added
+  `apps/desktop/src-tauri/src/db/tests.rs`: 14 tests against a real on-disk
+  SQLite file (not `:memory:`, so WAL and the reopen path are genuinely
+  exercised), covering every table the migration declares, WAL +
+  foreign-key pragmas, restart idempotency, autosave of an in-progress draft
+  with no evaluation yet, autosave survival across a restart,
+  autosave-then-submit attaching the evaluation to the same attempt without
+  duplicating rows, interrupted-session detection, newest-first ordering,
+  scenario-version traceability of a completed attempt, profile round-trip,
+  and per-domain competency upsert. All 14 pass. This replaces the Phase 5
+  evidence (a one-off Python script that executed the schema by hand, which
+  validated the schema but not the Rust that runs it).
+
+**Other stabilization:**
+
+- Root `package.json` gained `packageManager: pnpm@9.15.9`. `tauri.conf.json`
+  hardcodes `pnpm` in `beforeDevCommand`/`beforeBuildCommand`, so the
+  toolchain needs to be reproducible rather than assumed.
+- `.gitignore` gained `.env`, `.env.*`, `*.pem`, `*.key`, `secrets.json`.
+  The security audit confirmed no secret has ever been committed; these
+  patterns keep that true once payment/AI/TTS providers arrive in Phase 8+.
+- Dashboard copy no longer tells users that Training, Knowledge Base, and
+  Analytics "arrive in later phases" — all three shipped.
+- Removed the dead `build:core` script (nexus-core has no `build` script; it
+  is consumed from source via `main: ./src/index.ts`).
+
+**Verified this checkpoint:** 186/186 nexus-core tests (32 files), 25/25
+desktop tests (6 files), 14/14 Rust tests — **225 total, 0 failures**.
+`pnpm -r typecheck` clean across all three packages. `pnpm -r build`
+succeeds (136 modules). Earlier documentation claimed 172 nexus-core and 22
+desktop tests; those figures predated the analytics engine and were never
+updated. Corrected throughout.
+
+**Accepted conditions carried into Phase 8** (documented, not silently
+skipped — see the audit doc for the full list): no migration runner or
+`schema_version` tracking; the entitlement engine is still a static
+six-boolean stub with one display-only consumer; module-global ID counters
+in the evaluation and recommendation engines make error IDs non-reproducible
+across runs; `modules.ts` declares 12 competency domains while the evaluator
+produces 7; content hashing is implemented but not wired to any build/import
+gate; no rendered-component tests; `tauri dev`/`tauri build` not yet run;
+only 2 scenarios exist, at difficulty 1 and 3.
+
+---
+
 ## Phase 6 — Training/Remediation (Complete)
 
 Incorporates Phases 1-5 in full, plus:
@@ -108,7 +306,7 @@ Incorporates Phase 1 in full, plus:
 
 ## Not yet started (by design)
 
-Phase 7 is the Pre-Commercialization Audit & Stabilization Gate. Phase 8 onward covers commercialization and later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`.
+Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model) is complete. Phase 8.2 onward has not been started: no UI gating, paywall states, Assessment mode, subscription persistence, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
 
 ---
 
@@ -119,6 +317,8 @@ Phase 7 is explicitly defined as an audit and stabilization gate, **not an Analy
 The Phase 7 gate must reconcile the actual Phase 1–6 repository state with `README.md`, `CLAUDE.md`, the architecture package, and the business model specification; verify tests/typechecks/build evidence; document the Tauri/Rust verification boundary; inspect persistence and determinism; confirm security/privacy boundaries; and determine whether the Phase 1 entitlement architecture is ready to support commercialization.
 
 Phase 8 begins commercialization implementation only after the Phase 7 gate closes. See `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`.
+
+**Outcome:** the gate closed as **PASS WITH CONDITIONS**. The audit confirmed analytics was an already-implemented capability that had been removed in error rather than a capability Phase 7 needed to build — restoring it did not redefine Phase 7 as an Analytics phase.
 
 ## Business Model Update — Commercialization Made First-Class
 
