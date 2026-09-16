@@ -1,7 +1,7 @@
 # H.A.A. Nexus
 
 Healthcare training, simulation, assessment, and competency platform. See
-`docs/HAA_Nexus_Architecture_Package.md` for the full architecture and
+`docs/HAA_Nexus_Architecture_Package.md` for the full technical architecture, `docs/BUSINESS_MODEL_PRODUCT_SPEC.md` for the commercialization/subscription strategy, and
 `CHANGELOG.md` for exactly which phases are incorporated in this build (it's
 cumulative — every checkpoint includes all prior phases, verified together,
 never a separate patch). This README covers only how to run what exists so far.
@@ -9,16 +9,22 @@ never a separate patch). This README covers only how to run what exists so far.
 **Proprietary software — see `LICENSE.md`.** This is not open source; every
 `package.json` in this workspace is marked `"license": "UNLICENSED"`.
 
-## Status: Phase 7 (Analytics)
+## Status: Phase 6 complete — Phase 7 is the Pre-Commercialization Audit & Stabilization Gate
 
 | Component | Status |
 |---|---|
-| `packages/nexus-core` — all Phase 1-6 engines | **Implemented** — unit tested, typechecked |
-| `packages/nexus-core/analytics-engine` (overall performance/trend, weak/strong areas, error trends, scenario progress) | **Implemented** — unit tested (including large-dataset and malformed-data resilience cases), typechecked, zero new persistence |
-| Desktop: Dashboard, Live Scribing, Knowledge Base, Training, Settings, **Analytics (now real, not a placeholder)** | **Implemented** — unit/integration tested, typechecked, production build verified |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Written, passes `rustfmt`/`cargo fmt --check`. Compilation unverified in this sandbox** — confirmed environment-level (Tauri v2's transitive deps require Cargo's `edition2024`; apt's Rust 1.75 predates it), not a source defect |
+| `packages/nexus-core` (entitlements, AI abstraction, module registry) | **Implemented** — unit tested, typechecked |
+| `packages/nexus-core/scenario-engine`, `simulation-engine`, `evaluation-engine`, `persistence`, `competency-engine` | **Implemented** — unit tested, typechecked |
+| `packages/nexus-core/terminology-engine` (lay↔clinical dictionary schema + searchable repository) | **Implemented** — unit tested, typechecked |
+| `packages/nexus-core/training-engine` (lesson schema + repository) | **Implemented** — unit tested, typechecked |
+| `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
+| Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Written, passes `rustfmt` syntax validation. Compilation unverified in this sandbox** — same toolchain gap as Phase 1 |
+| Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
+| Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
+| Recommendation engine factoring in competency-record trends (not just error frequency) | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | App icons (`src-tauri/icons/`) | **Not started** |
-| Offline hardening, Tauri packaging, and everything from Phase 8 onward | **Not started** (by design) |
+| Phase 7 Pre-Commercialization Audit & Stabilization Gate | **Next gate — not started** |
 
 ### Known environment gap: Rust toolchain
 
@@ -89,3 +95,8 @@ pnpm --filter @haa-nexus/desktop build
 
 The Tauri desktop shell (`pnpm --filter @haa-nexus/desktop tauri dev`) requires
 the real Rust toolchain described above and has not been run end-to-end yet.
+
+
+## Phase 7 definition
+
+Phase 7 is **not Analytics**. It is the **Pre-Commercialization Audit & Stabilization Gate**. Analytics readiness and any existing placeholder/data-path work are audited as part of this gate. Phase 8 begins commercialization implementation only after Phase 7 closes. See `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`.

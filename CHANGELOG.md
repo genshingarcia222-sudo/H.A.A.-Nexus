@@ -11,24 +11,6 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
-## Phase 7 — Analytics (Complete)
-
-Incorporates Phases 1-6 in full, plus:
-
-- **`analytics-engine`** (nexus-core, pure/deterministic, no AI): `computeAnalytics(sessions, competencyRecords, totalScenarioCount)` — overall performance average + trend (tolerance-banded comparison of recent vs. older evaluated sessions, consistent with the competency engine's own trend logic), weakest/strongest competency areas (top/bottom 3 by avgScore, excluding zero-attempt domains), recurring-error frequency counts sorted descending, and scenario coverage (distinct scenarios attempted vs. total available). **Zero new persistence** — computed entirely from `SessionRepository`/`CompetencyRepository`/`ScenarioRepository`, which already existed from Phases 2/5/6. No new database table, no new dependency.
-- **Desktop**: `Analytics.tsx` replaced its Phase 1 `ComingSoon` placeholder with real computed data — empty-state messaging when no sessions are scored yet, trend labeling, weak/strong area lists, and a recurring-errors breakdown.
-- **Hardening added proactively**: `computeAnalytics` now defensively excludes non-finite scores and tolerates a missing `errors` array, so malformed/incomplete data (e.g. from a future migration or partial write) degrades gracefully instead of throwing or silently corrupting the average.
-
-**A real test-design bug caught and fixed during this phase (not a product defect):** an early integration test asserted that a specific named domain ("accuracy") would appear in `strongestAreas` after a single empty submission. In fact, an empty submission against the real scenario content produces a 4-way tie at the maximum score, and which specific tied domains land in the top-3 slice is arbitrary insertion-order behavior — not a guaranteed property. Fixed by asserting the actual guarantee (`strongestAreas` has length 3, all scored at the maximum) instead of a specific tied domain's name.
-
-**Verified:** 186/186 nexus-core tests (14 new — including explicit large-history-dataset (200 sessions) and malformed-data resilience tests), 25/25 desktop tests (3 new end-to-end tests through real submitted sessions). Typecheck clean across all packages. Production build succeeds (136 modules).
-
-**Explicitly out of scope for Phase 7** (not silently skipped): pagination/virtualization for very large histories (200-session correctness is tested; UI-level performance at that scale is not, since no history view in this app renders more than ~10 rows today); AI-assisted trend narration (nothing in this phase requires it — everything is deterministic per Architecture Package Section 40's "actionable, not decorative" requirement).
-
----
-
-
-
 ## Phase 6 — Training/Remediation (Complete)
 
 Incorporates Phases 1-5 in full, plus:
@@ -126,4 +108,31 @@ Incorporates Phase 1 in full, plus:
 
 ## Not yet started (by design)
 
-Phases 8–13 (Offline hardening, Tauri packaging, Cloud sync, AI, Commercialization, Instructor/Organization tooling) — see `docs/HAA_Nexus_Architecture_Package.md` for the full roadmap and MVP boundary.
+Phase 7 is the Pre-Commercialization Audit & Stabilization Gate. Phase 8 onward covers commercialization and later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`.
+
+---
+
+## Phase 7 Definition — Pre-Commercialization Audit & Stabilization Gate
+
+Phase 7 is explicitly defined as an audit and stabilization gate, **not an Analytics implementation phase**. Analytics readiness and any existing placeholder/data-path work are audited within this phase for correctness, traceability, and regression safety.
+
+The Phase 7 gate must reconcile the actual Phase 1–6 repository state with `README.md`, `CLAUDE.md`, the architecture package, and the business model specification; verify tests/typechecks/build evidence; document the Tauri/Rust verification boundary; inspect persistence and determinism; confirm security/privacy boundaries; and determine whether the Phase 1 entitlement architecture is ready to support commercialization.
+
+Phase 8 begins commercialization implementation only after the Phase 7 gate closes. See `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`.
+
+## Business Model Update — Commercialization Made First-Class
+
+Added `docs/BUSINESS_MODEL_PRODUCT_SPEC.md` as the durable product/commercialization specification and `CLAUDE.md` as the Claude Code repository handoff/instruction layer.
+
+This update establishes subscription and revenue architecture as a first-class project concern rather than a later add-on. The Phase 1 entitlement engine remains the starting point for monetization wiring.
+
+Key decisions recorded:
+
+- Web deployment is the near-term revenue vehicle and should proceed in parallel with desktop verification.
+- Planned tiers: Free Foundations, Practice Access ($15/month), Exam-Ready Pro ($20/month), and Agency Fast-Track (+$39 one-time with active Pro).
+- PayMongo is the planned customer-billing provider; provider-specific recurring-payment capabilities must be verified during implementation.
+- Deterministic evaluation remains the default scoring path for all tiers to keep marginal per-attempt cost near zero and scoring auditable.
+- Scenario generation and TTS should be asynchronous/batch operations with validation/caching rather than live per-attempt dependencies.
+- Any future interpretive AI assessment should be explicitly metered because its cost scales directly with unique learner submissions.
+- Commercial capabilities must be represented as testable entitlements rather than scattered UI-only paywalls.
+- Payment, AI, and TTS vendors remain behind adapter boundaries so clinical-training logic is vendor-independent.

@@ -450,7 +450,7 @@ not_started → in_progress ⇄ paused → completed
 - **Autosave:** documentation fields persist to `documentation_attempts` (draft row) on a debounce (e.g. every field blur + every 15s), not only at Submit. This is what makes "interrupted sessions must not lose work" true rather than aspirational.
 - **Timer:** `active_ms` accumulates only while `status = in_progress`; pausing stops accumulation and increments `paused_ms`. Time efficiency is computed from `active_ms` vs `timeTargetSeconds`, so pausing cannot be used to game the score.
 - **Progressive transcript:** the encounter narrative is chunked at content-authoring time (`narrative` split into ordered beats); the engine reveals beats on a timer or user "continue" action — deterministic in MVP, replaceable by a live AI conversation engine later without changing the workspace UI contract.
-- **Flagging:** flags are stored as `{ beatId, flagType, timestamp }` in `flags_json`; analytics on flag accuracy is a Phase 7 concern, not required for MVP scoring.
+- **Flagging:** flags are stored as `{ beatId, flagType, timestamp }` in `flags_json`; analytics on flag accuracy is a future analytics concern; Phase 7 audits analytics readiness rather than implementing it.
 - **Recovery:** on app launch, any session with `status = in_progress` and no `completed_at` is surfaced as "Resume interrupted session?" — this satisfies Section 29's "interrupted sessions must not lose work" concretely.
 
 ---
@@ -639,7 +639,7 @@ MVP wires `NullAIProvider` unconditionally. Any future provider (e.g., calling C
 
 ---
 
-## 24. Subscription Architecture (future — Phase 12)
+## 24. Subscription Architecture (future — commercialization phase beginning after Phase 7)
 
 ```
 User → Subscription (tier: free|paid|premium) → Entitlements → Feature Access
@@ -736,15 +736,15 @@ Each dimension is stored per-scenario (Section 9), not derived solely from the l
 | 4 | Evaluation + scoring engine, error classification, feedback templates |
 | 5 | SQLite persistence wired to all of the above |
 | 6 | Training lessons, recommendation engine, retry flow |
-| 7 | Analytics dashboard |
-| 8 | Offline-reliability hardening (crash recovery, WAL tuning, restart tests) |
-| 9 | Tauri packaging for Windows (installer, icon, versioning) |
-| 10 | Cloud/API sync |
-| 11 | AI provider integration |
-| 12 | Subscriptions/entitlements/payment |
-| 13 | Instructor/organization tooling |
+| 7 | **Pre-Commercialization Audit & Stabilization Gate** — audit Phases 1–6, verify tests/persistence/analytics/Tauri boundary/security, reconcile documentation, and approve the commercialization entry point |
+| 8 | **Commercialization Foundation** — entitlement/capability matrix, Assessment mode, web revenue path, cloud persistence foundation, and payment integration in the approved order |
+| 9 | Tauri packaging/release hardening for Windows |
+| 10 | Cloud/API sync and multi-device infrastructure |
+| 11 | AI provider integration and offline/batch authoring pipeline |
+| 12 | Voice/TTS production pipeline and metered AI deep-review capability |
+| 13 | Instructor/organization tooling and B2B licensing |
 
-Phases proceed in order; a later phase is not started while a foundational phase has open defects (per Project Instructions Section 20).
+Phases proceed in order. Phase 7 is a mandatory audit gate before commercialization work. A later phase is not started while a foundational phase has open defects or unresolved audit blockers.
 
 ---
 
