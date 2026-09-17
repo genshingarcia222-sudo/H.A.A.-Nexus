@@ -11,6 +11,48 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Domain Unions vs SQLite CHECK Constraints (Complete)
+
+`SessionStatus`, `SimulationMode` and `CompetencyLevel` are TypeScript string
+unions. The columns that store them are SQLite `CHECK` constraints written in
+a different language, in a different file, with nothing connecting the two. A
+value added to a union typechecks, passes every test, and then fails the first
+time a real session is written, because the column rejects it.
+
+Five of the eight session statuses are exactly that risk today:
+`not_started`, `interrupted`, `abandoned`, `evaluation_failed` and `retried`
+are part of the union but nothing writes them yet, so nothing would have
+noticed if a migration lost one.
+
+**TypeScript** (`src/persistence/schemaContract.test.ts`, +5 tests): each union
+is listed with a compiler-checked `satisfies Record<T, true>`, so the list
+cannot drift from the type, and is compared to the CHECK list parsed out of
+the migration that currently owns the column - the *last* migration defining
+it, which is how the 002 table rebuild supersedes 001. One test pins the
+reason 002 exists: 001 alone would reject `assessment`.
+
+**Rust** (`src-tauri/src/db/contract_tests.rs`, +2 tests): all 24
+status × mode combinations are saved to real file-backed SQLite and read back,
+asserting the stored value is unchanged; and a status outside the union is
+asserted to be *rejected*, so the constraint is proven to be doing work rather
+than sitting inert.
+
+**Mutation checks.** Three, each caught: dropping `assessment` from the mode
+constraint (the TypeScript comparison failed, and SQLite refused the write
+with `CHECK constraint failed`), adding a status the domain does not have (1),
+and removing the status constraint entirely (the rejection test failed). Every
+file was restored byte-identical.
+
+**No product decision.** These tests describe what the schema already accepts.
+Nothing was added to a union, no unused status was given behaviour, and no
+learner-facing rule changed.
+
+**Verified:** 267/267 nexus-core, 130/130 desktop, 53/53 Rust — **450 total, 0
+failures** (+7). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (287.71
+kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## Phase 8.3 — Live-Feedback Boundary Enforced Structurally (Complete)
 
 The Phase 8.3 boundary (decision D2) was real but *conventional*: each

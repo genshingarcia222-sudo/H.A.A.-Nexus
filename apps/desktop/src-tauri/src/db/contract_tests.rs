@@ -138,6 +138,68 @@ fn competency_records_survive_a_database_round_trip_byte_for_byte() {
     assert_eq!(serde_json::to_value(&loaded).unwrap(), fixture(COMPETENCY));
 }
 
+// --- status / mode CHECK constraints ----------------------------------------
+
+/// Every `SessionStatus` in the TypeScript union, in the same order as
+/// `simulation-engine/types.ts`. `schemaContract.test.ts` proves this list
+/// matches the migration's CHECK constraint; this proves SQLite actually
+/// stores each value.
+///
+/// Most of these are never written today - nothing produces `evaluation_failed`,
+/// `retried`, `interrupted`, `abandoned` or `not_started` yet - which is
+/// precisely why they need a test: the first code to use one would otherwise
+/// discover at runtime, in a learner's session, that the column rejects it.
+const ALL_STATUSES: [&str; 8] = [
+    "not_started",
+    "in_progress",
+    "paused",
+    "completed",
+    "interrupted",
+    "abandoned",
+    "evaluation_failed",
+    "retried",
+];
+
+const ALL_MODES: [&str; 3] = ["practice", "simulation", "assessment"];
+
+#[test]
+fn every_session_status_and_mode_in_the_domain_is_accepted_by_sqlite() {
+    let mut db = TempDb::new();
+    let template: SessionRecordDto = serde_json::from_str(SESSION_IN_PROGRESS).unwrap();
+
+    for mode in ALL_MODES {
+        for status in ALL_STATUSES {
+            let mut dto = template.clone();
+            dto.id = format!("contract-{mode}-{status}");
+            dto.mode = mode.to_string();
+            dto.status = status.to_string();
+
+            sessions::save_session(db.conn_mut(), &dto)
+                .unwrap_or_else(|e| panic!("SQLite refused mode={mode} status={status}: {e}"));
+
+            let loaded = sessions::get_session(db.conn(), &dto.id)
+                .unwrap()
+                .expect("session missing");
+            assert_eq!(loaded.mode, mode, "mode changed on the way through SQLite");
+            assert_eq!(
+                loaded.status, status,
+                "status changed on the way through SQLite"
+            );
+        }
+    }
+}
+
+#[test]
+fn a_status_outside_the_domain_union_is_rejected_by_the_check_constraint() {
+    // The constraint is doing real work: it is not a comment. If this ever
+    // passes, the CHECK has been dropped and the test above proves nothing.
+    let mut db = TempDb::new();
+    let mut dto: SessionRecordDto = serde_json::from_str(SESSION_IN_PROGRESS).unwrap();
+    dto.id = "contract-bogus-status".to_string();
+    dto.status = "not_a_real_status".to_string();
+    assert!(sessions::save_session(db.conn_mut(), &dto).is_err());
+}
+
 #[test]
 fn the_profile_survives_a_database_round_trip_byte_for_byte() {
     let db = TempDb::new();
