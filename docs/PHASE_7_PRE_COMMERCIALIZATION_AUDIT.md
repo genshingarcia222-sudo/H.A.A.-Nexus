@@ -166,6 +166,8 @@ All 14 pass.
 
 **Condition (carried to Phase 8, blocking):** there is **no migration runner and no `schema_version` tracking**. `db/mod.rs` executes `001_initial.sql` unconditionally on every boot. Architecture Package §20 states migrations are "applied in order at startup, tracked in `application_metadata['schema_version']`" — `application_metadata` is created and never written. Phase 8 must not add a table until this exists.
 
+> **Update — cleared by Phase 8.2.1.** A versioned migration runner now exists and `application_metadata['schema_version']` is written. The evidence above describes the state at the Phase 7 gate.
+
 ## 5. Tauri/Rust verification boundary — PASS
 
 The limitation carried since Phase 1 (apt Rust 1.75 below Tauri v2's MSRV) is resolved. On rustc 1.98.1:
@@ -250,7 +252,7 @@ Resolved in this gate:
 - Business model spec's product-state table updated.
 - This document's status changed from "Not yet started" to the closed disposition.
 
-**Unresolved documentation gaps (conditions, not blockers):** Architecture Package §20 describes a migration runner that does not exist, and §29 describes a build-time content-hash drift gate that does not exist. Both are recorded as Phase 8 prerequisites rather than rewritten, because the documented behaviour is the behaviour we want — the code should catch up to the doc, not the reverse.
+**Unresolved documentation gaps (conditions, not blockers):** Architecture Package §20 describes a migration runner that does not exist *(resolved by Phase 8.2.1 — the code now matches §20)*, and §29 describes a build-time content-hash drift gate that does not exist. Both are recorded as Phase 8 prerequisites rather than rewritten, because the documented behaviour is the behaviour we want — the code should catch up to the doc, not the reverse.
 
 ---
 
@@ -277,7 +279,7 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 
 | # | Condition | Gates |
 |---|---|---|
-| C1 | No migration runner / `schema_version` tracking | Any Phase 8 increment that adds a table (subscription persistence, Assessment mode's `mode` CHECK constraint) |
+| C1 | ~~No migration runner / `schema_version` tracking~~ **CLEARED by Phase 8.2.1** — numbered migrations applied once each, in order, transactionally, recorded in `application_metadata['schema_version']`, with foreign-key handling that permits table rebuilds. 18 Rust tests. See CHANGELOG, Phase 8.2.1 | Any Phase 8 increment that adds a table (subscription persistence, Assessment mode's `mode` CHECK constraint) |
 | C2 | ~~Entitlement engine has no tier, matrix, subscription state, or resolution function~~ **CLEARED by Phase 8.1** — `Tier`, `SubscriptionState`, `CAPABILITY_MATRIX` and the pure `resolveEntitlements` resolver now exist in `nexus-core`, with 45 tests. See CHANGELOG, Phase 8.1 | The entire commercialization sequence; it was Phase 8's first increment |
 | C3 | No rendered-component tests (no jsdom/testing-library) — **PARTIALLY ADDRESSED by Phase 8.2**: jsdom + Testing Library now exist (opt-in per file), with rendered tests for `ScenarioLibrary` gating (15) and Dashboard interrupted-session resume (2). Every other component remains untested at the rendered level, so the condition stays open for each *future* gating/paywall surface | Any paywall/gating UI state, which would otherwise ship untested |
 

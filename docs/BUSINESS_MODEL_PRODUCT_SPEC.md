@@ -33,12 +33,12 @@ The repository is a pnpm/TypeScript monorepo with a React frontend and Tauri des
 | 6 | Terminology, lessons, deterministic recommendations | Complete |
 | 6 | Analytics engine (performance, trend, weak/strong areas, error trends, scenario progress) | Complete — audited and confirmed in Phase 7 |
 | 7 | Pre-Commercialization Audit & Stabilization Gate; analytics requirements/readiness are audited as part of the gate | **Closed — PASS WITH CONDITIONS** (see `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`) |
-| 8 | Commercialization Foundation | **Next — not started** |
+| 8 | Commercialization Foundation | **In progress** — 8.1 entitlement domain model, 8.2 scenario entitlement gating, and 8.2.1 migration infrastructure complete; Assessment mode, subscription persistence, and payments not started |
 
 ### Material gaps before commercial launch
 
-- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 14 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
-- No migration runner or `schema_version` tracking exists; required before any new table is added.
+- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 32 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
+- A versioned migration runner now exists (Phase 8.2.1), so new tables and constraint changes can ship safely; the schema itself is still at version 1.
 - Content library is only 2 scenarios (difficulty 1 and 3) — not enough to populate a Free tier, let alone justify paid access.
 - No-pause **Assessment mode** is not yet implemented.
 - Web deployment and lightweight cloud persistence are not yet implemented.

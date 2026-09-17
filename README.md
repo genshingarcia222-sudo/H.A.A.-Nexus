@@ -9,13 +9,14 @@ never a separate patch). This README covers only how to run what exists so far.
 **Proprietary software — see `LICENSE.md`.** This is not open source; every
 `package.json` in this workspace is marked `"license": "UNLICENSED"`.
 
-## Status: Phase 8.2 complete — no later increment started
+## Status: Phase 8.2.1 complete — no later increment started
 
 Phase 7 (the Pre-Commercialization Audit & Stabilization Gate) closed as PASS
 WITH CONDITIONS; its evidence and disposition are recorded in
 `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`. Phase 8.1 (Entitlement Domain
-Model) and Phase 8.2 (ScenarioLibrary Entitlement Gating) are the only
-commercialization increments implemented so far.
+Model), Phase 8.2 (ScenarioLibrary Entitlement Gating) and Phase 8.2.1
+(Database Migration Infrastructure) are the only Phase 8 increments
+implemented so far.
 
 | Component | Status |
 |---|---|
@@ -26,12 +27,12 @@ commercialization increments implemented so far.
 | `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
 | `packages/nexus-core/analytics-engine` (overall performance, trend, weak/strong areas, error trends, scenario progress) | **Implemented** — 14 unit tests; every figure computed from real `SessionRecord`/`CompetencyRecord` data, no separate analytics store |
 | Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (14 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (32 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
 | Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Analytics, Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
 | App icons (`src-tauri/icons/`) | **Implemented** — full icon set generated from a brand source image via `tauri icon` |
 | Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | Recommendation engine factoring in competency-record trends (not just error frequency) | **Not implemented (honestly scoped out — see CHANGELOG)** |
-| Migration runner / `schema_version` tracking | **Not implemented** — accepted Phase 7 condition; required before Phase 8 adds any table (see audit doc) |
+| Migration runner / `schema_version` tracking | **Implemented (Phase 8.2.1)** — numbered, transactional migrations recorded in `application_metadata['schema_version']`; clears Phase 7 condition C1. Schema is still at version 1 (`001_initial.sql`) |
 | Assessment (no-pause) mode | **Not started** — later Phase 8 increment |
 | Entitlement domain model (tier ladder, capability matrix, pure resolver) | **Implemented (Phase 8.1)** — 53 unit tests. Pure domain logic; consumed by scenario gating |
 | Scenario entitlement gating (library lock states + start enforcement) | **Implemented (Phase 8.2)** — locked scenarios stay visible; every start path refused below the UI. Subscription state is a Free-only placeholder (see Phase 8 progress) |
@@ -51,12 +52,17 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
 ```
 
 - `cargo check --all-targets` — **clean**, no errors, no warnings.
-- `cargo test` — **14 passed, 0 failed.** Real-file SQLite (not `:memory:`),
-  covering migration/table integrity, WAL + foreign-key pragmas, restart
-  idempotency, autosave of an in-progress draft with no evaluation yet,
-  autosave survival across a restart, autosave-then-submit attaching the
-  evaluation to the same attempt, interrupted-session detection, scenario
-  version traceability, profile round-trip, and competency upsert.
+- `cargo test` — **32 passed, 0 failed.** Real-file SQLite (not `:memory:`).
+  14 persistence tests (Phase 7) cover table integrity, WAL + foreign-key
+  pragmas, restart idempotency, autosave of an in-progress draft with no
+  evaluation yet, autosave survival across a restart, autosave-then-submit
+  attaching the evaluation to the same attempt, interrupted-session
+  detection, scenario version traceability, profile round-trip, and
+  competency upsert. 18 migration tests (Phase 8.2.1) cover fresh install,
+  upgrading a pre-versioning database without data loss, in-order and
+  exactly-once application, full rollback of a failed migration, refusal of
+  a database from a newer build, and a rehearsal of the table rebuild needed
+  to widen a CHECK constraint.
 
 **Still unverified:** `pnpm tauri dev` (launching the actual webview) and
 `tauri build` (MSI/NSIS bundling) have not been run. Installer packaging is
@@ -138,6 +144,11 @@ Phase 8 is commercialization, delivered as independently verifiable increments.
   function every scenario entry point calls, so a locked scenario is refused
   whether it is reached from the library, a retry, a recommendation, or an
   interrupted-session resume.
+- **8.2.1 Database Migration Infrastructure — complete.** Versioned SQLite
+  migrations: each applied once, in order, in its own transaction with its
+  version bump, with foreign keys handled so a later migration can rebuild a
+  table (as widening the session `mode` CHECK for Assessment mode will
+  require). Clears Phase 7 condition C1. No schema change was made.
 - **Later increments — not started.** Paywall/conversion states, locked score
   detail, Assessment mode, subscription persistence, PayMongo, web
   deployment and authentication all remain unimplemented.

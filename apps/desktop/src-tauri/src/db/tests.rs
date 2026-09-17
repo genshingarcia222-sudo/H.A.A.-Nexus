@@ -179,9 +179,10 @@ fn reopening_the_database_is_idempotent() {
     let mut db = TestDb::new();
     assert_eq!(db.count("SELECT COUNT(*) FROM users"), 1);
 
-    // The migration is re-executed on every boot (CREATE TABLE IF NOT
-    // EXISTS + INSERT OR IGNORE), so a restart must not duplicate the
-    // local user or fail on existing tables.
+    // Every boot runs the migration runner and `ensure_local_user`
+    // (INSERT OR IGNORE). A restart must not re-apply migrations, duplicate
+    // the local user, or fail on existing tables. Migration-specific
+    // behaviour is covered in `migration_tests.rs`.
     db.reopen();
     db.reopen();
 

@@ -11,6 +11,115 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 8.2.1 — Database Migration Infrastructure (Complete)
+
+Incorporates Phases 1-8.2 in full. Clears Phase 7 condition **C1**. A
+prerequisite increment: it adds the ability to change the SQLite schema
+safely, and deliberately **makes no schema change**. The database is still
+at version 1 (`001_initial.sql`), and no table, column, constraint or mode
+was added. No learner-visible behaviour changed; the frontend production
+bundle is byte-identical to Phase 8.2.
+
+**The problem.** `001_initial.sql` was executed unconditionally on every
+boot. That only worked because every statement in it is `CREATE ... IF NOT
+EXISTS`, and it offered no way to ship a change that is not naturally
+repeatable. Assessment mode needs exactly such a change: widening the
+`simulation_sessions.mode` CHECK constraint, which SQLite cannot `ALTER`.
+
+**Added `apps/desktop/src-tauri/src/db/migrations.rs`:**
+
+- Migrations are numbered SQL files in `migrations/`, embedded with
+  `include_str!` and listed in order in `MIGRATIONS`. The list is validated
+  to be contiguous from 1 before anything runs.
+- The authoritative version is `application_metadata['schema_version']`,
+  exactly as Architecture Package Section 20 has always specified; until now
+  that table was created and never written. A database without the row is
+  version 0.
+- On open, each migration above the stored version is applied in order,
+  **in its own transaction together with its version bump**. A migration
+  either fully applies and is recorded, or fully rolls back (DDL included)
+  leaving the version unchanged. A failure stops the run, so later
+  migrations do not apply on top of a failed one, and `init_connection`
+  returns the error rather than opening a half-migrated database.
+- **Foreign keys and table rebuilds.** SQLite silently ignores `PRAGMA
+  foreign_keys` inside a transaction, and dropping a parent table such as
+  `simulation_sessions` fails with enforcement on. Each migration therefore
+  runs with enforcement switched off *outside* its transaction, runs `PRAGMA
+  foreign_key_check` before committing and rolls back on any violation, and
+  switches enforcement back on afterwards whether it succeeded or failed.
+- **Refuses unsafe states instead of guessing:** a database whose stored
+  version is newer than this build (`DatabaseNewerThanApp`), and a
+  `schema_version` that is not a valid integer (`CorruptSchemaVersion`).
+  Neither modifies the database.
+
+**Upgrade path for existing databases.** Every database created before this
+checkpoint has the full 001 schema but no version row, so it reads as
+version 0 and 001 runs again — a no-op, because 001 is idempotent DDL — and
+version 1 is recorded. No learner data is touched. `001_initial.sql` is
+byte-identical to the previous commit. A test pins 001's idempotency (every
+CREATE uses `IF NOT EXISTS`; no DROP, ALTER, INSERT, UPDATE or DELETE) so a
+later edit cannot silently break this upgrade path. Only 001 needs that
+property; later migrations run exactly once and may use ordinary DDL.
+
+**Changed:** `db/mod.rs` — `init_connection` now calls `run_migrations` and
+returns `Result<Connection, MigrationError>` (previously
+`rusqlite::Result`). Its only caller, `main.rs`, uses `.expect` and needed
+no change. The `INITIAL_MIGRATION` constant, which `init_connection` used to
+execute directly, was replaced by the `MIGRATIONS` list. A comment in
+the existing `tests.rs` that described the old re-run-every-boot behaviour
+was corrected; no assertion changed.
+
+**Tests added (18, `db/migration_tests.rs`), all against real on-disk
+SQLite:** the shipped list is contiguous and applies; 001 is idempotent DDL
+(static and behavioural); a fresh database starts at version 0, and
+`init_connection` brings it to the latest version and records it; pending
+migrations apply in order (using a deliberately non-idempotent test
+migration and a dependent one); only migrations newer than the stored
+version apply; rerunning with nothing pending applies nothing; reopening a
+migrated database re-applies nothing and keeps data; **a pre-versioning
+database with a real session, attempt and evaluation upgrades to version 1
+with all of it intact**; a migration that fails halfway rolls back entirely
+(its created table does not survive) and keeps the previous version; a
+failure stops later migrations; foreign-key enforcement is restored after a
+failure; a fixed migration can then be applied; a migration that orphans
+rows is rolled back by the foreign-key check; `init_connection` refuses a
+corrupt version; a database from a newer build is refused untouched; a
+malformed migration list is rejected before anything applies; and a
+**rehearsal of the table rebuild Assessment mode will need**, widening
+`simulation_sessions.mode` and verifying the existing session, attempt and
+evaluation survive, the new value is accepted, invalid values are still
+rejected, foreign keys remain enforced against the rebuilt table, and its
+indexes are recreated. The rehearsal uses a placeholder mode value in test
+code only; no mode was added to the product.
+
+**Tests verified to detect regressions, not merely pass.** Five defects were
+injected one at a time into `migrations.rs` and each was caught: never
+disabling foreign keys (failed the rebuild rehearsal and foreign-key-violation
+tests), skipping `foreign_key_check` (failed the violation test), never
+restoring foreign keys (failed 4 tests including the restore test), ignoring
+the stored version (failed the only-newer and rerun tests), and removing the
+newer-database guard (failed the newer-build test). The file was restored
+byte-identical afterwards. Transaction atomicity itself was not
+mutation-tested; it is covered directly by the half-applied rollback test.
+
+**Verified this checkpoint:** 239/239 nexus-core tests, 77/77 desktop tests,
+32/32 Rust tests (14 existing + 18 new) — **348 total, 0 failures**, up from
+330 at Phase 8.2 (+18, all Rust). No pre-existing test was removed and no
+assertion changed; the only edit to an existing test file is the comment
+noted above. `pnpm -r typecheck` clean. `pnpm -r build` succeeds with an
+unchanged bundle. `cargo check --all-targets` clean, `cargo fmt --check`
+clean.
+
+**Explicitly NOT implemented in 8.2.1:** Assessment mode, any new mode
+value, subscription or entitlement tables, PayMongo, authentication, and any
+change to clinical-training logic. **Remaining C1-adjacent limits:** there is
+no downgrade/rollback migration support (a newer database is refused, not
+reverted); migrations are not backed up before running; and a migration
+cannot currently execute Rust code, only SQL. None is needed by the next
+planned migration.
+
+---
+
 ## Phase 8.2 — ScenarioLibrary Entitlement Gating (Complete)
 
 Incorporates Phases 1-8.1 in full. The first production-facing consumer of
@@ -433,7 +542,7 @@ Incorporates Phase 1 in full, plus:
 
 ## Not yet started (by design)
 
-Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model) and Phase 8.2 (ScenarioLibrary Entitlement Gating) are complete. No later increment has been started: no paywall states, locked score detail, Assessment mode, subscription persistence, migration runner, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
+Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model), Phase 8.2 (ScenarioLibrary Entitlement Gating) and Phase 8.2.1 (Database Migration Infrastructure) are complete. No later increment has been started: no paywall states, locked score detail, Assessment mode, subscription persistence, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
 
 ---
 
