@@ -11,7 +11,7 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
-## Phase 8.3 — Assessment Mode (In Progress: domain, persistence and workspace foundation)
+## Phase 8.3 — Assessment Mode (In Progress: foundation, workspace and live-feedback boundary; blocked on product decisions)
 
 Incorporates Phases 1-8.2.1 in full. **This checkpoint is a foundation, not
 the finished feature.** Assessment mode now exists in the domain model and
@@ -91,11 +91,66 @@ no-Pause test. Each file was restored byte-identical.
 checkpoints: domain and persistence first (360 tests at that commit), then
 the workspace changes.
 
-**Remaining for Assessment mode:** a decision on which tier includes it (then
-an entitlement capability in the matrix), a UI entry point gated by that
-capability, deciding what counts as "live feedback that would compromise
-exam simulation" and suppressing it, and rendered-component tests for
-those surfaces.
+**Live-feedback boundary (third checkpoint).** Authorized by Business Model
+Spec §10.2 ("hides live feedback that would compromise exam simulation") and
+by the session owner's direct instruction defining the boundary: during an
+active Assessment the learner must receive no information that reveals,
+confirms, grades, coaches, or materially signals the correctness or quality
+of ongoing performance. A trace of every mechanism found **no existing
+leak**, but the boundary was held only by call order (`submit` evaluates
+after completing) and by routing (`LiveScribing` mounts the summary only for
+completed sessions). It is now enforced:
+- `nexus-core`: `mayRevealPerformance(session)` is false for an assessment
+  session in every status except `completed` — including `interrupted` and
+  `abandoned`, since neither submits the attempt. `assertMayRevealPerformance`
+  throws the new `LiveFeedbackNotAllowedError`. Practice and simulation are
+  unrestricted, because no restriction is authorized for them.
+- `sessionStore`: an active assessment's autosaved record never carries an
+  evaluation; a leaked one is stripped and the draft is still saved.
+  `submit` asserts the boundary at the reveal point.
+- `SubmissionSummary`: renders nothing, and computes no recommendations, for
+  an assessment that is not completed.
+
++5 `nexus-core` tests (every status in both directions; the error). +8
+desktop tests (`assessmentFeedbackBoundary.test.tsx`): no evaluation through
+any in-session action, autosave without an evaluation, a leaked evaluation
+stripped while the draft survives, the strip scoped to assessment only,
+evaluation revealed after submit, and — with a real evaluation injected into
+an active assessment to simulate a future leak — the summary rendering
+nothing, the route still showing the workspace with no performance text, and
+the workspace showing none while errors are being made. Two of these tests
+fail against the previous checkpoint (injected-result summary, autosave
+strip); the rest guard paths that already held.
+
+**Mutation checks (live-feedback boundary).** Five defects, each caught:
+the predicate always revealing (3 core and 2 desktop tests failed), the
+autosave strip removed, the summary guard removed, and live evaluation on
+every keystroke (caught by the state test, though nothing renders the
+result). Every file was restored byte-identical.
+
+**Product decisions.** Recorded in the new
+`docs/PHASE_8_3_ASSESSMENT_MODE.md`, with evidence examined for each:
+- **D1 — which tier includes Assessment: BLOCKED.** The spec establishes that
+  Assessment is entitlement-gated, not which tier; the tier name "Exam-Ready
+  Pro" is not a statement of entitlement. No capability was added, since
+  any per-tier values (including all-false) would encode feature availability.
+- **D2 — live-feedback boundary: principle AUTHORIZED**, implemented above.
+- **D3 — what an Assessment learner sees after submitting: NOT AUTHORIZED.**
+- **D4 — whether Assessment is closed-book: NOT AUTHORIZED.**
+- **D5 — whether Assessment results count in analytics/competency: NOT
+  AUTHORIZED.**
+- **D6 — retake/resume after an interrupted Assessment: NOT AUTHORIZED.**
+Existing mode-agnostic behaviour was left unchanged for D3–D6.
+
+**Verified (third checkpoint):** 252/252 nexus-core, 91/91 desktop, 36/36
+Rust — **379 total, 0 failures** (+13). `pnpm -r typecheck` clean. `pnpm -r
+build` succeeds (286.02 kB). `cargo check --all-targets` and `cargo fmt
+--check` clean.
+
+**Remaining for Assessment mode:** a decision on D1 (then an entitlement
+capability, a learner entry point gated by it, and mode-level start
+enforcement), and decisions on D3–D6. Phase 8.3 cannot close until D1 is
+decided.
 
 ---
 

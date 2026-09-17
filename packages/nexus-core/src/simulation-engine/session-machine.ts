@@ -21,6 +21,47 @@ function assertPausable(session: SimulationSession, action: string): void {
   }
 }
 
+/**
+ * Thrown when performance information (an evaluation, score, feedback or
+ * recommendation derived from the attempt) would be revealed for an
+ * assessment session that is still active.
+ */
+export class LiveFeedbackNotAllowedError extends Error {
+  constructor(status: SessionStatus, what: string) {
+    super(`Cannot reveal ${what} for an assessment session in status "${status}": it runs under exam conditions.`);
+    this.name = "LiveFeedbackNotAllowedError";
+  }
+}
+
+/**
+ * Whether information about this attempt's performance may be revealed yet.
+ *
+ * Business Model Spec Section 10 requires Assessment to hide "live feedback
+ * that would compromise exam simulation"; the session owner defined the
+ * boundary as no information that reveals, confirms, grades, coaches or
+ * materially signals the correctness or quality of ongoing performance.
+ * For an assessment session that means nothing performance-derived until
+ * the attempt is completed - including while it is interrupted or
+ * abandoned, since neither ends the exam with a submitted attempt.
+ *
+ * Practice and simulation always return true. That is not a product rule
+ * that they *should* show live feedback; it is the absence of any
+ * authorized restriction for those modes, so none is imposed here.
+ *
+ * What an assessment learner sees *after* submitting is a separate, still
+ * undecided product question (see docs/PHASE_8_3_ASSESSMENT_MODE.md, D3).
+ */
+export function mayRevealPerformance(session: SimulationSession): boolean {
+  if (session.mode !== "assessment") return true;
+  return session.status === "completed";
+}
+
+export function assertMayRevealPerformance(session: SimulationSession, what: string): void {
+  if (!mayRevealPerformance(session)) {
+    throw new LiveFeedbackNotAllowedError(session.status, what);
+  }
+}
+
 function assertStatus(session: SimulationSession, allowed: SessionStatus[], action: string): void {
   if (!allowed.includes(session.status)) {
     throw new InvalidSessionTransitionError(session.status, action);

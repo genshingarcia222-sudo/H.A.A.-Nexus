@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button } from "@haa-nexus/ui-kit";
 import {
   generateRecommendations,
+  mayRevealPerformance,
   type EvaluationError,
   type Recommendation,
   type Scenario,
@@ -46,7 +47,9 @@ export function SubmissionSummary() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
 
   useEffect(() => {
-    if (!scenario) return;
+    // Recommendations are performance-derived; never compute them for an
+    // assessment that is still active (Phase 8.3 live-feedback boundary).
+    if (!scenario || !session || !mayRevealPerformance(session)) return;
     let cancelled = false;
     void sessionRepository.list().then((history) => {
       if (cancelled) return;
@@ -59,7 +62,7 @@ export function SubmissionSummary() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scenario, result]);
 
-  if (!scenario || !session || !result) return null;
+  if (!scenario || !session || !result || !mayRevealPerformance(session)) return null;
 
   function handleRecommendation(rec: Recommendation) {
     if (rec.recommendedType === "lesson") {

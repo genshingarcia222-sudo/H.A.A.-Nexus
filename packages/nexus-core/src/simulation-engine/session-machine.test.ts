@@ -8,9 +8,12 @@ import {
   interruptSession,
   computeLiveActiveMs,
   InvalidSessionTransitionError,
-  PauseNotAllowedError
+  PauseNotAllowedError,
+  LiveFeedbackNotAllowedError,
+  mayRevealPerformance,
+  assertMayRevealPerformance
 } from "./session-machine.js";
-import { modeAllowsPause, type SimulationMode } from "./types.js";
+import { modeAllowsPause, type SessionStatus, type SimulationMode } from "./types.js";
 
 const PARAMS = { id: "s1", scenarioId: "SCRIBE-FM-014", scenarioVersion: "1.0", mode: "practice" as const };
 
@@ -170,5 +173,52 @@ describe("assessment mode (Phase 8.3) - no pause, no resume", () => {
       expect(paused.status).toBe("paused");
       expect(resumeSession(paused, 3000).status).toBe("in_progress");
     }
+  });
+});
+
+describe("assessment live-feedback boundary (Phase 8.3)", () => {
+  const ALL_STATUSES: SessionStatus[] = [
+    "not_started",
+    "in_progress",
+    "paused",
+    "completed",
+    "interrupted",
+    "abandoned",
+    "evaluation_failed",
+    "retried"
+  ];
+  const sessionIn = (mode: SimulationMode, status: SessionStatus) => ({
+    ...startSession({ ...PARAMS, mode }, 1000),
+    status
+  });
+
+  it("reveals assessment performance only once the attempt is completed", () => {
+    for (const status of ALL_STATUSES) {
+      expect(mayRevealPerformance(sessionIn("assessment", status)), status).toBe(status === "completed");
+    }
+  });
+
+  it("keeps an interrupted or abandoned assessment closed, since neither submits the attempt", () => {
+    expect(mayRevealPerformance(sessionIn("assessment", "interrupted"))).toBe(false);
+    expect(mayRevealPerformance(sessionIn("assessment", "abandoned"))).toBe(false);
+  });
+
+  it("imposes no restriction on practice or simulation, for which none is authorized", () => {
+    for (const mode of ["practice", "simulation"] as const) {
+      for (const status of ALL_STATUSES) {
+        expect(mayRevealPerformance(sessionIn(mode, status)), `${mode}/${status}`).toBe(true);
+      }
+    }
+  });
+
+  it("throws LiveFeedbackNotAllowedError for an active assessment and names what was withheld", () => {
+    const active = startSession({ ...PARAMS, mode: "assessment" }, 1000);
+    expect(() => assertMayRevealPerformance(active, "an evaluation")).toThrow(LiveFeedbackNotAllowedError);
+    expect(() => assertMayRevealPerformance(active, "an evaluation")).toThrow(/an evaluation/);
+  });
+
+  it("allows the reveal once the assessment has been completed through the session machine", () => {
+    const completed = completeSession(startSession({ ...PARAMS, mode: "assessment" }, 1000), 5000);
+    expect(() => assertMayRevealPerformance(completed, "an evaluation")).not.toThrow();
   });
 });

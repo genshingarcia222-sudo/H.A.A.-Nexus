@@ -13,6 +13,8 @@ import {
   updateCompetencyRecord,
   canAccessDifficulty,
   modeAllowsPause,
+  mayRevealPerformance,
+  assertMayRevealPerformance,
   type Scenario,
   type SimulationSession,
   type SimulationMode,
@@ -70,7 +72,10 @@ function toSessionRecord(
     completedAt: session.completedAt,
     flags: session.flags,
     draft,
-    evaluation: result
+    // An active assessment must never carry an evaluation, not even in its
+    // autosaved record (Phase 8.3 live-feedback boundary). Stripping it here,
+    // rather than refusing to save, keeps the learner's draft safe.
+    evaluation: mayRevealPerformance(session) ? result : null
   };
 }
 
@@ -179,6 +184,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     if (!scenario || !session) return;
 
     const completedSession = completeSession(session, Date.now());
+    // The reveal point for an attempt's evaluation. Always satisfied here,
+    // because the session has just been completed; stated so that any future
+    // path that evaluates earlier fails loudly for an active assessment.
+    assertMayRevealPerformance(completedSession, "an evaluation");
     const result = evaluateAttempt({ scenario, draft, activeMs: completedSession.activeMs });
 
     set({ session: completedSession, result });
