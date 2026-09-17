@@ -1,0 +1,7 @@
+{
+  "_about": "Content-authoring gate (Architecture Package Section 29). SHA-256 of each released scenario version's canonicalized JSON, as computed by computeContentHash. A released version's hash must never change: publish edits under a new version and add its hash here. Checked by packages/nexus-core/src/scenario-engine/content-qa.e2e.test.ts.",
+  "scenarios": {
+    "SCRIBE-FM-014@1.0": "a7928dea6ebe8bb82beccfec54ab65cdea5a10705ba63f94e312658315adf586",
+    "SCRIBE-IM-032@1.0": "3c73298568476514b016d0dcdd2ac7bd328381a1289cf27974226b11edf7dda5"
+  }
+}

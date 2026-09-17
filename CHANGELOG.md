@@ -59,6 +59,53 @@ both recommendation tests. Every file was restored byte-identical.
 failures** (+6). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (286.23
 kB). `cargo check --all-targets` and `cargo fmt --check` clean.
 
+### A3 — Content-hash drift gate (Cleared)
+
+**Problem.** Architecture Package §29 requires that "a content update that
+doesn't bump `version` but changes `content_hash` is flagged as a
+content-authoring error at build/import time". `computeContentHash` existed,
+but nothing outside its own test called it, so an edit to a released
+scenario could ship silently under an unchanged version - and every attempt
+stored against that version would then be traced to content it was never
+scored against.
+
+**Change.**
+- `findContentHashViolations(recorded, actual)` in `scenario-engine`: pure and
+  deterministic. It reports a released version whose content changed
+  without a version bump, a shipped version with no recorded hash, and a
+  recorded version no longer shipped.
+- `content/content-hashes.json`: the committed manifest of SHA-256 hashes of
+  each released scenario version's canonicalized JSON, seeded with the two
+  shipped scenarios (`SCRIBE-FM-014@1.0`, `SCRIBE-IM-032@1.0`).
+- The content-QA suite checks every shipped scenario against the manifest on
+  every `pnpm test`. Its failure message says exactly what to do: publish the
+  edit under a new version, or add the printed entry for a new version.
+- **No regeneration command, by design.** Re-recording a released version's
+  hash would defeat the gate, so new versions are added from the printed
+  entry and existing entries are never overwritten.
+
+**Scope.** Scenarios only, which is what §29 names. Lessons and the
+terminology dictionary are not covered, and the dictionary has no version
+field to bump. Runtime `content_versions` writes remain unimplemented,
+because content is bundled with the app rather than imported into SQLite.
+
+**Tests.** +6 unit tests for the checker (clean match, changed without a
+bump, the same change under a new recorded version, unrecorded, recorded but
+missing, all violations in a stable order). +1 content-QA test over the real
+shipped content.
+
+**Mutation checks.** Editing a released scenario without bumping its version,
+altering a recorded hash, removing a manifest entry, and making the checker
+ignore hash differences each failed. Reordering keys and reformatting
+whitespace in a released scenario still passed, as it should, since the hash
+is canonical. Every file was restored byte-identical, and the shipped
+scenarios are unchanged.
+
+**Verified:** 265/265 nexus-core, 91/91 desktop, 36/36 Rust — **392 total, 0
+failures** (+7). `pnpm -r typecheck` clean. `pnpm -r build` succeeds, bundle
+unchanged (the checker runs only at test time). `cargo check --all-targets`
+and `cargo fmt --check` clean.
+
 ---
 
 ## Phase 8.3 — Assessment Mode (In Progress: foundation, workspace and live-feedback boundary; blocked on product decisions)

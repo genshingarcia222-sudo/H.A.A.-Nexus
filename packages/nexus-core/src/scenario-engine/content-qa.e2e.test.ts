@@ -3,9 +3,12 @@ import { readdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { validateScenario } from "./validate.js";
+import { computeContentHash, findContentHashViolations } from "./content-hash.js";
+import { scenarioKey } from "./versioning.js";
 
 const CONTENT_DIR = fileURLToPath(new URL("../../../../content/scenarios/live-scribing", import.meta.url));
 const SAMPLE_SCENARIO_PATH = path.join(CONTENT_DIR, "SCRIBE-FM-014-v1.0.json");
+const HASH_MANIFEST_PATH = fileURLToPath(new URL("../../../../content/content-hashes.json", import.meta.url));
 
 async function loadAllScenarioFiles(): Promise<{ file: string; parsed: unknown }[]> {
   const filenames = (await readdir(CONTENT_DIR)).filter((f) => f.endsWith(".json"));
@@ -82,5 +85,27 @@ describe("real content package: SCRIBE-FM-014-v1.0.json", () => {
     // The scenario's encounter never provides a temperature value anywhere,
     // so no requirement should ever trace to one.
     expect(allSourceFacts.some((fact) => /\d+(\.\d+)?\s*°?c/i.test(fact))).toBe(false);
+  });
+});
+
+describe("content QA: content-hash drift gate (Architecture Package Section 29)", () => {
+  it("every shipped scenario version matches its recorded hash, and every recorded version is shipped", async () => {
+    const manifest = JSON.parse(await readFile(HASH_MANIFEST_PATH, "utf-8")) as { scenarios: Record<string, string> };
+    const actual: Record<string, string> = {};
+    for (const { parsed } of await loadAllScenarioFiles()) {
+      const scenario = parsed as { scenarioId: string; version: string };
+      actual[scenarioKey(scenario.scenarioId, scenario.version)] = await computeContentHash(parsed);
+    }
+
+    const violations = findContentHashViolations(manifest.scenarios, actual);
+    const explain = violations.map((v) =>
+      v.kind === "changed-without-version-bump"
+        ? `${v.key}: content changed but the version did not. Released versions are immutable - publish this edit under a new version, and record that new version's hash, instead of changing ${v.key}.`
+        : v.kind === "unrecorded"
+          ? `${v.key}: new version with no recorded hash. Once its content is final, add to content/content-hashes.json -> scenarios: "${v.key}": "${v.actual}"`
+          : `${v.key}: recorded in content/content-hashes.json but no longer shipped. Remove the entry only if retiring this version is intended.`
+    );
+    expect(explain, explain.join("\n")).toEqual([]);
+    expect(Object.keys(actual).length).toBeGreaterThan(0);
   });
 });

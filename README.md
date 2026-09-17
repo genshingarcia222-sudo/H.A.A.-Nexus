@@ -88,12 +88,13 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (258 nexus-core + 91 desktop = 349).
+# Every package's tests (265 nexus-core + 91 desktop = 356).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
 # the recommendation engine's deterministic rules, and content-QA passes
-# over every file under /content. Desktop covers duration formatting, real
+# over every file under /content, including the content-hash drift gate
+# (content/content-hashes.json) that rejects an edited released scenario. Desktop covers duration formatting, real
 # checks that all bundled content loads/validates/evaluates correctly at
 # runtime, the full submit -> persist -> competency-update flow, and
 # end-to-end recommendation and analytics flows against real submitted

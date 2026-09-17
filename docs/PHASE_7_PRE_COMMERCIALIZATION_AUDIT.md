@@ -108,7 +108,7 @@ Entry state: branch `main`, working tree clean, HEAD `ec6dd82`.
 | Design system (`ui-kit`) | PARTIALLY VERIFIED — implemented and consumed; no tests of any kind |
 | Entitlement engine | PARTIALLY VERIFIED — see §8 |
 | Scenario engine, schema validation | VERIFIED |
-| Content hashing / versioning | PARTIALLY VERIFIED — correct and tested, but `computeContentHash` is never called outside its own test and `content_versions` is never written |
+| Content hashing / versioning | PARTIALLY VERIFIED — correct and tested, but `computeContentHash` is never called outside its own test and `content_versions` is never written *(update: the build-time drift gate now uses it — see A3)* |
 | Live-scribing session state, transcript reveal, documentation form | VERIFIED |
 | Evaluation engine, fabrication/negation detection | VERIFIED |
 | Deterministic scoring | PARTIALLY VERIFIED — see §3 |
@@ -254,7 +254,7 @@ Resolved in this gate:
 - Business model spec's product-state table updated.
 - This document's status changed from "Not yet started" to the closed disposition.
 
-**Unresolved documentation gaps (conditions, not blockers):** Architecture Package §20 describes a migration runner that does not exist *(resolved by Phase 8.2.1 — the code now matches §20)*, and §29 describes a build-time content-hash drift gate that does not exist. Both are recorded as Phase 8 prerequisites rather than rewritten, because the documented behaviour is the behaviour we want — the code should catch up to the doc, not the reverse.
+**Unresolved documentation gaps (conditions, not blockers):** Architecture Package §20 describes a migration runner that does not exist *(resolved by Phase 8.2.1 — the code now matches §20)*, and §29 describes a build-time content-hash drift gate that does not exist *(resolved — see A3)*. Both are recorded as Phase 8 prerequisites rather than rewritten, because the documented behaviour is the behaviour we want — the code should catch up to the doc, not the reverse.
 
 ---
 
@@ -291,7 +291,7 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 |---|---|
 | A1 | ~~Module-global ID counters make error/recommendation IDs non-reproducible across runs~~ **CLEARED** — IDs are now content-derived (`<errorType>:<requirementId>`, `fabrication:<value>#<n>`, `rec:<ruleId>`); no module-level mutable state remains in `nexus-core`. See CHANGELOG, Phase 7 Accepted-Debt Remediation |
 | A2 | `modules.ts` declares 12 competency domains; the evaluator produces 7. The registry list is dead data |
-| A3 | Content hashing implemented but wired to no build/import gate (Architecture Package §29 unmet) |
+| A3 | ~~Content hashing implemented but wired to no build/import gate (Architecture Package §29 unmet)~~ **CLEARED** — `content/content-hashes.json` records each released scenario version's hash; the content-QA suite fails any shipped scenario edited without a version bump. Scenarios only; runtime `content_versions` writes remain unimplemented (content is bundled, not imported). See CHANGELOG, Phase 7 Accepted-Debt Remediation |
 | A4 | `tauri dev` / `tauri build` not yet run; installer packaging unverified (Phase 9) |
 | A5 | `"csp": null` in `tauri.conf.json` — must change before web deployment |
 | A6 | Exact mid-transcript resume not implemented (`revealedCount` not persisted) |
