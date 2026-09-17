@@ -248,3 +248,38 @@ describe("evaluateAttempt - deterministic, reproducible results (Phase 7 debt A1
     expect(errors.find((e) => e.errorType === "time_management")?.id).toBe("time_management:session");
   });
 });
+
+describe("evaluateAttempt - very long documentation (Architecture Package §28)", () => {
+  // Roughly 400 KB of documentation: thousands of sentences, with the required
+  // facts buried at the very end.
+  const filler = (n: number) =>
+    Array.from({ length: n }, (_, i) => `Patient discussed unrelated topic number ${i} at some length.`).join(" ");
+  const longDraft = () =>
+    draft({
+      hpi: `${filler(3000)} Non-productive cough x3 days.`,
+      ros: `${filler(3000)} No fever.`
+    });
+
+  it("still finds required facts buried at the end of very long sections", () => {
+    const d = longDraft();
+    expect(d.hpi.length + d.ros.length).toBeGreaterThan(300_000);
+
+    const result = evaluateAttempt({ scenario: makeScenario(), draft: d, activeMs: 60_000 });
+
+    expect(result.errors.filter((e) => e.errorType === "omission")).toEqual([]);
+    expect(result.categoryScores.completeness).toBe(100);
+  });
+
+  it("evaluates very long documentation deterministically and without pathological slowdown", () => {
+    const d = longDraft();
+    const started = performance.now();
+    const first = evaluateAttempt({ scenario: makeScenario(), draft: d, activeMs: 60_000 });
+    const elapsed = performance.now() - started;
+    const second = evaluateAttempt({ scenario: makeScenario(), draft: d, activeMs: 60_000 });
+
+    expect({ ...second, evaluatedAt: 0 }).toEqual({ ...first, evaluatedAt: 0 });
+    // A generous ceiling: this guards against accidentally quadratic matching,
+    // not against ordinary machine-to-machine variation.
+    expect(elapsed).toBeLessThan(5_000);
+  });
+});

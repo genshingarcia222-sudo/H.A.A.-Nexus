@@ -89,7 +89,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (265 nexus-core + 94 desktop = 359).
+# Every package's tests (267 nexus-core + 106 desktop = 373).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
@@ -101,8 +101,9 @@ pnpm install
 # end-to-end recommendation and analytics flows against real submitted
 # sessions, scenario entitlement enforcement, and rendered-component tests
 # (jsdom + Testing Library) for the scenario library, Dashboard resume, and
-# the simulator workspace under assessment mode, and the assessment
-# live-feedback boundary.
+# the simulator workspace under assessment mode, the assessment
+# live-feedback boundary, save-failure recovery and idempotent submission,
+# and scenario-version traceability of stored attempts.
 pnpm test
 
 # Typecheck every package

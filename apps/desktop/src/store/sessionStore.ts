@@ -27,6 +27,14 @@ import {
 import { sessionRepository, competencyRepository } from "../persistence/repositories.js";
 import { currentEntitlements } from "./entitlementStore.js";
 
+/**
+ * Why the learner's work is not currently saved (Architecture Package §28:
+ * a write failure must surface as a recoverable error, never as silent data
+ * loss). `autosave` - an in-progress draft failed to save. `submission` - a
+ * completed attempt failed to save to history.
+ */
+export type SaveError = "autosave" | "submission";
+
 interface SessionState {
   scenario: Scenario | null;
   session: SimulationSession | null;
@@ -34,6 +42,8 @@ interface SessionState {
   beats: TranscriptBeat[];
   revealedCount: number;
   result: EvaluationResult | null;
+  /** Set when the latest save failed; cleared by the next successful save. */
+  saveError: SaveError | null;
 
   /**
    * Starts a session, or refuses to. Returns `true` if a session started and
@@ -49,8 +59,13 @@ interface SessionState {
   clearDraft: () => void;
   submit: () => Promise<void>;
   reset: () => void;
-  /** Called on an interval while in_progress, and on pause - see Architecture Package Section 10 ("autosave... every 15s"). */
-  persistDraft: () => Promise<void>;
+  /**
+   * Saves the current session, draft and (once revealable) result. Called on
+   * an interval while in_progress, on pause (Architecture Package Section 10,
+   * "autosave... every 15s"), and when the learner retries after a failure.
+   * Resolves to whether the save succeeded.
+   */
+  persistDraft: () => Promise<boolean>;
 }
 
 function toSessionRecord(
@@ -96,6 +111,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   beats: [],
   revealedCount: 0,
   result: null,
+  saveError: null,
 
   start: (scenario, mode) => {
     // Entitlement enforcement (Phase 8.2). Every way into a session - the
@@ -122,6 +138,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       draft: createEmptyDraft(),
       beats,
       result: null,
+      saveError: null,
       // Practice mode shows the full transcript up front ("optional
       // transcript visibility" - Architecture Package Section 7). Simulation
       // and assessment modes reveal it progressively.
@@ -168,20 +185,28 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   persistDraft: async () => {
     const { scenario, session, draft, result } = get();
-    if (!scenario || !session) return;
+    if (!scenario || !session) return false;
     try {
       await sessionRepository.save(toSessionRecord(scenario, session, draft, result));
+      if (get().saveError) set({ saveError: null });
+      return true;
     } catch (err) {
-      // Autosave failures shouldn't interrupt the learner's session - log
-      // and continue. A user-visible "not saving" indicator is a
-      // reasonable future refinement (Architecture Package Section 57).
-      console.error("Autosave failed:", err);
+      // A failed save must not interrupt the learner, but it must not be
+      // silent either (Architecture Package §28): the work is still in memory
+      // and on screen, and saveError lets the UI say so and offer a retry.
+      console.error("Save failed:", err);
+      set({ saveError: session.status === "completed" ? "submission" : "autosave" });
+      return false;
     }
   },
 
   submit: async () => {
     const { scenario, session, draft } = get();
     if (!scenario || !session) return;
+    // Idempotent: a second submit (a double click, or a retry racing the
+    // first) finds the session already completed and does nothing, so one
+    // attempt can never be evaluated, saved, or folded into competency twice.
+    if (session.status !== "in_progress" && session.status !== "paused") return;
 
     const completedSession = completeSession(session, Date.now());
     // The reveal point for an attempt's evaluation. Always satisfied here,
@@ -194,8 +219,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
     try {
       await sessionRepository.save(toSessionRecord(scenario, completedSession, draft, result));
+      if (get().saveError) set({ saveError: null });
     } catch (err) {
       console.error("Failed to save completed session:", err);
+      set({ saveError: "submission" });
     }
 
     // Fold this attempt's category scores into each domain's competency
@@ -216,7 +243,15 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
 
   reset: () => {
-    set({ scenario: null, session: null, draft: createEmptyDraft(), beats: [], revealedCount: 0, result: null });
+    set({
+      scenario: null,
+      session: null,
+      draft: createEmptyDraft(),
+      beats: [],
+      revealedCount: 0,
+      result: null,
+      saveError: null
+    });
   }
 }));
 

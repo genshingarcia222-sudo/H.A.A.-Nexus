@@ -11,6 +11,7 @@ import {
 } from "@haa-nexus/nexus-core";
 import { formatDuration } from "./formatDuration.js";
 import { lockedScenarioMessage } from "./lockedScenarioMessage.js";
+import { SaveErrorNotice } from "./SaveErrorNotice.js";
 import { useSessionStore } from "../store/sessionStore.js";
 import { sessionRepository } from "../persistence/repositories.js";
 import { scenarioRepository, lessonRepository } from "../content/scenarios.js";
@@ -84,6 +85,7 @@ export function SubmissionSummary() {
 
   return (
     <div style={{ display: "grid", gap: "var(--nexus-space-3)", maxWidth: 720 }}>
+      <SaveErrorNotice />
       <Card title="Results">
         <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nexus-space-2)" }}>
           <span className="nexus-data-readout" style={{ fontSize: "var(--nexus-font-size-xl)" }}>

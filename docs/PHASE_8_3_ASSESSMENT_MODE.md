@@ -24,7 +24,7 @@
 | `assessment` session mode; pause/resume refused by the session machine (`PauseNotAllowedError`), mode checked before status | `nexus-core` `simulation-engine` | `02ddb7f` |
 | Database accepts `assessment` (migration 002 table rebuild; schema version 2) | `src-tauri/migrations/002_assessment_mode.sql` | `02ddb7f` |
 | Workspace hides Pause/Resume, keeps progressive transcript reveal, labels the mode; store ignores pause/resume | `SimulatorWorkspace.tsx`, `sessionStore.ts` | `97c533b` |
-| **Live-feedback boundary enforced as state** (see §4) | `mayRevealPerformance` / `assertMayRevealPerformance` in `nexus-core`; `sessionStore.ts`; `SubmissionSummary.tsx` | this document's checkpoint |
+| **Live-feedback boundary enforced as state** (see §4) | `mayRevealPerformance` / `assertMayRevealPerformance` in `nexus-core`; `sessionStore.ts`; `SubmissionSummary.tsx` | `621855e` |
 
 **Not implemented:** no learner can start an Assessment. There is no entry point and no entitlement capability, because the tier is undecided (D1).
 
@@ -70,6 +70,15 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 - **Why insufficient:** retake and resume rules are exam-integrity policy, a learner-facing restriction.
 - **Current state:** the generic "Start a new attempt" flow is unchanged.
 - **Decision required:** the retake/resume policy for interrupted Assessments.
+
+### Related open decision outside Assessment
+
+#### D7 — How is contradictory learner documentation graded? — **NOT AUTHORIZED**
+
+- **Evidence examined:** Architecture Package §28 lists "contradictory learner input" as a required edge-case fixture but states no expected outcome; §11–§13 (evaluation, scoring, error classification) do not address documentation that asserts both a fact and its negation (for example, "No fever. Fever present."); Business Model Spec §6 (deterministic scoring) is silent.
+- **Why insufficient:** a fixture needs an expected result, and that result is scoring policy — which error type, what severity, what score effect. Pinning the evaluator's current behaviour as "expected" would silently convert implementation behaviour into a grading rule.
+- **Current state:** the evaluator's existing behaviour is unchanged and untested for this case.
+- **Decision required:** how contradictory documentation should be classified and scored.
 
 ## 4. Live-feedback trace and enforcement
 

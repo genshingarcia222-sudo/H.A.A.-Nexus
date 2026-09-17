@@ -10,6 +10,7 @@ import {
 } from "@haa-nexus/nexus-core";
 import { useSessionStore } from "../store/sessionStore.js";
 import { formatDuration } from "./formatDuration.js";
+import { SaveErrorNotice } from "./SaveErrorNotice.js";
 
 const SECTION_LABELS: Record<string, string> = {
   chiefComplaint: "Chief Complaint",
@@ -148,6 +149,7 @@ export function SimulatorWorkspace() {
       </div>
 
       <div style={{ display: "grid", gap: "var(--nexus-space-3)" }}>
+        <SaveErrorNotice />
         <Card title="Documentation">
           <div style={{ display: "grid", gap: "var(--nexus-space-3)" }}>
             {(Object.keys(SECTION_LABELS) as (keyof typeof SECTION_LABELS)[]).map((section) => (

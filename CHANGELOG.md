@@ -11,6 +11,72 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Architecture §28 Edge-Case Coverage (Complete, with two items recorded as not implementable)
+
+Architecture Package §28 lists the edge cases the testing strategy must map to
+concrete fixtures. Auditing them against the repository found four
+unimplemented; three required behaviour changes. None of these changes what
+the product offers or how attempts are scored.
+
+| §28 edge case | State before | Now |
+|---|---|---|
+| Empty submission, partial submission, terminology variant accepted, wrong terminology, fabrication (the temperature example) | Covered (Phase 4) | Unchanged |
+| Forced interruption → recovery | Covered (Phase 7 restart tests) | Unchanged |
+| **Simulated DB write failure → "user sees a recoverable error, not silent data loss"** | **Silent.** A failed save was only logged; a failed submission save still showed the summary as if saved | **Implemented** — see below |
+| **Duplicate submission** | A second `submit` threw from the store | **Implemented** — idempotent submit |
+| **Scenario version bump after a completed attempt** | Untested | **Tested** |
+| **Very long documentation (stress the segmenter)** | Untested | **Tested** |
+| Unsupported-inference detection | Scoped out in Phase 4 (needs language understanding; Architecture Package §23 defers it to AI-assisted interpretation) | Still scoped out |
+| Contradictory learner input | Untested | **Not authorized** — the correct *grading outcome* for contradictory documentation is scoring policy, which no source defines. Recorded as D7 in `docs/PHASE_8_3_ASSESSMENT_MODE.md`; no expected outcome was encoded |
+
+**Write-failure recovery.**
+- `sessionStore` gains `saveError` (`"autosave"` | `"submission"`), set when a
+  save fails and cleared by the next successful save, a new session, or a
+  reset. `persistDraft` now resolves to whether it succeeded.
+- A new `SaveErrorNotice` (`role="alert"`, conveyed in text, not only colour)
+  appears in the simulator workspace and on the submission summary. It
+  explains exactly what is and is not saved, and offers **Try saving again**.
+  The autosave wording claims automatic retries only while the session is
+  running, which is when the 15-second autosave interval actually runs.
+- **Known limitation:** a failed *competency* update after submission is still
+  only logged. Competency folding is not safely retryable (retrying could
+  count an attempt twice), so surfacing it needs its own design.
+
+**Idempotent submit.** `submit` does nothing unless the session is
+`in_progress` or `paused`, so a double click, or a retry racing the first
+submit, can never evaluate, save, or fold one attempt into competency twice.
+
+**Tests.** +9 desktop (`saveFailureRecovery.test.tsx`): autosave failure
+keeps the draft and clears on the next success; a failed submission save
+keeps the result and saves on retry; the error clears on reset; no notice
+while saves succeed; the workspace notice and its retry; the summary notice
+and its retry; the notice persists when a retry also fails; an attempt folds
+into competency once despite concurrent and repeated submits; submit on a
+completed session does not throw. +3 desktop (`versionTraceability.test.ts`,
+using a test-only v1.1 never written to `/content`): a stored attempt still
+resolves to the exact v1.0 content (by content hash) after v1.1 exists;
+re-evaluating the stored draft against its recorded version reproduces the
+stored evaluation exactly, IDs included (possible since A1); and the same
+draft scores differently against v1.1. +2 `nexus-core`: required facts are
+found at the end of sections of roughly 180 KB each, and evaluation is
+deterministic with no pathological slowdown (generous 5 s ceiling).
+
+**Mutation checks.** Seven, each caught: silencing autosave failures (4 tests
+failed), silencing submission-save failures (2), removing the submit guard
+(2), the notice never rendering (3), the summary omitting the notice (1), the
+repository ignoring the requested version (2), and the text matcher reading
+only the first 10 KB (1). Every file was restored byte-identical.
+
+**Test noise, not a defect.** Rendered tests that use `MemoryRouter` print
+React Router v6 "future flag" deprecation warnings to stderr. These come from
+the router library, not the application, and were left alone.
+
+**Verified:** 267/267 nexus-core, 106/106 desktop, 43/43 Rust — **416 total, 0
+failures** (+14). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (287.63
+kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## Phase 7 Accepted-Debt Remediation (In Progress)
 
 Runs in parallel with Phase 8.3, which is blocked on product decisions. Each
