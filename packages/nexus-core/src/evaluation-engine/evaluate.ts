@@ -15,10 +15,19 @@ import {
 } from "./feedback-templates.js";
 import type { EvaluationError, EvaluationResult, CategoryScores } from "./types.js";
 
-let errorIdCounter = 0;
-function nextErrorId(): string {
-  errorIdCounter += 1;
-  return `err-${errorIdCounter}`;
+/**
+ * Error IDs are derived from what the error is about, not from a counter.
+ * The same attempt therefore always produces the same IDs, whenever and
+ * however many times it is evaluated - which keeps evaluation results
+ * reproducible and auditable (Business Model Spec Section 6), and removes the
+ * module-global mutable state recorded as Phase 7 accepted debt A1.
+ *
+ * Uniqueness within one result: each requirement yields at most one error,
+ * requirement IDs are unique within a scenario (schema-enforced), fabricated
+ * values carry an occurrence number, and there is at most one time error.
+ */
+function errorId(errorType: string, qualifier: string): string {
+  return `${errorType}:${qualifier}`;
 }
 
 function clamp(value: number, min = 0, max = 100): number {
@@ -69,7 +78,7 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
     const { requirement } = result;
     if (!result.found && !result.negationReversed) {
       errors.push({
-        id: nextErrorId(),
+        id: errorId("omission", requirement.id),
         errorType: "omission",
         severity: enforceSeverityFloor("omission", "major"),
         section: requirement.section,
@@ -79,7 +88,7 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
     } else if (!result.found && result.negationReversed) {
       fabricationLikeCount += 1;
       errors.push({
-        id: nextErrorId(),
+        id: errorId("incorrect_negative", requirement.id),
         errorType: "incorrect_negative",
         severity: enforceSeverityFloor("incorrect_negative", "critical"),
         section: requirement.section,
@@ -88,7 +97,7 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
       });
     } else if (result.found && result.isWrongSection) {
       errors.push({
-        id: nextErrorId(),
+        id: errorId("wrong_section", requirement.id),
         errorType: "wrong_section",
         severity: enforceSeverityFloor("wrong_section", "major"),
         section: requirement.section,
@@ -97,7 +106,7 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
       });
     } else if (result.found && result.usedRawLayTerm) {
       errors.push({
-        id: nextErrorId(),
+        id: errorId("incorrect_terminology", requirement.id),
         errorType: "incorrect_terminology",
         severity: enforceSeverityFloor("incorrect_terminology", "minor"),
         section: requirement.section,
@@ -112,10 +121,13 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
     buildDocumentedFullText(draft),
     buildEncounterFullText(scenario)
   );
+  const mentionOccurrences = new Map<string, number>();
   for (const mention of unsupportedMentions) {
     fabricationLikeCount += 1;
+    const occurrence = (mentionOccurrences.get(mention.key) ?? 0) + 1;
+    mentionOccurrences.set(mention.key, occurrence);
     errors.push({
-      id: nextErrorId(),
+      id: errorId("fabrication", `${mention.key}#${occurrence}`),
       errorType: "fabrication",
       severity: enforceSeverityFloor("fabrication", "critical"),
       section: "additionalNotes", // fabricated values aren't tied to one specific required section
@@ -128,7 +140,7 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
   const overTimeRatio = elapsedSeconds / scenario.timeTargetSeconds;
   if (overTimeRatio > 1.5) {
     errors.push({
-      id: nextErrorId(),
+      id: errorId("time_management", "session"),
       errorType: "time_management",
       severity: enforceSeverityFloor("time_management", "minor"),
       section: "additionalNotes",

@@ -70,8 +70,6 @@ const RULES: RecommendationRule[] = [
   }
 ];
 
-let recommendationIdCounter = 0;
-
 /**
  * Generates recommendations from the most recent `lookback` evaluated
  * sessions (Architecture Package Section 23 - deterministic rule-based
@@ -90,9 +88,11 @@ export function generateRecommendations(
   const recommendations: Recommendation[] = [];
   for (const rule of RULES) {
     if (rule.matches(counts)) {
-      recommendationIdCounter += 1;
       recommendations.push({
-        id: `rec-${recommendationIdCounter}`,
+        // Derived from the rule, not a counter: each rule fires at most once
+        // per call, so this is unique within the result and identical every
+        // time the same history is evaluated (Phase 7 accepted debt A1).
+        id: `rec:${rule.id}`,
         reason: rule.reason,
         recommendedType: rule.recommendedType,
         recommendedId:

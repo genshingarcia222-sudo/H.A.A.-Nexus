@@ -11,6 +11,56 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 7 Accepted-Debt Remediation (In Progress)
+
+Runs in parallel with Phase 8.3, which is blocked on product decisions. Each
+item below is accepted debt recorded in
+`docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`, and each is a technical change
+with no effect on what the product offers or how learners are evaluated.
+
+### A1 — Deterministic evaluation and recommendation IDs (Cleared)
+
+**Problem.** `evaluation-engine/evaluate.ts` and
+`recommendation-engine/index.ts` each held a module-global counter
+(`errorIdCounter`, `recommendationIdCounter`). Identical inputs therefore
+produced different IDs on every evaluation, and the counters reset per
+process. Scores were always reproducible; the result objects were not. That
+weakens the reproducible, auditable scoring Business Model Spec Section 6
+relies on.
+
+**Change.** IDs are now derived from what they identify:
+- a requirement error is `<errorType>:<requirementId>` — each requirement
+  yields at most one error, and requirement IDs are unique within a scenario
+  (schema-enforced);
+- a fabricated value is `fabrication:<value>#<occurrence>`, so the same value
+  written twice gets two distinct IDs;
+- a time overrun is `time_management:session`;
+- a recommendation is `rec:<ruleId>` — each rule fires at most once per call.
+
+**No module-level mutable state remains in `nexus-core`** (verified by search).
+Scores, severities, categories, feedback text and recommendation rules are
+unchanged. IDs are used only as React keys and inside stored JSON, and
+nothing parses them, so evaluations saved with the old `err-N` / `rec-N`
+format remain valid.
+
+**Tests.** +4 `evaluate.test.ts`: an attempt covering every ID branch evaluates
+to an identical result (IDs included) every time; unrelated earlier
+evaluations do not change IDs; every ID in a result is unique, including a
+value fabricated twice; each ID is derived from its subject. +2
+`recommendation-engine`: identical recommendations for the same history, and
+rule-derived IDs unique within the result.
+
+**Mutation checks.** Restoring a global counter for error IDs failed all 4
+evaluation determinism tests; dropping the fabrication occurrence number
+failed the uniqueness test; restoring a counter for recommendation IDs failed
+both recommendation tests. Every file was restored byte-identical.
+
+**Verified:** 258/258 nexus-core, 91/91 desktop, 36/36 Rust — **385 total, 0
+failures** (+6). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (286.23
+kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## Phase 8.3 — Assessment Mode (In Progress: foundation, workspace and live-feedback boundary; blocked on product decisions)
 
 Incorporates Phases 1-8.2.1 in full. **This checkpoint is a foundation, not

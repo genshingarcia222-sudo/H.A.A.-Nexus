@@ -140,6 +140,8 @@ Entry state: branch `main`, working tree clean, HEAD `ec6dd82`.
 
 **Condition (carried to Phase 8):** the evaluation *result object* is not byte-reproducible. `evaluation-engine/evaluate.ts` holds a module-global `errorIdCounter`, and `recommendation-engine/index.ts` holds a module-global `recommendationIdCounter`. Identical inputs therefore yield different `id` values across runs, and both counters reset to 1 per process. Impact is limited (IDs are stored inside JSON blobs, so no key collisions occur), but this weakens the auditability the commercial model depends on and should be replaced with content-derived IDs.
 
+> **Update — cleared (A1).** Error and recommendation IDs are now derived from their subject, so the same attempt produces an identical result object on every evaluation. The evidence above describes the state at the Phase 7 gate.
+
 **Shared mutable state.** The in-memory `sessionRepository` singleton is shared across tests by design; `InMemorySessionRepository.clear()` exists for isolation and is applied consistently. No test-order dependence was observed across full-suite runs.
 
 ## 4. Persistence integrity — PASS
@@ -287,7 +289,7 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 
 | # | Condition |
 |---|---|
-| A1 | Module-global ID counters make error/recommendation IDs non-reproducible across runs |
+| A1 | ~~Module-global ID counters make error/recommendation IDs non-reproducible across runs~~ **CLEARED** — IDs are now content-derived (`<errorType>:<requirementId>`, `fabrication:<value>#<n>`, `rec:<ruleId>`); no module-level mutable state remains in `nexus-core`. See CHANGELOG, Phase 7 Accepted-Debt Remediation |
 | A2 | `modules.ts` declares 12 competency domains; the evaluator produces 7. The registry list is dead data |
 | A3 | Content hashing implemented but wired to no build/import gate (Architecture Package §29 unmet) |
 | A4 | `tauri dev` / `tauri build` not yet run; installer packaging unverified (Phase 9) |

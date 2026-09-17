@@ -88,7 +88,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (252 nexus-core + 91 desktop = 343).
+# Every package's tests (258 nexus-core + 91 desktop = 349).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,

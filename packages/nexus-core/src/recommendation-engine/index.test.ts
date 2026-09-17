@@ -98,3 +98,23 @@ describe("generateRecommendations", () => {
     expect(recs.some((r) => r.recommendedId === "hpi-fundamentals")).toBe(false);
   });
 });
+
+describe("generateRecommendations - deterministic IDs (Phase 7 debt A1)", () => {
+  const history = () => [
+    makeSession([makeError("omission", "hpi"), makeError("incorrect_terminology"), makeError("fabrication")]),
+    makeSession([makeError("omission", "hpi"), makeError("incorrect_terminology")])
+  ];
+
+  it("returns identical recommendations every time the same history is evaluated", () => {
+    const first = generateRecommendations(history(), "SCRIBE-FM-014", 1000);
+    const second = generateRecommendations(history(), "SCRIBE-FM-014", 1000);
+    expect(first.length).toBe(3);
+    expect(second).toEqual(first);
+  });
+
+  it("derives each ID from the rule that produced it, unique within the result", () => {
+    const ids = generateRecommendations(history(), "SCRIBE-FM-014", 1000).map((r) => r.id);
+    expect(ids).toEqual(["rec:repeated-hpi-omission", "rec:repeated-terminology-errors", "rec:fabrication-detected"]);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});

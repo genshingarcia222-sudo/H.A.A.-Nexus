@@ -209,3 +209,42 @@ describe("evaluateAttempt - scoring weights", () => {
     expect(result.overallScore).toBe(50);
   });
 });
+
+describe("evaluateAttempt - deterministic, reproducible results (Phase 7 debt A1)", () => {
+  // Omissions (both requirements), a fabricated value mentioned twice, and a
+  // time overrun: every error-ID branch in one attempt.
+  const messyDraft = () =>
+    draft({ ros: "Temperature 37.0°C. Recheck 37.0°C.", additionalNotes: "BP 120/80 mmHg" });
+  const messy = () => evaluateAttempt({ scenario: makeScenario(), draft: messyDraft(), activeMs: 600_000 });
+  const withoutTimestamp = <T extends { evaluatedAt: number }>(r: T) => ({ ...r, evaluatedAt: 0 });
+
+  it("produces an identical result, IDs included, every time the same attempt is evaluated", () => {
+    const first = messy();
+    const second = messy();
+    expect(first.errors.length).toBeGreaterThanOrEqual(4);
+    expect(withoutTimestamp(second)).toEqual(withoutTimestamp(first));
+  });
+
+  it("does not let earlier, unrelated evaluations change the IDs", () => {
+    const before = messy().errors.map((e) => e.id);
+    for (let i = 0; i < 5; i++) {
+      evaluateAttempt({ scenario: makeScenario(), draft: draft({}), activeMs: 1 });
+    }
+    expect(messy().errors.map((e) => e.id)).toEqual(before);
+  });
+
+  it("gives every error in a result a unique ID, including a value fabricated twice", () => {
+    const ids = messy().errors.map((e) => e.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    const fabrications = ids.filter((id) => id.startsWith("fabrication:37.0c"));
+    expect(fabrications).toEqual(["fabrication:37.0c#1", "fabrication:37.0c#2"]);
+  });
+
+  it("derives each ID from what the error is about", () => {
+    const errors = messy().errors;
+    for (const e of errors.filter((x) => x.relatedRequirementId)) {
+      expect(e.id).toBe(`${e.errorType}:${e.relatedRequirementId}`);
+    }
+    expect(errors.find((e) => e.errorType === "time_management")?.id).toBe("time_management:session");
+  });
+});
