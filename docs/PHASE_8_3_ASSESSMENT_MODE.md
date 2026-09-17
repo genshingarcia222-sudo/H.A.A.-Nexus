@@ -90,6 +90,13 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 - **Current state:** unchanged — interrupted sessions are surfaced, the draft remains persisted and recoverable from the database, and the learner is offered a new attempt.
 - **Decision required:** whether an interrupted practice/simulation attempt may be resumed, and if so how its elapsed time and attempt identity are treated. Assessment is explicitly excluded here; that is D6.
 
+#### D9 — What happens when evaluation itself fails? — **NOT AUTHORIZED**
+
+- **Evidence examined:** `SessionStatus` already includes `evaluation_failed` (`simulation-engine/types.ts`), and the SQLite `status` CHECK accepts it — now proven by test. Nothing produces it. `sessionStore.submit` calls `evaluateAttempt` outside its try/catch, so a throw would reject the promise `handleSubmit` awaits: the session stays `in_progress`, nothing is saved, and the learner sees no response to pressing Submit. Architecture Package §28 lists a simulated *write* failure as a required fixture, but not an evaluation failure.
+- **Why insufficient:** the status exists, but what the learner is told, whether the attempt may be retried, and whether a failed evaluation still counts as an attempt are all learner-facing policy. Encoding any of them — including "silently do nothing", which is today's behaviour — would be inventing a rule.
+- **Current state:** unchanged and untested. Deterministic evaluation over validated content makes a throw unlikely, which is why this is recorded rather than treated as a live defect.
+- **Decision required:** what a learner sees when evaluation fails, and what happens to the attempt.
+
 ## 4. Live-feedback trace and enforcement
 
 ### Trace (mechanisms that could reveal performance during an active session)

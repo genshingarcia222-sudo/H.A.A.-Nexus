@@ -43,6 +43,14 @@ with `CHECK constraint failed`), adding a status the domain does not have (1),
 and removing the status constraint entirely (the rejection test failed). Every
 file was restored byte-identical.
 
+**Recorded while testing the statuses.** `evaluation_failed` exists in the
+union and is accepted by the column, but nothing produces it, and
+`sessionStore.submit` calls `evaluateAttempt` outside its try/catch — so a
+throw there would leave the learner pressing Submit with no response. What the
+learner is told, and whether the attempt may be retried, is learner-facing
+policy, so it is recorded as **D9** in `docs/PHASE_8_3_ASSESSMENT_MODE.md`
+rather than decided here.
+
 **No product decision.** These tests describe what the schema already accepts.
 Nothing was added to a union, no unused status was given behaviour, and no
 learner-facing rule changed.
