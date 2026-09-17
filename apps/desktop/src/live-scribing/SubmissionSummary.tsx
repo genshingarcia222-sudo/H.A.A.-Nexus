@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button } from "@haa-nexus/ui-kit";
 import {
   generateRecommendations,
-  mayRevealPerformance,
   type EvaluationError,
   type Recommendation,
   type Scenario,
@@ -12,7 +11,7 @@ import {
 import { formatDuration } from "./formatDuration.js";
 import { lockedScenarioMessage } from "./lockedScenarioMessage.js";
 import { SaveErrorNotice } from "./SaveErrorNotice.js";
-import { useSessionStore } from "../store/sessionStore.js";
+import { useRevealableResult, useSessionStore } from "../store/sessionStore.js";
 import { sessionRepository } from "../persistence/repositories.js";
 import { scenarioRepository, lessonRepository } from "../content/scenarios.js";
 
@@ -40,7 +39,9 @@ export function SubmissionSummary() {
   const scenario = useSessionStore((s) => s.scenario);
   const session = useSessionStore((s) => s.session);
   const draft = useSessionStore((s) => s.draft);
-  const result = useSessionStore((s) => s.result);
+  // Boundary-filtered at the store (Phase 8.3 D2): null while an assessment
+  // is still active, so this component cannot reveal performance by accident.
+  const result = useRevealableResult();
   const reset = useSessionStore((s) => s.reset);
   const start = useSessionStore((s) => s.start);
   const navigate = useNavigate();
@@ -48,9 +49,10 @@ export function SubmissionSummary() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
 
   useEffect(() => {
-    // Recommendations are performance-derived; never compute them for an
-    // assessment that is still active (Phase 8.3 live-feedback boundary).
-    if (!scenario || !session || !mayRevealPerformance(session)) return;
+    // Recommendations are performance-derived, so they follow the same
+    // boundary as the score itself: a null result means nothing may be
+    // revealed yet, and nothing is computed (Phase 8.3 D2).
+    if (!scenario || !result) return;
     let cancelled = false;
     void sessionRepository.list().then((history) => {
       if (cancelled) return;
@@ -63,7 +65,7 @@ export function SubmissionSummary() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scenario, result]);
 
-  if (!scenario || !session || !result || !mayRevealPerformance(session)) return null;
+  if (!scenario || !session || !result) return null;
 
   function handleRecommendation(rec: Recommendation) {
     if (rec.recommendedType === "lesson") {

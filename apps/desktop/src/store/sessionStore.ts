@@ -259,3 +259,27 @@ export function visibleTranscriptBeats(): TranscriptBeat[] {
   const { beats, revealedCount } = useSessionStore.getState();
   return visibleBeats(beats, revealedCount);
 }
+
+/**
+ * The evaluation the learner may be shown *right now*, or `null`.
+ *
+ * `state.result` is the raw field: it exists so `submit` can evaluate, persist
+ * and fold the attempt into competency. It is not what the UI may render. The
+ * Phase 8.3 live-feedback boundary (D2) applies here, once, so that presenting
+ * a score is not a rule each component has to remember - an assessment reveals
+ * nothing until it is `completed`, while practice and simulation are
+ * unrestricted because no restriction is authorized for them.
+ *
+ * Every UI path reads the result through this selector or
+ * `useRevealableResult`; `liveFeedbackBoundary.invariant.test.ts` fails if a
+ * component reaches for `state.result` directly.
+ */
+export function selectRevealableResult(state: SessionState): EvaluationResult | null {
+  if (!state.session || !state.result) return null;
+  return mayRevealPerformance(state.session) ? state.result : null;
+}
+
+/** React binding for {@link selectRevealableResult}. */
+export function useRevealableResult(): EvaluationResult | null {
+  return useSessionStore(selectRevealableResult);
+}

@@ -11,6 +11,62 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 8.3 — Live-Feedback Boundary Enforced Structurally (Complete)
+
+The Phase 8.3 boundary (decision D2) was real but *conventional*: each
+component that wanted to show a score had to remember to call
+`mayRevealPerformance` first. `SubmissionSummary` did. A future surface that
+forgot would leak performance information into an active assessment, and no
+test would have caught it, because each existing test covers only the
+component it was written for.
+
+**The rule now lives in one place.** `selectRevealableResult` (and its
+`useRevealableResult` binding) applies the boundary in the store and returns
+`null` while an assessment is active. `state.result` remains the raw field
+that `submit` needs in order to evaluate, persist and fold the attempt into
+competency; it is no longer what the UI reads. `SubmissionSummary` now
+consumes the guarded selector, so its score, category breakdown, WHAT/WHY/HOW
+feedback and recommendations are all gated by one decision instead of three
+checks it had to repeat.
+
+**Enforced, not documented.** `liveFeedbackBoundary.invariant.test.ts` scans
+every non-test source file under `apps/desktop/src` and fails if any file
+other than the store reads the raw evaluation out of session state. The same
+file also fails if the desktop app re-implements the rule locally
+(`mode === "assessment"`) instead of importing it from `nexus-core`, so the
+domain stays the single authority.
+
+**No product decision was made or changed.** Practice and simulation remain
+unrestricted, because no restriction is authorized for them. Assessment still
+reveals nothing before `completed`, exactly as before. What changed is where
+the rule is enforced, not what it says.
+
+**Tests.** +12 desktop: the selector is proven for every session status in
+every mode, including `interrupted` and `abandoned`, and for the
+no-session/no-result cases; plus the four source-scanning invariants. The
+assessment helper sets `paused` directly, because the machine correctly
+refuses to pause an assessment at all.
+
+**Mutation checks.** Three, each caught: dropping the boundary from the
+selector (5 tests failed, including the existing rendering test), the summary
+reaching around the selector for the raw field (3), and re-implementing the
+rule in the desktop app instead of importing it (1). Every file was restored
+byte-identical.
+
+**Still blocked (unchanged).** D1 was re-audited against the Business Model
+Spec this session: Section 4's tier table names Assessment in no row, and the
+entitlement rules state only *that* it must be gated. No authoritative source
+says which tier includes Assessment, so no tier was encoded and Assessment
+still has no learner entry point. D3–D7 remain unauthorized; a new D8
+(resuming an interrupted practice/simulation attempt) is recorded in
+`docs/PHASE_8_3_ASSESSMENT_MODE.md`.
+
+**Verified:** 267/267 nexus-core, 125/125 desktop, 51/51 Rust — **443 total, 0
+failures** (+12). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (287.71
+kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## TypeScript to Rust IPC Data Contract (Complete)
 
 Every DTO in `src-tauri/src/db/models.rs` documents itself as mirroring a

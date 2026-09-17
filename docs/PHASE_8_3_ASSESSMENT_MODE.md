@@ -25,6 +25,7 @@
 | Database accepts `assessment` (migration 002 table rebuild; schema version 2) | `src-tauri/migrations/002_assessment_mode.sql` | `02ddb7f` |
 | Workspace hides Pause/Resume, keeps progressive transcript reveal, labels the mode; store ignores pause/resume | `SimulatorWorkspace.tsx`, `sessionStore.ts` | `97c533b` |
 | **Live-feedback boundary enforced as state** (see §4) | `mayRevealPerformance` / `assertMayRevealPerformance` in `nexus-core`; `sessionStore.ts`; `SubmissionSummary.tsx` | `621855e` |
+| **Boundary enforced structurally**: one guarded selector plus a source-scanning invariant, so no future surface can reveal performance by forgetting the rule | `selectRevealableResult` / `useRevealableResult` in `sessionStore.ts`; `liveFeedbackBoundary.invariant.test.ts` | Phase 8.3 hardening (see CHANGELOG) |
 
 **Not implemented:** no learner can start an Assessment. There is no entry point and no entitlement capability, because the tier is undecided (D1).
 
@@ -33,6 +34,8 @@
 Every Phase 8.3 decision is classified against the evidence hierarchy. A decision is **AUTHORIZED** only when a direct instruction or a current product specification explicitly establishes it. Current behaviour, tests, tier names and "obvious" defaults are not authorization.
 
 ### D1 — Which subscription tier includes Assessment? — **BLOCKED**
+
+*Re-audited 2026-09-18: unchanged. The Business Model Spec Section 4 tier table names Assessment in no row; the entitlement rules establish only that it must be gated by an explicit capability. "Exam-Ready Pro" is a product name, not a statement of entitlement.*
 
 - **Evidence examined:** Business Model Spec §4 tier table (Assessment appears in no row); §4 entitlement rules ("Assessment … should be gated by explicit entitlement capabilities"); §9 monetization roadmap ("Add Assessment mode" — timing only); §12 launch gate; Architecture Package §24/§25; `capability-matrix.ts`.
 - **Why insufficient:** the specification establishes *that* Assessment is gated, not *which* tier. The tier name "Exam-Ready Pro" suggests an exam feature but is not a statement of entitlement. Adding a capability with any per-tier values — including `false` everywhere — would encode feature availability.
@@ -80,6 +83,13 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 - **Current state:** the evaluator's existing behaviour is unchanged and untested for this case.
 - **Decision required:** how contradictory documentation should be classified and scored.
 
+#### D8 — May an interrupted practice or simulation attempt be resumed? — **NOT AUTHORIZED**
+
+- **Evidence examined:** Architecture Package §20 ("on app launch, any session with `status = in_progress` and no `completed_at` is surfaced as *Resume interrupted session?*"), §10 (autosave so "interrupted sessions must not lose work"), §30 acceptance ("recovery from a forced interruption"). The Dashboard already surfaces interrupted sessions and offers a fresh attempt; the draft is already persisted, so no work is lost on disk.
+- **Why insufficient:** the architecture states that interrupted sessions are *surfaced* and that drafts are *saved*, but not what resuming does to the attempt itself. Restoring a draft into a running attempt would carry prior work into a newly timed session, and elapsed time feeds `timeEfficiencyRatio`, which feeds the score. Whether a resumed attempt is the same attempt, and how its time is accounted, is scoring policy.
+- **Current state:** unchanged — interrupted sessions are surfaced, the draft remains persisted and recoverable from the database, and the learner is offered a new attempt.
+- **Decision required:** whether an interrupted practice/simulation attempt may be resumed, and if so how its elapsed time and attempt identity are treated. Assessment is explicitly excluded here; that is D6.
+
 ## 4. Live-feedback trace and enforcement
 
 ### Trace (mechanisms that could reveal performance during an active session)
@@ -100,11 +110,13 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 
 - **Domain:** `mayRevealPerformance(session)` in `nexus-core` is false for an assessment session in any status except `completed`, including `interrupted` and `abandoned`. `assertMayRevealPerformance` throws `LiveFeedbackNotAllowedError`. Practice and simulation are unrestricted, because no restriction is authorized for them.
 - **State:** the autosaved record of an active assessment never carries an evaluation; a leaked one is stripped and the draft is still saved. `submit` asserts the boundary at the reveal point.
-- **Presentation:** `SubmissionSummary` renders nothing, and computes no recommendations, for an assessment that is not completed.
+- **Presentation:** the store exposes `selectRevealableResult` / `useRevealableResult`, which return `null` while an assessment is active. `SubmissionSummary` reads the result only through that selector, so its score, breakdown, feedback and recommendations are gated by one decision rather than by checks each component must remember. `state.result` stays raw for `submit` (evaluate, persist, competency) and is no longer read by any UI.
+- **Invariant:** `apps/desktop/src/store/liveFeedbackBoundary.invariant.test.ts` scans every non-test source file and fails if any file other than the store reads the raw evaluation, or if the desktop app re-implements the rule instead of importing it from `nexus-core`.
 
 ### Verification
 
 - `nexus-core`: 5 tests, covering every status in both directions.
+- Desktop: 12 tests (`liveFeedbackBoundary.invariant.test.ts`) covering the guarded selector for every mode and status, and the source-level invariants.
 - Desktop: 8 tests (`assessmentFeedbackBoundary.test.tsx`), several of which inject a real evaluation into an active assessment to simulate a future leak.
 - Mutation checks: the predicate always revealing, the autosave strip removed, the summary guard removed, and live evaluation on every keystroke were each caught by the test aimed at them.
 

@@ -92,7 +92,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (267 nexus-core + 113 desktop = 380).
+# Every package's tests (267 nexus-core + 125 desktop = 392).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
@@ -109,7 +109,8 @@ pnpm install
 # and scenario-version traceability of stored attempts. Desktop also checks
 # the TypeScript half of the IPC data contract: compiler-checked key lists
 # against the shared fixtures, and every invoke call's argument names
-# against the Rust command that receives them.
+# against the Rust command that receives them. A source-scanning invariant
+# test keeps the Assessment live-feedback boundary enforced in one place.
 pnpm test
 
 # Typecheck every package
