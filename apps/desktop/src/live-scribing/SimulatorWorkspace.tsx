@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Card, Button, TextArea } from "@haa-nexus/ui-kit";
-import { computeLiveActiveMs, difficultyLabel, isDraftEmpty, type FlagType } from "@haa-nexus/nexus-core";
+import {
+  computeLiveActiveMs,
+  difficultyLabel,
+  isDraftEmpty,
+  modeAllowsPause,
+  type FlagType,
+  type SimulationMode
+} from "@haa-nexus/nexus-core";
 import { useSessionStore } from "../store/sessionStore.js";
 import { formatDuration } from "./formatDuration.js";
 
@@ -12,6 +19,12 @@ const SECTION_LABELS: Record<string, string> = {
   assessment: "Assessment",
   plan: "Plan",
   additionalNotes: "Additional Notes"
+};
+
+const MODE_LABELS: Record<SimulationMode, string> = {
+  practice: "Practice",
+  simulation: "Simulation",
+  assessment: "Assessment"
 };
 
 const FLAG_TYPES: { type: FlagType; label: string }[] = [
@@ -63,7 +76,12 @@ export function SimulatorWorkspace() {
   const elapsedMs = computeLiveActiveMs(session, Date.now());
   const isPaused = session.status === "paused";
   const allBeatsRevealed = revealedCount >= beats.length;
-  const isSimulation = session.mode === "simulation";
+  // Simulation and assessment both reveal the transcript one beat at a time;
+  // only practice shows it all up front (see sessionStore.start).
+  const revealsProgressively = session.mode !== "practice";
+  // Assessment runs under exam conditions: no pause, no resume. The session
+  // machine enforces this; the button is simply not offered.
+  const canPause = modeAllowsPause(session.mode);
 
   async function handleSubmit() {
     if (isDraftEmpty(draft) && !window.confirm("Submit with no documentation entered?")) {
@@ -85,13 +103,15 @@ export function SimulatorWorkspace() {
         <Card title={scenario.title}>
           <p style={{ margin: 0, fontSize: "var(--nexus-font-size-sm)", color: "var(--nexus-color-ink-secondary)" }}>
             {scenario.patient.age}yo {scenario.patient.sex} · {scenario.specialty} · {scenario.encounterType} ·{" "}
-            {difficultyLabel(scenario.difficulty)} · {session.mode === "practice" ? "Practice" : "Simulation"}
+            {difficultyLabel(scenario.difficulty)} · {MODE_LABELS[session.mode]}
           </p>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "var(--nexus-space-3)" }}>
             <span className="nexus-data-readout">{formatDuration(elapsedMs)}</span>
-            <Button variant="secondary" onClick={isPaused ? resume : pause}>
-              {isPaused ? "Resume" : "Pause"}
-            </Button>
+            {canPause && (
+              <Button variant="secondary" onClick={isPaused ? resume : pause}>
+                {isPaused ? "Resume" : "Pause"}
+              </Button>
+            )}
           </div>
         </Card>
 
@@ -107,7 +127,7 @@ export function SimulatorWorkspace() {
             ))}
           </div>
 
-          {isSimulation && !isPaused && (
+          {revealsProgressively && !isPaused && (
             <div style={{ display: "flex", gap: "var(--nexus-space-2)", marginTop: "var(--nexus-space-3)" }}>
               <Button variant="secondary" onClick={advanceTranscript} disabled={allBeatsRevealed}>
                 {allBeatsRevealed ? "End of encounter" : "Continue"}

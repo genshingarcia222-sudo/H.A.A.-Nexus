@@ -11,13 +11,14 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
-## Phase 8.3 — Assessment Mode (In Progress: domain and persistence foundation)
+## Phase 8.3 — Assessment Mode (In Progress: domain, persistence and workspace foundation)
 
 Incorporates Phases 1-8.2.1 in full. **This checkpoint is a foundation, not
 the finished feature.** Assessment mode now exists in the domain model and
-in the database, but **no learner can start an assessment session yet**:
-there is no UI entry point, and no screen was changed. Product behaviour is
-unchanged.
+in the database, and the simulator workspace handles it correctly, but **no
+learner can start an assessment session yet**: there is no UI entry point.
+Practice and simulation behave exactly as before, so learner-visible
+behaviour is unchanged.
 
 **Why no UI entry point yet.** Business Model Spec Section 4 says Assessment
 "should be gated by explicit entitlement capabilities", but its tier table
@@ -64,21 +65,37 @@ version and one now expects the app version 2. One test was renamed from
 `..._upgrades_to_the_latest_version_...` accordingly. No assertion was
 weakened.
 
-**Mutation check.** With the pause rule disabled, exactly the 4
-refusal-dependent session-machine tests failed; the file was restored
-byte-identical.
+**Workspace (`apps/desktop`).** Found while checking the domain change end
+to end: `SimulatorWorkspace` offered the transcript's Continue button only
+when `mode === "simulation"`, but assessment also reveals the transcript
+one beat at a time, so an assessment learner would have been stuck on the
+first beat. It now offers Continue for every mode except practice. The
+Pause/Resume button is not rendered for assessment, the mode label shows
+"Assessment", and `sessionStore.pause`/`resume` ignore the request for an
+assessment session instead of letting `PauseNotAllowedError` escape a click
+handler. +6 rendered tests (`SimulatorWorkspace.test.tsx`): no Pause or
+Resume in assessment, the Assessment label, Continue still advancing the
+transcript, the store ignoring pause without throwing or changing status,
+Pause still working in simulation and practice, and no Continue in practice.
 
-**Verified this checkpoint:** 247/247 nexus-core, 77/77 desktop, 36/36 Rust —
-**360 total, 0 failures** (+12 from 348). `pnpm -r typecheck` clean.
-`pnpm -r build` succeeds; the bundle grew by about 0.3 kB because the new
-core exports are reachable through the package barrel. `cargo check
---all-targets` and `cargo fmt --check` clean.
+**Mutation checks.** With the session-machine pause rule disabled, exactly
+the 4 refusal-dependent session-machine tests failed. Reverting the
+workspace's Continue condition to simulation-only failed the
+progressive-reveal test, and forcing Pause to always render failed the
+no-Pause test. Each file was restored byte-identical.
+
+**Verified this checkpoint:** 247/247 nexus-core, 83/83 desktop, 36/36 Rust —
+**366 total, 0 failures** (+18 from 348). `pnpm -r typecheck` clean.
+`pnpm -r build` succeeds (bundle 285.66 kB, up from 285.30 kB). `cargo check
+--all-targets` and `cargo fmt --check` clean. This phase was committed in two
+checkpoints: domain and persistence first (360 tests at that commit), then
+the workspace changes.
 
 **Remaining for Assessment mode:** a decision on which tier includes it (then
 an entitlement capability in the matrix), a UI entry point gated by that
-capability, hiding Pause/Resume in the workspace, deciding what counts as
-"live feedback that would compromise exam simulation" and suppressing it,
-and rendered-component tests for those surfaces.
+capability, deciding what counts as "live feedback that would compromise
+exam simulation" and suppressing it, and rendered-component tests for
+those surfaces.
 
 ---
 

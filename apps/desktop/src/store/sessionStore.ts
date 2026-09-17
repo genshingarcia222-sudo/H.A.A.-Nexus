@@ -12,6 +12,7 @@ import {
   evaluateAttempt,
   updateCompetencyRecord,
   canAccessDifficulty,
+  modeAllowsPause,
   type Scenario,
   type SimulationSession,
   type SimulationMode,
@@ -118,7 +119,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       result: null,
       // Practice mode shows the full transcript up front ("optional
       // transcript visibility" - Architecture Package Section 7). Simulation
-      // mode reveals it progressively.
+      // and assessment modes reveal it progressively.
       revealedCount: mode === "practice" ? beats.length : Math.min(1, beats.length)
     });
     return true;
@@ -126,14 +127,16 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   pause: () => {
     const { session } = get();
-    if (!session) return;
+    // Assessment sessions cannot pause (the session machine would throw);
+    // ignore the request rather than raising from a UI event handler.
+    if (!session || !modeAllowsPause(session.mode)) return;
     set({ session: pauseSession(session, Date.now()) });
     void get().persistDraft();
   },
 
   resume: () => {
     const { session } = get();
-    if (!session) return;
+    if (!session || !modeAllowsPause(session.mode)) return;
     set({ session: resumeSession(session, Date.now()) });
   },
 
