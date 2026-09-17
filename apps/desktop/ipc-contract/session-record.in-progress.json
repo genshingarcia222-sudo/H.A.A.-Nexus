@@ -1,0 +1,23 @@
+{
+  "id": "contract-session-in-progress",
+  "scenarioId": "SCRIBE-IM-032",
+  "scenarioVersion": "1.0",
+  "scenarioTitle": "Fatigue and Palpitations, Internal Medicine",
+  "mode": "simulation",
+  "status": "paused",
+  "startedAt": 1700000500000,
+  "activeMs": 30000,
+  "pausedMs": 12000,
+  "completedAt": null,
+  "flags": [],
+  "draft": {
+    "chiefComplaint": "",
+    "hpi": "Fatigue for two weeks.",
+    "ros": "",
+    "physicalExam": "",
+    "assessment": "",
+    "plan": "",
+    "additionalNotes": ""
+  },
+  "evaluation": null
+}

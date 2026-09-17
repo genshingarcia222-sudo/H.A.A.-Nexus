@@ -11,6 +11,55 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## TypeScript to Rust IPC Data Contract (Complete)
+
+Every DTO in `src-tauri/src/db/models.rs` documents itself as mirroring a
+`nexus-core` type through hand-written `#[serde(rename = "...")]`
+attributes. Nothing verified that claim. A mistyped, missing or stale rename
+fails **silently at runtime** — the frontend receives `undefined` for that
+field — while every Rust and TypeScript test stays green, because each side
+only ever tested itself.
+
+**Shared fixtures.** `apps/desktop/ipc-contract/` holds four JSON records
+(completed session, in-progress session with its nullable fields, competency
+record, user profile) that both sides test against. Every `f64` field uses a
+non-integer value, so an exact comparison is meaningful (`serde_json`
+distinguishes `70` from `70.0`).
+
+**Rust side** (`src-tauri/src/db/contract_tests.rs`, +8 tests): each fixture
+deserializes into its DTO and serializes back to *exactly* the same JSON —
+which also catches a field that exists in TypeScript but not in Rust, since
+serde otherwise ignores unknown fields and would drop it on save. Three tests
+repeat the comparison after a round trip through real file-backed SQLite, and
+one asserts that a record missing a required field is rejected rather than
+silently defaulted.
+
+**TypeScript side** (`src/persistence/ipcContract.test.ts`, +7 tests): the
+key list for each type is compiler-checked with
+`satisfies Record<keyof T, true>`, so it cannot drift from the `nexus-core`
+type, and each fixture must have exactly those keys. A further test parses
+`commands.rs` and the repository modules and requires every `invoke` call to
+pass exactly the arguments its `#[tauri::command]` declares, camelCase to
+snake_case — the other half of the contract, which types cannot check.
+
+**Mutation checks.** Five, each caught: a broken serde rename (3 Rust tests
+failed), `default` added so a missing field is silently filled (1), a key
+dropped from a fixture (1), an argument renamed on the TypeScript side (1),
+and the same argument renamed on the Rust side (1). Every file was restored
+byte-identical.
+
+**Known limitation — this is not an end-to-end test.** These tests prove the
+two sides agree on field names, types and argument names; they do not prove a
+real IPC call works, because `pnpm tauri dev` and `tauri build` have still
+never been run in this environment (Phase 7 accepted debt A4). The
+argument-name check reads source text, not a running Tauri app.
+
+**Verified:** 267/267 nexus-core, 113/113 desktop, 51/51 Rust — **431 total, 0
+failures** (+15). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (287.63
+kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## Architecture §28 Edge-Case Coverage (Complete, with two items recorded as not implementable)
 
 Architecture Package §28 lists the edge cases the testing strategy must map to

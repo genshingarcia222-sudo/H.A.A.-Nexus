@@ -9,6 +9,8 @@ pub mod profile;
 pub mod sessions;
 
 #[cfg(test)]
+mod contract_tests;
+#[cfg(test)]
 mod migration_tests;
 #[cfg(test)]
 mod tests;

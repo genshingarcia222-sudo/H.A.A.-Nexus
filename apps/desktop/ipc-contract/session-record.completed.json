@@ -1,0 +1,68 @@
+{
+  "id": "contract-session-completed",
+  "scenarioId": "SCRIBE-FM-014",
+  "scenarioVersion": "1.0",
+  "scenarioTitle": "Three-Day Cough, Family Medicine",
+  "mode": "assessment",
+  "status": "completed",
+  "startedAt": 1700000000000,
+  "activeMs": 245000,
+  "pausedMs": 0,
+  "completedAt": 1700000245000,
+  "flags": [
+    { "beatId": "beat-2", "flagType": "uncertain", "timestamp": 1700000060000 }
+  ],
+  "draft": {
+    "chiefComplaint": "Cough x3 days.",
+    "hpi": "Non-productive cough x3 days.",
+    "ros": "No fever. Temperature 37.0°C.",
+    "physicalExam": "Lungs clear.",
+    "assessment": "Viral URI.",
+    "plan": "Supportive care.",
+    "additionalNotes": "Return if worse."
+  },
+  "evaluation": {
+    "overallScore": 87.5,
+    "categoryScores": {
+      "accuracy": 60,
+      "completeness": 100,
+      "terminology": 100,
+      "relevance": 80,
+      "structure": 100,
+      "pertinentPosNeg": 100,
+      "timeEfficiency": 97.9
+    },
+    "errors": [
+      {
+        "id": "fabrication:37.0c#1",
+        "errorType": "fabrication",
+        "severity": "critical",
+        "section": "additionalNotes",
+        "what": "You documented 37.0°C, which the encounter never provided.",
+        "why": "Fabricated vitals can drive wrong clinical decisions.",
+        "how": "Document only values stated in the encounter."
+      },
+      {
+        "id": "omission:req-cough",
+        "errorType": "omission",
+        "severity": "major",
+        "section": "hpi",
+        "relatedRequirementId": "req-cough",
+        "what": "Cough was not documented.",
+        "why": "Required information informs care.",
+        "how": "Document the chief symptom in the HPI."
+      }
+    ],
+    "scoringWeightsUsed": {
+      "accuracy": 0.25,
+      "completeness": 0.2,
+      "terminology": 0.15,
+      "relevance": 0.1,
+      "structure": 0.1,
+      "pertinentPosNeg": 0.1,
+      "timeEfficiency": 0.1
+    },
+    "timeEfficiencyRatio": 1.0208,
+    "evaluatedAt": 1700000245500
+  }
+}
