@@ -9,14 +9,15 @@ never a separate patch). This README covers only how to run what exists so far.
 **Proprietary software — see `LICENSE.md`.** This is not open source; every
 `package.json` in this workspace is marked `"license": "UNLICENSED"`.
 
-## Status: Phase 8.2.1 complete — no later increment started
+## Status: Phase 8.3 (Assessment Mode) in progress — foundation checkpoint
 
 Phase 7 (the Pre-Commercialization Audit & Stabilization Gate) closed as PASS
 WITH CONDITIONS; its evidence and disposition are recorded in
 `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`. Phase 8.1 (Entitlement Domain
 Model), Phase 8.2 (ScenarioLibrary Entitlement Gating) and Phase 8.2.1
-(Database Migration Infrastructure) are the only Phase 8 increments
-implemented so far.
+(Database Migration Infrastructure) are complete. Phase 8.3 (Assessment Mode)
+is in progress: the domain rule and database migration exist, but learners
+cannot start an assessment session yet.
 
 | Component | Status |
 |---|---|
@@ -27,13 +28,13 @@ implemented so far.
 | `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
 | `packages/nexus-core/analytics-engine` (overall performance, trend, weak/strong areas, error trends, scenario progress) | **Implemented** — 14 unit tests; every figure computed from real `SessionRecord`/`CompetencyRecord` data, no separate analytics store |
 | Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (32 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (36 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
 | Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Analytics, Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
 | App icons (`src-tauri/icons/`) | **Implemented** — full icon set generated from a brand source image via `tauri icon` |
 | Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | Recommendation engine factoring in competency-record trends (not just error frequency) | **Not implemented (honestly scoped out — see CHANGELOG)** |
-| Migration runner / `schema_version` tracking | **Implemented (Phase 8.2.1)** — numbered, transactional migrations recorded in `application_metadata['schema_version']`; clears Phase 7 condition C1. Schema is still at version 1 (`001_initial.sql`) |
-| Assessment (no-pause) mode | **Not started** — later Phase 8 increment |
+| Migration runner / `schema_version` tracking | **Implemented (Phase 8.2.1)** — numbered, transactional migrations recorded in `application_metadata['schema_version']`; clears Phase 7 condition C1. Schema is at version 2 (`002_assessment_mode.sql`, Phase 8.3) |
+| Assessment (no-pause) mode | **In progress (Phase 8.3)** — `assessment` mode and its no-pause rule enforced in the session machine; migration 002 allows it in SQLite (schema version 2). **No UI entry point or entitlement gating yet** — the spec does not say which tier includes it |
 | Entitlement domain model (tier ladder, capability matrix, pure resolver) | **Implemented (Phase 8.1)** — 53 unit tests. Pure domain logic; consumed by scenario gating |
 | Scenario entitlement gating (library lock states + start enforcement) | **Implemented (Phase 8.2)** — locked scenarios stay visible; every start path refused below the UI. Subscription state is a Free-only placeholder (see Phase 8 progress) |
 | Commercialization (subscription persistence, billing, payments, paywall/score-detail gating, web deployment, auth) | **Not started** — later Phase 8 increments |
@@ -52,7 +53,7 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
 ```
 
 - `cargo check --all-targets` — **clean**, no errors, no warnings.
-- `cargo test` — **32 passed, 0 failed.** Real-file SQLite (not `:memory:`).
+- `cargo test` — **36 passed, 0 failed.** Real-file SQLite (not `:memory:`).
   14 persistence tests (Phase 7) cover table integrity, WAL + foreign-key
   pragmas, restart idempotency, autosave of an in-progress draft with no
   evaluation yet, autosave survival across a restart, autosave-then-submit
@@ -62,7 +63,8 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
   upgrading a pre-versioning database without data loss, in-order and
   exactly-once application, full rollback of a failed migration, refusal of
   a database from a newer build, and a rehearsal of the table rebuild needed
-  to widen a CHECK constraint.
+  to widen a CHECK constraint. 4 more (Phase 8.3) cover migration 002, the
+  real `mode` CHECK widening for Assessment mode.
 
 **Still unverified:** `pnpm tauri dev` (launching the actual webview) and
 `tauri build` (MSI/NSIS bundling) have not been run. Installer packaging is
@@ -85,7 +87,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (239 nexus-core + 77 desktop = 316).
+# Every package's tests (247 nexus-core + 77 desktop = 324).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
@@ -149,8 +151,12 @@ Phase 8 is commercialization, delivered as independently verifiable increments.
   version bump, with foreign keys handled so a later migration can rebuild a
   table (as widening the session `mode` CHECK for Assessment mode will
   require). Clears Phase 7 condition C1. No schema change was made.
+- **8.3 Assessment Mode — in progress.** Foundation checkpoint: the
+  `assessment` mode exists, the session machine refuses to pause or resume
+  it, and migration 002 widens the persisted `mode` CHECK. Not yet reachable
+  by learners: which tier includes Assessment is undecided in the spec.
 - **Later increments — not started.** Paywall/conversion states, locked score
-  detail, Assessment mode, subscription persistence, PayMongo, web
+  detail, subscription persistence, PayMongo, web
   deployment and authentication all remain unimplemented.
 
 **Subscription state is not real yet.** There is no subscription persistence

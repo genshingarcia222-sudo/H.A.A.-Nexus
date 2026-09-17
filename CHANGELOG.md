@@ -11,6 +11,77 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 8.3 — Assessment Mode (In Progress: domain and persistence foundation)
+
+Incorporates Phases 1-8.2.1 in full. **This checkpoint is a foundation, not
+the finished feature.** Assessment mode now exists in the domain model and
+in the database, but **no learner can start an assessment session yet**:
+there is no UI entry point, and no screen was changed. Product behaviour is
+unchanged.
+
+**Why no UI entry point yet.** Business Model Spec Section 4 says Assessment
+"should be gated by explicit entitlement capabilities", but its tier table
+never says which tier includes Assessment. Choosing one would invent a
+commercial rule, so exposing the mode to learners is deferred until that is
+decided. Nothing in this checkpoint depends on the answer.
+
+**Domain (`nexus-core`).**
+- `SimulationMode` is now `"practice" | "simulation" | "assessment"`
+  (Architecture Package Section 8 already listed `assessment`; the fourth
+  architected mode, `learning`, remains unimplemented).
+- `modeAllowsPause(mode)` is the single statement of the rule: false only for
+  `assessment`.
+- `pauseSession` and `resumeSession` throw the new `PauseNotAllowedError`
+  for an assessment session. The mode is checked before the status, so the
+  rule cannot be masked by a status error, and resuming a persisted
+  assessment session that somehow carries `paused` is refused too. This
+  implements Business Model Spec Section 10's "mode flag that disables
+  Pause/Resume" in the session machine itself rather than only in a button.
+- Completing, abandoning and interrupting behave exactly as for other modes.
+
+**Persistence (`migrations/002_assessment_mode.sql`).** The first real use
+of the Phase 8.2.1 migration runner. `simulation_sessions` is rebuilt to
+widen its `mode` CHECK to include `'assessment'`, using the table-rebuild
+procedure rehearsed in 8.2.1. Every other column, default, the `status`
+CHECK and both indexes are unchanged, and the copy names its columns
+explicitly. Databases upgrade from version 1 to 2 on next launch; the stored
+schema version is now **2**. `001_initial.sql` is unchanged.
+
+**Tests.** +8 `nexus-core` (`session-machine.test.ts`): the pause rule per
+mode, starting an assessment session, refused pause, refused resume of a
+paused-marked record, mode-before-status ordering, no mutation on refusal,
+normal complete/abandon/interrupt, and unchanged practice/simulation pausing.
++4 Rust (`migration_tests.rs`): version 1 rejects `assessment`; a fresh
+database accepts all three modes and still rejects `learning` and junk; a
+version-1 database with real practice and simulation sessions, attempts and
+evaluations upgrades to 2 with all of it intact, no foreign-key violations,
+and an assessment session then round-trips through the real persistence
+code; and migration 002 keeps the `status` CHECK, foreign-key enforcement
+and indexes and leaves no temporary table. Four existing Rust assertions
+hard-coded "the shipped schema is version 1": three now assert the latest
+version and one now expects the app version 2. One test was renamed from
+`..._upgrades_to_version_one_...` to
+`..._upgrades_to_the_latest_version_...` accordingly. No assertion was
+weakened.
+
+**Mutation check.** With the pause rule disabled, exactly the 4
+refusal-dependent session-machine tests failed; the file was restored
+byte-identical.
+
+**Verified this checkpoint:** 247/247 nexus-core, 77/77 desktop, 36/36 Rust —
+**360 total, 0 failures** (+12 from 348). `pnpm -r typecheck` clean.
+`pnpm -r build` succeeds; the bundle grew by about 0.3 kB because the new
+core exports are reachable through the package barrel. `cargo check
+--all-targets` and `cargo fmt --check` clean.
+
+**Remaining for Assessment mode:** a decision on which tier includes it (then
+an entitlement capability in the matrix), a UI entry point gated by that
+capability, hiding Pause/Resume in the workspace, deciding what counts as
+"live feedback that would compromise exam simulation" and suppressing it,
+and rendered-component tests for those surfaces.
+
+---
+
 ## Phase 8.2.1 — Database Migration Infrastructure (Complete)
 
 Incorporates Phases 1-8.2 in full. Clears Phase 7 condition **C1**. A
@@ -542,7 +613,7 @@ Incorporates Phase 1 in full, plus:
 
 ## Not yet started (by design)
 
-Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model), Phase 8.2 (ScenarioLibrary Entitlement Gating) and Phase 8.2.1 (Database Migration Infrastructure) are complete. No later increment has been started: no paywall states, locked score detail, Assessment mode, subscription persistence, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
+Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model), Phase 8.2 (ScenarioLibrary Entitlement Gating) and Phase 8.2.1 (Database Migration Infrastructure) are complete. Phase 8.3 (Assessment Mode) is in progress: its domain rule and database migration exist, but it has no UI entry point or entitlement gating yet. No paywall states, locked score detail, subscription persistence, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
 
 ---
 

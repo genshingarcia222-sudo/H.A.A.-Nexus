@@ -7,8 +7,10 @@ import {
   abandonSession,
   interruptSession,
   computeLiveActiveMs,
-  InvalidSessionTransitionError
+  InvalidSessionTransitionError,
+  PauseNotAllowedError
 } from "./session-machine.js";
+import { modeAllowsPause, type SimulationMode } from "./types.js";
 
 const PARAMS = { id: "s1", scenarioId: "SCRIBE-FM-014", scenarioVersion: "1.0", mode: "practice" as const };
 
@@ -104,5 +106,69 @@ describe("computeLiveActiveMs", () => {
     session = pauseSession(session, 5000);
     // even if "now" advances further, paused time doesn't count as active
     expect(computeLiveActiveMs(session, 9000)).toBe(5000);
+  });
+});
+
+describe("assessment mode (Phase 8.3) - no pause, no resume", () => {
+  const ASSESSMENT = { ...PARAMS, mode: "assessment" as const };
+
+  it("allows pausing only outside assessment mode", () => {
+    const cases: [SimulationMode, boolean][] = [
+      ["practice", true],
+      ["simulation", true],
+      ["assessment", false]
+    ];
+    for (const [mode, allowed] of cases) {
+      expect(modeAllowsPause(mode), mode).toBe(allowed);
+    }
+  });
+
+  it("starts an assessment session normally", () => {
+    const session = startSession(ASSESSMENT, 1000);
+    expect(session.mode).toBe("assessment");
+    expect(session.status).toBe("in_progress");
+  });
+
+  it("refuses to pause an in-progress assessment session", () => {
+    const session = startSession(ASSESSMENT, 1000);
+    expect(() => pauseSession(session, 2000)).toThrow(PauseNotAllowedError);
+  });
+
+  it("refuses to resume an assessment session, even one already marked paused", () => {
+    // A paused assessment session cannot be produced through the machine,
+    // but persisted data could still carry one. Resuming it must not be a
+    // way around the rule.
+    const paused = { ...startSession(ASSESSMENT, 1000), status: "paused" as const };
+    expect(() => resumeSession(paused, 2000)).toThrow(PauseNotAllowedError);
+  });
+
+  it("checks the mode before the status, so the mode rule cannot be masked", () => {
+    const completed = completeSession(startSession(ASSESSMENT, 1000), 2000);
+    expect(() => pauseSession(completed, 3000)).toThrow(PauseNotAllowedError);
+  });
+
+  it("leaves the session untouched when a pause is refused", () => {
+    const session = startSession(ASSESSMENT, 1000);
+    const snapshot = structuredClone(session);
+    expect(() => pauseSession(session, 5000)).toThrow();
+    expect(session).toEqual(snapshot);
+  });
+
+  it("still completes, abandons and interrupts like any other session", () => {
+    const session = startSession(ASSESSMENT, 1000);
+    const completed = completeSession(session, 61_000);
+    expect(completed.status).toBe("completed");
+    expect(completed.activeMs).toBe(60_000);
+    expect(completed.pausedMs).toBe(0);
+    expect(abandonSession(session).status).toBe("abandoned");
+    expect(interruptSession(session).status).toBe("interrupted");
+  });
+
+  it("does not change pause behaviour for practice or simulation", () => {
+    for (const mode of ["practice", "simulation"] as const) {
+      const paused = pauseSession(startSession({ ...PARAMS, mode }, 1000), 2000);
+      expect(paused.status).toBe("paused");
+      expect(resumeSession(paused, 3000).status).toBe("in_progress");
+    }
   });
 });

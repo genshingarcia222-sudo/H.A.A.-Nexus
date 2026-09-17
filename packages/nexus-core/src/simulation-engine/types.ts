@@ -15,11 +15,21 @@ export type SessionStatus =
   | "retried";
 
 /**
- * Assessment mode exists in the architecture doc's four-mode model but is
- * not required by the MVP acceptance criteria (Section 76 only requires
- * Practice or Simulation) - deliberately out of scope for Phase 3.
+ * - `practice`   full transcript visible up front; pausable.
+ * - `simulation` transcript revealed progressively; pausable.
+ * - `assessment` exam conditions (Phase 8.3): revealed progressively like
+ *   simulation, but **cannot be paused or resumed**. Business Model Spec
+ *   Section 10: "a mode flag that disables Pause/Resume". The rule is
+ *   enforced by the session machine itself, not only by hiding a button.
+ *
+ * The architecture doc's fourth mode, `learning`, is not implemented.
  */
-export type SimulationMode = "practice" | "simulation";
+export type SimulationMode = "practice" | "simulation" | "assessment";
+
+/** Whether a session in this mode may be paused (and therefore resumed). */
+export function modeAllowsPause(mode: SimulationMode): boolean {
+  return mode !== "assessment";
+}
 
 export type FlagType = "important" | "uncertain" | "review_later";
 

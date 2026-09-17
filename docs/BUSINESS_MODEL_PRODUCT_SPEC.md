@@ -33,14 +33,14 @@ The repository is a pnpm/TypeScript monorepo with a React frontend and Tauri des
 | 6 | Terminology, lessons, deterministic recommendations | Complete |
 | 6 | Analytics engine (performance, trend, weak/strong areas, error trends, scenario progress) | Complete — audited and confirmed in Phase 7 |
 | 7 | Pre-Commercialization Audit & Stabilization Gate; analytics requirements/readiness are audited as part of the gate | **Closed — PASS WITH CONDITIONS** (see `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`) |
-| 8 | Commercialization Foundation | **In progress** — 8.1 entitlement domain model, 8.2 scenario entitlement gating, and 8.2.1 migration infrastructure complete; Assessment mode, subscription persistence, and payments not started |
+| 8 | Commercialization Foundation | **In progress** — 8.1 entitlement domain model, 8.2 scenario entitlement gating, and 8.2.1 migration infrastructure complete; 8.3 Assessment mode in progress (domain rule and migration only, not yet learner-reachable); subscription persistence and payments not started |
 
 ### Material gaps before commercial launch
 
-- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 32 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
-- A versioned migration runner now exists (Phase 8.2.1), so new tables and constraint changes can ship safely; the schema itself is still at version 1.
+- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 36 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
+- A versioned migration runner now exists (Phase 8.2.1), so new tables and constraint changes can ship safely; the schema is at version 2 after the Phase 8.3 Assessment-mode migration.
 - Content library is only 2 scenarios (difficulty 1 and 3) — not enough to populate a Free tier, let alone justify paid access.
-- No-pause **Assessment mode** is not yet implemented.
+- No-pause **Assessment mode** is only partly implemented: the no-pause rule and database support exist, but it has no UI entry point. **Open decision:** Section 4 does not say which tier includes Assessment.
 - Web deployment and lightweight cloud persistence are not yet implemented.
 - Entitlement engine is not yet wired to a real payment processor.
 - Cloud sync / multi-device / multi-user infrastructure is not yet implemented.

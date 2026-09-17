@@ -166,7 +166,7 @@ fn a_fresh_database_is_migrated_to_the_latest_version_and_records_it() {
             |row| row.get(0),
         )
         .unwrap();
-    assert_eq!(stored, "1");
+    assert_eq!(stored, MIGRATIONS.len().to_string());
     assert!(table_exists(&conn, "simulation_sessions"));
     assert!(foreign_keys_on(&conn));
 }
@@ -246,7 +246,10 @@ fn reopening_an_already_migrated_database_reapplies_nothing_and_keeps_data() {
     }
     for _ in 0..3 {
         let conn = init_connection(db.path.clone()).unwrap();
-        assert_eq!(current_schema_version(&conn).unwrap(), 1);
+        assert_eq!(
+            current_schema_version(&conn).unwrap(),
+            MIGRATIONS.len() as u32
+        );
         assert_eq!(count(&conn, "SELECT COUNT(*) FROM simulation_sessions"), 1);
         assert_eq!(count(&conn, "SELECT COUNT(*) FROM evaluation_results"), 1);
     }
@@ -255,7 +258,7 @@ fn reopening_an_already_migrated_database_reapplies_nothing_and_keeps_data() {
 // --- upgrading a database created before versioning ---------------------
 
 #[test]
-fn a_pre_versioning_database_upgrades_to_version_one_without_losing_learner_data() {
+fn a_pre_versioning_database_upgrades_to_the_latest_version_without_losing_learner_data() {
     let db = TempDb::new();
 
     // Recreate exactly what every pre-8.2.1 build produced: the 001 schema,
@@ -270,7 +273,10 @@ fn a_pre_versioning_database_upgrades_to_version_one_without_losing_learner_data
 
     let conn = init_connection(db.path.clone()).unwrap();
 
-    assert_eq!(current_schema_version(&conn).unwrap(), 1);
+    assert_eq!(
+        current_schema_version(&conn).unwrap(),
+        MIGRATIONS.len() as u32
+    );
     assert_eq!(count(&conn, "SELECT COUNT(*) FROM users"), 1);
     let record = sessions::get_session(&conn, "legacy-1")
         .unwrap()
@@ -426,7 +432,7 @@ fn a_database_from_a_newer_build_is_refused_and_left_untouched() {
         err,
         MigrationError::DatabaseNewerThanApp {
             database: 5,
-            app: 1
+            app: 2
         }
     ));
     assert_eq!(current_schema_version(&conn).unwrap(), 5);
@@ -558,4 +564,132 @@ fn a_mode_check_constraint_can_be_widened_by_table_rebuild_without_losing_data()
             "{index} missing after rebuild"
         );
     }
+}
+
+// --- migration 002: assessment mode (Phase 8.3) ---------------------------
+
+fn insert_session_with_mode(conn: &Connection, id: &str, mode: &str) -> rusqlite::Result<usize> {
+    conn.execute(
+        "INSERT INTO simulation_sessions
+            (id, user_id, scenario_id, scenario_version, scenario_title, mode, status, started_at)
+         VALUES (?1, 'local-user', 'SCRIBE-FM-014', '1.0', 't', ?2, 'in_progress', '0')",
+        rusqlite::params![id, mode],
+    )
+}
+
+#[test]
+fn schema_version_one_rejects_assessment_mode() {
+    let db = TempDb::new();
+    let mut conn = db.open_unmigrated();
+    run_migrations(&mut conn, &[initial()]).unwrap();
+    ensure_local_user(&conn).unwrap();
+    assert!(insert_session_with_mode(&conn, "a", "assessment").is_err());
+}
+
+#[test]
+fn a_fresh_database_accepts_assessment_mode_and_still_rejects_unknown_modes() {
+    let db = TempDb::new();
+    let conn = init_connection(db.path.clone()).unwrap();
+    assert_eq!(current_schema_version(&conn).unwrap(), 2);
+
+    for mode in ["practice", "simulation", "assessment"] {
+        insert_session_with_mode(&conn, mode, mode).unwrap();
+    }
+    assert!(insert_session_with_mode(&conn, "junk", "learning").is_err());
+    assert!(insert_session_with_mode(&conn, "junk2", "not_a_mode").is_err());
+}
+
+#[test]
+fn upgrading_a_version_one_database_to_two_keeps_every_session_attempt_and_evaluation() {
+    let db = TempDb::new();
+    {
+        let mut conn = db.open_unmigrated();
+        run_migrations(&mut conn, &[initial()]).unwrap();
+        ensure_local_user(&conn).unwrap();
+        sessions::save_session(&mut conn, &completed_session("v1-practice")).unwrap();
+        let mut simulation = completed_session("v1-simulation");
+        simulation.mode = "simulation".to_string();
+        sessions::save_session(&mut conn, &simulation).unwrap();
+        assert_eq!(current_schema_version(&conn).unwrap(), 1);
+    }
+
+    let mut conn = init_connection(db.path.clone()).unwrap();
+    assert_eq!(current_schema_version(&conn).unwrap(), 2);
+
+    for (id, mode) in [("v1-practice", "practice"), ("v1-simulation", "simulation")] {
+        let record = sessions::get_session(&conn, id)
+            .unwrap()
+            .expect("session lost");
+        assert_eq!(record.mode, mode);
+        assert_eq!(
+            record.draft.hpi,
+            "Learner's documentation that must survive every migration."
+        );
+        assert_eq!(
+            record.evaluation.expect("evaluation lost").overall_score,
+            91.0
+        );
+    }
+    assert_eq!(
+        count(&conn, "SELECT COUNT(*) FROM documentation_attempts"),
+        2
+    );
+    assert_eq!(count(&conn, "SELECT COUNT(*) FROM evaluation_results"), 2);
+    assert_eq!(
+        count(&conn, "SELECT COUNT(*) FROM pragma_foreign_key_check"),
+        0
+    );
+    assert!(foreign_keys_on(&conn));
+
+    // An assessment session round-trips through the real persistence code.
+    let mut assessment = completed_session("post-upgrade-assessment");
+    assessment.mode = "assessment".to_string();
+    sessions::save_session(&mut conn, &assessment).unwrap();
+    let loaded = sessions::get_session(&conn, "post-upgrade-assessment")
+        .unwrap()
+        .expect("assessment session missing");
+    assert_eq!(loaded.mode, "assessment");
+}
+
+#[test]
+fn migration_two_preserves_the_status_check_indexes_and_foreign_key_enforcement() {
+    let db = TempDb::new();
+    let conn = init_connection(db.path.clone()).unwrap();
+
+    assert!(conn
+        .execute(
+            "INSERT INTO simulation_sessions
+                (id, user_id, scenario_id, scenario_version, scenario_title, mode, status, started_at)
+             VALUES ('bad-status', 'local-user', 's', '1.0', 't', 'assessment', 'not_a_status', '0')",
+            [],
+        )
+        .is_err());
+    assert!(conn
+        .execute(
+            "INSERT INTO simulation_sessions
+                (id, user_id, scenario_id, scenario_version, scenario_title, mode, status, started_at)
+             VALUES ('no-user', 'no-such-user', 's', '1.0', 't', 'assessment', 'in_progress', '0')",
+            [],
+        )
+        .is_err());
+    for index in ["idx_sessions_user", "idx_sessions_status"] {
+        assert_eq!(
+            count(
+                &conn,
+                &format!(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = '{index}'"
+                )
+            ),
+            1,
+            "{index} missing"
+        );
+    }
+    assert_eq!(
+        count(
+            &conn,
+            "SELECT COUNT(*) FROM sqlite_master WHERE name = 'simulation_sessions_new'"
+        ),
+        0,
+        "temporary rebuild table left behind"
+    );
 }

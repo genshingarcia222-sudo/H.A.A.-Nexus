@@ -57,11 +57,18 @@ pub struct Migration {
 
 /// Every migration the app ships, in order. Append new migrations here;
 /// never edit or reorder one that has already been released.
-pub const MIGRATIONS: &[Migration] = &[Migration {
-    version: 1,
-    name: "001_initial",
-    sql: include_str!("../../migrations/001_initial.sql"),
-}];
+pub const MIGRATIONS: &[Migration] = &[
+    Migration {
+        version: 1,
+        name: "001_initial",
+        sql: include_str!("../../migrations/001_initial.sql"),
+    },
+    Migration {
+        version: 2,
+        name: "002_assessment_mode",
+        sql: include_str!("../../migrations/002_assessment_mode.sql"),
+    },
+];
 
 const SCHEMA_VERSION_KEY: &str = "schema_version";
 

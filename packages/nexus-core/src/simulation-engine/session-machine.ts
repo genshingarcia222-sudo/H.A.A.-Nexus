@@ -1,9 +1,23 @@
-import type { SessionStatus, SimulationMode, SimulationSession } from "./types.js";
+import { modeAllowsPause, type SessionStatus, type SimulationMode, type SimulationSession } from "./types.js";
 
 export class InvalidSessionTransitionError extends Error {
   constructor(from: SessionStatus, action: string) {
     super(`Cannot ${action} a session in status "${from}".`);
     this.name = "InvalidSessionTransitionError";
+  }
+}
+
+/** Thrown when a pause or resume is attempted in a mode that forbids it (assessment). */
+export class PauseNotAllowedError extends Error {
+  constructor(mode: SimulationMode, action: string) {
+    super(`Cannot ${action} a session in "${mode}" mode: it runs under exam conditions.`);
+    this.name = "PauseNotAllowedError";
+  }
+}
+
+function assertPausable(session: SimulationSession, action: string): void {
+  if (!modeAllowsPause(session.mode)) {
+    throw new PauseNotAllowedError(session.mode, action);
   }
 }
 
@@ -34,6 +48,7 @@ export function startSession(params: StartSessionParams, now: number): Simulatio
 }
 
 export function pauseSession(session: SimulationSession, now: number): SimulationSession {
+  assertPausable(session, "pause");
   assertStatus(session, ["in_progress"], "pause");
   const elapsedSinceTransition = now - (session.lastTransitionAt ?? now);
   return {
@@ -45,6 +60,7 @@ export function pauseSession(session: SimulationSession, now: number): Simulatio
 }
 
 export function resumeSession(session: SimulationSession, now: number): SimulationSession {
+  assertPausable(session, "resume");
   assertStatus(session, ["paused"], "resume");
   const elapsedSinceTransition = now - (session.lastTransitionAt ?? now);
   return {
