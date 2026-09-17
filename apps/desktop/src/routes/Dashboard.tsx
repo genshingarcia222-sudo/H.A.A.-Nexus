@@ -6,6 +6,7 @@ import { useSessionStore } from "../store/sessionStore.js";
 import { moduleRegistry } from "../modules.js";
 import { scenarioRepository } from "../content/scenarios.js";
 import { sessionRepository } from "../persistence/repositories.js";
+import { lockedScenarioMessage } from "../live-scribing/lockedScenarioMessage.js";
 
 function formatDate(ms: number): string {
   return new Date(ms).toLocaleString(undefined, {
@@ -52,8 +53,17 @@ export function Dashboard() {
     // isn't persisted yet (only the session and its draft are). The prior
     // draft text itself is not lost; it remains in history under its
     // original (now-abandoned) session id.
+    //
+    // The new attempt is started *before* the old record is abandoned. If
+    // the learner's entitlements no longer unlock this scenario, `start`
+    // refuses without side effects, and the interrupted record must survive
+    // that refusal rather than being abandoned for a session that never
+    // began. `start` is synchronous and writes nothing to the repository.
+    if (!startSession(scenario, record.mode)) {
+      window.alert(`That scenario is locked. ${lockedScenarioMessage(scenario)}`);
+      return;
+    }
     await sessionRepository.save({ ...record, status: "abandoned" });
-    startSession(scenario, record.mode);
     await refresh();
   }
 

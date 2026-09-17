@@ -97,3 +97,19 @@ export function canAccessDifficulty(
 ): boolean {
   return difficulty <= entitlements.maxScenarioDifficulty;
 }
+
+/**
+ * The cheapest tier whose capabilities unlock a scenario of this
+ * difficulty, or `null` if no tier does.
+ *
+ * Derived from `CAPABILITY_MATRIX` at call time rather than kept as a
+ * second difficulty-to-tier table, so it can never disagree with the
+ * matrix. This is what lets a locked scenario say which access level it
+ * needs without the UI restating the commercial policy itself.
+ */
+export function minimumTierForDifficulty(difficulty: DifficultyLevel): Tier | null {
+  for (const tier of TIER_ORDER) {
+    if (canAccessDifficulty(CAPABILITY_MATRIX[tier], difficulty)) return tier;
+  }
+  return null;
+}

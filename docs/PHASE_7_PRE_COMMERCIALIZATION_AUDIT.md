@@ -279,7 +279,7 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 |---|---|---|
 | C1 | No migration runner / `schema_version` tracking | Any Phase 8 increment that adds a table (subscription persistence, Assessment mode's `mode` CHECK constraint) |
 | C2 | ~~Entitlement engine has no tier, matrix, subscription state, or resolution function~~ **CLEARED by Phase 8.1** — `Tier`, `SubscriptionState`, `CAPABILITY_MATRIX` and the pure `resolveEntitlements` resolver now exist in `nexus-core`, with 45 tests. See CHANGELOG, Phase 8.1 | The entire commercialization sequence; it was Phase 8's first increment |
-| C3 | No rendered-component tests (no jsdom/testing-library) | Any paywall/gating UI state, which would otherwise ship untested |
+| C3 | No rendered-component tests (no jsdom/testing-library) — **PARTIALLY ADDRESSED by Phase 8.2**: jsdom + Testing Library now exist (opt-in per file), with rendered tests for `ScenarioLibrary` gating (15) and Dashboard interrupted-session resume (2). Every other component remains untested at the rendered level, so the condition stays open for each *future* gating/paywall surface | Any paywall/gating UI state, which would otherwise ship untested |
 
 ### Accepted debt — documented, not blocking
 
@@ -296,7 +296,7 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 | A9 | `modules.ts` carries a stale `scenarioSchemaVersion: "0.0.0-unbuilt"` |
 | A10 | N+1 query patterns in `list_sessions` and `TauriCompetencyRepository.get()` |
 | A11 | `main.rs` missing `windows_subsystem = "windows"` for release builds |
-| A12 | Only 2 scenarios exist (difficulty 1 and 3) — insufficient content for a paid tier |
+| A12 | Only 2 scenarios exist (difficulty 1 and 3) — insufficient content for a paid tier. **Sharpened by Phase 8.2:** with gating live and every learner resolving to Free, only SCRIBE-FM-014 is startable in the app; SCRIBE-IM-032 shows as locked. No difficulty-2, -4, -5 or -6 content exists, so Pro and Fast-Track currently unlock nothing Practice does not |
 | A13 | `simulation_sessions.started_at` is TEXT; ordering is lexicographic (correct until year 2286) |
 
 ## Phase 8 entry point

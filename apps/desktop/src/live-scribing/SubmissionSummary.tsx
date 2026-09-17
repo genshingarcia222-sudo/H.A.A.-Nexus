@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button } from "@haa-nexus/ui-kit";
-import { generateRecommendations, type EvaluationError, type Recommendation } from "@haa-nexus/nexus-core";
+import {
+  generateRecommendations,
+  type EvaluationError,
+  type Recommendation,
+  type Scenario,
+  type SimulationMode
+} from "@haa-nexus/nexus-core";
 import { formatDuration } from "./formatDuration.js";
+import { lockedScenarioMessage } from "./lockedScenarioMessage.js";
 import { useSessionStore } from "../store/sessionStore.js";
 import { sessionRepository } from "../persistence/repositories.js";
 import { scenarioRepository, lessonRepository } from "../content/scenarios.js";
@@ -60,7 +67,16 @@ export function SubmissionSummary() {
       return;
     }
     const target = scenarioRepository.getLatest(rec.recommendedId);
-    if (target) start(target, "simulation");
+    if (target) retry(target, "simulation");
+  }
+
+  // Both retry paths go through `start`, which refuses a scenario the
+  // learner's entitlements do not unlock. Explain a refusal instead of
+  // leaving a click that silently does nothing.
+  function retry(target: Scenario, mode: SimulationMode) {
+    if (!start(target, mode)) {
+      window.alert(`That scenario is locked. ${lockedScenarioMessage(target)}`);
+    }
   }
 
   return (
@@ -152,7 +168,7 @@ export function SubmissionSummary() {
         <Button variant="secondary" onClick={reset}>
           Back to library
         </Button>
-        <Button onClick={() => start(scenario, session.mode)}>Retry this scenario</Button>
+        <Button onClick={() => retry(scenario, session.mode)}>Retry this scenario</Button>
       </div>
     </div>
   );

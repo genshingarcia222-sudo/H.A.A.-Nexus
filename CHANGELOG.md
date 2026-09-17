@@ -11,6 +11,133 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 8.2 — ScenarioLibrary Entitlement Gating (Complete)
+
+Incorporates Phases 1-8.1 in full. The first production-facing consumer of
+the Phase 8.1 entitlement model.
+
+**User-visible behaviour change.** This is the first commercialization
+checkpoint that changes what a learner can do. Because no subscription
+persistence or payment provider exists, every learner resolves to **Free**,
+whose ceiling is difficulty 2. In the shipped content, SCRIBE-FM-014
+(difficulty 1) remains available and **SCRIBE-IM-032 (difficulty 3) is now
+locked** — before this checkpoint both were open to everyone. This follows
+directly from the audited Phase 8.1 matrix; it is not a new rule.
+
+**Access contract.** A scenario may start only if its existing 1-6
+`difficulty` is at or below the resolved `maxScenarioDifficulty`: Free
+D1-D2, Practice D1-D3, Pro D1-D4, Fast-Track D1-D6. The Phase 8.1 matrix is
+unchanged; no difficulty metadata or scenario content was altered.
+
+**Enforcement lives below the UI.** A pre-flight map of every way into a
+session found four entry points — the library's Practice/Simulation buttons,
+"Retry this scenario", a recommendation's retry, and resuming an interrupted
+session from the Dashboard — and no route that carries a scenario ID. All
+four call `sessionStore.start`, so that is where access is enforced. `start`
+now returns `boolean`: it checks entitlements before touching any state, and
+on refusal creates no session, draft, transcript, result or persisted
+record, and leaves any session already in progress untouched. Gating only
+the library would have left three live bypasses.
+
+**Pre-existing data-loss path fixed.** `Dashboard.handleResume` abandoned
+the interrupted record *before* starting the new attempt. With `start` now
+able to refuse, that order would have abandoned a learner's interrupted
+session for an attempt that never began — and such records can genuinely
+exist, since before this checkpoint anyone could start the difficulty-3
+scenario. The new attempt is now started first; on refusal the interrupted
+record is kept and the learner is told why. Both retry paths in
+`SubmissionSummary` likewise explain a refusal instead of silently doing
+nothing.
+
+**Locked presentation.** Locked scenarios stay **visible**: Business Model
+Spec Section 5 asks the free set to "naturally expos[e] the benefit of
+additional scenarios", which hiding them would defeat. A locked card shows
+its title and difficulty, a text "Locked" badge, and the access level that
+includes it (e.g. "Intermediate scenarios are included with Practice
+Access."). It renders no buttons, so nothing looks actionable; its accessible
+name carries "(locked)", so state is not conveyed by colour alone. No price,
+checkout, countdown or scarcity claim appears anywhere.
+
+**Commercial policy stays in the domain.** Added to `nexus-core`:
+`TIER_LABELS` (the spec's customer-facing tier names) and
+`minimumTierForDifficulty` (derived from `CAPABILITY_MATRIX` at call time,
+not a second table). A post-implementation search confirmed every tier
+literal and every difficulty comparison in non-test source is inside
+`entitlement-engine`; `apps/desktop` contains none. The locked-scenario
+wording lives once, in `lockedScenarioMessage.ts`, shared by all three
+places that display it.
+
+**Subscription-state source.** `apps/desktop/src/store/entitlementStore.ts`
+is the single source. It initialises to `NO_SUBSCRIPTION` (resolves to Free)
+and has no code path that defaults anyone upward. Its `setSubscription`
+exists for tests only and is not wired to any UI, persisted value or
+environment variable. The clock is read at this application boundary and
+passed into the pure resolver; `nexus-core` still never reads ambient time.
+Entitlements resolve once per subscription change for the whole list, not
+once per card. Subscription persistence will replace this store's initial
+value without any consumer changing.
+
+**Component-test infrastructure (first in the repository).** Added dev-only
+`jsdom` 30.0.1, `@testing-library/react` 16.3.3 and `@testing-library/dom`
+10.4.2 to `apps/desktop`. `vitest.config.ts` now includes `*.test.tsx` and
+uses the automatic JSX runtime; `node` remains the default environment, and
+rendered tests opt into jsdom per file, so the 25 existing desktop tests run
+exactly as before. No runtime dependency changed, and the production bundle
+grew by about 1 kB.
+
+**Tests added (60).**
+- `nexus-core` `resolve.test.ts` +8: `minimumTierForDifficulty` for all six
+  levels, agreement with the matrix at every level, and `TIER_LABELS`.
+- `store/entitlementGating.test.ts` (35): the full 4-tier x 6-difficulty
+  matrix through `sessionStore.start`; bypass tests that call the boundary
+  directly with no UI; no side effects on refusal; an in-progress session
+  surviving a refused start; valid, bare-string, Free/Practice-purchase and
+  expired Fast-Track; the safe Free default; Practice's audited 8.1
+  capabilities still locked; no input mutation.
+- `live-scribing/ScenarioLibrary.test.tsx` (15, rendered): per-tier
+  boundaries and the full six-level matrix as displayed; locked cards
+  visible, text-identified, naming the right tier, with no buttons and no
+  pricing language; a locked card starting nothing when clicked; Practice
+  and Simulation still starting from unlocked cards; re-rendering on
+  subscription change; real shipped content under the Free default.
+- `routes/Dashboard.test.tsx` (2, rendered): a locked interrupted session is
+  kept intact with an explanation; an unlocked one still resumes and is
+  abandoned.
+
+**Tests verified to detect regressions, not merely pass.** With the guard
+in `sessionStore.start` temporarily disabled, exactly the 16 refusal-
+dependent gating tests failed (9 refused cells of the access matrix, 4
+bypass tests, 3 Fast-Track refusals) while the 19 allow-path tests passed.
+With `Dashboard.handleResume` temporarily reverted to its original order,
+the locked-resume test failed. Both files were restored byte-identical
+before final verification.
+
+**Commit attribution.** Commit `1306eca` ("Phase 8.1") was made while this
+increment was in progress, and captured three early Phase 8.2 changes that
+were inert at that commit: the three test devDependencies (and
+`pnpm-lock.yaml`), the `TIER_LABELS` export, and the `TIER_ORDER` import in
+`resolve.ts`. They are described here because they are Phase 8.2 work; the
+Phase 8.1 entry below correctly does not mention them.
+
+**Verified this checkpoint:** 239/239 nexus-core tests (33 files), 77/77
+desktop tests (9 files), 14/14 Rust tests — **330 total, 0 failures**, up
+from 270 at Phase 8.1 (+60). No pre-existing test was modified or removed:
+the only line deleted from any test file is an import widened in place.
+`pnpm -r typecheck` clean. `pnpm -r build` succeeds. `cargo check
+--all-targets` clean, `cargo test` 14/14, `cargo fmt --check` clean.
+
+**Explicitly NOT implemented in 8.2** (verified absent): subscription
+persistence or tables, the migration runner (Phase 7 condition C1 remains
+open), any `PaymentProvider`, PayMongo, checkout, billing, webhooks,
+authentication, cloud sync, locked score detail or other paywall states,
+Assessment mode, and any new scenario content. Phase 7 condition C3 is
+addressed only for the scenario library and Dashboard resume; other
+surfaces remain without rendered tests. A12 remains open and is now more
+visible: only one scenario is startable by default, and no difficulty-4, -5
+or -6 content exists for Pro or Fast-Track to unlock.
+
+---
+
 ## Phase 8.1 — Entitlement Domain Model (Complete)
 
 Incorporates Phases 1-7 in full. The first commercialization increment, and
@@ -306,7 +433,7 @@ Incorporates Phase 1 in full, plus:
 
 ## Not yet started (by design)
 
-Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model) is complete. Phase 8.2 onward has not been started: no UI gating, paywall states, Assessment mode, subscription persistence, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
+Phase 8 covers commercialization and Phases 9-13 later platform expansion — see `docs/HAA_Nexus_Architecture_Package.md` and `docs/BUSINESS_MODEL_PRODUCT_SPEC.md`. Phase 8.1 (Entitlement Domain Model) and Phase 8.2 (ScenarioLibrary Entitlement Gating) are complete. No later increment has been started: no paywall states, locked score detail, Assessment mode, subscription persistence, migration runner, PayMongo, billing, cloud authentication, or web deployment work exists in the repository.
 
 ---
 

@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   canAccessDifficulty,
   isSubscriptionCurrent,
+  minimumTierForDifficulty,
   resolveEffectiveTier,
   resolveEntitlements
 } from "./resolve.js";
-import { CAPABILITY_MATRIX } from "./capability-matrix.js";
+import { CAPABILITY_MATRIX, TIER_LABELS, TIER_ORDER } from "./capability-matrix.js";
 import { EntitlementService } from "./index.js";
 import { DEFAULT_ENTITLEMENTS, type Entitlements } from "../types/entitlements.js";
 import {
@@ -366,6 +367,43 @@ describe("scenario difficulty gating", () => {
 
   it("covers every difficulty level the scenario schema defines", () => {
     expect(ALL_LEVELS).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+});
+
+describe("minimumTierForDifficulty", () => {
+  const cases: { difficulty: DifficultyLevel; tier: Tier }[] = [
+    { difficulty: 1, tier: "free" },
+    { difficulty: 2, tier: "free" },
+    { difficulty: 3, tier: "practice" },
+    { difficulty: 4, tier: "pro" },
+    { difficulty: 5, tier: "fast_track" },
+    { difficulty: 6, tier: "fast_track" }
+  ];
+
+  for (const { difficulty, tier } of cases) {
+    it(`difficulty ${difficulty} first unlocks at ${tier}`, () => {
+      expect(minimumTierForDifficulty(difficulty)).toBe(tier);
+    });
+  }
+
+  it("agrees with the matrix for every level: the named tier unlocks it and every cheaper tier does not", () => {
+    // Guards against the derivation ever becoming a second, divergent table.
+    for (const level of DIFFICULTY_LEVELS.map((d) => d.level)) {
+      const tier = minimumTierForDifficulty(level)!;
+      expect(canAccessDifficulty(CAPABILITY_MATRIX[tier], level)).toBe(true);
+      for (const cheaper of TIER_ORDER.slice(0, TIER_ORDER.indexOf(tier))) {
+        expect(canAccessDifficulty(CAPABILITY_MATRIX[cheaper], level)).toBe(false);
+      }
+    }
+  });
+
+  it("provides a customer-facing label for every tier, matching the spec's names", () => {
+    expect(TIER_LABELS).toEqual({
+      free: "Free · Foundations",
+      practice: "Practice Access",
+      pro: "Exam-Ready Pro",
+      fast_track: "Agency Fast-Track"
+    });
   });
 });
 

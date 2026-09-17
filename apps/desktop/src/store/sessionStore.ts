@@ -11,6 +11,7 @@ import {
   updateDraftField,
   evaluateAttempt,
   updateCompetencyRecord,
+  canAccessDifficulty,
   type Scenario,
   type SimulationSession,
   type SimulationMode,
@@ -21,6 +22,7 @@ import {
   type SessionRecord
 } from "@haa-nexus/nexus-core";
 import { sessionRepository, competencyRepository } from "../persistence/repositories.js";
+import { currentEntitlements } from "./entitlementStore.js";
 
 interface SessionState {
   scenario: Scenario | null;
@@ -30,7 +32,12 @@ interface SessionState {
   revealedCount: number;
   result: EvaluationResult | null;
 
-  start: (scenario: Scenario, mode: SimulationMode) => void;
+  /**
+   * Starts a session, or refuses to. Returns `true` if a session started and
+   * `false` if the learner's entitlements do not unlock this scenario's
+   * difficulty - in which case nothing at all changes.
+   */
+  start: (scenario: Scenario, mode: SimulationMode) => boolean;
   pause: () => void;
   resume: () => void;
   advanceTranscript: () => void;
@@ -85,6 +92,17 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   result: null,
 
   start: (scenario, mode) => {
+    // Entitlement enforcement (Phase 8.2). Every way into a session - the
+    // scenario library, "Retry this scenario", a recommendation's retry, and
+    // resuming an interrupted session from the Dashboard - calls this
+    // function, so guarding here protects all of them rather than only the
+    // button a learner happens to see. The check runs before any state is
+    // touched: a refused start creates no session, no draft, no persisted
+    // record, and leaves any current session exactly as it was.
+    if (!canAccessDifficulty(currentEntitlements(), scenario.difficulty)) {
+      return false;
+    }
+
     const beats = splitNarrativeIntoBeats(scenario.encounter.narrative);
     set({
       scenario,
@@ -103,6 +121,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       // mode reveals it progressively.
       revealedCount: mode === "practice" ? beats.length : Math.min(1, beats.length)
     });
+    return true;
   },
 
   pause: () => {

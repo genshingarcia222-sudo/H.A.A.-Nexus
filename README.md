@@ -9,12 +9,13 @@ never a separate patch). This README covers only how to run what exists so far.
 **Proprietary software — see `LICENSE.md`.** This is not open source; every
 `package.json` in this workspace is marked `"license": "UNLICENSED"`.
 
-## Status: Phase 8.1 complete — Phase 8.2 not started
+## Status: Phase 8.2 complete — no later increment started
 
 Phase 7 (the Pre-Commercialization Audit & Stabilization Gate) closed as PASS
 WITH CONDITIONS; its evidence and disposition are recorded in
 `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`. Phase 8.1 (Entitlement Domain
-Model) is the only commercialization increment implemented so far.
+Model) and Phase 8.2 (ScenarioLibrary Entitlement Gating) are the only
+commercialization increments implemented so far.
 
 | Component | Status |
 |---|---|
@@ -31,9 +32,10 @@ Model) is the only commercialization increment implemented so far.
 | Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | Recommendation engine factoring in competency-record trends (not just error frequency) | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | Migration runner / `schema_version` tracking | **Not implemented** — accepted Phase 7 condition; required before Phase 8 adds any table (see audit doc) |
-| Assessment (no-pause) mode | **Not started** — Phase 8.2+ |
-| Entitlement domain model (tier ladder, capability matrix, pure resolver) | **Implemented (Phase 8.1)** — 45 unit tests. Pure domain logic only; nothing consumes it yet |
-| Commercialization (subscription persistence, billing, payments, UI gating, web deployment, auth) | **Not started** — Phase 8.2 onward |
+| Assessment (no-pause) mode | **Not started** — later Phase 8 increment |
+| Entitlement domain model (tier ladder, capability matrix, pure resolver) | **Implemented (Phase 8.1)** — 53 unit tests. Pure domain logic; consumed by scenario gating |
+| Scenario entitlement gating (library lock states + start enforcement) | **Implemented (Phase 8.2)** — locked scenarios stay visible; every start path refused below the UI. Subscription state is a Free-only placeholder (see Phase 8 progress) |
+| Commercialization (subscription persistence, billing, payments, paywall/score-detail gating, web deployment, auth) | **Not started** — later Phase 8 increments |
 
 ### Rust/Tauri verification
 
@@ -77,7 +79,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (231 nexus-core + 25 desktop = 256).
+# Every package's tests (239 nexus-core + 77 desktop = 316).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
@@ -86,7 +88,8 @@ pnpm install
 # checks that all bundled content loads/validates/evaluates correctly at
 # runtime, the full submit -> persist -> competency-update flow, and
 # end-to-end recommendation and analytics flows against real submitted
-# sessions.
+# sessions, scenario entitlement enforcement, and rendered-component tests
+# (jsdom + Testing Library) for the scenario library and Dashboard resume.
 pnpm test
 
 # Typecheck every package
@@ -126,8 +129,23 @@ Phase 8 is commercialization, delivered as independently verifiable increments.
 
 - **8.1 Entitlement Domain Model — complete.** A tier ladder, a capability
   matrix expressed as data, and a pure resolver, all inside `nexus-core` with
-  no provider, persistence, or UI dependency. It is domain logic only:
-  nothing in the app consumes it yet, so product behaviour is unchanged.
-- **8.2 onward — not started.** Scenario-library gating, paywall/conversion
-  states, Assessment mode, subscription persistence, PayMongo, web
+  no provider, persistence, or UI dependency.
+- **8.2 ScenarioLibrary Entitlement Gating — complete.** The first consumer
+  of the entitlement model. Scenarios above the learner's difficulty
+  ceiling (Free ≤2, Practice ≤3, Pro ≤4, Fast-Track ≤6) stay visible in the
+  library but show as locked, naming the access level that includes them —
+  no price, no checkout. Enforcement lives in `sessionStore.start`, the one
+  function every scenario entry point calls, so a locked scenario is refused
+  whether it is reached from the library, a retry, a recommendation, or an
+  interrupted-session resume.
+- **Later increments — not started.** Paywall/conversion states, locked score
+  detail, Assessment mode, subscription persistence, PayMongo, web
   deployment and authentication all remain unimplemented.
+
+**Subscription state is not real yet.** There is no subscription persistence
+or payment provider, so every learner resolves to **Free**. In the shipped
+content that means SCRIBE-FM-014 (difficulty 1) is available and
+SCRIBE-IM-032 (difficulty 3) is locked. The source is a single store
+(`apps/desktop/src/store/entitlementStore.ts`) that defaults to no
+subscription and cannot default anyone upward; subscription persistence will
+replace its initial value without any consumer changing.
