@@ -106,6 +106,57 @@ failures** (+7). `pnpm -r typecheck` clean. `pnpm -r build` succeeds, bundle
 unchanged (the checker runs only at test time). `cargo check --all-targets`
 and `cargo fmt --check` clean.
 
+### A10 / A13 — Single-query persistence reads and numeric ordering (Cleared)
+
+**Problem.** Listing sessions ran one query for the IDs and then three
+queries per session: 3N+1 for N sessions, on every Dashboard load and every
+submission's recommendation pass. `find_interrupted_sessions` did the same.
+`TauriCompetencyRepository.get` fetched every competency record to find one,
+and `submit` calls it once per domain. Separately, sessions were ordered by
+`started_at` as *text*, although the column holds epoch-millisecond strings.
+That misorders values of different digit lengths, so it was correct only
+while every timestamp had 13 digits.
+
+**Change.**
+- `db/sessions.rs`: `get_session`, `list_sessions` and
+  `find_interrupted_sessions` now share one statement that loads the
+  session, its latest attempt and that attempt's evaluation together. It keeps
+  the previous loader's semantics: latest attempt by `submitted_at`, first
+  evaluation by `rowid`, and an empty draft with no evaluation for a session
+  that has no attempt. Timestamps are ordered as integers, with `id` breaking
+  ties so the order is fully deterministic. `save_session` is byte-identical.
+  `list_session_ids` and `find_interrupted_session_ids` were removed, and the
+  two existing tests that used them now use the full-record functions with
+  unchanged assertions.
+- `db/competency.rs` + `commands.rs` + `main.rs`: a new
+  `get_competency_record(domain)` command; `TauriCompetencyRepository.get`
+  uses it.
+- IPC contract test: every command name the frontend passes to `invoke` must
+  be registered in `main.rs`, so a renamed or unregistered command fails the
+  test suite rather than failing at runtime.
+
+**Tests.** +7 Rust: numeric rather than text ordering, a stable order for
+equal start times, many sessions listed without drafts or evaluations
+cross-wired, a session with no attempt row, the latest of two attempts and
+its own evaluation (and still one record per session), interrupted sessions
+returned as full records newest-first, and per-domain competency lookup. +3
+desktop (`tauriRepositories.test.ts`, with `invoke` mocked): `get` issues one
+per-domain command, `null` maps to `undefined`, and the IPC contract.
+
+**Mutation checks.** Text ordering of `started_at`, removing the tie-break,
+choosing the earliest attempt, a plain join (one row per attempt), reverting
+`TauriCompetencyRepository.get` to list everything, and unregistering the new
+command each failed the test aimed at it. Every file was restored
+byte-identical.
+
+**Not verified.** The new command compiles, is registered, and is checked by
+the contract test, but a real IPC round trip has not been exercised, because
+`tauri dev` has still never been launched (Phase 7 accepted debt A4).
+
+**Verified:** 265/265 nexus-core, 94/94 desktop, 43/43 Rust — **402 total, 0
+failures** (+10). `pnpm -r typecheck` clean. `pnpm -r build` succeeds (286.26
+kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
 ---
 
 ## Phase 8.3 — Assessment Mode (In Progress: foundation, workspace and live-feedback boundary; blocked on product decisions)

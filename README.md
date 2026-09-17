@@ -28,7 +28,7 @@ cannot start an assessment session yet.
 | `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
 | `packages/nexus-core/analytics-engine` (overall performance, trend, weak/strong areas, error trends, scenario progress) | **Implemented** — 14 unit tests; every figure computed from real `SessionRecord`/`CompetencyRecord` data, no separate analytics store |
 | Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (36 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (43 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
 | Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Analytics, Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
 | App icons (`src-tauri/icons/`) | **Implemented** — full icon set generated from a brand source image via `tauri icon` |
 | Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
@@ -53,7 +53,7 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
 ```
 
 - `cargo check --all-targets` — **clean**, no errors, no warnings.
-- `cargo test` — **36 passed, 0 failed.** Real-file SQLite (not `:memory:`).
+- `cargo test` — **43 passed, 0 failed.** Real-file SQLite (not `:memory:`).
   14 persistence tests (Phase 7) cover table integrity, WAL + foreign-key
   pragmas, restart idempotency, autosave of an in-progress draft with no
   evaluation yet, autosave survival across a restart, autosave-then-submit
@@ -64,7 +64,8 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
   exactly-once application, full rollback of a failed migration, refusal of
   a database from a newer build, and a rehearsal of the table rebuild needed
   to widen a CHECK constraint. 4 more (Phase 8.3) cover migration 002, the
-  real `mode` CHECK widening for Assessment mode.
+  real `mode` CHECK widening for Assessment mode. 7 more cover the
+  single-query session reads and numeric ordering (Phase 7 debt A10/A13).
 
 **Still unverified:** `pnpm tauri dev` (launching the actual webview) and
 `tauri build` (MSI/NSIS bundling) have not been run. Installer packaging is
@@ -88,7 +89,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (265 nexus-core + 91 desktop = 356).
+# Every package's tests (265 nexus-core + 94 desktop = 359).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,

@@ -37,7 +37,7 @@ The repository is a pnpm/TypeScript monorepo with a React frontend and Tauri des
 
 ### Material gaps before commercial launch
 
-- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 36 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
+- Tauri/Rust **compilation is verified** (rustc 1.98.1, `cargo check` clean, 43 Rust tests green). **Packaging/installer bundling is still unverified** — Phase 9.
 - A versioned migration runner now exists (Phase 8.2.1), so new tables and constraint changes can ship safely; the schema is at version 2 after the Phase 8.3 Assessment-mode migration.
 - Content library is only 2 scenarios (difficulty 1 and 3) — not enough to populate a Free tier, let alone justify paid access.
 - No-pause **Assessment mode** is only partly implemented: the no-pause rule, database support, workspace support and live-feedback boundary exist, but it has no UI entry point. **Open decisions** (see `docs/PHASE_8_3_ASSESSMENT_MODE.md`): which tier includes Assessment (Section 4 does not say), post-submission results, closed-book access, analytics treatment, and interrupted-Assessment policy.

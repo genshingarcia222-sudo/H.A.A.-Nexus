@@ -1,6 +1,6 @@
 use super::models::CompetencyRecordDto;
 use super::LOCAL_USER_ID;
-use rusqlite::{params, Connection};
+use rusqlite::{params, Connection, OptionalExtension};
 
 fn row_to_record(row: &rusqlite::Row) -> rusqlite::Result<CompetencyRecordDto> {
     let recent_scores_json: String = row.get("recent_scores_json")?;
@@ -15,6 +15,21 @@ fn row_to_record(row: &rusqlite::Row) -> rusqlite::Result<CompetencyRecordDto> {
         recent_scores: serde_json::from_str(&recent_scores_json).unwrap_or_default(),
         updated_at: row.get::<_, String>("updated_at")?.parse().unwrap_or(0),
     })
+}
+
+/// One domain's record, or `None` if that domain has never been scored.
+/// Replaces listing every record to find one (Phase 7 accepted debt A10).
+pub fn get_competency_record(
+    conn: &Connection,
+    domain: &str,
+) -> rusqlite::Result<Option<CompetencyRecordDto>> {
+    conn.query_row(
+        "SELECT domain, level, avg_score, recent_score, trend, attempt_count, recent_scores_json, confidence, updated_at
+         FROM competency_records WHERE user_id = ?1 AND domain = ?2",
+        params![LOCAL_USER_ID, domain],
+        row_to_record,
+    )
+    .optional()
 }
 
 pub fn list_competency_records(conn: &Connection) -> rusqlite::Result<Vec<CompetencyRecordDto>> {

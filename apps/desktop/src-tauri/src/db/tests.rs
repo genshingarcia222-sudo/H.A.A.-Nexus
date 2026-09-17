@@ -291,7 +291,11 @@ fn find_interrupted_returns_only_in_progress_and_paused_sessions() {
     .unwrap();
     sessions::save_session(db.conn_mut(), &record("s-gone", "abandoned", "d", None)).unwrap();
 
-    let mut ids = sessions::find_interrupted_session_ids(db.conn()).expect("query failed");
+    let mut ids: Vec<String> = sessions::find_interrupted_sessions(db.conn())
+        .expect("query failed")
+        .into_iter()
+        .map(|r| r.id)
+        .collect();
     ids.sort();
     assert_eq!(ids, vec!["s-live".to_string(), "s-paused".to_string()]);
 }
@@ -344,7 +348,11 @@ fn sessions_are_listed_newest_first() {
         sessions::save_session(db.conn_mut(), &rec).unwrap();
     }
 
-    let ids = sessions::list_session_ids(db.conn()).expect("list failed");
+    let ids: Vec<String> = sessions::list_sessions(db.conn())
+        .expect("list failed")
+        .into_iter()
+        .map(|r| r.id)
+        .collect();
     assert_eq!(ids, vec!["s-new".to_string(), "s-old".to_string()]);
 }
 
@@ -429,4 +437,201 @@ fn competency_records_survive_a_restart() {
     assert_eq!(all[0].domain, "completeness");
     assert_eq!(all[0].trend, "up");
     assert_eq!(all[0].confidence, 0.8);
+}
+
+// --- single-query reads (Phase 7 accepted debt A10 / A13) ------------------
+
+fn insert_bare_session(db: &TestDb, id: &str, started_at: &str, status: &str) {
+    db.conn()
+        .execute(
+            "INSERT INTO simulation_sessions
+                (id, user_id, scenario_id, scenario_version, scenario_title, mode, status, started_at)
+             VALUES (?1, ?2, 'SCRIBE-FM-014', '1.0', 't', 'practice', ?3, ?4)",
+            rusqlite::params![id, LOCAL_USER_ID, status, started_at],
+        )
+        .expect("insert failed");
+}
+
+#[test]
+fn sessions_are_ordered_by_numeric_start_time_not_text() {
+    // Timestamps are stored as epoch-ms strings. Text ordering would put
+    // "999" after "1000"; numeric ordering must not.
+    let db = TestDb::new();
+    insert_bare_session(&db, "older", "999", "completed");
+    insert_bare_session(&db, "newer", "1000", "completed");
+
+    let ids: Vec<String> = sessions::list_sessions(db.conn())
+        .unwrap()
+        .into_iter()
+        .map(|r| r.id)
+        .collect();
+    assert_eq!(ids, ["newer", "older"]);
+}
+
+#[test]
+fn sessions_with_the_same_start_time_list_in_a_stable_order() {
+    let db = TestDb::new();
+    for id in ["b", "a", "c"] {
+        insert_bare_session(&db, id, "1700000000000", "completed");
+    }
+    let first: Vec<String> = sessions::list_sessions(db.conn())
+        .unwrap()
+        .into_iter()
+        .map(|r| r.id)
+        .collect();
+    let second: Vec<String> = sessions::list_sessions(db.conn())
+        .unwrap()
+        .into_iter()
+        .map(|r| r.id)
+        .collect();
+    assert_eq!(first, ["c", "b", "a"]);
+    assert_eq!(second, first);
+}
+
+#[test]
+fn listing_many_sessions_attaches_each_sessions_own_draft_and_evaluation() {
+    let mut db = TestDb::new();
+    for (i, (id, status, score)) in [
+        ("s-a", "completed", Some(55.0)),
+        ("s-b", "in_progress", None),
+        ("s-c", "completed", Some(91.0)),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let eval = score.map(|s| EvaluationResultDto {
+            overall_score: s,
+            ..evaluation()
+        });
+        let mut rec = record(id, status, &format!("hpi for {id}"), eval);
+        rec.started_at = 1_700_000_000_000 + i as i64;
+        sessions::save_session(db.conn_mut(), &rec).unwrap();
+    }
+
+    let all = sessions::list_sessions(db.conn()).unwrap();
+    assert_eq!(all.len(), 3);
+    for r in &all {
+        assert_eq!(
+            r.draft.hpi,
+            format!("hpi for {}", r.id),
+            "draft cross-wired for {}",
+            r.id
+        );
+    }
+    let score = |id: &str| {
+        all.iter()
+            .find(|r| r.id == id)
+            .unwrap()
+            .evaluation
+            .as_ref()
+            .map(|e| e.overall_score)
+    };
+    assert_eq!(score("s-a"), Some(55.0));
+    assert_eq!(score("s-b"), None);
+    assert_eq!(score("s-c"), Some(91.0));
+}
+
+#[test]
+fn a_session_with_no_attempt_row_loads_with_an_empty_draft_and_no_evaluation() {
+    let db = TestDb::new();
+    insert_bare_session(&db, "bare", "1700000000000", "in_progress");
+
+    let loaded = sessions::get_session(db.conn(), "bare")
+        .unwrap()
+        .expect("session missing");
+    assert_eq!(loaded.draft.hpi, "");
+    assert_eq!(loaded.draft.chief_complaint, "");
+    assert!(loaded.evaluation.is_none());
+}
+
+#[test]
+fn a_session_loads_its_latest_attempt_and_that_attempts_evaluation() {
+    let mut db = TestDb::new();
+    sessions::save_session(
+        db.conn_mut(),
+        &record("s-1", "completed", "first attempt", Some(evaluation())),
+    )
+    .unwrap();
+    // A second, later attempt for the same session (the schema allows it)
+    // with its own evaluation.
+    db.conn()
+        .execute(
+            "INSERT INTO documentation_attempts (id, session_id, hpi, submitted_at)
+             VALUES ('s-1-attempt-2', 's-1', 'second attempt', '99999999999999')",
+            [],
+        )
+        .unwrap();
+    db.conn()
+        .execute(
+            "INSERT INTO evaluation_results
+                (id, attempt_id, overall_score, category_scores_json, errors_json,
+                 time_efficiency_ratio, scoring_weights_json, evaluated_at)
+             VALUES ('s-1-eval-2', 's-1-attempt-2', 42.0, '{}', '[]', 1.0, '{}', '5')",
+            [],
+        )
+        .unwrap();
+
+    let loaded = sessions::get_session(db.conn(), "s-1")
+        .unwrap()
+        .expect("session missing");
+    assert_eq!(loaded.draft.hpi, "second attempt");
+    assert_eq!(
+        loaded.evaluation.expect("evaluation missing").overall_score,
+        42.0
+    );
+    // Still exactly one record for the session, not one per attempt.
+    assert_eq!(sessions::list_sessions(db.conn()).unwrap().len(), 1);
+}
+
+#[test]
+fn interrupted_sessions_come_back_as_full_records_newest_first() {
+    let mut db = TestDb::new();
+    for (i, (id, status)) in [
+        ("old-live", "in_progress"),
+        ("done", "completed"),
+        ("new-paused", "paused"),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let mut rec = record(id, status, &format!("draft {id}"), None);
+        rec.started_at = 1_700_000_000_000 + i as i64;
+        sessions::save_session(db.conn_mut(), &rec).unwrap();
+    }
+
+    let interrupted = sessions::find_interrupted_sessions(db.conn()).unwrap();
+    let ids: Vec<&str> = interrupted.iter().map(|r| r.id.as_str()).collect();
+    assert_eq!(ids, ["new-paused", "old-live"]);
+    assert_eq!(interrupted[0].draft.hpi, "draft new-paused");
+}
+
+#[test]
+fn get_competency_record_returns_exactly_the_requested_domain() {
+    let db = TestDb::new();
+    for (domain, score) in [("accuracy", 90.0), ("completeness", 60.0)] {
+        competency::upsert_competency_record(
+            db.conn(),
+            &CompetencyRecordDto {
+                domain: domain.to_string(),
+                level: "developing".to_string(),
+                avg_score: score,
+                recent_score: score,
+                trend: "flat".to_string(),
+                attempt_count: 3,
+                confidence: 0.3,
+                recent_scores: vec![score],
+                updated_at: 1,
+            },
+        )
+        .unwrap();
+    }
+
+    let found = competency::get_competency_record(db.conn(), "completeness")
+        .unwrap()
+        .expect("record missing");
+    assert_eq!(found.domain, "completeness");
+    assert_eq!(found.avg_score, 60.0);
+    assert!(competency::get_competency_record(db.conn(), "terminology")
+        .unwrap()
+        .is_none());
 }

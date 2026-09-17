@@ -32,6 +32,7 @@ fn main() {
             commands::get_profile,
             commands::save_profile,
             commands::list_competency_records,
+            commands::get_competency_record,
             commands::upsert_competency_record,
         ])
         .run(tauri::generate_context!())

@@ -298,10 +298,10 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 | A7 | Recommendation engine does not factor in competency trends |
 | A8 | MVP acceptance criterion §34(10) — note comparison (encounter vs. learner vs. expected) — never implemented |
 | A9 | `modules.ts` carries a stale `scenarioSchemaVersion: "0.0.0-unbuilt"` |
-| A10 | N+1 query patterns in `list_sessions` and `TauriCompetencyRepository.get()` |
+| A10 | ~~N+1 query patterns in `list_sessions` and `TauriCompetencyRepository.get()`~~ **CLEARED** — session reads (get/list/interrupted) are one query each; competency lookup uses a per-domain `get_competency_record` command. IPC round trip not yet exercised (A4). See CHANGELOG, Phase 7 Accepted-Debt Remediation |
 | A11 | `main.rs` missing `windows_subsystem = "windows"` for release builds |
 | A12 | Only 2 scenarios exist (difficulty 1 and 3) — insufficient content for a paid tier. **Sharpened by Phase 8.2:** with gating live and every learner resolving to Free, only SCRIBE-FM-014 is startable in the app; SCRIBE-IM-032 shows as locked. No difficulty-2, -4, -5 or -6 content exists, so Pro and Fast-Track currently unlock nothing Practice does not |
-| A13 | `simulation_sessions.started_at` is TEXT; ordering is lexicographic (correct until year 2286) |
+| A13 | ~~`simulation_sessions.started_at` is TEXT; ordering is lexicographic (correct until year 2286)~~ **CLEARED** — ordering casts to INTEGER with an `id` tie-break; the column type is unchanged (no migration). See CHANGELOG, Phase 7 Accepted-Debt Remediation |
 
 ## Phase 8 entry point
 

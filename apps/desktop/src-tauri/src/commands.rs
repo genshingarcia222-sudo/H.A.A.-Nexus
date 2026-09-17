@@ -33,14 +33,7 @@ pub fn list_sessions(state: State<DbState>) -> Result<Vec<SessionRecordDto>, Str
         .0
         .lock()
         .map_err(|_| "Database lock poisoned".to_string())?;
-    let ids = sessions::list_session_ids(&conn).map_err(map_err)?;
-    let mut records = Vec::with_capacity(ids.len());
-    for id in ids {
-        if let Some(record) = sessions::get_session(&conn, &id).map_err(map_err)? {
-            records.push(record);
-        }
-    }
-    Ok(records)
+    sessions::list_sessions(&conn).map_err(map_err)
 }
 
 #[tauri::command]
@@ -49,14 +42,7 @@ pub fn find_interrupted_sessions(state: State<DbState>) -> Result<Vec<SessionRec
         .0
         .lock()
         .map_err(|_| "Database lock poisoned".to_string())?;
-    let ids = sessions::find_interrupted_session_ids(&conn).map_err(map_err)?;
-    let mut records = Vec::with_capacity(ids.len());
-    for id in ids {
-        if let Some(record) = sessions::get_session(&conn, &id).map_err(map_err)? {
-            records.push(record);
-        }
-    }
-    Ok(records)
+    sessions::find_interrupted_sessions(&conn).map_err(map_err)
 }
 
 #[tauri::command]
@@ -84,6 +70,18 @@ pub fn list_competency_records(state: State<DbState>) -> Result<Vec<CompetencyRe
         .lock()
         .map_err(|_| "Database lock poisoned".to_string())?;
     competency::list_competency_records(&conn).map_err(map_err)
+}
+
+#[tauri::command]
+pub fn get_competency_record(
+    state: State<DbState>,
+    domain: String,
+) -> Result<Option<CompetencyRecordDto>, String> {
+    let conn = state
+        .0
+        .lock()
+        .map_err(|_| "Database lock poisoned".to_string())?;
+    competency::get_competency_record(&conn, &domain).map_err(map_err)
 }
 
 #[tauri::command]
