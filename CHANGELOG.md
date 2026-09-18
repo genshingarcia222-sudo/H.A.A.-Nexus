@@ -11,6 +11,46 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Open Decision Register (2026-09-18)
+
+**What changed:** a new `docs/DECISION_REGISTER.md` consolidates every decision
+currently blocking engineering work — D1, D10, A2, A6, A7, A9, A12, with
+pointers to D3–D9 in the Phase 8.3 document — into one place, with the evidence
+already gathered and the options the current architecture actually supports.
+
+**Why:** the blockers were accurate but scattered across a phase document, an
+audit table and commit messages, so answering any one of them started with a
+research session. Each entry now states what is blocked, what the code does
+today (re-verified at this commit, not taken from notes), what evidence was
+examined, and the smallest set of alternatives the architecture supports.
+
+**Nothing was decided.** Options are listed with their consequences and none is
+selected or encoded. Where an apparently neutral choice would in fact be a
+decision — adding an Assessment capability set to `false` for every tier, for
+example — that is called out rather than taken.
+
+**Re-verified during the audit**, first-hand rather than from earlier notes:
+`revealedCount` is absent from `SessionRecord` and the IPC fixtures, so exact
+mid-transcript resume is structurally impossible today (A6); the recommendation
+engine contains no competency reference (A7); the module registry declares 12
+domains against the evaluator's 7 (A2); `scenarioSchemaVersion` is still
+`"0.0.0-unbuilt"` and no scenario *schema* version concept exists (A9); content
+remains 2 scenarios at difficulty 1 and 3 (A12); the web build still falls back
+to in-memory repositories, so a refresh loses the session (D10). The Business
+Model Spec and Architecture Package are unchanged since `5a59cb4`, so the D1
+evidence stands.
+
+**Verification:** documentation only — no source changed. 279/279 nexus-core,
+144/144 desktop, 55/55 Rust — **478 total, 0 failures**, unchanged. Typecheck,
+build, `cargo check --all-targets` and `cargo fmt --check` clean.
+
+**Known limitation:** the register records the state of decisions, not their
+resolution. Every item in it still requires a human product, architecture or
+content decision, and remote monitor access still requires an owner-configured
+tunnel account.
+
+---
+
 ## Competency Folding Is Now All-or-Nothing (data-integrity fix)
 
 Submitting an attempt folds its category scores into seven competency

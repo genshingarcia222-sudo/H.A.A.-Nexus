@@ -11,6 +11,10 @@ never a separate patch). This README covers only how to run what exists so far.
 
 ## Status: Phase 8.3 (Assessment Mode) in progress — blocked on product decisions
 
+Every open decision that currently blocks work — with the evidence and the
+options the architecture supports — is collected in
+[`docs/DECISION_REGISTER.md`](docs/DECISION_REGISTER.md).
+
 Phase 7 (the Pre-Commercialization Audit & Stabilization Gate) closed as PASS
 WITH CONDITIONS; its evidence and disposition are recorded in
 `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`. Phase 8.1 (Entitlement Domain
