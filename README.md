@@ -81,9 +81,21 @@ exposed and fixed a genuine defect: the Vite dev server watched `src-tauri`
 and crashed with `EBUSY` on the executable cargo was writing, aborting
 `tauri dev` entirely.
 
-**Still unverified:** `tauri build` (MSI/NSIS bundling) has not been run.
-Installer packaging is Phase 9 (Tauri packaging/release hardening), not
-Phase 7.
+**Release build verified.** `tauri build` compiles the optimized binary
+(1m 39s) and the resulting `haa-nexus-desktop.exe` runs standalone, serving
+embedded assets from `tauri.localhost` and performing real IPC against SQLite.
+
+**Still unverified:** MSI/NSIS **bundling**. After building the exe, Tauri
+downloads the WiX toolset, which failed with a DNS error in this environment
+(`No such host is known`). It needs network access to that host or a
+pre-installed WiX/NSIS toolchain. Installer packaging remains Phase 9.
+
+**Web target:** the production `dist/` was served as static files and driven in
+a browser with no Tauri present - all six routes render, routing is hash-based
+(so static hosting needs no rewrite rules), and Free-tier scenario gating
+behaves exactly as on desktop. Persistence is the open piece: outside Tauri the
+repositories are in-memory, so a refresh loses progress (see D10 in
+`docs/PHASE_8_3_ASSESSMENT_MODE.md`).
 
 ## Repo layout
 

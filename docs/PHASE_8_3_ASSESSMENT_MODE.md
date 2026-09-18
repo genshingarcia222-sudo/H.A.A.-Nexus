@@ -97,6 +97,13 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 - **Current state:** unchanged and untested. Deterministic evaluation over validated content makes a throw unlikely, which is why this is recorded rather than treated as a live defect.
 - **Decision required:** what a learner sees when evaluation fails, and what happens to the attempt.
 
+#### D10 - What persists a web learner's progress? - **NOT AUTHORIZED**
+
+- **Evidence examined:** Business Model Spec §3 step 4 ("a lightweight cloud persistence layer so refreshes do not lose progress"); §2 ("Web deployment and lightweight cloud persistence are not yet implemented"); `apps/desktop/src/persistence/repositories.ts`, which falls back to in-memory repositories whenever `__TAURI_INTERNALS__` is absent. Verified in a real browser: the web build runs and gates correctly, but a refresh loses the session.
+- **Why insufficient:** the spec names the goal (a refresh must not lose progress) but not the mechanism. A browser-local store keeps progress per device; a hosted database makes it follow the learner across devices and implies accounts. That difference is a product promise about continuity - and an account model would also pull in authentication, which is not authorized.
+- **Current state:** unchanged. The web target uses in-memory repositories; no browser or cloud persistence was added.
+- **Decision required:** whether web progress is per-browser, per-account across devices, or both, and if cloud, which provider and account model.
+
 ## 4. Live-feedback trace and enforcement
 
 ### Trace (mechanisms that could reveal performance during an active session)

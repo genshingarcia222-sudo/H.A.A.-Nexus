@@ -11,6 +11,59 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Release Build and Web-Target Runtime Verification (Build-priority steps 2 and 4)
+
+Business Model Spec Section 3 step 2 asks for the Tauri + Rust build to be
+verified on a real machine, and step 4 for a web-deployed build to be stood up
+"in parallel" using the existing browser-capable frontend. Both were measured
+rather than assumed.
+
+### Release build (`tauri build`)
+
+The **release binary compiles and runs**: the optimized profile finished in
+1m 39s, producing `haa-nexus-desktop.exe`. Launched directly - no dev server, no
+Vite - it serves its embedded assets from `tauri.localhost` and performs the
+same real IPC calls verified in dev, against the same SQLite database. The
+production asset path is therefore verified too, not just the dev path.
+
+**Bundling could not be verified here.** After building the exe, Tauri tries to
+fetch the WiX toolset to produce the MSI, and the download failed with
+`io: No such host is known. (os error 11001)` - a DNS failure in this
+environment, not a repository defect. Installer bundling remains unverified and
+stays Phase 9; it needs either network access to that host or a pre-installed
+WiX/NSIS toolchain.
+
+### Web target
+
+The production `dist/` was served as plain static files and driven in a real
+browser with no Tauri present:
+
+| Check | Result |
+|---|---|
+| App boots outside the shell | yes - no console errors, no blank screen |
+| `__TAURI_INTERNALS__` absent | yes, so the in-memory repositories were in use, as `repositories.ts` intends |
+| All six routes render | Dashboard, Live Scribing, Training, Knowledge Base, Analytics, Settings |
+| Routing style | hash routing (`#/live-scribing`), so static hosting needs **no** server rewrite rules |
+| Entitlement gating | identical to desktop: the difficulty-1 scenario is actionable, the difficulty-3 scenario shows "Locked - Intermediate scenarios are included with Practice Access" |
+| Browser storage available | `localStorage` writable |
+
+So the spec's premise holds: the frontend is genuinely browser-capable, and
+Free-tier gating enforces itself there with no extra work.
+
+**The gap is persistence.** Outside Tauri the repositories are in-memory, so a
+refresh loses the session. That is what step 4's "lightweight cloud persistence
+layer" is for - but which layer (a hosted database, a browser-local store, or
+both) determines whether progress follows a learner across devices, and that is
+a product promise rather than an implementation detail. Recorded as **D10** in
+`docs/PHASE_8_3_ASSESSMENT_MODE.md`; no persistence layer was chosen.
+
+**Verified:** 267/267 nexus-core, 130/130 desktop, 53/53 Rust - **450 total, 0
+failures**, unchanged by this work. `pnpm -r typecheck` clean. `pnpm -r build`
+succeeds (287.71 kB). `cargo check --all-targets` and `cargo fmt --check`
+clean.
+
+---
+
 ## Runtime IPC Verified in the Real Tauri Shell (Phase 7 debt A4, partly cleared)
 
 Until now every claim about TypeScript ↔ Rust communication rested on tests
