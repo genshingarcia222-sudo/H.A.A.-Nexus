@@ -85,10 +85,18 @@ and crashed with `EBUSY` on the executable cargo was writing, aborting
 (1m 39s) and the resulting `haa-nexus-desktop.exe` runs standalone, serving
 embedded assets from `tauri.localhost` and performing real IPC against SQLite.
 
-**Still unverified:** MSI/NSIS **bundling**. After building the exe, Tauri
-downloads the WiX toolset, which failed with a DNS error in this environment
-(`No such host is known`). It needs network access to that host or a
-pre-installed WiX/NSIS toolchain. Installer packaging remains Phase 9.
+**Installers build.** `tauri build` completes end to end and produces both
+bundles: a 3.6 MB MSI and a 2.5 MB NSIS setup (the release exe is 9.8 MB). An
+earlier run failed while downloading the WiX toolset, which turned out to be a
+transient DNS failure - rerunning the same command unchanged succeeded.
+Installer **signing**, auto-update and release hardening remain Phase 9.
+
+**Content Security Policy.** The webview runs under a real policy
+(`default-src 'self'`, `script-src 'self'`, `object-src 'none'`, IPC origins
+allowed), with a separate development policy for Vite/HMR. `style-src` keeps
+`'unsafe-inline'` because the UI styles elements through React `style` props.
+Verified by running the production binary and confirming zero CSP violations
+with IPC working.
 
 **Web target:** the production `dist/` was served as static files and driven in
 a browser with no Tauri present - all six routes render, routing is hash-based

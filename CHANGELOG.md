@@ -11,6 +11,65 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Content Security Policy, and Installers Actually Built (A5 and A4 cleared)
+
+### A Content Security Policy now exists (A5)
+
+The audit recorded `"csp": null` as debt that had to be resolved before web
+deployment: with no policy, the webview would execute script from anywhere.
+The app now ships a real policy, plus a separate development policy so the
+Vite dev server and HMR keep working:
+
+- Production: `default-src 'self'`, `script-src 'self'`, `object-src 'none'`,
+  `base-uri 'self'`, `form-action 'none'`, `frame-ancestors 'none'`, and
+  `connect-src 'self' ipc: http://ipc.localhost` so Tauri IPC still resolves.
+- Development adds `'unsafe-inline' 'unsafe-eval'` for scripts and the
+  `ws://localhost:1420` origin, which HMR needs and production does not.
+
+**`style-src` keeps `'unsafe-inline'`, deliberately.** The UI styles elements
+through React `style` props, and Vite injects stylesheets as inline `<style>` tags
+in development. Removing it would require moving every inline style into
+stylesheets - a real change worth making later, not something to claim now.
+
+**Verified at runtime, not by inspection.** The production binary was launched
+and driven over the webview's debugging protocol: the page loads from
+`http://tauri.localhost/` (embedded assets, so the production policy is the one
+in force), the UI renders with styles applied, `get_profile` returns real data
+over IPC, and the console contains **zero messages** - no CSP violations, no
+errors.
+
+A first attempt at this check was invalid and was redone: a stray Vite dev
+server left over from an earlier `tauri dev` run was still listening, and a
+binary built with plain `cargo build --release` loads the dev URL, so the page
+came from `localhost:1420` and exercised the *development* policy. Only a build
+through `tauri build` exercises the production one.
+
+### Installers build (A4 now fully cleared)
+
+`tauri build` completes end to end and produces both bundles:
+
+| Artifact | Size |
+|---|---|
+| `haa-nexus-desktop.exe` (release) | 9.8 MB |
+| `H.A.A. Nexus_0.1.0_x64_en-US.msi` | 3.6 MB |
+| `H.A.A. Nexus_0.1.0_x64-setup.exe` (NSIS) | 2.5 MB |
+
+**This corrects the previous entry.** That entry reported bundling as blocked
+by a DNS failure while Tauri downloaded the WiX toolset
+(`No such host is known`). The failure was transient: the same command, run
+again unchanged, downloaded WiX and produced both installers. The earlier
+report was accurate about what happened at the time and wrong as a conclusion
+about the repository. Phase 7 debt A4 is therefore fully cleared - `tauri dev`,
+`tauri build`, runtime IPC and installer bundling have all now been exercised
+on a real machine. Installer *signing*, auto-update and release hardening
+remain Phase 9 and remain unattempted.
+
+**Verified:** 267/267 nexus-core, 130/130 desktop, 53/53 Rust - **450 total, 0
+failures**, unchanged by this work. `pnpm -r typecheck` clean. `pnpm -r build`
+succeeds (287.71 kB). `cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## Release Build and Web-Target Runtime Verification (Build-priority steps 2 and 4)
 
 Business Model Spec Section 3 step 2 asks for the Tauri + Rust build to be
