@@ -123,7 +123,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (267 nexus-core + 130 desktop = 397).
+# Every package's tests (279 nexus-core + 137 desktop = 416).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
@@ -143,7 +143,9 @@ pnpm install
 # against the Rust command that receives them. A source-scanning invariant
 # test keeps the Assessment live-feedback boundary enforced in one place, and
 # the domain's status/mode/competency-level unions are checked against the
-# SQLite CHECK constraints that have to store them.
+# SQLite CHECK constraints that have to store them. The note comparison
+# (Architecture Section 34(10)) is covered in the domain and as rendered
+# against the real shipped scenario.
 pnpm test
 
 # Typecheck every package

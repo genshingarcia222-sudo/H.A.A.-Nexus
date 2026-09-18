@@ -136,6 +136,23 @@ describe("assessment live-feedback boundary - rendering", () => {
     expect(container.innerHTML).toBe("");
   });
 
+  it("the note comparison is not reachable during an active assessment either", () => {
+    // Section 34(10)'s comparison shows the expected answers, so it must obey
+    // the same boundary as the score: it lives inside SubmissionSummary and is
+    // therefore unreachable until the assessment is completed.
+    startIn("assessment");
+    useSessionStore.setState({ result: realResult() });
+
+    const { container } = render(
+      <MemoryRouter>
+        <SubmissionSummary />
+      </MemoryRouter>
+    );
+
+    expect(container.textContent).not.toContain("Note comparison");
+    expect(container.textContent).not.toContain("Expected");
+  });
+
   it("the Live Scribing route keeps showing the workspace, with no performance text, even with a leaked result", () => {
     startIn("assessment");
     useSessionStore.setState({ result: realResult() });

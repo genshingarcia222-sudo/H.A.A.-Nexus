@@ -11,6 +11,63 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Note Comparison - the Last Unimplemented MVP Acceptance Criterion (A8 cleared)
+
+Architecture Package Section 34 lists thirteen things a learner must be able
+to do entirely offline. Twelve were implemented. Number 10 - "Review a note
+comparison (encounter vs. learner vs. expected)" - never was, and was carried
+as Phase 7 accepted debt A8.
+
+After submitting, the summary now shows a table with one row per documentation
+section and three columns: the encounter as it happened, what the learner
+wrote, and what the scenario required.
+
+**It decides nothing.** `buildNoteComparison` in `nexus-core` is a pure
+derivation over data that already exists: the encounter column is the
+scenario's own per-section content, the learner column is the draft, and the
+expected column is the requirement set the evaluator already scores against.
+Every requirement's status is **read back out of the evaluation's errors**
+rather than recomputed, so the comparison cannot contradict the feedback shown
+directly above it - if the evaluator called something an omission, the
+comparison says "Missing" for exactly that reason, and the four
+requirement-linked error types map straight through
+(`omission`, `incorrect_negative`, `wrong_section`, `incorrect_terminology`).
+
+**Two details worth recording:**
+
+- `additionalNotes` has no encounter counterpart, so its encounter cell is
+  empty rather than filled with something approximate.
+- Only `requiredDocumentation` appears. The evaluator raises
+  requirement-linked errors for required items alone, so an optional item has
+  no status to read back - including one would mean recomputing whether it was
+  documented, which is precisely the second opinion this view must not have. A
+  test pins that exclusion and its reason.
+
+**No product decision.** This adds no scoring rule and changes no grading. The
+view lives inside the submission summary, so it inherits the Phase 8.3
+live-feedback boundary unchanged: an active assessment reaches none of it, and
+a test asserts that. What an Assessment learner sees after submitting is still
+**D3**, still open, and is not decided by this being present in the shared
+summary.
+
+**Tests.** +12 `nexus-core` (column mapping, section grouping, the
+pertinent-negative flag, every status read back from the evaluation, errors
+that name no requirement being ignored, optional exclusion, and no mutation of
+its inputs). +6 desktop, rendered against the **real shipped scenario** rather
+than a fixture shaped to suit the component, plus +1 assessment-boundary test.
+
+**Mutation checks.** Five, each caught: recomputing status instead of reading
+the evaluation (2 tests failed), mapping the encounter column to the wrong
+field (1), showing optional documentation as required (4), dropping the
+per-section grouping (5), and rendering the summary without the assessment
+boundary (2). Every file was restored byte-identical.
+
+**Verified:** 279/279 nexus-core, 137/137 desktop, 53/53 Rust - **469 total, 0
+failures** (+19). `pnpm -r typecheck` clean. `pnpm -r build` succeeds
+(291.37 kB, up from 287.71). `cargo test` unchanged.
+
+---
+
 ## Content Security Policy, and Installers Actually Built (A5 and A4 cleared)
 
 ### A Content Security Policy now exists (A5)

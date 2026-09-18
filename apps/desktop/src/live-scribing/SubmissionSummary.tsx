@@ -11,6 +11,7 @@ import {
 import { formatDuration } from "./formatDuration.js";
 import { lockedScenarioMessage } from "./lockedScenarioMessage.js";
 import { SaveErrorNotice } from "./SaveErrorNotice.js";
+import { NoteComparison } from "./NoteComparison.js";
 import { useRevealableResult, useSessionStore } from "../store/sessionStore.js";
 import { sessionRepository } from "../persistence/repositories.js";
 import { scenarioRepository, lessonRepository } from "../content/scenarios.js";
@@ -133,6 +134,8 @@ export function SubmissionSummary() {
           </div>
         </Card>
       )}
+
+      <NoteComparison scenario={scenario} draft={draft} evaluation={result} />
 
       {recommendations.length > 0 && (
         <Card title="Recommended for you">

@@ -296,7 +296,7 @@ It is **PASS WITH CONDITIONS** rather than a clean PASS because three conditions
 | A5 | ~~`"csp": null` in `tauri.conf.json`~~ **CLEARED** — a production CSP (`default-src 'self'`, `script-src 'self'`, `object-src 'none'`, IPC origins allowed) plus a separate dev policy for Vite/HMR. `style-src` retains `'unsafe-inline'` because the UI uses React `style` props. Verified by running the production binary: zero CSP violations, IPC working. See CHANGELOG |
 | A6 | Exact mid-transcript resume not implemented (`revealedCount` not persisted) |
 | A7 | Recommendation engine does not factor in competency trends |
-| A8 | MVP acceptance criterion §34(10) — note comparison (encounter vs. learner vs. expected) — never implemented |
+| A8 | ~~MVP acceptance criterion §34(10) — note comparison — never implemented~~ **CLEARED** — the submission summary shows a per-section table of encounter vs. learner vs. required, with each requirement's status read back out of the evaluation rather than recomputed. Inherits the Phase 8.3 live-feedback boundary. See CHANGELOG |
 | A9 | `modules.ts` carries a stale `scenarioSchemaVersion: "0.0.0-unbuilt"` |
 | A10 | ~~N+1 query patterns in `list_sessions` and `TauriCompetencyRepository.get()`~~ **CLEARED** — session reads (get/list/interrupted) are one query each; competency lookup uses a per-domain `get_competency_record` command, now exercised over real IPC in the running shell (see A4). See CHANGELOG, Phase 7 Accepted-Debt Remediation |
 | A11 | `main.rs` missing `windows_subsystem = "windows"` for release builds |
