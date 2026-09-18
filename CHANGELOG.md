@@ -11,6 +11,52 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Runtime IPC Verified in the Real Tauri Shell (Phase 7 debt A4, partly cleared)
+
+Until now every claim about TypeScript ↔ Rust communication rested on tests
+that each ran on one side of the boundary. `pnpm tauri dev` had never been
+executed, so nothing proved a single `invoke` call worked end to end. This
+runs it.
+
+**A real defect surfaced immediately.** `tauri dev` starts the Vite dev server
+first, then cargo builds into `src-tauri/target`. Vite's file watcher tried to
+watch the executable cargo was writing and died with
+`EBUSY: resource busy or locked ... haa_nexus_desktop.exe`, which failed the
+`beforeDevCommand` and aborted the whole run. The app could not start at all on
+this platform. Fixed by ignoring the Rust tree in the dev server's watcher
+(`server.watch.ignored = ["**/src-tauri/**"]`), which is what Tauri's own Vite
+guidance specifies; cargo already watches its own sources.
+
+**Verified live**, by attaching to the running WebView2 instance over its
+remote debugging port and calling commands in the page:
+
+| Check | Result |
+|---|---|
+| Real shell detected (`__TAURI_INTERNALS__`, `invoke` present) | yes — so the Tauri repositories, not the in-memory fallback, were in use |
+| `get_profile` | `{ displayName: "Learner", updatedAt: 1789710033038 }` — Rust → SQLite → TypeScript with the exact camelCase names the M6 fixtures pin |
+| `list_sessions`, `list_competency_records` | empty arrays on a fresh database |
+| `get_session` for an unknown id | `null`, not an error — the contract `TauriSessionRepository` depends on |
+| `get_competency_record("accuracy")` | `null` on a fresh database |
+| Wrong argument name (`sessionId` instead of `id`) | rejected: *invalid args `id` for command `get_session`* — the argument-name contract M6 checks statically is enforced at runtime |
+| `save_profile` then `get_profile` | write path works; the value was saved back unchanged, so no local data was altered |
+| Window and UI | renders "Welcome back, Learner" (that name came over IPC), Modules and History; no error overlay, no Rust panic |
+
+The migration runner also ran for real: the app opened a live database, applied
+migrations and created the local user row, which is how `get_profile` had a row
+to return.
+
+**What this does and does not clear.** A4 covered two things. Runtime IPC is
+now verified, and the `tauri dev` path works on Windows. **`tauri build`
+(MSI/NSIS bundling) is still unrun**, so installer packaging remains unverified
+and stays Phase 9 work.
+
+**Verified:** 267/267 nexus-core, 130/130 desktop, 53/53 Rust — **450 total, 0
+failures**. `pnpm -r typecheck` clean. `pnpm -r build` succeeds (287.71 kB).
+`cargo check --all-targets` and `cargo fmt --check` clean. The dev-server
+watcher change affects `vite dev` only, not the production build.
+
+---
+
 ## Domain Unions vs SQLite CHECK Constraints (Complete)
 
 `SessionStatus`, `SimulationMode` and `CompetencyLevel` are TypeScript string

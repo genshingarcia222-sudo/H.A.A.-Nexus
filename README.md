@@ -72,9 +72,18 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
   domain is proven to be accepted by the real CHECK constraints (a value
   outside them is proven to be rejected).
 
-**Still unverified:** `pnpm tauri dev` (launching the actual webview) and
-`tauri build` (MSI/NSIS bundling) have not been run. Installer packaging is
-Phase 9 (Tauri packaging/release hardening), not Phase 7.
+**Runtime IPC verified.** `pnpm tauri dev` has been run: the window launches,
+the React frontend talks to the Rust backend over real IPC against a real
+SQLite database, and the commands behave as the contract tests claim —
+including a wrong argument name being rejected by Tauri itself. See the
+CHANGELOG entry "Runtime IPC Verified in the Real Tauri Shell". Running it
+exposed and fixed a genuine defect: the Vite dev server watched `src-tauri`
+and crashed with `EBUSY` on the executable cargo was writing, aborting
+`tauri dev` entirely.
+
+**Still unverified:** `tauri build` (MSI/NSIS bundling) has not been run.
+Installer packaging is Phase 9 (Tauri packaging/release hardening), not
+Phase 7.
 
 ## Repo layout
 
