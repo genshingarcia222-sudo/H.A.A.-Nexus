@@ -28,7 +28,7 @@ cannot start an assessment session yet.
 | `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
 | `packages/nexus-core/analytics-engine` (overall performance, trend, weak/strong areas, error trends, scenario progress) | **Implemented** — 14 unit tests; every figure computed from real `SessionRecord`/`CompetencyRecord` data, no separate analytics store |
 | Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (53 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (55 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
 | Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Analytics, Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
 | App icons (`src-tauri/icons/`) | **Implemented** — full icon set generated from a brand source image via `tauri icon` |
 | Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
@@ -53,7 +53,7 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
 ```
 
 - `cargo check --all-targets` — **clean**, no errors, no warnings.
-- `cargo test` — **53 passed, 0 failed.** Real-file SQLite (not `:memory:`).
+- `cargo test` — **55 passed, 0 failed.** Real-file SQLite (not `:memory:`).
   14 persistence tests (Phase 7) cover table integrity, WAL + foreign-key
   pragmas, restart idempotency, autosave of an in-progress draft with no
   evaluation yet, autosave survival across a restart, autosave-then-submit
@@ -70,7 +70,8 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
   `apps/desktop/ipc-contract/` round-trips through its DTO, and through
   SQLite, to exactly the same JSON, and every session status and mode in the
   domain is proven to be accepted by the real CHECK constraints (a value
-  outside them is proven to be rejected).
+  outside them is proven to be rejected), and a competency batch is proven to
+  commit all-or-nothing.
 
 **Runtime IPC verified.** `pnpm tauri dev` has been run: the window launches,
 the React frontend talks to the Rust backend over real IPC against a real
@@ -123,7 +124,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (279 nexus-core + 137 desktop = 416).
+# Every package's tests (279 nexus-core + 144 desktop = 423).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,

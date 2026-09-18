@@ -232,11 +232,19 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     // would need the evaluator to score sections independently - a
     // reasonable future refinement, not implemented in Phase 5).
     try {
+      // Read and compute everything first, then write once. Folding domain by
+      // domain meant a failure partway through left this attempt counted in
+      // some domains and not others - and `submit` is idempotent, so a retry
+      // finds the session already completed and never finishes the fold. The
+      // repository writes the batch atomically (one SQLite transaction), so
+      // an attempt lands in every domain or in none.
+      const foldedAt = Date.now();
+      const updates = [];
       for (const domain of COMPETENCY_DOMAINS) {
         const existing = await competencyRepository.get(domain);
-        const updated = updateCompetencyRecord(existing, domain, result.categoryScores[domain], Date.now());
-        await competencyRepository.upsert(updated);
+        updates.push(updateCompetencyRecord(existing, domain, result.categoryScores[domain], foldedAt));
       }
+      await competencyRepository.upsertMany(updates);
     } catch (err) {
       console.error("Failed to update competency records:", err);
     }

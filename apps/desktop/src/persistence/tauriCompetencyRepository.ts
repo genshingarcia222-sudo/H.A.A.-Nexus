@@ -17,4 +17,9 @@ export class TauriCompetencyRepository implements CompetencyRepository {
   async upsert(record: CompetencyRecord): Promise<void> {
     await invoke("upsert_competency_record", { record });
   }
+
+  async upsertMany(records: readonly CompetencyRecord[]): Promise<void> {
+    // One command, one SQLite transaction: the whole fold lands or none of it.
+    await invoke("upsert_competency_records", { records });
+  }
 }

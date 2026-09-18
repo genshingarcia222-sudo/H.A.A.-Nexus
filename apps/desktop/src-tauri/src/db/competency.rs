@@ -44,6 +44,23 @@ pub fn list_competency_records(conn: &Connection) -> rusqlite::Result<Vec<Compet
     Ok(records)
 }
 
+/// Writes several competency records in one transaction.
+///
+/// An attempt is folded into every domain or into none of them. Writing them
+/// one at a time let a failure partway through leave an attempt counted in
+/// some domains and not others, which submitting again could not repair
+/// because submission is idempotent.
+pub fn upsert_competency_records(
+    conn: &mut Connection,
+    records: &[CompetencyRecordDto],
+) -> rusqlite::Result<()> {
+    let tx = conn.transaction()?;
+    for record in records {
+        upsert_competency_record(&tx, record)?;
+    }
+    tx.commit()
+}
+
 pub fn upsert_competency_record(
     conn: &Connection,
     record: &CompetencyRecordDto,

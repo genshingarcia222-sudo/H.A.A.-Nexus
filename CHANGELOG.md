@@ -11,6 +11,53 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Competency Folding Is Now All-or-Nothing (data-integrity fix)
+
+Submitting an attempt folds its category scores into seven competency
+domains. That ran domain by domain - read, compute, write, repeat - so a
+failure partway through left the attempt counted in some domains and not
+others. Because `submit` is idempotent (a second call finds the session
+already `completed` and returns), **nothing could ever finish the fold**: the
+inconsistency was permanent, silent, and would quietly skew every figure
+derived from competency.
+
+Sessions were already written in one transaction; competency was not.
+
+**The fix.** `CompetencyRepository` gains `upsertMany`, and `submit` now reads
+and computes every domain first, then writes them as one batch. The Tauri
+repository sends a single new command, `upsert_competency_records`, which
+writes the whole batch inside one SQLite transaction - so an attempt lands in
+every domain or in none. The fold also stamps one timestamp across all seven
+domains rather than reading the clock per domain, which had made a single
+attempt look like several events spread over time.
+
+**No product decision.** Nothing about what competency means, how it is
+computed, or what a learner sees changed. This makes the existing intent - one
+attempt counts once in every domain - actually hold.
+
+**Tests.** +7 desktop (`competencyFold.test.ts`): the fold is one batch and
+not seven calls; a failing batch leaves no domain written; a read failure
+partway leaves no domain written; one attempt counts exactly once in every
+domain; a repeated submit does not double-count; all seven domains share one
+timestamp; and a failed fold still leaves the attempt saved in history,
+because a derived roll-up must not cost the learner their work. +2 Rust: a
+batch containing a row SQLite rejects commits nothing, and a valid batch
+writes every record.
+
+**Mutation checks.** Four run, three caught: reverting the store to per-domain
+writes (2 tests failed), reading the clock per domain (1), and removing the
+transaction from the Rust batch (1). The fourth - removing the "staging" in
+the in-memory repository - was **not** caught, and that was correct: a
+synchronous loop cannot be observed partway, so the staging guaranteed
+nothing. It was deleted rather than kept as reassuring-looking code, and the
+comment now says where the real guarantee lives.
+
+**Verified:** 279/279 nexus-core, 144/144 desktop, 55/55 Rust - **478 total, 0
+failures** (+9). `pnpm -r typecheck` clean. `pnpm -r build` succeeds.
+`cargo check --all-targets` and `cargo fmt --check` clean.
+
+---
+
 ## Note Comparison - the Last Unimplemented MVP Acceptance Criterion (A8 cleared)
 
 Architecture Package Section 34 lists thirteen things a learner must be able

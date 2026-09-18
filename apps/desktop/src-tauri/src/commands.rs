@@ -85,6 +85,18 @@ pub fn get_competency_record(
 }
 
 #[tauri::command]
+pub fn upsert_competency_records(
+    state: State<DbState>,
+    records: Vec<CompetencyRecordDto>,
+) -> Result<(), String> {
+    let mut conn = state
+        .0
+        .lock()
+        .map_err(|_| "Database lock poisoned".to_string())?;
+    competency::upsert_competency_records(&mut conn, &records).map_err(map_err)
+}
+
+#[tauri::command]
 pub fn upsert_competency_record(
     state: State<DbState>,
     record: CompetencyRecordDto,

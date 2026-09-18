@@ -138,6 +138,59 @@ fn competency_records_survive_a_database_round_trip_byte_for_byte() {
     assert_eq!(serde_json::to_value(&loaded).unwrap(), fixture(COMPETENCY));
 }
 
+// --- competency batch atomicity ---------------------------------------------
+
+#[test]
+fn a_batch_of_competency_records_is_written_all_or_nothing() {
+    // An attempt is folded into every domain or into none. A half-written
+    // fold cannot be repaired by submitting again, because submission is
+    // idempotent, so the batch has to be atomic rather than best-effort.
+    let mut db = TempDb::new();
+    let template: CompetencyRecordDto = serde_json::from_str(COMPETENCY).unwrap();
+
+    let mut good = template.clone();
+    good.domain = "accuracy".to_string();
+    let mut bad = template.clone();
+    bad.domain = "completeness".to_string();
+    // `level` has a CHECK constraint, so this row is refused by SQLite.
+    bad.level = "not_a_real_level".to_string();
+
+    let result = competency::upsert_competency_records(db.conn_mut(), &[good.clone(), bad]);
+    assert!(result.is_err(), "a rejected row must fail the batch");
+
+    let survivor = competency::get_competency_record(db.conn(), &good.domain).unwrap();
+    assert!(
+        survivor.is_none(),
+        "the valid row was committed even though the batch failed"
+    );
+}
+
+#[test]
+fn a_valid_competency_batch_writes_every_record() {
+    let mut db = TempDb::new();
+    let template: CompetencyRecordDto = serde_json::from_str(COMPETENCY).unwrap();
+    let domains = ["accuracy", "completeness", "terminology"];
+    let batch: Vec<CompetencyRecordDto> = domains
+        .iter()
+        .map(|d| {
+            let mut r = template.clone();
+            r.domain = (*d).to_string();
+            r
+        })
+        .collect();
+
+    competency::upsert_competency_records(db.conn_mut(), &batch).unwrap();
+
+    for domain in domains {
+        assert!(
+            competency::get_competency_record(db.conn(), domain)
+                .unwrap()
+                .is_some(),
+            "{domain} missing after a successful batch"
+        );
+    }
+}
+
 // --- status / mode CHECK constraints ----------------------------------------
 
 /// Every `SessionStatus` in the TypeScript union, in the same order as
