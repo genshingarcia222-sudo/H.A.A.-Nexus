@@ -1,0 +1,303 @@
+{
+  "batchId": "NEXUS-PILOT-001",
+  "createdOn": "2026-09-19",
+  "schemaStatus": "PROPOSED — NOT the repository schema. Repository TrainingLesson.knowledgeChecks has only {question, options[], correctOptionIndex}. Claude Code must decide how to carry the extra fields (rationale, source, tier, ids). Field names below are a proposal only.",
+  "difficultyScale": "Repository 6-level scale (1 Foundation, 2 Beginner, 3 Intermediate, 4 Advanced, 5 Expert, 6 Master/Elite). Owner confirmed reuse on 2026-09-19. Levels are AUTHOR PROPOSALS, pending review; no entitlement mapping is implied.",
+  "icdSystemPolicy": "Owner confirmed U.S. ICD-10-CM leads (2026-09-19). This batch contains NO specific ICD codes. All ICD items are concept/workflow items tied to the ICD-10-CM Official Guidelines FY2027.",
+  "sourceVerificationMethod": "Pages were retrieved with a fetch tool that returns a model-generated extract, not raw text. Quotations and section numbers are therefore UNVERIFIED against the primary documents. No item is marked SOURCE-VERIFIED. A human reviewer must open each locator and confirm the wording and section number.",
+  "sources": {
+    "HHS-PR-SUMMARY": {"authority": "U.S. HHS Office for Civil Rights", "title": "Summary of the HIPAA Privacy Rule", "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html", "dateOrVersion": "page dated 2025-03-14 per fetch"},
+    "HHS-MIN-NECESSARY": {"authority": "U.S. HHS Office for Civil Rights", "title": "Minimum Necessary Requirement", "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/minimum-necessary-requirement/index.html", "dateOrVersion": "last reviewed 2013-07-26 per fetch (older page; re-check against 45 CFR 164.502(b) before approval)"},
+    "HHS-BA": {"authority": "U.S. HHS Office for Civil Rights", "title": "Business Associates", "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/business-associates/index.html", "dateOrVersion": "page dated 2026-07-30 per fetch"},
+    "HHS-FAQ-TREATMENT": {"authority": "U.S. HHS Office for Civil Rights", "title": "FAQ: sharing patient information for treatment without authorization", "url": "https://www.hhs.gov/hipaa/for-professionals/faq/does-hipaa-permit-doctors-to-share-patient-information-for-treatment-without-authorization/index.html", "dateOrVersion": "content last reviewed 2022-12-28 per fetch"},
+    "CDC-ICD10CM": {"authority": "CDC / National Center for Health Statistics", "title": "ICD-10-CM", "url": "https://www.cdc.gov/nchs/icd/icd-10-cm/index.html", "dateOrVersion": "page dated 2026-07-02 per fetch; the extract mentioned FY2024 resources, so the page may contain stale references — re-check"},
+    "CDC-ICD10CM-GL-FY27": {"authority": "CDC / NCHS (with CMS)", "title": "ICD-10-CM Official Guidelines for Coding and Reporting FY 2027 — Updated October 1, 2026", "url": "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/ICD10CM/2027/ICD-10-CM-October-1-2026-FY27-Guidelines.pdf", "dateOrVersion": "effective 2026-10-01 to 2027-09-30"}
+  },
+  "versionNote": "On 2026-09-19 the FY2026 code set and guidelines are still in effect; FY2027 takes effect 2026-10-01. Items that cite FY2027 guidelines are not 'current' until that date. Section numbers can shift between fiscal years. Every ICD item needs re-verification when a new fiscal year is released.",
+  "items": [
+    {
+      "id": "NEXUS-L1-PRIV-000001",
+      "domain": "Medical Scribing",
+      "skillArea": "Privacy & Confidentiality",
+      "difficultyLevel": 1,
+      "questionType": "recognition",
+      "learningObjective": "Name the HIPAA term for individually identifiable health information.",
+      "question": "Under the HIPAA Privacy Rule, what is individually identifiable health information (including demographic data) that relates to a person's health, health care, or payment for care called?",
+      "choices": [
+        {"id": "a", "text": "Protected health information (PHI)", "why": "Correct: the Privacy Rule calls this information protected health information."},
+        {"id": "b", "text": "A designated record set", "why": "A designated record set is a defined group of records, not the name for the information itself."},
+        {"id": "c", "text": "A notice of privacy practices", "why": "That is a document telling patients how their information is used."},
+        {"id": "d", "text": "A business associate record", "why": "Not a Privacy Rule term for identifiable health information."}
+      ],
+      "correctChoiceId": "a",
+      "rationale": "HHS's Privacy Rule summary states that the Privacy Rule calls individually identifiable health information 'protected health information (PHI)'.",
+      "source": {"ref": "HHS-PR-SUMMARY", "locator": "Section 'Protected Health Information' (verify heading)"},
+      "variantGroup": "PRIV-PHI-DEFINITION",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED"]
+    },
+    {
+      "id": "NEXUS-L1-PRIV-000002",
+      "domain": "Medical Scribing",
+      "skillArea": "Privacy & Confidentiality",
+      "difficultyLevel": 1,
+      "questionType": "recognition",
+      "learningObjective": "Recognize the three kinds of covered entity.",
+      "question": "Which of the following is one of the three types of covered entity that the HIPAA Privacy Rule applies to?",
+      "choices": [
+        {"id": "a", "text": "A pharmaceutical manufacturer", "why": "Not one of the three covered-entity types."},
+        {"id": "b", "text": "A health care clearinghouse", "why": "Correct: health plans, certain health care providers, and health care clearinghouses are the covered-entity types."},
+        {"id": "c", "text": "A patient's family caregiver", "why": "A family member is not a covered entity."},
+        {"id": "d", "text": "A medical-scribe training website", "why": "A training site is not, by that fact alone, a covered entity."}
+      ],
+      "correctChoiceId": "b",
+      "rationale": "The Privacy Rule applies to health plans, health care providers that transmit health information electronically in connection with standard transactions, and health care clearinghouses.",
+      "source": {"ref": "HHS-PR-SUMMARY", "locator": "Section 'Who is covered by the Privacy Rule' (verify heading)"},
+      "variantGroup": "PRIV-COVERED-ENTITY-TYPES",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED"]
+    },
+    {
+      "id": "NEXUS-L2-PRIV-000003",
+      "domain": "Medical Scribing",
+      "skillArea": "Privacy & Confidentiality",
+      "difficultyLevel": 2,
+      "questionType": "scenario",
+      "learningObjective": "Know that treatment disclosures between providers do not require patient authorization.",
+      "question": "A covered clinic's physician sends a patient's lab report and diagnosis to a specialist she is referring the patient to. Under the HIPAA Privacy Rule, is the patient's written authorization required for this disclosure?",
+      "choices": [
+        {"id": "a", "text": "Yes, written authorization is always required before any disclosure between providers.", "why": "Incorrect: the Rule permits disclosure for treatment without authorization."},
+        {"id": "b", "text": "Yes, but only if the specialist works at a different building.", "why": "Location is not the test."},
+        {"id": "c", "text": "No, the Rule permits covered providers to disclose PHI for treatment purposes without the patient's authorization.", "why": "Correct."},
+        {"id": "d", "text": "No, because lab reports are not PHI.", "why": "Lab reports are PHI; the reason no authorization is needed is the treatment purpose."}
+      ],
+      "correctChoiceId": "c",
+      "rationale": "HHS states that the Privacy Rule allows covered providers to use or disclose PHI, including laboratory reports and diagnoses, for treatment purposes without the patient's authorization, including consultations and referrals (45 CFR 164.506).",
+      "source": {"ref": "HHS-FAQ-TREATMENT", "locator": "FAQ answer text; regulatory basis 45 CFR 164.506"},
+      "variantGroup": "PRIV-TREATMENT-DISCLOSURE",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "SCRIBE-SCOPE-REVIEW: knowledge item only; does not teach a scribe to decide disclosures"]
+    },
+    {
+      "id": "NEXUS-L2-PRIV-000004",
+      "domain": "Medical Scribing",
+      "skillArea": "Privacy & Confidentiality",
+      "difficultyLevel": 2,
+      "questionType": "recall",
+      "learningObjective": "Identify a disclosure the minimum necessary standard does not apply to.",
+      "question": "The minimum necessary standard generally limits uses, disclosures, and requests for PHI to what is needed for the purpose. For which of these does the standard NOT apply?",
+      "choices": [
+        {"id": "a", "text": "A clinic staff member's request for a patient's full record to check a colleague's schedule", "why": "That is a use for a non-treatment purpose, so the standard applies."},
+        {"id": "b", "text": "A billing office's request for far more patient detail than a claim needs", "why": "Subject to the standard."},
+        {"id": "c", "text": "A covered entity sharing patient data with an outside vendor for marketing", "why": "Not on HHS's exception list."},
+        {"id": "d", "text": "A disclosure to a health care provider for treatment", "why": "Correct: HHS lists disclosures to or requests by health care providers for treatment as an exception."}
+      ],
+      "correctChoiceId": "d",
+      "rationale": "HHS lists exceptions to the minimum necessary standard, including disclosures to or requests by health care providers for treatment, disclosures to the individual, and uses or disclosures made under an authorization.",
+      "source": {"ref": "HHS-MIN-NECESSARY", "locator": "Page text, exceptions list"},
+      "variantGroup": "PRIV-MIN-NECESSARY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "SOURCE-DATE-OLD: HHS page last reviewed 2013; verify against current 45 CFR 164.502(b) and 164.514(d)"]
+    },
+    {
+      "id": "NEXUS-L2-PRIV-000005",
+      "domain": "Medical Scribing",
+      "skillArea": "Privacy & Confidentiality",
+      "difficultyLevel": 2,
+      "questionType": "interpretation",
+      "learningObjective": "Distinguish treatment from payment and health care operations.",
+      "question": "Which activity fits the Privacy Rule's definition of 'treatment'?",
+      "choices": [
+        {"id": "a", "text": "A health plan determining premiums and coverage", "why": "That is payment."},
+        {"id": "b", "text": "A clinic reviewing its own quality measures across many patients", "why": "Quality assessment is a health care operation."},
+        {"id": "c", "text": "Two providers coordinating an individual patient's care and related services", "why": "Correct: treatment is provision, coordination, or management of health care and related services for an individual by one or more providers."},
+        {"id": "d", "text": "An auditor reviewing claims for legal compliance", "why": "Audits and legal services fall under health care operations."}
+      ],
+      "correctChoiceId": "c",
+      "rationale": "HHS defines treatment as the provision, coordination, or management of health care and related services for an individual by one or more health care providers; payment and health care operations are separate categories.",
+      "source": {"ref": "HHS-PR-SUMMARY", "locator": "Section on treatment, payment, and health care operations (verify heading)"},
+      "variantGroup": "PRIV-TPO-CATEGORIES",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED"]
+    },
+    {
+      "id": "NEXUS-L3-PRIV-000006",
+      "domain": "Medical Scribing",
+      "skillArea": "Privacy & Confidentiality",
+      "difficultyLevel": 3,
+      "questionType": "scenario",
+      "learningObjective": "Apply the business associate definition to an outside vendor.",
+      "question": "A covered clinic hires an outside company to store and maintain its patients' scanned records on the company's servers. The company will not treat patients or bill for the clinic. Under HHS's description, what is the company's status, and what must the clinic have in place before giving it the records?",
+      "choices": [
+        {"id": "a", "text": "It is a business associate; the clinic must have satisfactory assurances in a contract or other written arrangement before disclosing PHI.", "why": "Correct: maintaining PHI on the clinic's behalf makes it a business associate."},
+        {"id": "b", "text": "It is not a business associate, because it does not treat patients.", "why": "Treating patients is not the test; creating, receiving, maintaining, or transmitting PHI for the covered entity is."},
+        {"id": "c", "text": "It is a business associate, but no written arrangement is needed if the vendor is reputable.", "why": "A written arrangement providing satisfactory assurances is required."},
+        {"id": "d", "text": "It is a covered entity, so it needs its own patient authorizations.", "why": "Performing a function for a covered entity does not by itself make it one."}
+      ],
+      "correctChoiceId": "a",
+      "rationale": "HHS describes a business associate as a person that performs certain functions or activities on behalf of a covered entity that involve creating, receiving, maintaining, or transmitting PHI. A covered entity may disclose PHI to a business associate if it obtains satisfactory assurances, in a contract or other written arrangement, that the associate will appropriately safeguard the information.",
+      "source": {"ref": "HHS-BA", "locator": "Definition and 'satisfactory assurances' paragraphs"},
+      "variantGroup": "PRIV-BUSINESS-ASSOCIATE",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "CLINICAL-REVIEW-NOT-REQUIRED; LEGAL-STYLE ITEM: confirm scenario is squarely within the definition"]
+    },
+    {
+      "id": "NEXUS-L1-ICD-000007",
+      "domain": "ICD",
+      "skillArea": "Classification Awareness",
+      "difficultyLevel": 1,
+      "questionType": "recognition",
+      "learningObjective": "Identify ICD-10-CM as the U.S. clinical modification used for diagnosis coding.",
+      "question": "Which system is the U.S. clinical modification of the WHO's ICD-10 for diagnosis and condition (morbidity) coding?",
+      "choices": [
+        {"id": "a", "text": "ICD-10-PCS", "why": "PCS is the separate U.S. procedure coding system."},
+        {"id": "b", "text": "ICD-10-CM", "why": "Correct."},
+        {"id": "c", "text": "The WHO ICD-10 exactly as published", "why": "The WHO publication is the base classification, not the U.S. clinical modification."},
+        {"id": "d", "text": "The Alphabetic Index alone", "why": "The Index is one component of ICD-10-CM, not the system."}
+      ],
+      "correctChoiceId": "b",
+      "rationale": "CDC describes ICD-10-CM as a standardized system used to code diseases and medical conditions (morbidity) data. NCHS is responsible for the clinical modification of ICD-10 for U.S. use; WHO owns ICD-10. CMS develops ICD-10-PCS, the procedure system.",
+      "source": {"ref": "CDC-ICD10CM", "locator": "'What is ICD-10-CM' and maintenance paragraphs"},
+      "codingReference": {"system": "ICD-10-CM", "jurisdiction": "US", "release": "concept item, not release-specific", "codes": []},
+      "variantGroup": "ICD-SYSTEM-IDENTITY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED"]
+    },
+    {
+      "id": "NEXUS-L1-ICD-000008",
+      "domain": "ICD",
+      "skillArea": "Lookup Literacy",
+      "difficultyLevel": 1,
+      "questionType": "recall",
+      "learningObjective": "Describe the Tabular List.",
+      "question": "In ICD-10-CM, which description matches the Tabular List?",
+      "choices": [
+        {"id": "a", "text": "An alphabetical list of terms with their corresponding codes", "why": "That describes the Alphabetic Index."},
+        {"id": "b", "text": "A list of the codes reimbursed by each insurer", "why": "Not a component of the classification."},
+        {"id": "c", "text": "A structured list of codes divided into chapters by body system or condition", "why": "Correct."},
+        {"id": "d", "text": "A list of the provider's diagnoses for one encounter", "why": "That is documentation, not the classification."}
+      ],
+      "correctChoiceId": "c",
+      "rationale": "The Official Guidelines describe ICD-10-CM as divided into the Alphabetic Index, an alphabetical list of terms and their corresponding codes, and the Tabular List, a structured list of codes divided into chapters based on body system or condition.",
+      "source": {"ref": "CDC-ICD10CM-GL-FY27", "locator": "Section I.A (Conventions) — verify exact subsection number"},
+      "codingReference": {"system": "ICD-10-CM", "jurisdiction": "US", "release": "FY2027 guidelines (effective 2026-10-01); structure unchanged in concept but re-verify", "codes": []},
+      "variantGroup": "ICD-INDEX-TABULAR",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "ICD-VERSION-REVIEW"]
+    },
+    {
+      "id": "NEXUS-L2-ICD-000009",
+      "domain": "ICD",
+      "skillArea": "Lookup Literacy",
+      "difficultyLevel": 2,
+      "questionType": "workflow-sequencing",
+      "learningObjective": "Follow the Index-then-Tabular lookup workflow.",
+      "question": "According to the ICD-10-CM Official Guidelines, what is the correct way to select a code for a diagnosis documented in the medical record?",
+      "choices": [
+        {"id": "a", "text": "Locate the term in the Alphabetic Index, then verify the code in the Tabular List.", "why": "Correct."},
+        {"id": "b", "text": "Pick the code from the Alphabetic Index and skip the Tabular List to save time.", "why": "Guidelines say both must be used."},
+        {"id": "c", "text": "Reuse the code that was assigned to the same patient's last visit.", "why": "Code assignment follows current documentation, not prior visits."},
+        {"id": "d", "text": "Scan the Tabular List for a code that looks similar and use it.", "why": "The lookup starts with the Index term."}
+      ],
+      "correctChoiceId": "a",
+      "rationale": "The Guidelines direct the coder to first locate the term in the Alphabetic Index and then verify the code in the Tabular List, and state that it is essential to use both.",
+      "source": {"ref": "CDC-ICD10CM-GL-FY27", "locator": "Section I.B.1 (Locating a code) — verify"},
+      "codingReference": {"system": "ICD-10-CM", "jurisdiction": "US", "release": "FY2027 guidelines", "codes": []},
+      "variantGroup": "ICD-LOOKUP-WORKFLOW",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "ICD-VERSION-REVIEW"]
+    },
+    {
+      "id": "NEXUS-L2-ICD-000010",
+      "domain": "ICD",
+      "skillArea": "Version Awareness",
+      "difficultyLevel": 2,
+      "questionType": "recall",
+      "learningObjective": "Recognize that the guidelines and code set are labeled by fiscal year with an effective period.",
+      "question": "The 'ICD-10-CM Official Guidelines for Coding and Reporting FY 2027' are labeled for which effective period?",
+      "choices": [
+        {"id": "a", "text": "January 1, 2027 to December 31, 2027", "why": "ICD-10-CM fiscal years do not follow the calendar year."},
+        {"id": "b", "text": "October 1, 2026 to September 30, 2027", "why": "Correct."},
+        {"id": "c", "text": "July 1, 2026 to June 30, 2027", "why": "Not the labeled period."},
+        {"id": "d", "text": "The guidelines have no effective period", "why": "They are issued for a stated fiscal-year period."}
+      ],
+      "correctChoiceId": "b",
+      "rationale": "The FY 2027 guidelines document states an effective period of October 1, 2026 through September 30, 2027.",
+      "source": {"ref": "CDC-ICD10CM-GL-FY27", "locator": "Title page / effective period statement"},
+      "codingReference": {"system": "ICD-10-CM", "jurisdiction": "US", "release": "FY2027", "codes": []},
+      "variantGroup": "ICD-FY-EFFECTIVE-PERIOD",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "validUntil": "2027-09-30",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "ICD-VERSION-REVIEW", "EXPIRES: re-verify or retire after the FY2027 period"]
+    },
+    {
+      "id": "NEXUS-L2-ICD-000011",
+      "domain": "ICD",
+      "skillArea": "Specificity",
+      "difficultyLevel": 2,
+      "questionType": "interpretation",
+      "learningObjective": "Know when an 'unspecified' code is appropriate.",
+      "question": "According to the ICD-10-CM Official Guidelines, when is a code titled 'unspecified' appropriate?",
+      "choices": [
+        {"id": "a", "text": "When the coder cannot remember the more specific code", "why": "Memory is not the criterion."},
+        {"id": "b", "text": "When no diagnosis is documented at all", "why": "An unspecified code still requires a documented diagnosis; it is not a stand-in for none."},
+        {"id": "c", "text": "Whenever it is faster to look up", "why": "Speed is not the criterion."},
+        {"id": "d", "text": "When the information in the medical record is insufficient to assign a more specific code", "why": "Correct."}
+      ],
+      "correctChoiceId": "d",
+      "rationale": "The Guidelines say codes titled 'unspecified' are for use when the information in the medical record is insufficient to assign a more specific code, and that they should be reported when they most accurately reflect what is known at the encounter.",
+      "source": {"ref": "CDC-ICD10CM-GL-FY27", "locator": "Section I.B.18 — verify"},
+      "codingReference": {"system": "ICD-10-CM", "jurisdiction": "US", "release": "FY2027 guidelines", "codes": []},
+      "variantGroup": "ICD-UNSPECIFIED",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "ICD-VERSION-REVIEW", "AMBIGUITY-CHECK: distractor b states an inference from 'insufficient information'; confirm it is not defensible"]
+    },
+    {
+      "id": "NEXUS-L3-ICD-000012",
+      "domain": "ICD",
+      "skillArea": "Documentation-to-Code Reasoning",
+      "difficultyLevel": 3,
+      "questionType": "scenario",
+      "learningObjective": "Recognize that diagnosis code assignment rests on the patient's provider's documentation.",
+      "question": "During chart review, a nurse's intake note says the patient 'seems like they have diabetes.' The patient's provider has not documented any diabetes diagnosis for the encounter. Under the ICD-10-CM Official Guidelines, what is the appropriate conclusion about assigning a diabetes diagnosis code?",
+      "choices": [
+        {"id": "a", "text": "Assign the diabetes code, because the nurse's note is in the record.", "why": "Diagnosis code assignment is based on the patient's provider's documentation."},
+        {"id": "b", "text": "Do not assign it on that basis; diagnosis code assignment rests on the patient's provider's documentation.", "why": "Correct."},
+        {"id": "c", "text": "Assign an 'unspecified' diabetes code, since the details are missing.", "why": "'Unspecified' is for a documented diagnosis lacking detail, not for one that was never documented by the provider."},
+        {"id": "d", "text": "Assign it if the patient's chart shows a diabetes medication from another clinic.", "why": "Coding the diagnosis from an inferred medication link is unsupported inference."}
+      ],
+      "correctChoiceId": "b",
+      "rationale": "The Guidelines state that code assignment is based on the patient's provider's diagnostic statement that the condition exists; the documented exceptions (for example BMI, pressure ulcer stage, coma scale) concern specific measures that other clinicians may document, not the diagnosis itself.",
+      "source": {"ref": "CDC-ICD10CM-GL-FY27", "locator": "Sections I.A.19 and I.B.14 — verify wording and numbering"},
+      "codingReference": {"system": "ICD-10-CM", "jurisdiction": "US", "release": "FY2027 guidelines", "codes": []},
+      "variantGroup": "ICD-PROVIDER-DOCUMENTATION",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": ["SOURCE-LOCATOR-UNVERIFIED", "ICD-VERSION-REVIEW", "SCRIBE-SCOPE-REVIEW: no next-action (query/escalate) is taught here because no AHDI/Joint Commission source was verified for it"]
+    }
+  ],
+  "blockedTopics": [
+    {"topic": "Outpatient handling of uncertain diagnoses ('probable', 'suspected')", "reason": "Required authority: ICD-10-CM Official Guidelines Section IV; not retrieved in this pass.", "status": "CONTENT BLOCKED"},
+    {"topic": "Any specific ICD-10-CM code, including code examples", "reason": "Requires lookup in the official FY code files (index/tabular XML from CDC/NCHS); not done.", "status": "ICD CONTENT BLOCKED — OFFICIAL VERIFICATION REQUIRED"},
+    {"topic": "Which ICD-10-CM release applies to which date of service", "reason": "Not stated in the retrieved excerpts; needs official CMS/HIPAA code-set guidance.", "status": "CONTENT BLOCKED"},
+    {"topic": "Scribe query/escalation behavior, provider review, authentication, credential use", "reason": "Required authority: AHDI and Joint Commission; not retrieved. Repository lessons already teach some of this without sources.", "status": "CONTENT BLOCKED — AUTHORITATIVE SOURCE REQUIRED"}
+  ],
+  "batchSummary": {
+    "count": 12,
+    "byLevel": {"1": 4, "2": 6, "3": 2},
+    "byDomain": {"Medical Scribing / Privacy & Confidentiality": 6, "ICD": 6},
+    "note": "Level 1 to 3 only. No Advanced or higher level content was attempted; higher levels need more source work.",
+    "productionEligible": 0
+  }
+}
