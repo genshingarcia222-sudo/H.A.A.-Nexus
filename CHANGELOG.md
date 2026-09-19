@@ -11,6 +11,51 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Development-Only Browser Persistence (2026-09-19)
+
+**Autonomous implementation decision, not a product decision.** Running the
+frontend in a browser falls back to in-memory repositories, so every reload
+wiped the session and made looking at the developing UI needlessly painful.
+Three `localStorage`-backed repositories now implement the existing
+`SessionRepository` / `CompetencyRepository` / `ProfileRepository` contracts, wired in
+only when `import.meta.env.DEV` is true, the app is not inside the Tauri
+shell, and storage actually works.
+
+**This does not answer D10.** What persists a real web learner's progress -
+per-browser, per-account across devices, or both - remains open in
+`docs/DECISION_REGISTER.md`. This has no migration story, no schema
+versioning and no account model; the DEV guard is what keeps it out of any
+shipped web build. `persistenceMode` now reports which of the three backends
+is in use, so the distinction is visible rather than assumed.
+
+**Test determinism.** `import.meta.env.DEV` is also true under vitest, and
+jsdom provides a `localStorage` - so jsdom tests were silently getting
+browser storage instead of the in-memory repositories they are written for.
+They still passed, which is precisely the problem: the suite's behaviour
+depended on which environment a file happened to use. Test mode is now
+excluded explicitly.
+
+**Failure paths are part of the contract.** Storage is probed rather than
+assumed (it throws in a private window, with site data blocked, or when a
+quota is exhausted); corrupt stored JSON reads as empty rather than breaking
+the app on boot; a failed write is swallowed so a development convenience can
+never take the app down.
+
+**Verified.** +10 desktop tests covering the reload lifecycle (a new
+repository over the same storage, which is what a page load does), newest-first
+ordering matching SQLite, interrupted-session recovery, batch competency
+writes, unavailable storage, corrupt data and namespaced keys. Then in the
+real browser at `http://localhost:1420/`: started a Practice attempt, typed a
+chief complaint, submitted (scored 73/100), confirmed `nexus.dev.sessions` and
+`nexus.dev.competency` were written with 7 competency domains, reloaded the
+page, and saw the attempt restored in History.
+
+**Totals:** 279/279 nexus-core, 154/154 desktop, typecheck and build clean.
+Rust was untouched and not re-run; it remains at 55 from the previous
+checkpoint.
+
+---
+
 ## Preflight: Readiness and Decision-Register Validation (2026-09-19)
 
 **What changed:** `tools/preflight/` reports, in one command, what state the

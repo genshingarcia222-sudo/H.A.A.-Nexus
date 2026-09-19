@@ -88,6 +88,13 @@ promises continuity across devices.
 verified browser-capable; repository contracts, serialization fixtures and the
 Tauri/in-memory split already exist and would not change.
 
+**Development-only scaffolding (2026-09-19, autonomous):** `pnpm dev:desktop`
+now persists to `localStorage` so a reload does not wipe the session while
+this decision is open. It is gated on `import.meta.env.DEV`, excluded from
+test mode, and absent from any production bundle. It has no migration story,
+no schema versioning and no account model, and **does not** resolve D10 in
+either direction - `persistenceMode` reports which backend is live.
+
 ---
 
 ## A2 — The module registry declares 12 competency domains; the evaluator produces 7
