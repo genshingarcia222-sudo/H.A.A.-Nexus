@@ -11,6 +11,64 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D3 Characterized, Not Decided — Assessment Post-Submission (2026-09-20)
+
+**An audit, not a feature.** D1 made Assessment reachable, which made its
+post-submission behaviour something learners actually see. That behaviour was
+traced and written down. **No product policy was selected, and no Assessment
+behaviour changed.**
+
+**What the code does today.** `routes/LiveScribing.tsx` renders
+`SubmissionSummary` for *any* completed session, and `SubmissionSummary`
+branches on nothing but the data - there is no mode check anywhere in the
+post-submission path. A submitted Assessment therefore receives exactly what
+Practice receives: the overall score out of 100 with active time and flag
+count, all seven category scores, per-error WHAT/WHY/HOW feedback, the
+§34(10) note comparison *including the expected column*, performance-derived
+recommendations, the learner's own draft played back, and two controls - "Back
+to library" and "Retry this scenario", with no cooldown, attempt limit or
+review lock. The attempt is saved to history carrying its evaluation and
+folded into competency and analytics like any other.
+
+**That list is evidence, not policy.** Every item predates Assessment being
+reachable. Recording it here does not approve it, and D3 remains the owner's
+to answer.
+
+**Characterization test added.**
+`assessmentPostSubmission.characterization.test.tsx` (5 tests) pins the
+observable behaviour, including that Assessment and Practice render the same
+surfaces. It says in its own header that it is expected to fail and be
+rewritten once D3 is decided - that is the point of it: to make a change to
+the Assessment results experience deliberate rather than incidental.
+
+**A pre-existing gap found while tracing, and deliberately not fixed.** Three
+matrix capabilities - `canViewDetailedScoreBreakdown`, `canTrackCompetency`
+and `canViewAnalytics` - are declared per tier but read by no application
+code. The full category breakdown is shown to every tier, competency is folded
+for every tier, and analytics counts everything. This is older than D1 and is
+not an Assessment behaviour. Wiring any of them up would decide D3 or D5 by
+implementation, so nothing was wired.
+
+**Stale status text corrected.** `PHASE_8_3_ASSESSMENT_MODE.md` still said no
+learner could start an Assessment and listed D1 as blocked. D1 is now recorded
+as resolved there, with the evidence gathered while it was open kept for the
+record, and the remaining-work table updated. D3-D6 remain blocked.
+
+**Verification.** 296/296 nexus-core, 172/172 desktop (+5), typecheck clean,
+build clean, 17/17 preflight. Browser: a Practice attempt was submitted at
+`http://localhost:1420/` and the full post-submission surface was observed
+end to end (78/100, three feedback items, note comparison, draft playback,
+both controls). **An Assessment could not be exercised in the browser** - the
+app has no tier-switching surface, because subscription persistence is D10,
+and adding one purely to obtain evidence would have been production
+scaffolding for a test. Assessment post-submission behaviour is therefore
+evidenced by tests and by the shared code path, not by clicking. Rust was
+untouched and not re-run.
+
+**D3 remains BLOCKED - owner decision required.**
+
+---
+
 ## D1 Resolved — Assessment Mode Requires Pro (2026-09-19)
 
 **Owner decision.** The owner selected **Pro** as the minimum subscription

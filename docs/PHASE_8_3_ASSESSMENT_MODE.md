@@ -27,20 +27,28 @@
 | **Live-feedback boundary enforced as state** (see §4) | `mayRevealPerformance` / `assertMayRevealPerformance` in `nexus-core`; `sessionStore.ts`; `SubmissionSummary.tsx` | `621855e` |
 | **Boundary enforced structurally**: one guarded selector plus a source-scanning invariant, so no future surface can reveal performance by forgetting the rule | `selectRevealableResult` / `useRevealableResult` in `sessionStore.ts`; `liveFeedbackBoundary.invariant.test.ts` | Phase 8.3 hardening (see CHANGELOG) |
 
-**Not implemented:** no learner can start an Assessment. There is no entry point and no entitlement capability, because the tier is undecided (D1).
+| **Assessment gated by entitlement (D1 = Pro)**: `canStartAssessment` capability, `canStartMode` mapping in the domain, enforced in `sessionStore.start`, entry point in the scenario library | `capability-matrix.ts`, `resolve.ts`, `sessionStore.ts`, `ScenarioLibrary.tsx` | `34f727c` |
+
+**Reachable since `34f727c`:** Pro and Fast-Track learners can start an Assessment. Free and Practice cannot. What happens *after* an Assessment is submitted is still undecided (D3) - the learner currently receives the same mode-agnostic summary as Practice, which is existing behaviour, not a chosen policy.
 
 ## 3. Product decision log
 
 Every Phase 8.3 decision is classified against the evidence hierarchy. A decision is **AUTHORIZED** only when a direct instruction or a current product specification explicitly establishes it. Current behaviour, tests, tier names and "obvious" defaults are not authorization.
 
-### D1 — Which subscription tier includes Assessment? — **BLOCKED**
+### D1 — Which subscription tier includes Assessment? — **RESOLVED**
 
-*Re-audited 2026-09-18: unchanged. The Business Model Spec Section 4 tier table names Assessment in no row; the entitlement rules establish only that it must be gated by an explicit capability. "Exam-Ready Pro" is a product name, not a statement of entitlement.*
+**Owner decision, 2026-09-19: Pro.** Pro is the *minimum* tier that may start
+Assessment: Free blocked, Practice blocked, Pro allowed, Fast-Track allowed.
+Implemented and verified at `34f727c`; the full record is in
+`DECISION_REGISTER.md`. The evidence gathered while it was open is kept below,
+because it explains why the answer could not be inferred.
+
+*Audited 2026-09-18, while blocked: the Business Model Spec Section 4 tier table named Assessment in no row; the entitlement rules established only that it must be gated by an explicit capability. "Exam-Ready Pro" is a product name, not a statement of entitlement.*
 
 - **Evidence examined:** Business Model Spec §4 tier table (Assessment appears in no row); §4 entitlement rules ("Assessment … should be gated by explicit entitlement capabilities"); §9 monetization roadmap ("Add Assessment mode" — timing only); §12 launch gate; Architecture Package §24/§25; `capability-matrix.ts`.
 - **Why insufficient:** the specification establishes *that* Assessment is gated, not *which* tier. The tier name "Exam-Ready Pro" suggests an exam feature but is not a statement of entitlement. Adding a capability with any per-tier values — including `false` everywhere — would encode feature availability.
-- **Blocked work:** the Assessment entitlement capability and its matrix values; a learner entry point in the scenario library; mode-level enforcement in `sessionStore.start`.
-- **Decision required:** which tier(s) include Assessment.
+- **What it was blocking:** the Assessment entitlement capability and its matrix values; a learner entry point in the scenario library; mode-level enforcement in `sessionStore.start`. All three now exist.
+- **Answer:** Pro.
 
 ### D2 — What is prohibited live feedback during Assessment? — **PRINCIPLE AUTHORIZED**
 
@@ -51,7 +59,8 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 
 - **Evidence examined:** Business Model Spec §5 and §10.2 (both about *live* feedback); Architecture Package §34 (mode-agnostic acceptance criteria).
 - **Why insufficient:** post-submission results are not live feedback, and no source defines Assessment results policy (score, breakdown, WHAT/WHY/HOW feedback, recommendations, retry).
-- **Current state:** the existing mode-agnostic summary is unchanged. It is unreachable for Assessment until D1 is decided.
+- **Current state, characterized 2026-09-20 (evidence, not policy):** `routes/LiveScribing.tsx` renders `SubmissionSummary` for *any* completed session, and `SubmissionSummary` branches on no mode. A submitted Assessment therefore shows exactly what Practice shows: overall score out of 100 with active time and flag count; all seven category scores; per-error WHAT/WHY/HOW feedback; the §34(10) note comparison including the **expected** column; performance-derived recommendations; the learner's own draft played back; and two controls, "Back to library" and "Retry this scenario" (no cooldown, no attempt limit, no review lock). The attempt is saved to history carrying its evaluation and folded into competency like any other. Pinned by `assessmentPostSubmission.characterization.test.tsx`, which exists to make a future change visible - it is expected to be rewritten once D3 is answered.
+- **Note:** the matrix capability `canViewDetailedScoreBreakdown` is declared for every tier but read by no application code, so the category breakdown is currently shown to all tiers in all modes. That is a pre-existing gap, not an Assessment behaviour, and closing it is a product decision (D3/D5), not a cleanup.
 - **Decision required:** what an Assessment learner sees after submitting.
 
 ### D4 — Is Assessment closed-book? — **NOT AUTHORIZED**
@@ -138,11 +147,11 @@ Every Phase 8.3 decision is classified against the evidence hierarchy. A decisio
 
 | Work | Status |
 |---|---|
-| Assessment entitlement capability + matrix values | **BLOCKED** — D1 |
-| Learner entry point and mode-level start enforcement | **BLOCKED** — D1 |
-| Assessment-specific results presentation | **BLOCKED** — D3 |
+| Assessment entitlement capability + matrix values | **DONE** — D1 = Pro, `34f727c` |
+| Learner entry point and mode-level start enforcement | **DONE** — `34f727c` |
+| Assessment-specific results presentation | **BLOCKED** — D3 (current behaviour characterized 2026-09-20) |
 | Closed-book navigation restriction | **BLOCKED** — D4 (may not be required) |
 | Analytics/competency separation | **BLOCKED** — D5 (may not be required) |
 | Interrupted-Assessment policy | **BLOCKED** — D6 |
 
-Phase 8.3 cannot close until D1 is decided and the entry point exists.
+D1 is decided and the entry point exists. Phase 8.3 cannot close while D3-D6 remain unanswered: Assessment is reachable, but what it *does* after submission, whether it is closed-book, how it counts, and what happens when it is interrupted are all still the owner's to decide.

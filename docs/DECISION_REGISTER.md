@@ -268,6 +268,18 @@ interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). All remain
 unresolved. D2 is authorized and enforced.
 
+**D3 became urgent when D1 resolved**, because Assessment is now reachable and
+its post-submission behaviour is therefore something learners actually see. On
+2026-09-20 that behaviour was *characterized*, not decided: a submitted
+Assessment currently shows the identical mode-agnostic summary Practice shows -
+score, all seven category scores, WHAT/WHY/HOW feedback, the note comparison
+including the expected column, recommendations, the draft played back, and
+retry with no limit - and counts in history, analytics and competency like any
+other attempt. Nothing in that list is an approved policy; it is what the code
+did before Assessment was reachable. The full trace is in
+`PHASE_8_3_ASSESSMENT_MODE.md` D3, pinned by
+`assessmentPostSubmission.characterization.test.tsx`.
+
 ---
 
 ## Roadmap steps 4 and 5
