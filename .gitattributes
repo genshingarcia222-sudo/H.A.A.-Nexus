@@ -1,0 +1,6 @@
+# Pilot Batch 001 is identified by SHA-256, in its handoff manifest and in
+# `question-bank/pilot-compatibility.e2e.test.ts`. A line-ending conversion
+# would change those bytes and fail the integrity check for a reason that has
+# nothing to do with the content, so these files are never converted.
+nexus-pilot-batch-001.candidates.json -text
+nexus-pilot-batch-001.candidates.r2.json -text

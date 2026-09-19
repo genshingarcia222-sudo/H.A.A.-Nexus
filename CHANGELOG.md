@@ -11,6 +11,106 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D11 Resolved — Canonical Training Question Bank (2026-09-19)
+
+**Product decision — owner authorized.** The owner selected **Option B —
+Separate Reusable Training Question Bank**: canonical Training questions are
+their own records, independent of any lesson. This was supplied explicitly and
+is recorded as the owner's decision, not an engineering choice. Recorded in
+`docs/DECISION_REGISTER.md` D11.
+
+**What was built — the content contract, and nothing downstream of it.** A new
+`question-bank` module in `nexus-core`: a schema, a reusable validator
+(`validateTrainingQuestion`, `validateQuestionBank`) following the
+`validateScenario` convention of hard failures rather than warnings, and four
+test files. A question carries a stable id, id-addressed choices, a required
+rationale, optional per-choice explanations, required provenance, optional
+coding/ICD metadata, a variant group, a content lifecycle and a verification
+record.
+
+Two failure modes the current `KnowledgeCheck` shape allows are impossible
+here: `correctChoiceId` must resolve to a declared choice (today's
+`correctOptionIndex` is not bounds-checked against `options`), and choice
+identity is an id rather than a position, so reordering for display cannot
+silently change the answer.
+
+**No silent field loss.** Every object is `.strict()`: an unrecognised key is a
+hard error naming the field. The lesson schema's behaviour — dropping unknown
+keys without a word — is how a rationale or a citation could be authored,
+accepted, and then simply not exist. *Implementation decision — constrained by
+existing requirements*, and the one place the bank deliberately departs from
+lesson-schema behaviour. `TrainingLessonSchema` itself was not changed.
+
+**A candidate cannot become production-ready by being parsed.** A question may
+not claim a lifecycle state above `candidate` unless a person is recorded
+against it (`verification.humanVerifiedBy` and `humanVerifiedOn`), and
+`verification` has no default. `isProductionEligible()` is read-only and
+conservative — status, review outcome and a recorded verification must all line
+up — and the promotion workflow that would legitimately set those values is
+deliberately not implemented.
+
+**Pilot Batch 001 is a fixture, unchanged and unpromoted.** Revision 2 is held
+byte-identical at
+`packages/nexus-core/src/question-bank/__fixtures__/`, with its SHA-256 asserted
+against the handoff manifest. All 12 items validate against the canonical model
+and every item-level field is preserved (`id` → `questionId` is the only
+rename). Nine batch-level keys are **not** carried — `createdOn`,
+`schemaStatus`, `difficultyScale`, `icdSystemPolicy`,
+`sourceVerificationMethod`, `versionNote`, `blockedTopics`, `batchSummary`,
+`revisionNotes` — all of which describe the authoring batch rather than any
+question; the test pins that split so a new pilot field with nowhere to go fails
+by name. The 12 items remain `CANDIDATE` / SOURCE-VERIFICATION-PENDING with 0
+production-eligible, human source-locator verification stands at **0 of 12**,
+and nothing in this checkpoint marks any item source-verified.
+
+**Legacy lessons untouched.** `TrainingLessonSchema`, the three shipped lesson
+files, their six knowledge checks and the Training screen are unchanged. No
+lesson was migrated and no learner behaviour changed. The two models coexist by
+design; whether those checks stay, coexist or migrate is a further owner
+decision this one did not answer.
+
+**Implementation decisions — autonomous.** `question-bank` as a sibling engine
+module rather than a subfolder of `training-engine` (its consumers are not only
+Training). `content/question-bank/` as the content location — scanned by none of
+`content/lessons/`, `content/incoming/` or `content/scenarios/**`, with its own
+content-QA test, shipped empty. Supporting both a shared `sources` ref and a
+self-contained inline citation. Closed sets for question type and review status,
+drawn from content that exists rather than invented. `blocked` and `retired` as
+lifecycle hold states. Restating the 1–6 difficulty scale locally with a test
+asserting it agrees with the scenario side, rather than coupling a Training
+content contract to the scenario engine.
+
+**Explicitly not decided, and not encoded anywhere:** entitlement (no Training
+capability exists; `difficultyLevel` is an authoring signal, not a tier),
+seen-item persistence (depends on D10), the runtime selector and 10-question
+runs, randomisation and anti-memorisation, scoring, competency mapping,
+recommendations, Assessment Mode, and medical truth. **This is a foundation, not
+a Training feature** — the bank has no runtime consumer at all.
+
+**Documentation.** `docs/TRAINING_QUESTION_BANK.md` (new), `docs/DECISION_REGISTER.md`
+D11, Architecture Package §16, and a README in `content/question-bank/`.
+
+**One incidental fix.** A `.gitattributes` (the repository's first) marks the
+Pilot 001 candidate files `-text`. They are identified by SHA-256 in the handoff
+manifest and in the compatibility test; on a Windows checkout git would have
+rewritten their line endings and changed those bytes, failing the integrity
+check for a reason unrelated to their content.
+
+**Verification — INCOMPLETE. No Node toolchain on this device.** `node`, `npm`
+and `pnpm` are not installed and `node_modules` is absent, so `pnpm -r test`,
+`pnpm -r typecheck`, `pnpm -r build` and `node tools/preflight/preflight.mjs`
+**could not be run**. This entry therefore claims no test count, and the
+question-bank suite has **never been executed**. What *was* verified, with a
+standalone Node binary and no project dependencies: every file parses, and an
+independent dependency-free restatement of the schema's rules, run against the
+real pilot fixture, passes — 12 questions, 7 sources, hash matching the manifest,
+0 above candidate, 0 human-verified, 0 production-eligible, no unrepresented
+field. That checks the *data* against the contract; it does not execute the
+TypeScript. **The suite must be run before this work is relied on.** Rust was
+untouched.
+
+---
+
 ## D3 Characterized, Not Decided — Assessment Post-Submission (2026-09-20)
 
 **An audit, not a feature.** D1 made Assessment reachable, which made its

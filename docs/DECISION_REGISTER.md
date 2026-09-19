@@ -93,6 +93,62 @@ chosen, an active Assessment cannot leak performance information.
 
 ---
 
+## D11 — Where do canonical Training questions live? — **RESOLVED**
+
+**Resolved** by the owner on 2026-09-19: **Option B — a separate, reusable
+Training Question Bank.**
+
+| | |
+|---|---|
+| **Decision** | D11 — canonical Training content architecture |
+| **Selected value** | **Option B — separate reusable Question Bank** |
+| **Meaning** | each question is its own record, independent of any lesson |
+| **Rejected alternative** | extending `TrainingLesson.knowledgeChecks[]` |
+| **Owner-authorized** | YES (2026-09-19) |
+| **Status** | RESOLVED; schema, validator and tests implemented |
+
+**Implementation:** a new `question-bank` module in `nexus-core` with a strict
+schema, a `validateQuestionBank` / `validateTrainingQuestion` pair following the
+`validateScenario` convention, and `content/question-bank/` as a content
+location scanned by no existing test. Full architecture in
+`TRAINING_QUESTION_BANK.md`.
+
+**This resolves D11 only.** The bank is a content contract. It has no consumer:
+no selector, no runs, no randomisation, no seen-item tracking, no scoring, no
+entitlement mapping. `difficultyLevel` is an authoring signal and is **not**
+mapped to a tier — Training entitlement remains undecided, as does seen-item
+persistence (depends on D10), competency mapping (A2) and recommendation use
+(A7).
+
+**Legacy lessons are untouched.** `TrainingLessonSchema`, the three shipped
+lesson files, their six knowledge checks and the Training screen are unchanged.
+Whether those checks stay, coexist or migrate is a further owner decision that
+this one deliberately did not answer.
+
+**Pilot Batch 001 is unchanged and unpromoted.** Revision 2 is held as a test
+fixture, byte-identical and hash-asserted, purely to prove the schema can carry
+real authored content. Its 12 items remain `CANDIDATE` /
+SOURCE-VERIFICATION-PENDING with 0 production-eligible; human source-locator
+verification stands at 0 of 12 and is a human gate no code can advance.
+
+### Evidence considered while this decision was open
+
+**What it was blocking:** every field the pilot carries that the repository
+cannot represent — stable item ids, choice ids, per-choice explanations,
+rationale, provenance, difficulty on Training content, question type, learning
+objective, variant group, lifecycle status, expiry and coding reference. Where
+each of those lives depended entirely on this answer.
+
+**Current behaviour at the time:** Training content was lesson-shaped only.
+`KnowledgeCheck` carried `{ question, options[], correctOptionIndex }` and
+nothing else; unknown keys were silently stripped and `correctOptionIndex` was
+not bounds-checked against `options`. Both observations are recorded in
+`Claude outputs/nexus-pilot-001-compatibility-report.md` and both are now
+impossible in the bank, which rejects unknown fields by name and requires the
+correct-answer reference to resolve. The lesson schema itself was not changed.
+
+---
+
 ## D10 — What persists a web learner's progress?
 
 **Blocked work:** roadmap step 4 (web-deployed build). Step 5 (PayMongo)
