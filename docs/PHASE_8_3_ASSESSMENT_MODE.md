@@ -110,6 +110,54 @@ and every file was restored byte-identically.
 - **Why insufficient:** reference material does not signal the correctness of ongoing performance, so it falls outside the authorized D2 boundary. Restricting navigation would be a new learner-facing rule.
 - **Decision required:** whether Assessment is open-book or closed-book.
 
+**Current behaviour, characterized 2026-09-20 (evidence, not policy).** An
+active Assessment is **fully open-book, by omission rather than by decision**.
+
+| Reference surface | Reached by | Guard |
+|---|---|---|
+| Knowledge Base (terminology lookup) | nav rail link, `#/knowledge-base` | none |
+| Training (lessons: explanation, examples, knowledge checks with correct answers) | nav rail link, `#/training` | none |
+
+`App.tsx` declares six flat routes with no guards, no redirects and no
+`useBlocker`. `AppShell` renders the same nav rail regardless of session
+state. `KnowledgeBase.tsx`, `Training.tsx`, `AppShell.tsx` and `App.tsx`
+contain **zero** references to `useSessionStore`, `useEntitlementStore`,
+`currentEntitlements` or the session mode - the reference surfaces do not know
+a session exists, so there is nothing to bypass and no hidden button to find.
+Navigating away and back leaves the session running and the clock advancing.
+
+**The material detail for this decision:** the Knowledge Base is keyed
+lay-term → clinical-term with accepted alternatives, and the evaluator scores
+the Terminology category on exactly those conversions. In `SCRIBE-FM-014` the
+requirements are "document the cough as non-productive" and "document absence
+of shortness of breath using clinical terminology"; searching the Knowledge
+Base for "shortness of breath" during an active session returns **dyspnea**,
+plus the accepted forms. Reference material here is therefore not neutral
+background - for one scored category it is close to an answer key. Stated as a
+fact about the content, not as an argument for either policy.
+
+**Also relevant, not decided:** an Assessment cannot pause, so time spent in
+the Knowledge Base is counted against the learner by the Time Efficiency
+category. Whether that is an acceptable natural cost or an unfair one is part
+of the same decision.
+
+**Verified in-browser at Practice** (the only mode reachable at the default
+Free tier): mid-session navigation to the Knowledge Base returned the dyspnea
+entry, Training listed all three lessons, and returning to Live Scribing found
+the session still in progress with the timer advanced. **Assessment itself
+could not be exercised in-browser** - it requires Pro and no tier-switching
+surface exists (D10). The Assessment path is established from source instead,
+which is conclusive here precisely because the surfaces contain no mode logic
+at all.
+
+**No characterization test was added.** The finding is the *absence* of a
+guard, provable from the route table and the four files above; a test
+asserting "the Knowledge Base renders during an Assessment" would fail the
+moment D4 is answered in the restrictive direction, which is the next expected
+change. No production behaviour was altered to make the audit easier.
+
+- **The decision surface:** (1) is the Knowledge Base available during an active Assessment; (2) is Training/lesson content available; (3) if either is restricted, is that enforced at the route (a learner typing the URL) or only in the nav rail; (4) does the answer differ by tier. Dimension (4) is listed because the entitlement machinery could express it, not because anything today suggests it should.
+
 ### D5 — Do Assessment results count in analytics and competency? — **NOT AUTHORIZED**
 
 - **Evidence examined:** Architecture Package §14/§18 (mode-agnostic); Business Model Spec §4 (competency and analytics tiering only).

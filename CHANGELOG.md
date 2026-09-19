@@ -11,6 +11,58 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D4 Audit — Assessment Is Open-Book by Omission (2026-09-20)
+
+**An audit, not a decision. No production code changed.** D4 - whether an
+Assessment is closed-book - remains the owner's to answer.
+
+**Finding.** An active Assessment is fully open-book, and nothing enforces
+anything. `App.tsx` declares six flat routes with no guards, no redirects and
+no `useBlocker`; `AppShell` renders the same nav rail whatever the session is
+doing. `KnowledgeBase.tsx`, `Training.tsx`, `AppShell.tsx` and `App.tsx`
+contain **zero** references to the session store, the entitlement store or the
+session mode. There is no hidden button to find and no direct-URL bypass to
+report, because there is no boundary in the first place - the reference
+surfaces do not know a session exists.
+
+**The detail that matters for the decision.** The Knowledge Base is keyed
+lay-term → clinical-term with accepted alternatives, and the evaluator scores
+the Terminology category on exactly those conversions. Searching it for
+"shortness of breath" mid-session returns **dyspnea** - which is what
+`SCRIBE-FM-014` requires the learner to document. For one scored category the
+reference material is close to an answer key. That is a fact about the
+content, offered as evidence for either policy, not an argument for one.
+
+**Also recorded:** an Assessment cannot pause, so time spent reading reference
+material counts against Time Efficiency. Whether that is a fair natural cost
+is part of the same question.
+
+**Browser.** Verified at Practice, the only mode reachable at the default Free
+tier: mid-session navigation to the Knowledge Base returned the dyspnea entry,
+Training listed all three lessons, and returning to Live Scribing found the
+session still running with the clock advanced. **Assessment could not be
+exercised in-browser** (requires Pro; no tier-switching surface exists, D10).
+The Assessment path is established from source instead - conclusive here
+precisely because the surfaces contain no mode logic at all.
+
+**No test was added, deliberately.** The finding is the *absence* of a guard,
+provable from the route table and those four files. A test asserting "the
+Knowledge Base renders during an Assessment" would fail the moment D4 is
+answered restrictively, which is the next expected change - a tripwire on
+planned work is not coverage. No production behaviour was altered to make the
+audit easier, and no tier-switching scaffolding was added.
+
+**D1, D2 and D3 unchanged. D5 and D6 remain unresolved and untouched** -
+competency/analytics treatment and interruption behaviour were not examined
+for policy and not modified.
+
+**D4 remains BLOCKED — owner decision required.** The surface: whether the
+Knowledge Base is available during an active Assessment; whether Training is;
+if restricted, whether that is enforced at the route or only in the nav rail;
+and whether the answer varies by tier.
+
+---
+
 ## D3 Resolved — Assessment Post-Submission, All Six Surfaces ON (2026-09-20)
 
 **Owner decision.** An Assessment learner receives the full post-submission
