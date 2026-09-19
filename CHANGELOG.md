@@ -11,6 +11,53 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Preflight: Readiness and Decision-Register Validation (2026-09-19)
+
+**What changed:** `tools/preflight/` reports, in one command, what state the
+repository is actually in — git state, decision status parsed from the
+register, scenario inventory and difficulty coverage, the A2 domain mismatch,
+the A9 schema-version placeholder, and provider readiness. `pnpm preflight`
+prints it; `pnpm preflight:test` runs its tests. No dependencies were added.
+
+**Why:** the same questions were being re-answered by hand at the start of
+every session — is the tree clean, which decisions are open, how much content
+exists, is a tunnel installed, is PayMongo configured. Measuring them costs a
+second and removes the temptation to answer them from memory.
+
+**It observes; it never decides.** Preflight does not edit the register, does
+not resolve a decision, and does not gate on a blocked one — a blocked decision
+is this project's normal state. It exits non-zero only when the register itself
+is malformed, which is a defect in the record rather than a product question.
+
+**Secrets.** Provider readiness reports configured variable *names* and a mode
+derived from a key prefix (`test`, `live`, `unconfigured`, `unknown`). No value
+is printed, returned or logged, and a test asserts that no key-shaped value can
+reach the report.
+
+**It found a real defect on its first run.** The A6 entry in
+`docs/DECISION_REGISTER.md` described its blocker only in prose, so it parsed
+as neither blocked nor resolved — an entry that reads as settled at a glance
+with nothing to contradict it. A6 now records its blocker explicitly: it is the
+engineering half of **D8**, because resuming changes elapsed time, which feeds
+the score.
+
+**Verification:** 17 preflight tests pass (register parsing and
+classification, duplicate ids, broken document references, range-heading
+pointers, provider modes, secret non-exposure, and the shipped register parsing
+cleanly). Focused by design: no application source changed, so the previous
+verified baseline of 478 tests remains the baseline and was not re-run to
+restate an unchanged number.
+
+**Known limitations:** preflight reads the last fetched `origin/main` rather
+than reaching the network, and says so in its output. Its tests run through
+`pnpm preflight:test`, not `pnpm -r test`, because `tools/` is deliberately not
+a workspace package.
+
+**Unresolved decisions are unchanged:** D1, D10, A2, A9, A6, A7, A12 and D3–D9
+all remain open. Nothing in this milestone resolves any of them.
+
+---
+
 ## Open Decision Register (2026-09-18)
 
 **What changed:** a new `docs/DECISION_REGISTER.md` consolidates every decision

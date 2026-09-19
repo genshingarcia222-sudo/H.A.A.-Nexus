@@ -152,6 +152,12 @@ policy that no source defines; inventing "1.0" would be fabricating a fact.
 
 ## A6 — Exact mid-transcript resume is not implemented
 
+**Blocked work:** persisting transcript reveal position and restoring an
+interrupted attempt in place. **Blocked because:** resuming changes elapsed
+time, which feeds `timeEfficiencyRatio` and therefore the score, so attempt
+identity and time accounting are product decisions — this is the engineering
+half of **D8**, and Assessment resume is separately blocked by **D6**.
+
 **Current behaviour, verified:** `revealedCount` is **not** part of
 `SessionRecord` — it appears nowhere in the persistence types or the IPC
 fixtures. Drafts, flags, timings and status are persisted; transcript position

@@ -15,6 +15,11 @@ Every open decision that currently blocks work — with the evidence and the
 options the architecture supports — is collected in
 [`docs/DECISION_REGISTER.md`](docs/DECISION_REGISTER.md).
 
+`pnpm preflight` prints the current readiness picture: git state, which
+decisions are open, scenario inventory, the competency-domain mismatch, the
+scenario schema-version placeholder, and provider readiness (names and mode
+only — never key values).
+
 Phase 7 (the Pre-Commercialization Audit & Stabilization Gate) closed as PASS
 WITH CONDITIONS; its evidence and disposition are recorded in
 `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`. Phase 8.1 (Entitlement Domain
