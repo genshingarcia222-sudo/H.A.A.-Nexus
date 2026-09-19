@@ -29,7 +29,7 @@
 
 | **Assessment gated by entitlement (D1 = Pro)**: `canStartAssessment` capability, `canStartMode` mapping in the domain, enforced in `sessionStore.start`, entry point in the scenario library | `capability-matrix.ts`, `resolve.ts`, `sessionStore.ts`, `ScenarioLibrary.tsx` | `34f727c` |
 
-**Reachable since `34f727c`:** Pro and Fast-Track learners can start an Assessment. Free and Practice cannot. What happens *after* an Assessment is submitted is still undecided (D3) - the learner currently receives the same mode-agnostic summary as Practice, which is existing behaviour, not a chosen policy.
+**Reachable since `34f727c`:** Pro and Fast-Track learners can start an Assessment. Free and Practice cannot. What happens *after* an Assessment is submitted was decided on 2026-09-20 (D3): all six post-submission surfaces ON, delivered by the same mode-agnostic summary Practice uses.
 
 ## 3. Product decision log
 
@@ -55,13 +55,54 @@ because it explains why the answer could not be inferred.
 - **Evidence:** Business Model Spec §10.2; the session owner's boundary (§1 above).
 - **Implemented:** see §4. Enforcement is limited to information that actually signals ongoing performance. No broader restriction was invented.
 
-### D3 — What does an Assessment learner see after submitting? — **NOT AUTHORIZED**
+### D3 — What does an Assessment learner see after submitting? — **RESOLVED**
 
-- **Evidence examined:** Business Model Spec §5 and §10.2 (both about *live* feedback); Architecture Package §34 (mode-agnostic acceptance criteria).
-- **Why insufficient:** post-submission results are not live feedback, and no source defines Assessment results policy (score, breakdown, WHAT/WHY/HOW feedback, recommendations, retry).
-- **Current state, characterized 2026-09-20 (evidence, not policy):** `routes/LiveScribing.tsx` renders `SubmissionSummary` for *any* completed session, and `SubmissionSummary` branches on no mode. A submitted Assessment therefore shows exactly what Practice shows: overall score out of 100 with active time and flag count; all seven category scores; per-error WHAT/WHY/HOW feedback; the §34(10) note comparison including the **expected** column; performance-derived recommendations; the learner's own draft played back; and two controls, "Back to library" and "Retry this scenario" (no cooldown, no attempt limit, no review lock). The attempt is saved to history carrying its evaluation and folded into competency like any other. Pinned by `assessmentPostSubmission.characterization.test.tsx`, which exists to make a future change visible - it is expected to be rewritten once D3 is answered.
-- **Note:** the matrix capability `canViewDetailedScoreBreakdown` is declared for every tier but read by no application code, so the category breakdown is currently shown to all tiers in all modes. That is a pre-existing gap, not an Assessment behaviour, and closing it is a product decision (D3/D5), not a cleanup.
-- **Decision required:** what an Assessment learner sees after submitting.
+**Owner decision, 2026-09-20. All six post-submission surfaces ON:**
+
+| Surface | D3 |
+|---|---|
+| `score` | ON |
+| `category_breakdown` | ON |
+| `what_why_how` | ON |
+| `expected_answer_comparison` | ON |
+| `recommendations` | ON |
+| `immediate_retry` | ON |
+
+**No behaviour changed.** The characterization performed earlier the same day
+established that the existing mode-agnostic summary already did all six.
+Implementing D3 therefore meant *protecting* what existed, not writing new
+results code: `routes/LiveScribing.tsx` still renders `SubmissionSummary` for
+any completed session, and `SubmissionSummary` still branches on no mode.
+There is no Assessment-specific results renderer, and adding one would have
+been a second surface to keep in sync for no gain.
+
+**`recommendations = ON` means the whole engine.** The Assessment results
+surface exposes whatever `generateRecommendations` legitimately produces for
+the completed attempt - every rule, in the engine's order, including none. The
+surface does not filter, reorder or cap. All four rules the engine supports
+are covered by tests through the real component: `repeated-hpi-omission` and
+`repeated-terminology-errors` (lesson), `repeated-time-failures` (scenario
+retry), and `fabrication-detected`, which fires from a single occurrence and
+therefore also proves the attempt just submitted is part of the history the
+summary reads. No rule, threshold or recommendation type was invented,
+changed, or reordered by D3.
+
+**`immediate_retry = ON` does not mean unrestricted.** Retry goes through
+`sessionStore.start` like every other entry point, so a learner whose
+entitlement no longer allows Assessment is refused and told why. D3 grants a
+retry action; it does not grant entitlement, and no cooldown or quota was
+added in either direction.
+
+**Contract test:** `assessmentPostSubmission.test.tsx` (15 tests), which
+replaces the same-day characterization file that said it expected to be
+rewritten once D3 was answered. Four mutation checks confirmed it bites:
+suppressing the recommendation card, rendering only the first recommendation,
+dropping the expected column, and retrying in the wrong mode each failed it,
+and every file was restored byte-identically.
+
+- **Evidence examined while this decision was open:** Business Model Spec §5 and §10.2 (both about *live* feedback); Architecture Package §34 (mode-agnostic acceptance criteria).
+- **Why it was insufficient:** post-submission results are not live feedback, and no source defined Assessment results policy (score, breakdown, WHAT/WHY/HOW feedback, recommendations, retry). The answer had to come from the owner, and did.
+- **Note, unchanged by D3:** the matrix capability `canViewDetailedScoreBreakdown` is declared for every tier but read by no application code, so the category breakdown is shown to all tiers in all modes. D3 sets the breakdown ON for Assessment; it says nothing about tier-based filtering, which remains a separate question.
 
 ### D4 — Is Assessment closed-book? — **NOT AUTHORIZED**
 
@@ -149,9 +190,9 @@ because it explains why the answer could not be inferred.
 |---|---|
 | Assessment entitlement capability + matrix values | **DONE** — D1 = Pro, `34f727c` |
 | Learner entry point and mode-level start enforcement | **DONE** — `34f727c` |
-| Assessment-specific results presentation | **BLOCKED** — D3 (current behaviour characterized 2026-09-20) |
+| Assessment results presentation | **DONE** — D3 = all six surfaces ON, satisfied by the existing summary and protected by tests |
 | Closed-book navigation restriction | **BLOCKED** — D4 (may not be required) |
 | Analytics/competency separation | **BLOCKED** — D5 (may not be required) |
 | Interrupted-Assessment policy | **BLOCKED** — D6 |
 
-D1 is decided and the entry point exists. Phase 8.3 cannot close while D3-D6 remain unanswered: Assessment is reachable, but what it *does* after submission, whether it is closed-book, how it counts, and what happens when it is interrupted are all still the owner's to decide.
+D1 and D3 are decided: Assessment is reachable, and what a learner receives after submitting is settled. Phase 8.3 cannot close while D4-D6 remain unanswered - whether Assessment is closed-book, how its attempts count in analytics and competency, and what happens when one is interrupted are still the owner's to decide.

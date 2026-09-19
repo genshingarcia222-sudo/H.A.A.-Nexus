@@ -11,6 +11,77 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D3 Resolved — Assessment Post-Submission, All Six Surfaces ON (2026-09-20)
+
+**Owner decision.** An Assessment learner receives the full post-submission
+experience: score, category breakdown, WHAT/WHY/HOW feedback,
+expected-answer comparison, recommendations, and immediate retry. Supplied
+explicitly by the owner; recorded as their decision, not an engineering
+choice.
+
+**No behaviour changed, and that is the finding.** The characterization done
+earlier the same day had already established that the existing mode-agnostic
+summary does all six. Implementing D3 therefore meant protecting what exists
+rather than writing new results code. No Assessment-specific renderer was
+added - a second results surface would be one more thing to keep in sync, for
+no gain. The one production change in this checkpoint is none: the diff is a
+test file and documentation.
+
+**"Already true" is not "protected".** Before this, nothing failed if an
+Assessment quietly stopped showing its score, its feedback or its
+recommendations. `assessmentPostSubmission.test.tsx` (15 tests) now pins all
+six surfaces through the real component.
+
+**Recommendations means the whole engine.** The results surface exposes
+whatever `generateRecommendations` produces for the completed attempt - every
+rule, in the engine's order, including none - and does not filter, reorder or
+cap. All four supported rules are covered through the real component:
+`repeated-hpi-omission` and `repeated-terminology-errors` (lesson),
+`repeated-time-failures` (scenario retry), and `fabrication-detected`. That
+last one fires on a single occurrence, which is what proves the attempt *just
+submitted* is part of the history the summary reads - otherwise
+"recommendations for the completed attempt" would quietly mean "for the
+previous ones". The multi-recommendation test asks the engine itself what a
+seeded history should produce and asserts the rendered list equals it, so the
+test can never disagree with the engine about the rules. **No rule, threshold,
+type or ordering was invented or changed.**
+
+**Retry does not bypass D1.** It goes through `sessionStore.start` like every
+other entry point. A test drops the entitlement between submission and retry
+and asserts the retry is refused, the learner is told why, and the completed
+session is left untouched. D3 grants a retry action; it does not grant
+entitlement. No cooldown or quota was added in either direction.
+
+**Mutation-checked.** Four mutations confirmed the tests bite: suppressing the
+recommendation card (4 failures), rendering only the first recommendation (1),
+dropping the note comparison's expected column (1), and retrying in the wrong
+mode (2). Every file was restored byte-identically afterwards.
+
+**Verification.** 296/296 nexus-core, 182/182 desktop (+10 net), typecheck
+clean, build clean, 17/17 preflight. Rust untouched and not re-run.
+
+**Browser.** A Practice attempt was submitted at `http://localhost:1420/`
+containing a fabricated vital sign. The results page showed all six surfaces
+for real, including **two simultaneous recommendations in the engine's order**
+(HPI Fundamentals, then Accuracy and Unsupported Inference) with working
+"Open lesson" actions, and the critical fabrication error explained in
+WHAT/WHY/HOW form. The scenario library still showed **no Assessment button**
+at Free, confirming D1 intact. **An Assessment itself could not be exercised
+in the browser** - the app has no tier-switching surface because subscription
+persistence is D10, and adding one purely to obtain evidence would be
+production scaffolding for a test. Since the Assessment and Practice paths are
+the same component with no mode branch, the browser evidence covers the code
+an Assessment runs, but it is not an Assessment run: stated rather than
+implied.
+
+**D4, D5 and D6 remain unresolved and were not changed.** The expected-answer
+comparison after submission does not authorize Knowledge Base access *during*
+an Assessment (D4). Assessment attempts still count in competency and
+analytics exactly as before - D3 left that untouched rather than ratifying it
+(D5). Interruption, abandonment and resume behaviour is untouched (D6).
+
+---
+
 ## D3 Characterized, Not Decided — Assessment Post-Submission (2026-09-20)
 
 **An audit, not a feature.** D1 made Assessment reachable, which made its

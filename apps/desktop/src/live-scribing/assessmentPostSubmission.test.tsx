@@ -274,7 +274,7 @@ describe("D3 recommendations = ON: the summary exposes what the engine produces"
     // attempt" means.
     await submitAssessment({ physicalExam: "Temperature 38.5°C, blood pressure 140/90." });
 
-    const [record] = await sessionRepository.list();
+    const record = (await sessionRepository.list())[0]!;
     expect(record.evaluation!.errors.some((e) => e.errorType === "fabrication")).toBe(true);
 
     renderSummary();
@@ -338,7 +338,7 @@ describe("D3 changes nothing outside the Assessment results surface", () => {
     // is unresolved. D3 did not change it in either direction.
     await submitAssessment();
 
-    const [record] = await sessionRepository.list();
+    const record = (await sessionRepository.list())[0]!;
     expect(record.mode).toBe("assessment");
     expect(record.evaluation).not.toBeNull();
 
