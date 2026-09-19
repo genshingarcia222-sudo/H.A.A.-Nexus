@@ -10,5 +10,6 @@ export * from "./persistence/index.js";
 export * from "./competency-engine/index.js";
 export * from "./terminology-engine/index.js";
 export * from "./training-engine/index.js";
+export * from "./question-bank/index.js";
 export * from "./recommendation-engine/index.js";
 export * from "./analytics-engine/index.js";

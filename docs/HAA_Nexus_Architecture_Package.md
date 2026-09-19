@@ -562,6 +562,10 @@ Rules fire on frequency thresholds (e.g., "≥3 HPI omissions in last 5 attempts
 
 Lessons are content packages (`training_lessons` table) with `{ explanation, examples[], exercises[], knowledgeChecks[], linkedScenarioIds[] }`. The Learning mode UI is a generic lesson renderer — no lesson-specific UI code, matching the "content vs. logic" separation rule.
 
+**Question Bank (owner decision D11, 2026-09-19).** Canonical Training *questions* are no longer a property of a lesson. A separate, reusable Training Question Bank holds each question as its own record — with a stable id, id-addressed choices, a required rationale and required provenance, and an explicit content lifecycle — so that a future selector, remediation and Assessment can all consume one validated source. It is defined in `packages/nexus-core/src/question-bank/`, its content lives in `content/question-bank/`, and it is described in full in `TRAINING_QUESTION_BANK.md`.
+
+The bank **coexists with** `knowledgeChecks[]` above; lessons are unchanged and no lesson was migrated. The bank has no runtime consumer yet: selection, runs, seen-item history, scoring and entitlement are all separate and still undecided, and question `difficultyLevel` is an authoring signal, not a tier.
+
 ---
 
 ## 17. Knowledge Base
