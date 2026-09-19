@@ -43,6 +43,7 @@ export function ScenarioLibrary({ scenarios = scenarioRepository.list() }: Scena
           key={`${scenario.scenarioId}@${scenario.version}`}
           scenario={scenario}
           locked={!canAccessDifficulty(entitlements, scenario.difficulty)}
+          canStartAssessment={entitlements.canStartAssessment}
           onStart={start}
         />
       ))}
@@ -53,10 +54,15 @@ export function ScenarioLibrary({ scenarios = scenarioRepository.list() }: Scena
 function ScenarioCard({
   scenario,
   locked,
+  canStartAssessment,
   onStart
 }: {
   scenario: Scenario;
   locked: boolean;
+  /** Decision D1: Assessment starts at Pro. Blocked tiers get no button at
+   * all, matching how a locked scenario is presented - nothing here should
+   * look actionable when it is not. The start path enforces this regardless. */
+  canStartAssessment: boolean;
   onStart: (scenario: Scenario, mode: SimulationMode) => boolean;
 }) {
   return (
@@ -80,6 +86,11 @@ function ScenarioCard({
           <Button variant="primary" onClick={() => onStart(scenario, "simulation")}>
             Simulation
           </Button>
+          {canStartAssessment ? (
+            <Button variant="secondary" onClick={() => onStart(scenario, "assessment")}>
+              Assessment
+            </Button>
+          ) : null}
         </div>
       )}
     </Card>

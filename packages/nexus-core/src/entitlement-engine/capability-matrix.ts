@@ -60,6 +60,8 @@ export const CAPABILITY_MATRIX: Readonly<Record<Tier, Readonly<Entitlements>>> =
     maxScenarioDifficulty: 2,
     // "basic pass/fail; full scoring detail ... remain locked"
     canViewDetailedScoreBreakdown: false,
+    // D1: Assessment starts at Pro.
+    canStartAssessment: false,
     // "competency tracking and analytics remain locked"
     canTrackCompetency: false,
     canUseRecommendations: false,
@@ -84,6 +86,8 @@ export const CAPABILITY_MATRIX: Readonly<Record<Tier, Readonly<Entitlements>>> =
     maxScenarioDifficulty: 3,
     // "Full deterministic scoring breakdown"
     canViewDetailedScoreBreakdown: true,
+    // D1: Assessment starts at Pro.
+    canStartAssessment: false,
     // The Practice row of the spec names neither competency nor analytics;
     // both are named as Pro unlocks. See the recorded interpretation above.
     canTrackCompetency: false,
@@ -108,6 +112,9 @@ export const CAPABILITY_MATRIX: Readonly<Record<Tier, Readonly<Entitlements>>> =
     // "Adds Advanced" (4).
     maxScenarioDifficulty: 4,
     canViewDetailedScoreBreakdown: true,
+    // D1 (owner decision, 2026-09-19): Pro is the minimum tier that may start
+    // Assessment mode.
+    canStartAssessment: true,
     // "Competency tracking to Mastered" - the full feature, uncapped.
     canTrackCompetency: true,
     // "recommendation engine"
@@ -135,6 +142,8 @@ export const CAPABILITY_MATRIX: Readonly<Record<Tier, Readonly<Entitlements>>> =
     // "Adds Expert/Mastery" - Expert (5) and Master/Elite (6).
     maxScenarioDifficulty: 6,
     canViewDetailedScoreBreakdown: true,
+    // D1: inherited from Pro, which Fast-Track requires.
+    canStartAssessment: true,
     canTrackCompetency: true,
     canUseRecommendations: true,
     canViewAnalytics: true,

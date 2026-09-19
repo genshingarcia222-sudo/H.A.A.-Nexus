@@ -19,9 +19,46 @@ done or can still be done without answering the question.
 
 ---
 
-## D1 — Which tier includes Assessment mode?
+## D1 — Which tier includes Assessment mode? — **RESOLVED**
 
-**Blocked work:** the Assessment entitlement capability and its per-tier
+**Resolved** by the owner on 2026-09-19: **Pro**.
+
+| | |
+|---|---|
+| **Decision** | D1 — Assessment Mode access tier |
+| **Selected value** | **Pro** |
+| **Meaning** | Pro is the *minimum* tier that may start Assessment mode |
+| **Access** | Free blocked · Practice blocked · Pro allowed · Fast-Track allowed |
+| **Owner-authorized** | YES (2026-09-19) |
+| **Status** | RESOLVED and implemented |
+
+**Implementation:** a single capability, `canStartAssessment`, in the existing
+`Entitlements` shape, with per-tier values in `CAPABILITY_MATRIX` (false, false,
+true, true). `canStartMode(entitlements, mode)` in `nexus-core` maps a mode to
+its capability, and `sessionStore.start` enforces it beside the existing
+difficulty check. The Scenario Library shows an Assessment button only to
+entitled tiers. No second tier hierarchy and no "assessment tier" concept was
+introduced.
+
+**Verification:** 296 nexus-core and 167 desktop tests pass, including all four
+tiers against the single policy, direct invocation of the start boundary with
+no UI involved, refusal leaving no session or draft behind, both axes applying
+together (Pro may start an Assessment at difficulty 4 but not 5), and
+practice/simulation unchanged for every tier. In the live UI at Free: no
+Assessment button, and the normal Practice flow still starts.
+
+**Difficulty is unchanged:** 2 / 3 / 4 / 6 across the tiers. Assessment access
+and difficulty access are separate axes and both still apply.
+
+**This resolves D1 only.** Assessment being reachable makes existing
+mode-agnostic behaviour observable, which is *not* the same as deciding it:
+D3 (post-submission experience), D4 (closed-book), D5 (analytics/competency
+treatment) and D6 (interrupted policy) remain open, and nothing about them was
+changed or implied here.
+
+### Evidence considered while this decision was open
+
+**What it was blocking:** the Assessment entitlement capability and its per-tier
 values; a learner entry point in the scenario library; mode-level enforcement
 in `sessionStore.start`. Everything downstream of an Assessment a learner can
 actually start, including D3–D6.
@@ -37,7 +74,7 @@ capability; §9 and §12 give timing, not placement. "Exam-Ready Pro" is a
 product name, not a statement of entitlement. Re-audited at `aeb56d6`:
 unchanged.
 
-**Options the architecture supports** (each is one row of data in
+**The options that were on the table** (each is one row of data in
 `capability-matrix.ts` plus an entry point):
 
 | Option | Consequence |
@@ -230,6 +267,18 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). All remain
 unresolved. D2 is authorized and enforced.
+
+**D3 became urgent when D1 resolved**, because Assessment is now reachable and
+its post-submission behaviour is therefore something learners actually see. On
+2026-09-20 that behaviour was *characterized*, not decided: a submitted
+Assessment currently shows the identical mode-agnostic summary Practice shows -
+score, all seven category scores, WHAT/WHY/HOW feedback, the note comparison
+including the expected column, recommendations, the draft played back, and
+retry with no limit - and counts in history, analytics and competency like any
+other attempt. Nothing in that list is an approved policy; it is what the code
+did before Assessment was reachable. The full trace is in
+`PHASE_8_3_ASSESSMENT_MODE.md` D3, pinned by
+`assessmentPostSubmission.characterization.test.tsx`.
 
 ---
 

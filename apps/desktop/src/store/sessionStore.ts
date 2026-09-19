@@ -12,6 +12,7 @@ import {
   evaluateAttempt,
   updateCompetencyRecord,
   canAccessDifficulty,
+  canStartMode,
   modeAllowsPause,
   mayRevealPerformance,
   assertMayRevealPerformance,
@@ -121,7 +122,15 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     // button a learner happens to see. The check runs before any state is
     // touched: a refused start creates no session, no draft, no persisted
     // record, and leaves any current session exactly as it was.
-    if (!canAccessDifficulty(currentEntitlements(), scenario.difficulty)) {
+    const entitlements = currentEntitlements();
+    if (!canAccessDifficulty(entitlements, scenario.difficulty)) {
+      return false;
+    }
+    // Mode entitlement (decision D1, owner-selected 2026-09-19: Assessment
+    // requires Pro). Which mode needs which capability is decided in
+    // nexus-core; this boundary only enforces the answer, so hiding a button
+    // is a convenience rather than the protection.
+    if (!canStartMode(entitlements, mode)) {
       return false;
     }
 
