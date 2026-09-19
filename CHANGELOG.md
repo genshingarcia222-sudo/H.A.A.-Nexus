@@ -11,6 +11,44 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Scenario Intake for Clinical Authoring (2026-09-19)
+
+**Autonomous implementation decision.** A12 is blocked on clinical authoring,
+not on engineering — but an author should not have to discover the schema by
+trial and error, or wait for a reviewer to find a missing field.
+`content/incoming/` is now a staging folder with a template and an intake
+suite that reports, per file, exactly which fields are missing or malformed.
+
+**One definition of valid.** Intake calls the same `validateScenario` the
+application uses. It deliberately does not restate the schema, because a
+second definition would drift from the first.
+
+**What it checks:** drafts satisfy the real schema; no draft reuses the
+`scenarioId@version` of released content (which would break the content-hash
+gate and make a stored attempt ambiguous about what it was scored against); no
+two drafts collide; and the template itself still validates, so an author
+starts from something that passes.
+
+**What it does not check: clinical truth.** Whether a finding is correct,
+safe, internally consistent or appropriate for its difficulty is a human
+judgement no schema can make. Passing intake means a draft is *structurally
+reviewable*, nothing more. No clinical content was authored or approved here —
+the template contains `REPLACE:` markers, not medicine.
+
+**Nothing shipped changed.** The app loads scenarios from
+`content/scenarios/`; the staging folder is not on that path, and preflight
+still reports the real released inventory (2 scenarios, difficulty 1 and 3,
+with D2/D4/D5/D6 empty).
+
+**Verified:** +4 nexus-core tests. A mutation check removed `title` from the
+template and the template test failed as intended, then the file was restored
+byte-identically. 283/283 nexus-core, 154/154 desktop, typecheck clean. Rust
+untouched and not re-run (55 from the previous checkpoint).
+
+**A12 remains blocked** on clinical authoring and review, which is owner work.
+
+---
+
 ## Development-Only Browser Persistence (2026-09-19)
 
 **Autonomous implementation decision, not a product decision.** Running the

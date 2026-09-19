@@ -215,6 +215,12 @@ was fabricated to make tiers look complete.
 **Blocked because:** authoring clinical scenarios is content work requiring
 clinical review, not an engineering decision.
 
+**Authoring on-ramp (2026-09-19, autonomous):** `content/incoming/` holds a
+template and an intake suite that validates drafts against the real schema
+and reports actionable errors per file, so authoring does not require reading
+the schema first. It checks structure only — clinical truth remains a human
+judgement, and no content was authored or approved.
+
 ---
 
 ## D3–D9 (Assessment and evaluation policy)

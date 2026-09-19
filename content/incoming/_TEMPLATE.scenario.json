@@ -1,0 +1,63 @@
+{
+  "scenarioId": "SCRIBE-XX-000",
+  "version": "1.0",
+  "title": "REPLACE: short encounter title, e.g. Three-Day Cough, Family Medicine",
+  "specialty": "REPLACE: e.g. Family Medicine",
+  "encounterType": "REPLACE: e.g. Office Visit",
+  "difficulty": 1,
+  "complexityDimensions": {
+    "informationDensity": 1,
+    "complaintCount": 1,
+    "sectionsRequired": ["chiefComplaint", "hpi", "ros", "physicalExam", "assessment", "plan"],
+    "terminologyComplexity": 1,
+    "relevanceComplexity": 1,
+    "timePressure": 1,
+    "distraction": 1,
+    "ambiguity": 1,
+    "specificity": 1,
+    "requiredInfoCount": 1,
+    "errorRisk": 1
+  },
+  "objectives": ["REPLACE: what this scenario is meant to teach or assess"],
+  "patient": {
+    "age": 30,
+    "sex": "REPLACE: female | male | other"
+  },
+  "encounter": {
+    "chiefComplaintRaw": "REPLACE: the complaint in the patient's own words",
+    "narrative": "REPLACE: the encounter as it unfolds. This is the transcript the learner sees, revealed progressively. Every fact a requirement traces to must appear here verbatim enough to be recognisable.",
+    "hpi": "REPLACE: history of present illness as stated in the encounter",
+    "ros": "REPLACE: review of systems as stated, including explicit denials",
+    "history": "REPLACE: past medical history",
+    "medications": ["REPLACE: medication, or leave the array empty"],
+    "allergies": [],
+    "physicalExam": "REPLACE: examination findings actually given in the encounter",
+    "assessment": "REPLACE: the clinician's assessment",
+    "plan": "REPLACE: the plan as stated",
+    "pertinentPositives": ["REPLACE: findings present and relevant"],
+    "pertinentNegatives": ["REPLACE: findings explicitly denied and relevant"]
+  },
+  "requiredDocumentation": [
+    {
+      "id": "req-cc",
+      "section": "chiefComplaint",
+      "description": "REPLACE: what the learner must document, in reviewer-readable words",
+      "sourceFact": "REPLACE: the exact fact from encounter above that this traces to",
+      "acceptableVariants": [
+        "REPLACE: an acceptable phrasing",
+        "REPLACE: another acceptable phrasing, including common abbreviations"
+      ]
+    }
+  ],
+  "optionalDocumentation": [],
+  "terminologyMappings": [],
+  "commonErrors": [
+    {
+      "description": "REPLACE: a mistake learners actually make on this encounter",
+      "errorType": "omission",
+      "severity": "major"
+    }
+  ],
+  "timeTargetSeconds": 240,
+  "tags": ["REPLACE: tag"]
+}
