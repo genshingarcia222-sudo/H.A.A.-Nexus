@@ -101,6 +101,42 @@ describe("ScenarioLibrary - tier boundaries as rendered", () => {
   });
 });
 
+describe("ScenarioLibrary - Assessment entry point (D1)", () => {
+  // The button is a convenience; sessionStore.start is the protection.
+  // What matters here is that a blocked tier is not shown something that
+  // looks actionable and then silently does nothing.
+  it("offers Assessment to an entitled tier", () => {
+    useEntitlementStore.getState().setSubscription(active("pro"));
+    render(<ScenarioLibrary scenarios={ALL_DIFFICULTIES} />);
+    expect(screen.getAllByRole("button", { name: "Assessment" }).length).toBeGreaterThan(0);
+  });
+
+  it("offers Assessment to Fast-Track", () => {
+    useEntitlementStore.getState().setSubscription(active("fast_track", true));
+    render(<ScenarioLibrary scenarios={ALL_DIFFICULTIES} />);
+    expect(screen.getAllByRole("button", { name: "Assessment" }).length).toBeGreaterThan(0);
+  });
+
+  it("shows no Assessment button to Free or Practice", () => {
+    for (const tier of ["free", "practice"] as const) {
+      useEntitlementStore.getState().setSubscription(active(tier));
+      render(<ScenarioLibrary scenarios={ALL_DIFFICULTIES} />);
+      expect(screen.queryByRole("button", { name: "Assessment" }), tier).toBeNull();
+      cleanup();
+    }
+  });
+
+  it("leaves Practice and Simulation available to every tier", () => {
+    for (const tier of ["free", "practice", "pro", "fast_track"] as const) {
+      useEntitlementStore.getState().setSubscription(active(tier, tier === "fast_track"));
+      render(<ScenarioLibrary scenarios={ALL_DIFFICULTIES} />);
+      expect(screen.getAllByRole("button", { name: "Practice" }).length).toBeGreaterThan(0);
+      expect(screen.getAllByRole("button", { name: "Simulation" }).length).toBeGreaterThan(0);
+      cleanup();
+    }
+  });
+});
+
 describe("ScenarioLibrary - locked presentation", () => {
   it("keeps locked scenarios visible rather than hiding them", () => {
     render(<ScenarioLibrary scenarios={ALL_DIFFICULTIES} />);

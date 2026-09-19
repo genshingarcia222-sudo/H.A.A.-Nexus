@@ -30,6 +30,16 @@ export interface Entitlements {
   /** Free sees pass/fail only; the full deterministic breakdown is paid. */
   canViewDetailedScoreBreakdown: boolean;
   /**
+   * Whether the learner may start Assessment mode (decision D1, owner-selected
+   * 2026-09-19: minimum tier Pro).
+   *
+   * Distinct from `maxScenarioDifficulty`: difficulty gates *which scenarios*
+   * may be started, this gates *which mode* they may be started in. Both apply
+   * - an entitled learner still cannot start an Assessment on a scenario whose
+   * difficulty their tier does not unlock.
+   */
+  canStartAssessment: boolean;
+  /**
    * Whether competency records are surfaced to the learner.
    *
    * There is deliberately no "maximum competency level" companion to this
@@ -95,6 +105,7 @@ export const DEFAULT_ENTITLEMENTS: Entitlements = {
 
   maxScenarioDifficulty: 2,
   canViewDetailedScoreBreakdown: false,
+  canStartAssessment: false,
   canTrackCompetency: false,
   canUseRecommendations: false,
   canViewAnalytics: false,

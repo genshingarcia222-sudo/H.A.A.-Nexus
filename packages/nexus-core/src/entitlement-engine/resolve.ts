@@ -1,6 +1,7 @@
 import type { Entitlements } from "../types/entitlements.js";
 import type { SubscriptionState, Tier } from "../types/subscription.js";
 import type { DifficultyLevel } from "../scenario-engine/difficulty.js";
+import type { SimulationMode } from "../simulation-engine/types.js";
 import { CAPABILITY_MATRIX, TIER_ORDER } from "./capability-matrix.js";
 
 /**
@@ -96,6 +97,23 @@ export function canAccessDifficulty(
   difficulty: DifficultyLevel
 ): boolean {
   return difficulty <= entitlements.maxScenarioDifficulty;
+}
+
+/**
+ * Whether the learner may start a session in this mode.
+ *
+ * Decision D1 (owner-selected 2026-09-19): Assessment requires the
+ * `canStartAssessment` capability, whose per-tier values live in
+ * `CAPABILITY_MATRIX` - minimum tier Pro. Practice and simulation are
+ * ungated, because no source gates them.
+ *
+ * The mapping from mode to capability belongs here, with the matrix, rather
+ * than in a UI or a store: a `mode === "assessment"` test written in the
+ * desktop app would be a second place where commercial policy lives, and an
+ * invariant test forbids exactly that.
+ */
+export function canStartMode(entitlements: Entitlements, mode: SimulationMode): boolean {
+  return mode === "assessment" ? entitlements.canStartAssessment : true;
 }
 
 /**

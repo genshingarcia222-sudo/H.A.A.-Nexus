@@ -45,7 +45,16 @@ function realResult() {
   });
 }
 
+/**
+ * Assessment requires Pro (decision D1, owner-selected 2026-09-19), so an
+ * assessment fixture grants that entitlement first. These tests are about
+ * the live-feedback boundary, not about who may start - entitlement itself
+ * is covered in `store/entitlementGating.test.ts`.
+ */
 function startIn(mode: SimulationMode) {
+  useEntitlementStore
+    .getState()
+    .setSubscription({ tier: "pro", status: "active", currentPeriodEnd: null, fastTrackPurchased: false });
   expect(useSessionStore.getState().start(SCENARIO, mode)).toBe(true);
 }
 

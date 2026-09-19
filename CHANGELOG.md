@@ -11,6 +11,58 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D1 Resolved — Assessment Mode Requires Pro (2026-09-19)
+
+**Owner decision.** The owner selected **Pro** as the minimum subscription
+tier that may start Assessment mode: Free and Practice blocked, Pro and
+Fast-Track allowed. This was supplied explicitly and is recorded as the
+owner's decision, not an engineering choice.
+
+**Implementation.** One capability, `canStartAssessment`, added to the existing
+`Entitlements` shape with per-tier values in `CAPABILITY_MATRIX`.
+`canStartMode(entitlements, mode)` in `nexus-core` maps a mode to the
+capability it needs, `sessionStore.start` enforces it beside the existing
+difficulty check, and the Scenario Library renders an Assessment button only
+for entitled tiers. No parallel entitlement mechanism and no "assessment
+tier" concept.
+
+**Enforcement is not the button.** The start boundary refuses a blocked tier
+whether it is reached from the library, a retry, a resume, or a direct call,
+and a refusal creates no session, draft, transcript or record. Tests call that
+boundary directly, with no UI involved, which is what a bypass would do.
+
+**An invariant caught a genuine mistake mid-implementation.** The first
+version wrote `mode === "assessment"` inside `sessionStore`, and
+`liveFeedbackBoundary.invariant.test.ts` failed: that test forbids the
+desktop app re-implementing a rule that belongs in the domain. It was right.
+The mode-to-capability mapping moved into `nexus-core` as `canStartMode`,
+which is where the matrix already lives. The test was not weakened to
+accommodate the code.
+
+**Tests updated, not weakened.** The Phase 8.3 live-feedback and workspace
+suites started assessments under the default Free subscription, which D1 now
+blocks. They grant Pro in their fixture and say why: those suites test the D2
+boundary and the workspace, not who may start.
+
+**Verification.** 296/296 nexus-core (+13), 167/167 desktop (+13), typecheck
+clean, build clean (830ms), 17/17 preflight. Rust was untouched and not
+re-run. In the live UI at `http://localhost:1420/`, Free shows Practice and
+Simulation but **no Assessment button**, and the normal Practice flow still
+starts (session, transcript and Pause all present).
+
+**Limitation.** Pro and Fast-Track could not be exercised *through the
+browser*: the app has no tier-switching surface, because subscription
+persistence is D10 and remains unresolved. Those tiers are verified at the
+authoritative boundary by tests, not by clicking. Stated rather than implied.
+
+**Nothing else was resolved.** Assessment being reachable makes existing
+mode-agnostic behaviour observable, which is not the same as deciding it:
+D3–D6 remain open, along with D7–D10, A2, A6, A7, A9 and A12. Difficulty
+limits (2/3/4/6) are unchanged, and no payment, authentication or subscription
+persistence was added.
+
+---
+
 ## Scenario Intake for Clinical Authoring (2026-09-19)
 
 **Autonomous implementation decision.** A12 is blocked on clinical authoring,

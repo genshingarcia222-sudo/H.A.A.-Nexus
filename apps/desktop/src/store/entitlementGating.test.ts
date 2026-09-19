@@ -58,6 +58,72 @@ afterEach(() => {
   useEntitlementStore.getState().setSubscription(NO_SUBSCRIPTION);
 });
 
+describe("D1 - Assessment mode requires Pro, enforced at the start boundary", () => {
+  // Owner decision, 2026-09-19: Pro is the minimum tier that may start
+  // Assessment. These call sessionStore.start directly - no UI involved -
+  // which is exactly what a bypass would do.
+  const D1_ALLOWS: [Tier, boolean][] = [
+    ["free", false],
+    ["practice", false],
+    ["pro", true],
+    ["fast_track", true]
+  ];
+
+  for (const [tier, allowed] of D1_ALLOWS) {
+    it(`${tier} ${allowed ? "may" : "may not"} start an Assessment directly`, () => {
+      useEntitlementStore.getState().setSubscription(activeSubscription(tier, tier === "fast_track"));
+      // Difficulty 1 is unlocked for every tier, so only D1 can refuse this.
+      const started = useSessionStore.getState().start(scenarioAt(1), "assessment");
+      expect(started).toBe(allowed);
+      expect(useSessionStore.getState().session?.mode ?? null).toBe(allowed ? "assessment" : null);
+    });
+  }
+
+  it("creates no session, draft or transcript when it refuses an Assessment", () => {
+    useEntitlementStore.getState().setSubscription(activeSubscription("practice"));
+    expect(useSessionStore.getState().start(scenarioAt(1), "assessment")).toBe(false);
+    const state = useSessionStore.getState();
+    expect(state.session).toBeNull();
+    expect(state.scenario).toBeNull();
+    expect(state.beats).toEqual([]);
+    expect(state.result).toBeNull();
+  });
+
+  it("leaves a session already in progress untouched when it refuses an Assessment", () => {
+    useEntitlementStore.getState().setSubscription(activeSubscription("practice"));
+    expect(useSessionStore.getState().start(scenarioAt(1), "practice")).toBe(true);
+    const running = useSessionStore.getState().session;
+
+    expect(useSessionStore.getState().start(scenarioAt(1), "assessment")).toBe(false);
+    expect(useSessionStore.getState().session).toBe(running);
+  });
+
+  it("still applies difficulty gating to an entitled tier", () => {
+    // Both axes apply: Pro may use Assessment, but not on difficulty 5.
+    useEntitlementStore.getState().setSubscription(activeSubscription("pro"));
+    expect(useSessionStore.getState().start(scenarioAt(4), "assessment")).toBe(true);
+    useSessionStore.getState().reset();
+    expect(useSessionStore.getState().start(scenarioAt(5), "assessment")).toBe(false);
+  });
+
+  it("does not change practice or simulation for any tier", () => {
+    for (const [tier] of D1_ALLOWS) {
+      useEntitlementStore.getState().setSubscription(activeSubscription(tier, tier === "fast_track"));
+      for (const mode of ["practice", "simulation"] as const) {
+        useSessionStore.getState().reset();
+        expect(useSessionStore.getState().start(scenarioAt(1), mode), `${tier} ${mode}`).toBe(true);
+      }
+    }
+  });
+
+  it("reports the capability through the resolved entitlements, not a tier string", () => {
+    useEntitlementStore.getState().setSubscription(activeSubscription("pro"));
+    expect(currentEntitlements().canStartAssessment).toBe(true);
+    useEntitlementStore.getState().setSubscription(activeSubscription("free"));
+    expect(currentEntitlements().canStartAssessment).toBe(false);
+  });
+});
+
 describe("sessionStore.start - access matrix", () => {
   const cases: { label: string; subscription: SubscriptionState; maxAllowed: DifficultyLevel }[] = [
     { label: "Free", subscription: NO_SUBSCRIPTION, maxAllowed: 2 },
