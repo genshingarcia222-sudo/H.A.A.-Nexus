@@ -321,20 +321,23 @@ judgement, and no content was authored or approved.
 Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 (D3), closed-book access (D4), analytics/competency treatment (D5),
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
-practice/simulation resume (D8), evaluation-failure behaviour (D9). All remain
-unresolved. D2 is authorized and enforced.
+practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
+authorized and enforced. **D3 was answered by the owner on 2026-09-20; D4-D9
+remain unresolved.**
 
-**D3 became urgent when D1 resolved**, because Assessment is now reachable and
-its post-submission behaviour is therefore something learners actually see. On
-2026-09-20 that behaviour was *characterized*, not decided: a submitted
-Assessment currently shows the identical mode-agnostic summary Practice shows -
-score, all seven category scores, WHAT/WHY/HOW feedback, the note comparison
-including the expected column, recommendations, the draft played back, and
-retry with no limit - and counts in history, analytics and competency like any
-other attempt. Nothing in that list is an approved policy; it is what the code
-did before Assessment was reachable. The full trace is in
-`PHASE_8_3_ASSESSMENT_MODE.md` D3, pinned by
-`assessmentPostSubmission.characterization.test.tsx`.
+**D3 — Assessment post-submission experience — answered 2026-09-20.** All six
+surfaces ON: score, category breakdown, WHAT/WHY/HOW feedback, expected-answer
+comparison, recommendations, immediate retry. The characterization performed
+earlier the same day showed the existing mode-agnostic summary already did all
+six, so the decision required no behaviour change - it was implemented by
+protecting what existed with a contract test
+(`assessmentPostSubmission.test.tsx`), not by writing new results code. Full
+record in `PHASE_8_3_ASSESSMENT_MODE.md` D3.
+
+*What D3 did not decide:* Knowledge Base access during an Assessment (D4),
+whether Assessment attempts should count in analytics and competency (D5), and
+what happens to an interrupted Assessment (D6). Assessment attempts do count
+today; D3 left that exactly as it was rather than ratifying it.
 
 ---
 

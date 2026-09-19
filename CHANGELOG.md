@@ -11,103 +11,126 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
-## D11 Resolved — Canonical Training Question Bank (2026-09-19)
+## D4 Audit — Assessment Is Open-Book by Omission (2026-09-20)
 
-**Product decision — owner authorized.** The owner selected **Option B —
-Separate Reusable Training Question Bank**: canonical Training questions are
-their own records, independent of any lesson. This was supplied explicitly and
-is recorded as the owner's decision, not an engineering choice. Recorded in
-`docs/DECISION_REGISTER.md` D11.
+**An audit, not a decision. No production code changed.** D4 - whether an
+Assessment is closed-book - remains the owner's to answer.
 
-**What was built — the content contract, and nothing downstream of it.** A new
-`question-bank` module in `nexus-core`: a schema, a reusable validator
-(`validateTrainingQuestion`, `validateQuestionBank`) following the
-`validateScenario` convention of hard failures rather than warnings, and four
-test files. A question carries a stable id, id-addressed choices, a required
-rationale, optional per-choice explanations, required provenance, optional
-coding/ICD metadata, a variant group, a content lifecycle and a verification
-record.
+**Finding.** An active Assessment is fully open-book, and nothing enforces
+anything. `App.tsx` declares six flat routes with no guards, no redirects and
+no `useBlocker`; `AppShell` renders the same nav rail whatever the session is
+doing. `KnowledgeBase.tsx`, `Training.tsx`, `AppShell.tsx` and `App.tsx`
+contain **zero** references to the session store, the entitlement store or the
+session mode. There is no hidden button to find and no direct-URL bypass to
+report, because there is no boundary in the first place - the reference
+surfaces do not know a session exists.
 
-Two failure modes the current `KnowledgeCheck` shape allows are impossible
-here: `correctChoiceId` must resolve to a declared choice (today's
-`correctOptionIndex` is not bounds-checked against `options`), and choice
-identity is an id rather than a position, so reordering for display cannot
-silently change the answer.
+**The detail that matters for the decision.** The Knowledge Base is keyed
+lay-term → clinical-term with accepted alternatives, and the evaluator scores
+the Terminology category on exactly those conversions. Searching it for
+"shortness of breath" mid-session returns **dyspnea** - which is what
+`SCRIBE-FM-014` requires the learner to document. For one scored category the
+reference material is close to an answer key. That is a fact about the
+content, offered as evidence for either policy, not an argument for one.
 
-**No silent field loss.** Every object is `.strict()`: an unrecognised key is a
-hard error naming the field. The lesson schema's behaviour — dropping unknown
-keys without a word — is how a rationale or a citation could be authored,
-accepted, and then simply not exist. *Implementation decision — constrained by
-existing requirements*, and the one place the bank deliberately departs from
-lesson-schema behaviour. `TrainingLessonSchema` itself was not changed.
+**Also recorded:** an Assessment cannot pause, so time spent reading reference
+material counts against Time Efficiency. Whether that is a fair natural cost
+is part of the same question.
 
-**A candidate cannot become production-ready by being parsed.** A question may
-not claim a lifecycle state above `candidate` unless a person is recorded
-against it (`verification.humanVerifiedBy` and `humanVerifiedOn`), and
-`verification` has no default. `isProductionEligible()` is read-only and
-conservative — status, review outcome and a recorded verification must all line
-up — and the promotion workflow that would legitimately set those values is
-deliberately not implemented.
+**Browser.** Verified at Practice, the only mode reachable at the default Free
+tier: mid-session navigation to the Knowledge Base returned the dyspnea entry,
+Training listed all three lessons, and returning to Live Scribing found the
+session still running with the clock advanced. **Assessment could not be
+exercised in-browser** (requires Pro; no tier-switching surface exists, D10).
+The Assessment path is established from source instead - conclusive here
+precisely because the surfaces contain no mode logic at all.
 
-**Pilot Batch 001 is a fixture, unchanged and unpromoted.** Revision 2 is held
-byte-identical at
-`packages/nexus-core/src/question-bank/__fixtures__/`, with its SHA-256 asserted
-against the handoff manifest. All 12 items validate against the canonical model
-and every item-level field is preserved (`id` → `questionId` is the only
-rename). Nine batch-level keys are **not** carried — `createdOn`,
-`schemaStatus`, `difficultyScale`, `icdSystemPolicy`,
-`sourceVerificationMethod`, `versionNote`, `blockedTopics`, `batchSummary`,
-`revisionNotes` — all of which describe the authoring batch rather than any
-question; the test pins that split so a new pilot field with nowhere to go fails
-by name. The 12 items remain `CANDIDATE` / SOURCE-VERIFICATION-PENDING with 0
-production-eligible, human source-locator verification stands at **0 of 12**,
-and nothing in this checkpoint marks any item source-verified.
+**No test was added, deliberately.** The finding is the *absence* of a guard,
+provable from the route table and those four files. A test asserting "the
+Knowledge Base renders during an Assessment" would fail the moment D4 is
+answered restrictively, which is the next expected change - a tripwire on
+planned work is not coverage. No production behaviour was altered to make the
+audit easier, and no tier-switching scaffolding was added.
 
-**Legacy lessons untouched.** `TrainingLessonSchema`, the three shipped lesson
-files, their six knowledge checks and the Training screen are unchanged. No
-lesson was migrated and no learner behaviour changed. The two models coexist by
-design; whether those checks stay, coexist or migrate is a further owner
-decision this one did not answer.
+**D1, D2 and D3 unchanged. D5 and D6 remain unresolved and untouched** -
+competency/analytics treatment and interruption behaviour were not examined
+for policy and not modified.
 
-**Implementation decisions — autonomous.** `question-bank` as a sibling engine
-module rather than a subfolder of `training-engine` (its consumers are not only
-Training). `content/question-bank/` as the content location — scanned by none of
-`content/lessons/`, `content/incoming/` or `content/scenarios/**`, with its own
-content-QA test, shipped empty. Supporting both a shared `sources` ref and a
-self-contained inline citation. Closed sets for question type and review status,
-drawn from content that exists rather than invented. `blocked` and `retired` as
-lifecycle hold states. Restating the 1–6 difficulty scale locally with a test
-asserting it agrees with the scenario side, rather than coupling a Training
-content contract to the scenario engine.
+**D4 remains BLOCKED — owner decision required.** The surface: whether the
+Knowledge Base is available during an active Assessment; whether Training is;
+if restricted, whether that is enforced at the route or only in the nav rail;
+and whether the answer varies by tier.
 
-**Explicitly not decided, and not encoded anywhere:** entitlement (no Training
-capability exists; `difficultyLevel` is an authoring signal, not a tier),
-seen-item persistence (depends on D10), the runtime selector and 10-question
-runs, randomisation and anti-memorisation, scoring, competency mapping,
-recommendations, Assessment Mode, and medical truth. **This is a foundation, not
-a Training feature** — the bank has no runtime consumer at all.
+---
 
-**Documentation.** `docs/TRAINING_QUESTION_BANK.md` (new), `docs/DECISION_REGISTER.md`
-D11, Architecture Package §16, and a README in `content/question-bank/`.
+## D3 Resolved — Assessment Post-Submission, All Six Surfaces ON (2026-09-20)
 
-**One incidental fix.** A `.gitattributes` (the repository's first) marks the
-Pilot 001 candidate files `-text`. They are identified by SHA-256 in the handoff
-manifest and in the compatibility test; on a Windows checkout git would have
-rewritten their line endings and changed those bytes, failing the integrity
-check for a reason unrelated to their content.
+**Owner decision.** An Assessment learner receives the full post-submission
+experience: score, category breakdown, WHAT/WHY/HOW feedback,
+expected-answer comparison, recommendations, and immediate retry. Supplied
+explicitly by the owner; recorded as their decision, not an engineering
+choice.
 
-**Verification — INCOMPLETE. No Node toolchain on this device.** `node`, `npm`
-and `pnpm` are not installed and `node_modules` is absent, so `pnpm -r test`,
-`pnpm -r typecheck`, `pnpm -r build` and `node tools/preflight/preflight.mjs`
-**could not be run**. This entry therefore claims no test count, and the
-question-bank suite has **never been executed**. What *was* verified, with a
-standalone Node binary and no project dependencies: every file parses, and an
-independent dependency-free restatement of the schema's rules, run against the
-real pilot fixture, passes — 12 questions, 7 sources, hash matching the manifest,
-0 above candidate, 0 human-verified, 0 production-eligible, no unrepresented
-field. That checks the *data* against the contract; it does not execute the
-TypeScript. **The suite must be run before this work is relied on.** Rust was
-untouched.
+**No behaviour changed, and that is the finding.** The characterization done
+earlier the same day had already established that the existing mode-agnostic
+summary does all six. Implementing D3 therefore meant protecting what exists
+rather than writing new results code. No Assessment-specific renderer was
+added - a second results surface would be one more thing to keep in sync, for
+no gain. The one production change in this checkpoint is none: the diff is a
+test file and documentation.
+
+**"Already true" is not "protected".** Before this, nothing failed if an
+Assessment quietly stopped showing its score, its feedback or its
+recommendations. `assessmentPostSubmission.test.tsx` (15 tests) now pins all
+six surfaces through the real component.
+
+**Recommendations means the whole engine.** The results surface exposes
+whatever `generateRecommendations` produces for the completed attempt - every
+rule, in the engine's order, including none - and does not filter, reorder or
+cap. All four supported rules are covered through the real component:
+`repeated-hpi-omission` and `repeated-terminology-errors` (lesson),
+`repeated-time-failures` (scenario retry), and `fabrication-detected`. That
+last one fires on a single occurrence, which is what proves the attempt *just
+submitted* is part of the history the summary reads - otherwise
+"recommendations for the completed attempt" would quietly mean "for the
+previous ones". The multi-recommendation test asks the engine itself what a
+seeded history should produce and asserts the rendered list equals it, so the
+test can never disagree with the engine about the rules. **No rule, threshold,
+type or ordering was invented or changed.**
+
+**Retry does not bypass D1.** It goes through `sessionStore.start` like every
+other entry point. A test drops the entitlement between submission and retry
+and asserts the retry is refused, the learner is told why, and the completed
+session is left untouched. D3 grants a retry action; it does not grant
+entitlement. No cooldown or quota was added in either direction.
+
+**Mutation-checked.** Four mutations confirmed the tests bite: suppressing the
+recommendation card (4 failures), rendering only the first recommendation (1),
+dropping the note comparison's expected column (1), and retrying in the wrong
+mode (2). Every file was restored byte-identically afterwards.
+
+**Verification.** 296/296 nexus-core, 182/182 desktop (+10 net), typecheck
+clean, build clean, 17/17 preflight. Rust untouched and not re-run.
+
+**Browser.** A Practice attempt was submitted at `http://localhost:1420/`
+containing a fabricated vital sign. The results page showed all six surfaces
+for real, including **two simultaneous recommendations in the engine's order**
+(HPI Fundamentals, then Accuracy and Unsupported Inference) with working
+"Open lesson" actions, and the critical fabrication error explained in
+WHAT/WHY/HOW form. The scenario library still showed **no Assessment button**
+at Free, confirming D1 intact. **An Assessment itself could not be exercised
+in the browser** - the app has no tier-switching surface because subscription
+persistence is D10, and adding one purely to obtain evidence would be
+production scaffolding for a test. Since the Assessment and Practice paths are
+the same component with no mode branch, the browser evidence covers the code
+an Assessment runs, but it is not an Assessment run: stated rather than
+implied.
+
+**D4, D5 and D6 remain unresolved and were not changed.** The expected-answer
+comparison after submission does not authorize Knowledge Base access *during*
+an Assessment (D4). Assessment attempts still count in competency and
+analytics exactly as before - D3 left that untouched rather than ratifying it
+(D5). Interruption, abandonment and resume behaviour is untouched (D6).
 
 ---
 
