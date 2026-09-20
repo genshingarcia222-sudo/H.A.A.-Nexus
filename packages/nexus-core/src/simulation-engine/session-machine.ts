@@ -62,6 +62,49 @@ export function assertMayRevealPerformance(session: SimulationSession, what: str
   }
 }
 
+/** Thrown when reference material is requested during an active assessment. */
+export class ClosedBookViolationError extends Error {
+  constructor(what: string) {
+    super(`Cannot open ${what} during an active assessment: it runs closed-book.`);
+    this.name = "ClosedBookViolationError";
+  }
+}
+
+/**
+ * Whether the learner may open reference material right now.
+ *
+ * Decision D4, owner-selected 2026-09-20: an Assessment runs **closed-book**.
+ * The Knowledge Base and Training are unavailable while an assessment attempt
+ * is active, for every tier that may start one - D1 decides who may enter an
+ * assessment, D4 decides the conditions inside it, and the two are deliberately
+ * independent. There is no tier that gets an open-book assessment.
+ *
+ * `null` means no attempt is in progress at all, which is the ordinary state of
+ * the app and is unrestricted. Practice and simulation always return true: as
+ * with {@link mayRevealPerformance}, that is the absence of any authorized
+ * restriction for those modes, not a rule that they *should* be open-book.
+ *
+ * A completed assessment returns true, which is what keeps D3 intact - the
+ * post-submission experience, including the expected-answer comparison, is
+ * explicitly authorized and is not reference access "during" the attempt.
+ *
+ * The `completed` test rather than an "is it running" test also means the
+ * interrupted and abandoned statuses stay on the restrictive side without this
+ * function taking a position on them: what happens to an interrupted assessment
+ * is D6, still undecided, and no live session ever reaches this function in
+ * those states.
+ */
+export function mayAccessReferenceMaterial(session: SimulationSession | null): boolean {
+  if (!session || session.mode !== "assessment") return true;
+  return session.status === "completed";
+}
+
+export function assertMayAccessReferenceMaterial(session: SimulationSession | null, what: string): void {
+  if (!mayAccessReferenceMaterial(session)) {
+    throw new ClosedBookViolationError(what);
+  }
+}
+
 function assertStatus(session: SimulationSession, allowed: SessionStatus[], action: string): void {
   if (!allowed.includes(session.status)) {
     throw new InvalidSessionTransitionError(session.status, action);

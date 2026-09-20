@@ -24,6 +24,7 @@
 | `assessment` session mode; pause/resume refused by the session machine (`PauseNotAllowedError`), mode checked before status | `nexus-core` `simulation-engine` | `02ddb7f` |
 | Database accepts `assessment` (migration 002 table rebuild; schema version 2) | `src-tauri/migrations/002_assessment_mode.sql` | `02ddb7f` |
 | Workspace hides Pause/Resume, keeps progressive transcript reveal, labels the mode; store ignores pause/resume | `SimulatorWorkspace.tsx`, `sessionStore.ts` | `97c533b` |
+| **Closed-book Assessment (D4)**: `mayAccessReferenceMaterial` in the domain; `ReferenceGate` on the `/knowledge-base` and `/training` routes; nav links hidden to match | `session-machine.ts`, `ReferenceGate.tsx`, `App.tsx`, `AppShell.tsx` | D4 checkpoint |
 | **Live-feedback boundary enforced as state** (see §4) | `mayRevealPerformance` / `assertMayRevealPerformance` in `nexus-core`; `sessionStore.ts`; `SubmissionSummary.tsx` | `621855e` |
 | **Boundary enforced structurally**: one guarded selector plus a source-scanning invariant, so no future surface can reveal performance by forgetting the rule | `selectRevealableResult` / `useRevealableResult` in `sessionStore.ts`; `liveFeedbackBoundary.invariant.test.ts` | Phase 8.3 hardening (see CHANGELOG) |
 
@@ -104,7 +105,49 @@ and every file was restored byte-identically.
 - **Why it was insufficient:** post-submission results are not live feedback, and no source defined Assessment results policy (score, breakdown, WHAT/WHY/HOW feedback, recommendations, retry). The answer had to come from the owner, and did.
 - **Note, unchanged by D3:** the matrix capability `canViewDetailedScoreBreakdown` is declared for every tier but read by no application code, so the category breakdown is shown to all tiers in all modes. D3 sets the breakdown ON for Assessment; it says nothing about tier-based filtering, which remains a separate question.
 
-### D4 — Is Assessment closed-book? — **NOT AUTHORIZED**
+### D4 — Is Assessment closed-book? — **RESOLVED**
+
+**Owner decision, 2026-09-20: closed-book.**
+
+```
+knowledge_base_during_assessment = OFF
+training_during_assessment       = OFF
+direct_route_access              = BLOCKED
+tier_specific_reference_access   = NO
+```
+
+**One boundary, in the domain.** `mayAccessReferenceMaterial(session)` in
+`nexus-core` answers it: `null` (no attempt) and practice/simulation are
+unrestricted; an assessment is blocked unless `status === "completed"`. It
+takes a session and no tier, so Pro and Fast-Track cannot diverge - D1 decides
+who may enter an assessment, D4 decides the conditions inside it.
+
+**Guarded at the route, not the nav rail.** `ReferenceGate` wraps
+`/knowledge-base` and `/training` in `App.tsx`, so a typed URL, a bookmark and
+a programmatic `navigate()` are all blocked, because all three render the route
+element. `AppShell` also hides the two links, which is a courtesy so a learner
+is not offered something that would refuse them - the route guard is the
+protection. Both files import the same `REFERENCE_ROUTES` list, so a third
+reference surface cannot be added to one and forgotten in the other.
+
+**The `completed` test is what keeps D3 intact:** the books reopen exactly when
+the attempt is submitted, so the post-submission experience - including the
+expected-answer comparison - is untouched.
+
+**Verification:** 12 domain tests (every mode × every status, the assert form,
+no mutation, and that the rule takes no tier) and 17 desktop tests that render
+the **real router at a real URL** rather than the route components, because
+"blocked" has to mean the route is blocked. Three mutation checks confirmed
+they bite - removing the route guard so only the nav rail restricted access
+failed 5 tests, which is exactly the failure mode this decision forbids - and
+every file was restored byte-identically.
+
+---
+
+**The audit that preceded this decision** is kept below, because it is the
+evidence the decision was made on.
+
+### D4 — evidence gathered while this decision was open
 
 - **Evidence examined:** no source mentions Knowledge Base or Training access during Assessment.
 - **Why insufficient:** reference material does not signal the correctness of ongoing performance, so it falls outside the authorized D2 boundary. Restricting navigation would be a new learner-facing rule.
@@ -156,7 +199,16 @@ asserting "the Knowledge Base renders during an Assessment" would fail the
 moment D4 is answered in the restrictive direction, which is the next expected
 change. No production behaviour was altered to make the audit easier.
 
-- **The decision surface:** (1) is the Knowledge Base available during an active Assessment; (2) is Training/lesson content available; (3) if either is restricted, is that enforced at the route (a learner typing the URL) or only in the nav rail; (4) does the answer differ by tier. Dimension (4) is listed because the entitlement machinery could express it, not because anything today suggests it should.
+- **The decision surface as it was put to the owner:** (1) is the Knowledge Base available during an active Assessment; (2) is Training/lesson content available; (3) if either is restricted, is that enforced at the route or only in the nav rail; (4) does the answer differ by tier. **Answered: (1) no, (2) no, (3) at the route, (4) no.**
+
+**The knowledge archive is not what D4 restricts.** `content/` - scenarios,
+terminology, lessons and the question bank - remains available in full to
+authoring, validation and content tooling, and `content/scenarios.ts` still
+loads every repository at startup exactly as before. D4 closes a *runtime
+learner surface during an attempt*; it does not touch the archive that feeds
+that surface, and the boundary test explicitly permits the content layer to
+read those repositories. No archive content was moved, deleted, gated or given
+entitlement metadata.
 
 ### D5 — Do Assessment results count in analytics and competency? — **NOT AUTHORIZED**
 
@@ -239,8 +291,8 @@ change. No production behaviour was altered to make the audit easier.
 | Assessment entitlement capability + matrix values | **DONE** — D1 = Pro, `34f727c` |
 | Learner entry point and mode-level start enforcement | **DONE** — `34f727c` |
 | Assessment results presentation | **DONE** — D3 = all six surfaces ON, satisfied by the existing summary and protected by tests |
-| Closed-book navigation restriction | **BLOCKED** — D4 (may not be required) |
+| Closed-book navigation restriction | **DONE** — D4 = closed-book, enforced at the route |
 | Analytics/competency separation | **BLOCKED** — D5 (may not be required) |
 | Interrupted-Assessment policy | **BLOCKED** — D6 |
 
-D1 and D3 are decided: Assessment is reachable, and what a learner receives after submitting is settled. Phase 8.3 cannot close while D4-D6 remain unanswered - whether Assessment is closed-book, how its attempts count in analytics and competency, and what happens when one is interrupted are still the owner's to decide.
+D1, D3 and D4 are decided: Assessment is reachable, runs closed-book, and gives the full results experience on submission. Phase 8.3 cannot close while D5 and D6 remain unanswered - how Assessment attempts count in analytics and competency, and what happens when one is interrupted, are still the owner's to decide.
