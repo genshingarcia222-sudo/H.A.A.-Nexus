@@ -3,6 +3,7 @@ import type {
   CompetencyRepository,
   ProfileRepository,
   SessionRecord,
+  ResultPopulation,
   SessionRepository,
   UserProfile
 } from "@haa-nexus/nexus-core";
@@ -114,6 +115,11 @@ export class DevBrowserSessionRepository implements SessionRepository {
   }
 }
 
+/** Competency is keyed by population *and* domain (D5), never domain alone. */
+function keyOf(record: CompetencyRecord): string {
+  return `${record.population}:${record.domain}`;
+}
+
 export class DevBrowserCompetencyRepository implements CompetencyRepository {
   constructor(private readonly storage: Storage = globalThis.localStorage) {}
 
@@ -125,8 +131,8 @@ export class DevBrowserCompetencyRepository implements CompetencyRepository {
     writeJson(this.storage, DEV_STORAGE_KEYS.competency, records);
   }
 
-  async get(domain: string): Promise<CompetencyRecord | undefined> {
-    return this.all().find((r) => r.domain === domain);
+  async get(population: ResultPopulation, domain: string): Promise<CompetencyRecord | undefined> {
+    return this.all().find((r) => r.population === population && r.domain === domain);
   }
 
   async list(): Promise<CompetencyRecord[]> {
@@ -134,14 +140,16 @@ export class DevBrowserCompetencyRepository implements CompetencyRepository {
   }
 
   async upsert(record: CompetencyRecord): Promise<void> {
-    this.write([...this.all().filter((r) => r.domain !== record.domain), record]);
+    this.write([...this.all().filter((r) => !sameRecord(r, record)), record]);
   }
 
   async upsertMany(records: readonly CompetencyRecord[]): Promise<void> {
     // One write for the whole batch, so a fold cannot land half-applied
     // (the M14 all-or-nothing guarantee, as far as this storage allows).
-    const domains = new Set(records.map((r) => r.domain));
-    this.write([...this.all().filter((r) => !domains.has(r.domain)), ...records]);
+    // Records are replaced by (population, domain), so folding an assessment
+    // leaves the practice record for the same domain untouched (D5).
+    const keys = new Set(records.map(keyOf));
+    this.write([...this.all().filter((r) => !keys.has(keyOf(r))), ...records]);
   }
 
   clear(): void {

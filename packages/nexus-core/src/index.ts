@@ -1,4 +1,5 @@
 export * from "./types/entitlements.js";
+export * from "./types/result-population.js";
 export * from "./types/subscription.js";
 export * from "./entitlement-engine/index.js";
 export * from "./ai-service/index.js";

@@ -1,12 +1,13 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { CompetencyRecord } from "@haa-nexus/nexus-core";
+import type { CompetencyRecord, ResultPopulation } from "@haa-nexus/nexus-core";
 import type { CompetencyRepository } from "@haa-nexus/nexus-core";
 
 export class TauriCompetencyRepository implements CompetencyRepository {
-  async get(domain: string): Promise<CompetencyRecord | undefined> {
+  async get(population: ResultPopulation, domain: string): Promise<CompetencyRecord | undefined> {
     // One indexed lookup rather than listing every record to find one
     // (Phase 7 accepted debt A10); submit calls this once per domain.
-    const record = await invoke<CompetencyRecord | null>("get_competency_record", { domain });
+    // Population is part of the key (D5), not a filter applied afterwards.
+    const record = await invoke<CompetencyRecord | null>("get_competency_record", { population, domain });
     return record ?? undefined;
   }
 
