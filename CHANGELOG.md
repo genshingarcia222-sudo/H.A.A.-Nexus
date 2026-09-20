@@ -11,6 +11,67 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D6 Resolved — An Interrupted Assessment May Be Retaken (2026-09-20)
+
+**Decision under delegated authority. No production code changed.** A learner
+may retake an interrupted Assessment as a new attempt; exact in-place resume is
+not offered. The interrupted attempt is recorded as `abandoned` rather than
+deleted, and contributes nothing.
+
+**Resume was not selectable, and that is a rule rather than a preference.** A6
+records that exact mid-transcript resume is unimplemented and is *the
+engineering half of D8*: restoring an attempt changes elapsed time, which feeds
+`timeEfficiencyRatio` and therefore the score. Selecting it would have decided
+D8. The real option space was retake, or no retake at all.
+
+**Retake rather than a terminal lock.** A "no retake" rule would permanently
+cost a learner a scenario because their machine crashed - destructive,
+irreversible, and invented by no source. The exam-integrity worry behind such a
+rule is score-shopping, and it does not apply: **D2** shows the learner no
+performance information during an active Assessment, so there is nothing to
+shop against, and **D5** means an interrupted Assessment carries no evaluation
+and counts in neither population. A retake cannot launder a bad score because
+no score exists. The abandoned record keeps the audit trail.
+
+**Why no production change was required.** The existing Dashboard flow already
+implements exactly this policy: it offers "Start a new attempt" and "Discard",
+never a resume, and it starts the new attempt *before* abandoning the old
+record so a refused start cannot destroy the learner's work. D6 authorizes that
+behaviour; `interruptedAssessment.test.tsx` (7 tests) is what now stops it
+being changed by accident.
+
+**Adversarial checks confirmed the boundary is load-bearing:** abandoning the
+record before the start succeeds failed 2 tests, and carrying the old attempt's
+id forward - a disguised resume - failed 1. Both files restored byte-identically.
+
+**D5 acceptance, in the same pass.** The historical competency migration was
+re-checked against repository history rather than assumed: the Assessment entry
+point first existed at `34f727c`, so every competency record written before it
+is unambiguously practice or simulation. Between then and D5 an Assessment
+could in principle have folded into the shared record, but only under a Pro or
+Fast-Track subscription, and no persistence or tier-switching surface exists
+(D10) - so no production path did. `Simulation → Practice`, the preserved
+recommendation behaviour and the unchanged Dashboard were each re-verified;
+the recommendation engine and Dashboard are untouched by D5.
+
+**Verification.** 379/379 nexus-core, 215/215 desktop (+7), 55/55 Rust
+unchanged and not re-run (D6 touched no Rust), typecheck clean, build clean,
+17/17 preflight.
+
+**Browser.** The interrupted-session flow was exercised at
+`http://localhost:1420/`: a paused Practice attempt appeared under "Interrupted
+session" offering only "Start a new attempt" and "Discard" - no resume - and
+taking the retake moved the old record to `abandoned` in the history and
+started a fresh attempt. **This was a Practice session, not an Assessment**:
+an interrupted Assessment needs Pro and no tier-switching surface exists (D10).
+It is the same Dashboard code path, but that is the shared path, not an
+Assessment run.
+
+**Every Phase 8.3 Assessment decision is now resolved (D1-D6).** D7, D8 (with
+A6) and D9 remain open and are outside Assessment mode.
+
+---
+
 ## D5 Resolved — Assessment Results Count Separately from Practice (2026-09-20)
 
 **Owner decision.** A completed Assessment contributes to **Assessment**

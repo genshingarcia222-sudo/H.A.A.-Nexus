@@ -322,8 +322,23 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 (D3), closed-book access (D4), analytics/competency treatment (D5),
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
-authorized and enforced. **D3, D4 and D5 were answered by the owner on
-2026-09-20; D6-D9 remain unresolved.**
+authorized and enforced. **D3, D4, D5 and D6 were all answered on 2026-09-20.
+Every Phase 8.3 Assessment decision is now resolved; D7-D9 remain open and are
+outside Assessment mode.**
+
+**D6 — interrupted Assessments — answered 2026-09-20 under delegated
+authority.** A learner may **retake** an interrupted Assessment as a new
+attempt; exact in-place resume is **not** offered. The interrupted attempt is
+recorded as `abandoned`, not deleted, and contributes nothing. Resume was not
+selectable: it is the engineering half of **D8** (restoring an attempt changes
+elapsed time, which feeds the score), so choosing it would have decided D8. A
+terminal "no retake" lock was rejected as destructive and unsourced - and the
+score-shopping worry behind it does not apply, because **D2** shows the learner
+no performance during an active Assessment and **D5** means an interrupted
+Assessment carries no evaluation and counts in neither population. **No
+production change was required**: the existing Dashboard flow already did
+exactly this, and is now pinned by `interruptedAssessment.test.tsx`. Full
+record in `PHASE_8_3_ASSESSMENT_MODE.md` D6.
 
 **D5 — analytics and competency treatment — answered 2026-09-20.** Assessment
 results count **separately** from Practice results in both. The distinction is

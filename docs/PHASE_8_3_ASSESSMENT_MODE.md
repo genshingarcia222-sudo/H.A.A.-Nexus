@@ -236,10 +236,17 @@ something reconstructed from a merged total:
 | Analytics | `computeAnalytics(population, …)` - population is a **required** argument and the filtering happens inside, so no caller can produce a merged total |
 | UI | Two labelled sections; no combined figure is rendered anywhere |
 
-**Migration 003 assigns existing rows to `practice`.** Every record written
-before this was produced by the old mode-agnostic fold, and Assessment was
-unreachable for most of that period. That keeps a learner's training history;
-it does not claim those attempts were assessments.
+**Migration 003 assigns existing rows to `practice`.** Provenance was checked
+rather than assumed: the Assessment entry point first existed at `34f727c`
+(D1), so **every competency record written before that commit is unambiguously
+practice or simulation** - no learner could start an Assessment at all. Between
+`34f727c` and D5 an Assessment could in principle have folded into the shared
+record, but only for a Pro or Fast-Track subscription, and there is no
+subscription persistence or tier-switching surface (D10), so no production path
+existed. The classification is therefore safe for real data and, in the one
+theoretical window, is the conservative choice: it preserves the learner's
+history rather than discarding rows whose provenance cannot be proven. The
+dev-browser store applies the same rule to records predating the field.
 
 **Recommendations were deliberately left alone.** `generateRecommendations`
 still reads all evaluated sessions across both populations. D5 governs
@@ -311,12 +318,55 @@ it was left alone.
 
 </details>
 
-### D6 — After an interrupted Assessment, may the learner start again or resume? — **NOT AUTHORIZED**
+### D6 — After an interrupted Assessment, may the learner start again or resume? — **RESOLVED**
+
+**Decision, 2026-09-20, under delegated authority: a learner may retake an
+interrupted Assessment as a new attempt. Exact in-place resume is not
+offered.** The interrupted attempt is recorded as `abandoned` rather than
+deleted, and contributes nothing.
+
+**Why resume was not selectable.** A6 records that exact mid-transcript resume
+is unimplemented and is *the engineering half of D8*: restoring an attempt
+changes elapsed time, which feeds `timeEfficiencyRatio` and therefore the
+score. Choosing it would have decided D8, which is not this decision's to make.
+So the real option space was **retake** or **no retake at all**.
+
+**Why retake rather than a terminal lock.** A "no retake" rule would
+permanently cost a learner a scenario because their machine crashed - a
+destructive, irreversible outcome invented by no source. The exam-integrity
+worry behind such a rule is score-shopping, and it does not apply here: **D2**
+means the learner sees no performance information whatsoever during an active
+Assessment, so there is nothing to shop against, and the abandoned record keeps
+the audit trail. Under **D5** an interrupted Assessment carries no evaluation,
+so it counts in neither population - a retake cannot launder a bad score,
+because no score exists.
+
+**No production change was required.** The existing Dashboard flow already
+implements exactly this: it offers "Start a new attempt" and "Discard", never a
+resume, and it starts the new attempt *before* abandoning the old record so a
+refused start cannot destroy the learner's work. D6 authorizes that behaviour
+and `interruptedAssessment.test.tsx` now pins it, including that D1 still
+refuses a tier that may not start an Assessment.
+
+**Verified:** 7 tests through the real Dashboard. Two adversarial checks
+confirmed the boundary is load-bearing - abandoning the record before the start
+succeeds failed 2 tests, and carrying the old attempt's id forward (a disguised
+resume) failed 1 - and both files were restored byte-identically.
+
+**Still open, deliberately:** whether an interrupted *practice or simulation*
+attempt may be resumed in place is **D8**, and the transcript-position
+persistence it needs is **A6**. Neither was touched.
+
+<details><summary>The entry as it stood while this decision was open</summary>
+
+### D6 — evidence gathered while this decision was open
 
 - **Evidence examined:** the Dashboard's interrupted-session flow (implementation only).
 - **Why insufficient:** retake and resume rules are exam-integrity policy, a learner-facing restriction.
 - **Current state:** the generic "Start a new attempt" flow is unchanged.
-- **Decision required:** the retake/resume policy for interrupted Assessments.
+- **The decision as it was framed:** the retake/resume policy for interrupted Assessments. **Answered: retake allowed, resume not offered.**
+
+</details>
 
 ### Related open decision outside Assessment
 
@@ -387,6 +437,6 @@ it was left alone.
 | Assessment results presentation | **DONE** — D3 = all six surfaces ON, satisfied by the existing summary and protected by tests |
 | Closed-book navigation restriction | **DONE** — D4 = closed-book, enforced at the route |
 | Analytics/competency separation | **DONE** — D5 = separate populations, enforced in the domain, the schema and the aggregation |
-| Interrupted-Assessment policy | **BLOCKED** — D6 |
+| Interrupted-Assessment policy | **DONE** — D6 = retake allowed, resume not offered; already satisfied, no production change |
 
-D1, D3, D4 and D5 are decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, and counts as its own population. Phase 8.3 cannot close while D6 remains unanswered - what happens to an interrupted Assessment is still the owner's to decide.
+D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D7 (contradictory documentation), D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).
