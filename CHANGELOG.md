@@ -11,6 +11,72 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D4 Resolved — Assessment Runs Closed-Book (2026-09-20)
+
+**Owner decision.** Knowledge Base OFF, Training OFF, direct route access
+BLOCKED, no tier exception. Supplied explicitly; recorded as the owner's
+decision, not an engineering choice.
+
+**One boundary, in the domain.** `mayAccessReferenceMaterial(session)` in
+`nexus-core` decides it: no attempt and practice/simulation are unrestricted,
+an assessment is blocked unless it is `completed`. It takes a session and no
+tier, so Pro and Fast-Track cannot diverge - D1 decides who may *enter* an
+assessment, D4 decides the conditions *inside* it.
+
+**Guarded at the route, because the nav rail is not a boundary.**
+`ReferenceGate` wraps `/knowledge-base` and `/training` in the router, so a
+typed URL, a bookmark and a programmatic `navigate()` are all blocked - they
+all render the route element. Hiding the two nav links is a courtesy so a
+learner is not offered something that would refuse them. The router and the
+nav rail import the same `REFERENCE_ROUTES` list, so a third reference surface
+cannot be added to one and forgotten in the other.
+
+**The `completed` test is what keeps D3 intact.** The books reopen exactly when
+the attempt is submitted, so the full post-submission experience - including
+the expected-answer comparison - is unchanged. A test walks the whole
+lifecycle: allowed before, blocked during, allowed again after.
+
+**The knowledge archive was not restricted, and that distinction is the point.**
+`content/` - scenarios, terminology, lessons and the new question bank -
+remains available in full to authoring, validation and content tooling, and
+`content/scenarios.ts` still loads every repository at startup exactly as
+before. Nothing was moved, deleted, gated, or given entitlement metadata, and
+no repository was coupled to session state. D4 closes a runtime learner surface
+during an attempt; it does not touch the archive that feeds it. The boundary
+test caught this itself - it first flagged the content layer as an offender,
+and the fix was to scope the scan to *consumers*, not to restrict the content.
+
+**Mutation-checked.** Removing the route guard so that only the nav rail
+restricted access failed 5 tests - that is precisely the UI-only enforcement
+this decision forbids. Making the rule always allow failed 6; making it block
+every mode rather than assessment failed 4. Every file restored
+byte-identically.
+
+**Verification.** 356/356 nexus-core (+12), 199/199 desktop (+17), desktop
+typecheck clean, build clean, 17/17 preflight. Rust untouched and not re-run.
+
+**A pre-existing failure, not mine, and not fixed here.** `pnpm -r typecheck`
+fails on one strict-null error in `question-bank/schema.test.ts:48`
+(`parsed.choices[0].why`), introduced by the merged D11 question-bank work and
+untouched by this checkpoint. It is reported rather than silently fixed,
+because a one-line edit to someone else's in-flight test does not belong in a
+D4 diff.
+
+**Browser.** Verified at `http://localhost:1420/`: with no session the
+Knowledge Base renders in full, and during an active **Practice** session it
+still renders with all six nav links present - D4 left practice untouched.
+**The blocked Assessment state could not be exercised in-browser**: it requires
+Pro and no tier-switching surface exists (D10), and adding one would be
+production scaffolding for a test. Assessment enforcement is covered by 17
+tests that render the real router at a real URL, which is the same code path a
+typed URL takes.
+
+**D1 and D3 intact. D5 and D6 remain unresolved and untouched** - competency
+and analytics treatment, and interruption/resume behaviour, were neither
+examined for policy nor modified.
+
+---
+
 ## D4 Audit — Assessment Is Open-Book by Omission (2026-09-20)
 
 **An audit, not a decision. No production code changed.** D4 - whether an

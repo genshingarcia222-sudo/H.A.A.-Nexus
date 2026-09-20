@@ -322,8 +322,18 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 (D3), closed-book access (D4), analytics/competency treatment (D5),
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
-authorized and enforced. **D3 was answered by the owner on 2026-09-20; D4-D9
-remain unresolved.**
+authorized and enforced. **D3 and D4 were answered by the owner on 2026-09-20;
+D5-D9 remain unresolved.**
+
+**D4 — reference access during an Assessment — answered 2026-09-20.**
+Closed-book: Knowledge Base OFF, Training OFF, direct route access BLOCKED, and
+no tier exception. Enforced by `mayAccessReferenceMaterial` in `nexus-core` and
+`ReferenceGate` on the two routes, so a typed URL or a programmatic navigate is
+blocked and not merely unlinked. The books reopen on submission, which is what
+leaves D3 intact. **The knowledge archive is not restricted** - `content/` stays
+fully available to authoring and validation tooling; D4 closes a runtime learner
+surface during an attempt, not the content that feeds it. Full record in
+`PHASE_8_3_ASSESSMENT_MODE.md` D4.
 
 **D3 — Assessment post-submission experience — answered 2026-09-20.** All six
 surfaces ON: score, category breakdown, WHAT/WHY/HOW feedback, expected-answer
