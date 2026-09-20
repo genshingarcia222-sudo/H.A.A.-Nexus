@@ -15,7 +15,7 @@
   color: var(--nexus-color-accent-ink);
 }
 .nexus-btn--primary:hover {
-  background: #0c574e;
+  background: var(--nexus-color-accent-hover);
 }
 .nexus-btn--primary:disabled {
   background: var(--nexus-color-border);
@@ -43,6 +43,12 @@
   margin: 0 0 var(--nexus-space-2) 0;
   font-size: var(--nexus-font-size-md);
   font-weight: 600;
+}
+
+.nexus-nav-rail__footer {
+  margin-top: auto;
+  padding-top: var(--nexus-space-3);
+  border-top: var(--nexus-border-width) solid var(--nexus-color-border);
 }
 
 /* Nav rail: fixed-width left rail, like desktop documentation software */

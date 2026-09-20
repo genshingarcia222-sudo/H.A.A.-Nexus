@@ -4,6 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>H.A.A. Nexus</title>
+    <script>
+      // The website runs dark by default. Set before first paint so there is
+      // no light flash; the Tauri desktop shell keeps the light default.
+      // Inline and dependency-free because it must run before the module
+      // graph - and before any stylesheet paints.
+      (function () {
+        try {
+          if (!("__TAURI_INTERNALS__" in window)) {
+            document.documentElement.setAttribute("data-theme", "dark");
+          }
+        } catch (e) {
+          /* leave the light default */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
