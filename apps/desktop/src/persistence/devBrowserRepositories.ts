@@ -140,7 +140,7 @@ export class DevBrowserCompetencyRepository implements CompetencyRepository {
   }
 
   async upsert(record: CompetencyRecord): Promise<void> {
-    this.write([...this.all().filter((r) => !sameRecord(r, record)), record]);
+    this.write([...this.all().filter((r) => keyOf(r) !== keyOf(record)), record]);
   }
 
   async upsertMany(records: readonly CompetencyRecord[]): Promise<void> {

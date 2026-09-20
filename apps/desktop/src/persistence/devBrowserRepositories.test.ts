@@ -113,21 +113,22 @@ describe("dev browser persistence - the lifecycle a reload puts it through", () 
   it("keeps competency records across a reload and folds a batch in one write", async () => {
     const repo = new DevBrowserCompetencyRepository(storage);
     const domains: CompetencyRecord[] = ["accuracy", "completeness"].map(
-      (domain) => ({ domain, attemptCount: 1, updatedAt: 10 }) as unknown as CompetencyRecord
+      (domain) =>
+        ({ population: "practice", domain, attemptCount: 1, updatedAt: 10 }) as unknown as CompetencyRecord
     );
     await repo.upsertMany(domains);
 
     const after = new DevBrowserCompetencyRepository(storage);
     expect((await after.list()).map((r) => r.domain).sort()).toEqual(["accuracy", "completeness"]);
-    expect((await after.get("accuracy"))?.attemptCount).toBe(1);
+    expect((await after.get("practice", "accuracy"))?.attemptCount).toBe(1);
   });
 
   it("replaces a domain rather than duplicating it", async () => {
     const repo = new DevBrowserCompetencyRepository(storage);
-    await repo.upsert({ domain: "accuracy", attemptCount: 1 } as unknown as CompetencyRecord);
-    await repo.upsert({ domain: "accuracy", attemptCount: 2 } as unknown as CompetencyRecord);
+    await repo.upsert({ population: "practice", domain: "accuracy", attemptCount: 1 } as unknown as CompetencyRecord);
+    await repo.upsert({ population: "practice", domain: "accuracy", attemptCount: 2 } as unknown as CompetencyRecord);
     expect(await repo.list()).toHaveLength(1);
-    expect((await repo.get("accuracy"))?.attemptCount).toBe(2);
+    expect((await repo.get("practice", "accuracy"))?.attemptCount).toBe(2);
   });
 
   it("keeps the profile across a reload", async () => {
