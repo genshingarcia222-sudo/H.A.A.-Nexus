@@ -322,9 +322,25 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 (D3), closed-book access (D4), analytics/competency treatment (D5),
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
-authorized and enforced. **D3, D4, D5 and D6 were all answered on 2026-09-20.
-Every Phase 8.3 Assessment decision is now resolved; D7-D9 remain open and are
-outside Assessment mode.**
+authorized and enforced. **D3, D4, D5, D6 and D7 were all answered on
+2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them;
+D8 and D9 remain open.**
+
+**D7 — contradictory documentation — answered 2026-09-20 under delegated
+authority.** A note that documents a pertinent negative and asserts the
+opposite in the same section is a `critical_documentation_error`, at critical
+severity, counting against accuracy like any other unsupported assertion.
+Before this it cost nothing at all: the first match satisfied the requirement,
+so "No fever. Fever present." scored **accuracy 100 with no error**. No new
+error type, severity or scoring formula was invented -
+`critical_documentation_error` already existed with a critical floor and no
+evaluator produced it, and the score effect reuses the existing
+false-assertion counter. Scoped to pertinent negatives, where the existing
+negation machinery detects the contradiction reliably; this is not general
+contradiction detection. The note comparison's status union was extended in
+the same change, because otherwise a contradicted requirement would read back
+as "Documented" while the feedback list called it critical. Full record in
+`PHASE_8_3_ASSESSMENT_MODE.md` D7.
 
 **D6 — interrupted Assessments — answered 2026-09-20 under delegated
 authority.** A learner may **retake** an interrupted Assessment as a new

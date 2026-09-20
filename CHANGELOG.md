@@ -11,6 +11,137 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D7 Resolved — A Self-Contradictory Note Is a Critical Documentation Error (2026-09-20)
+
+**Decision under delegated authority.** A note that documents a pertinent
+negative **and** asserts the opposite in the same section is a
+`critical_documentation_error`, at critical severity, counting against
+accuracy like any other unsupported assertion.
+
+**What it was worth before: nothing.** `findFirstMatch` returns the *first*
+match, so a note reading "No fever. Fever present." satisfied the requirement
+and the contradiction was never examined. Measured before implementing
+anything, that note scored **accuracy 100 with no error at all** - a
+self-contradictory note graded identically to a correct one. Architecture §28
+requires contradictory learner input as an edge-case fixture but states no
+expected outcome, which is the gap this fills.
+
+**Nothing new was invented.** `critical_documentation_error` already existed
+in the taxonomy with a **critical** severity floor, and no evaluator path
+produced it - the architecture had reserved the type for defects dangerous
+regardless of category, which is what a self-contradictory note is. The score
+effect reuses the existing false-assertion counter, whose own comment already
+covered assertions of something false. No new error type, no new severity, no
+new scoring formula. `fabrication` (a value never provided),
+`incorrect_negative` (a clean reversal, which would collide with the existing
+path) and `incorrect_positive` (only half the defect) were each rejected for
+stated reasons.
+
+**Scoped honestly.** The rule covers pertinent negatives, where the existing
+negation machinery detects the contradiction reliably by reusing
+`detectReversedNegative`. It is not general contradiction detection.
+
+**A downstream defect found and fixed with it.** `critical_documentation_error`
+carries a `relatedRequirementId` but was not in the note comparison's
+`REQUIREMENT_STATUSES`, so a contradicted requirement would have read back as
+**Documented** while the feedback list called it critical - the exact
+divergence that component exists to prevent. The status union and the desktop
+labels now show **Contradictory**.
+
+**Mutation-checked.** Never detecting a contradiction failed 4 tests; dropping
+the pertinent-negative scope guard failed 1; reporting it with no score effect
+failed 1. All restored byte-identically. The scope-guard mutation initially
+*survived*: the first version of that test passed for the wrong reason,
+because the shipped requirements have no negated variants. It was rewritten to
+clear `isPertinentNegative` on the very requirement that does contradict,
+making the guard the single difference between the two cases.
+
+**Verification.** 390/390 nexus-core (+11), 228/228 desktop, typecheck clean,
+build clean. Rust untouched and not re-run - D7 changed no persistence or IPC.
+
+**Browser, inside a real Assessment:** accuracy 60, one critical documentation
+error with WHAT/WHY/HOW, and **Contradictory** in the note comparison.
+
+**D1-D6 intact. D8 and D9 remain unresolved and untouched.**
+
+---
+
+## Website: Dark Theme and Persistent Fast-Track Preview (2026-09-20)
+
+**Technical/UI execution, not a product decision.** This changes how the
+browser build looks and which tier it previews. It decides no policy and
+alters no learner-facing rule.
+
+**Dark theme, by token redefinition.** `theme.css` already exposed one set of
+semantic tokens, so dark mode redefines those same tokens under
+`:root[data-theme="dark"]` - there is no second colour system, and every
+component, inline style and badge that already read a token follows
+automatically. The one hardcoded colour in the codebase (the primary button
+hover) became `--nexus-color-accent-hover` so it follows too. Contrast was
+chosen against the surface each token actually sits on: ink 15.8:1, secondary
+ink 7.3:1, accent ink on accent 5.1:1, and every status colour at or above
+4.5:1. `color-scheme: dark` is set so native controls and scrollbars match.
+
+**No light flash.** The attribute is set by a small inline script in
+`index.html`, before the module graph loads and before any stylesheet paints.
+**The desktop shell is untouched** - the script skips when the Tauri global is
+present, so the native app keeps the light default.
+
+**Persistent highest-tier preview.** The browser build runs as a Fast-Track
+*preview client*, persisted at `nexus.preview.subscriptionTier` as
+`{"version":1,"tier":"fast_track"}`. The tier is read from `TIER_ORDER`
+rather than hardcoded, so it follows the matrix if a higher tier is ever
+added.
+
+**It reuses the production path rather than bypassing it:** stored tier into
+`SubscriptionState`, into `resolveEntitlements`, into capabilities. A feature
+is visible only if the real matrix grants it to that tier. No
+feature-specific bypass, no forked matrix, no weakened capability rule - **if
+a gate is wrong, the preview shows it as wrong.** No fake subscription record
+is created, and no payment or production entitlement state is written or
+changed.
+
+**It never downgrades itself.** Missing, corrupt, unknown-tier,
+version-mismatched and throwing storage all resolve to the preview tier, and
+the value is re-persisted on load so stale state repairs in place. The stored
+value is the *selected tier*, not a snapshot of which features existed when it
+was written, so a newer build's Fast-Track features appear with no
+reactivation.
+
+**Confined to the website.** Tauri and the test environment both fall through
+to `NO_SUBSCRIPTION`. The `MODE !== "test"` guard matters: jsdom supplies
+`localStorage` and reports no Tauri global, so without it every desktop test
+would silently start at Fast-Track and the D1 entitlement tests would stop
+testing anything.
+
+**Honest labelling.** The rail shows "Preview: Agency Fast-Track" and
+"Development preview - not a subscription." It deliberately avoids
+Subscribed, Purchased or Paid: no production subscription state exists, and
+claiming one would be a lie to whoever is looking at the screen.
+
+**Verification.** 13 preview tests; 228/228 desktop, 390/390 nexus-core,
+typecheck clean, build clean. Browser: dark confirmed (`data-theme="dark"`,
+body `rgb(15,20,25)`), the badge present, the stored value correct, and both
+surviving a reload. Fast-Track gating verified through the real matrix -
+**Assessment buttons appear and the Intermediate scenario is unlocked**, where
+Free showed neither.
+
+**A limitation this closes.** Every checkpoint since D1 reported that
+Assessment could not be exercised in a browser because no tier-switching
+surface existed. It can now, legitimately: a live Assessment confirmed **D4**
+(Training and Knowledge Base gone from the rail; a typed `#/knowledge-base`
+URL blocked by the closed-book notice), **D5** (Practice unchanged at 71/100
+over 4 sessions while Assessment showed 78/100 over 1, with its own competency
+records) and **D7** (the contradiction graded critical).
+
+**Not verified:** a full browser close-and-reopen, and loading a production
+build - reload persistence and the dev build were verified instead.
+
+**No product policy changed:** D1-D7 behave exactly as decided; the preview
+only chooses which tier the browser resolves as.
+
+---
+
 ## Training Question Selection — the 10-Question Run (2026-09-20)
 
 **The bank's first consumer.** The Question Bank could say what valid questions
@@ -19,85 +150,49 @@ that, and only that. **No Training UI, nothing records an answer, nothing
 scores, nothing remembers what a learner has seen, and no tier governs access.**
 
 **Selection lives in `training-engine`, not in `question-bank`.** The bank is a
-reusable content source; selection is Training's runtime policy. Putting the
-selector inside the bank would make the content model responsible for one
-consumer's rules, and a future Learning Assessment — which will want different
-ones — would inherit Training's by default. *Implementation decision —
-autonomous.*
-
-**The 10-question contract.** `DEFAULT_TRAINING_RUN_SIZE` is 10. The selector
-returns exactly the requested count and never more; it **never repeats a
-question to fill a run** (seven eligible against a request for ten is
-`insufficient-eligible-content`, reported with `requested` and `available`); and
-it **never silently widens a filter** — six level-2 questions against a request
-for ten is insufficiency, not four level-5 questions quietly mixed in. A learner
-told they practised level 2 must have practised level 2.
-
-**Eligibility is not re-derived.** The pool is `getProductionEligible()`, the
-bank's own gate. There is one definition of "may a learner see this" and it
-lives with the content. Consequence, and it is tested: **a bank of candidates is
-an empty pool** — Pilot 001, with all 12 items `CANDIDATE`, yields
-`available: 0`.
-
-**Randomness is injected, never reached for.** `RandomSource` is a
-`() => number`, with `createSeededRandom` (mulberry32) for reproducibility:
-same request, same pool, same source ⇒ the same run every time. This exists so
-that "why did the learner get these ten?" is answerable; a selector sprinkled
-with ambient `Math.random()` cannot be reproduced and therefore cannot be
-debugged or fairly reviewed. It is deterministic, not cryptographic.
+reusable content source; selection is Training's runtime policy. A future
+Learning Assessment will want different rules and should not inherit Training's.
 *Implementation decision — autonomous.*
 
-**Diversity is a preference, not a constraint.** A greedy pass picks the
-remaining question that would least concentrate the run, ties broken by the
-deterministic shuffle, weighted `variantGroup` 8 · `learningObjective` 4 ·
-`skillArea` 2 · `questionType` 1 · `domain` 1. Undefined metadata contributes
-nothing, so questions without a variant group are not treated as one group.
-Diversity never fails a run and never overrides a filter — making `variantGroup`
-*hard* would convert a content-shape problem into a learner-visible
-insufficiency error, and where that line belongs is a product question
-deliberately left open.
+**The 10-question contract.** `DEFAULT_TRAINING_RUN_SIZE` is 10. Exactly the
+requested count, never more. It **never repeats a question to fill a run**
+(seven eligible against a request for ten is `insufficient-eligible-content`,
+reported with `requested` and `available`) and **never silently widens a
+filter** — six level-2 questions against a request for ten is insufficiency, not
+four level-5 questions quietly mixed in. A learner told they practised level 2
+must have practised level 2.
 
-**The boundaries are checked, not trusted.**
-`question-selection.boundary.test.ts` scans the source: the selector may import
-only from `question-bank/`, may name no subscription tier, may not re-derive
-eligibility, and may hold no module-level mutable state — the same approach
-`liveFeedbackBoundary.invariant.test.ts` takes on the Assessment side. Each of
-entitlement, persistence and scoring would be easy to reach for while "just"
-making selection smarter, and each would quietly relocate a product decision
-into a content-adjacent module.
+**Eligibility is not re-derived.** The pool is `getProductionEligible()`, the
+bank's own gate. Consequence, and it is tested: **a bank of candidates is an
+empty pool** — Pilot 001, all 12 items `CANDIDATE`, yields `available: 0`.
 
-**Assessment readiness — re-inspected, and deliberately not built on.** D5 and
-D6 resolved since the last checkpoint, so **every Phase 8.3 Assessment decision
-is now settled**. The finding that matters is unchanged: **Assessment is a
-session mode over *scenarios*, not a question-based exam.** Its input is a
-`scenarioId`/`scenarioVersion` and a documentation draft; it has no
-multiple-choice question model, and no Assessment code references the Question
-Bank — verified by scanning, the only two mentions outside `question-bank/` and
-`training-engine/` are a doc comment and the package barrel export. A
-question-based "Learning Assessment" is a different, currently non-existent
-capability, and a future one would bring its own selection rules rather than
-reuse Training's.
+**Randomness is injected, never reached for.** `RandomSource` plus
+`createSeededRandom` (mulberry32): same request, same pool, same source ⇒ the
+same run every time, so "why did the learner get these ten?" is answerable.
+Deterministic, not cryptographic.
 
-**PRODUCT DECISION — BLOCKED: shared versus reserved question pool.** If
-Assessment ever draws from the pool Training practises on, a learner meets exam
-questions during practice and the exam is defeated. The bank and the selector
-can express either arrangement with no content-model rewrite — a reserved pool
-is a filter over existing metadata. Which is correct is the owner's. Nothing
-here assumes an answer, and no Assessment scoring, pass threshold, completion
-rule, certification semantics or Assessment entitlement was written. No medical
-content was generated: selection fixtures are structural variants of the
-existing bank fixture, with ids and classification metadata changed and the
-clinical text untouched.
+**Diversity is a preference, not a constraint.** A greedy least-concentration
+pass weighted `variantGroup` 8 · `learningObjective` 4 · `skillArea` 2 ·
+`questionType` 1 · `domain` 1, ties broken by the deterministic shuffle. It
+never fails a run and never overrides a filter; making `variantGroup` hard would
+turn a content-shape problem into a learner-visible error, which is a product
+question left open.
 
-**Documentation.** `docs/TRAINING_QUESTION_SELECTION.md` (new);
-`TRAINING_QUESTION_BANK.md` updated for its first consumer and the refreshed
-readiness finding.
+**Boundaries checked, not trusted.** `question-selection.boundary.test.ts` scans
+the source so the selector imports only from `question-bank/`, names no
+subscription tier, does not re-derive eligibility and holds no module state.
 
-**Verification.** 665/665 tests (450 nexus-core across 48 files — 33 new — and
-215 desktop across 24), typecheck clean, build clean, preflight exit 0 with
-17/17 preflight self-tests. **No browser verification was performed and none is
-claimed**: no UI was added, deliberately, since a dev diagnostic surface would
-have been scope this checkpoint does not need. Rust untouched and not re-run.
+**Assessment readiness re-inspected.** D5 and D6 resolved, so every Phase 8.3
+Assessment decision is settled. Assessment remains a session mode over
+*scenarios*: its input is a `scenarioId`/`scenarioVersion` and a documentation
+draft, it has no question model, and no Assessment code references the Question
+Bank. **PRODUCT DECISION — BLOCKED:** whether a future question-based Assessment
+draws from the pool Training practises on or a reserved one. No Assessment
+semantics implemented; no medical content generated.
+
+**Verification.** 665/665 tests (450 nexus-core across 48 files, 33 new; 215
+desktop across 24), typecheck clean, build clean, preflight 17/17. No UI was
+added, so no browser verification is claimed. Rust untouched.
 
 ---
 
@@ -289,86 +384,6 @@ handled separately.
 
 **D1-D4 intact. D5 remains BLOCKED - owner decision required. D6 unresolved and
 untouched.**
-
----
-
-## Question Bank Repository and Read-Only Loader (2026-09-20)
-
-**The seam, not the runtime.** The canonical Question Bank had a schema and a
-validator but no way to get content into a consumer. This adds that layer and
-nothing beyond it: **there is still no selector.** Nothing randomises, sequences,
-builds a 10-question run, tracks seen items or decides what a learner sees.
-
-**`QuestionBankRepository` — three methods, deliberately.** `getById`,
-`getAll`, and `getProductionEligible`. A future Training run, a remediation
-surface and a future Learning Assessment all need *"give me the questions"* and
-*"give me this one"*; none needs a query language, and inventing one would
-encode guesses about selection nobody has made. *Implementation decision —
-autonomous.*
-
-`getProductionEligible()` is a **safety gate, not a query** — it applies the
-existing `isProductionEligible`, which already requires content status, review
-outcome *and* a recorded human verification to agree. It is how a learner-facing
-consumer avoids being handed candidates by default, and it promotes nothing.
-
-**`InMemoryQuestionBankRepository`** mirrors `InMemoryTrainingLessonRepository`,
-with two guarantees added because bank content carries provenance and a review
-lifecycle that must not drift: stored records are **private, deep-frozen
-clones** (a consumer cannot edit a question's status, rationale or source
-through a reference it was handed, and registering does not freeze the caller's
-own object), and **reads are deterministic** (registration order every time, a
-fresh array each call). A duplicate id throws rather than overwriting — one
-question would silently disappear, and with a citation attached that is a
-question whose source no longer matches its text.
-
-**The loader is split in two, and that is a constraint rather than a
-preference.** `nexus-core` production code contains no `node:` imports anywhere
-and the desktop app bundles the package for the browser through Vite, so
-`node:fs` on the public surface would break that build. `loader.ts` is
-platform-neutral and takes file contents somebody else has read; `loader-node.ts`
-does filesystem discovery and is **deliberately absent from the package index**.
-Verified, not assumed: the shipped browser bundle contains no `node:fs` and no
-loader-node symbol. *Implementation decision — constrained by existing
-requirements.*
-
-Loader behaviour: every problem in every file is reported rather than the first;
-**nothing loads unless everything validates**, because a partial load means a
-consumer silently working from a subset of a bank that carries provenance; ids
-must be unique across the whole bank, not merely within a file; and **status
-survives untouched** — a candidate that goes in comes out a candidate.
-
-**Assessment readiness — inspected, and deliberately not built on.** The finding
-matters: **Assessment today is a session mode over *scenarios*, not a
-question-based exam.** It grades a documentation draft against a Scenario's
-`requiredDocumentation` through the evaluation engine, and contains no question
-model at all. D1, D2, D3 and D4 are owner-authorized; D5 and D6 remain blocked.
-
-**No Assessment consumer interface was created**, because the current Assessment
-specification defines no question-based content requirement to anchor one to —
-writing it would mean inventing product semantics. The repository interface is
-already consumer-neutral, and that is the preparation.
-
-One engineering observation, flagged rather than decided: if a future Assessment
-draws from the same pool Training practises on, a learner can meet an exam
-question during practice, which defeats the exam. The bank can express either
-arrangement with no schema change. Which is correct is **PRODUCT DECISION —
-BLOCKED**. Nothing here assumes an answer, and no Assessment scoring, pass
-threshold, entitlement, completion rule or certification semantics was written.
-No medical Assessment content was generated — authoring belongs to the Nexus
-Project archive under its source rules, not to Claude Code.
-
-**Pilot 001 unchanged.** Still `05fa24d0…aaf3d`, still 12 items
-`CANDIDATE` / SOURCE-VERIFICATION-PENDING, still 0 production-eligible. It now
-also proves the *repository layer* can carry real authored content: adapted in
-memory, loaded through the real loader, every canonical field intact, and
-`getProductionEligible()` returns an empty list. It remains development/test
-data — not under `content/`, read by no loader in the application.
-
-**Verification.** 593/593 tests (394 nexus-core across 44 files — the previous
-356 plus 38 new — and 199 desktop across 22), typecheck clean, build clean,
-preflight exit 0 with 17/17 preflight self-tests. Question-bank suite: 86 tests
-across 7 files. Re-verified after merging the D5 analytics/competency audit from
-`main`. Rust untouched and not re-run.
 
 ---
 

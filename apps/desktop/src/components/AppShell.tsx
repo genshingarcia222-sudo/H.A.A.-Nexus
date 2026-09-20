@@ -3,7 +3,10 @@ import { NavRail, type NavLinkProps } from "@haa-nexus/ui-kit";
 import type { ComponentType } from "react";
 import { mayAccessReferenceMaterial } from "@haa-nexus/nexus-core";
 import { useSessionStore } from "../store/sessionStore.js";
+import { useEntitlementStore } from "../store/entitlementStore.js";
 import { isReferenceRoute } from "./referenceRoutes.js";
+import { isWebsitePreview } from "../preview/previewEntitlement.js";
+import { TIER_LABELS } from "@haa-nexus/nexus-core";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard" },
@@ -32,6 +35,7 @@ export function AppShell() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <NavRail
+        footer={<PreviewBadge />}
         brand="H.A.A. NEXUS"
         linkComponent={RouterLink}
         items={items.map((item) => ({
@@ -42,6 +46,29 @@ export function AppShell() {
       <main style={{ flex: 1, padding: "var(--nexus-space-5)" }}>
         <Outlet />
       </main>
+    </div>
+  );
+}
+
+/**
+ * Says plainly that this browser is a development preview, not a purchase.
+ * Deliberately avoids "Subscribed"/"Paid": no production subscription state
+ * exists, and claiming one would be a lie to whoever is looking at the screen.
+ */
+function PreviewBadge() {
+  // The previewed tier is subscription state, not a capability: `Entitlements`
+  // deliberately carries no tier, so that nothing can branch on one.
+  const tier = useEntitlementStore((s) => s.subscription.tier);
+  if (!isWebsitePreview()) return null;
+
+  return (
+    <div
+      style={{ fontSize: "var(--nexus-font-size-xs)", color: "var(--nexus-color-ink-secondary)", lineHeight: 1.4 }}
+    >
+      <div style={{ fontWeight: 600, color: "var(--nexus-color-ink)" }}>
+        Preview: {TIER_LABELS[tier]}
+      </div>
+      <div>Development preview — not a subscription.</div>
     </div>
   );
 }

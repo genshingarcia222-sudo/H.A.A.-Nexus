@@ -10,6 +10,7 @@ import {
   wrongSectionFeedback,
   incorrectTerminologyFeedback,
   incorrectNegativeFeedback,
+  contradictionFeedback,
   fabricationFeedback,
   timeManagementFeedback
 } from "./feedback-templates.js";
@@ -72,7 +73,9 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
   const requiredResults = scenario.requiredDocumentation.map((req) => evaluateRequirement(req, draft));
   const optionalResults = scenario.optionalDocumentation.map((req) => evaluateRequirement(req, draft));
 
-  let fabricationLikeCount = 0; // fabrication + reversed negatives, both "asserted something false"
+  // fabrication, reversed negatives and self-contradictions: all assert
+  // something the encounter does not support (decision D7 added the third).
+  let fabricationLikeCount = 0;
 
   for (const result of requiredResults) {
     const { requirement } = result;
@@ -94,6 +97,25 @@ export function evaluateAttempt(params: EvaluateAttemptParams): EvaluationResult
         section: requirement.section,
         relatedRequirementId: requirement.id,
         ...incorrectNegativeFeedback(requirement)
+      });
+    } else if (result.found && result.selfContradicted) {
+      // Decision D7: a note that documents a pertinent negative *and* asserts
+      // the opposite in the same section is a critical documentation error.
+      // Before D7 the first match satisfied the requirement and the
+      // contradiction scored as fully correct.
+      //
+      // `critical_documentation_error` is not a new classification - it is the
+      // type the architecture already reserved for defects dangerous
+      // regardless of category, with a critical severity floor, and no
+      // evaluator path produced it until now.
+      fabricationLikeCount += 1;
+      errors.push({
+        id: errorId("critical_documentation_error", requirement.id),
+        errorType: "critical_documentation_error",
+        severity: enforceSeverityFloor("critical_documentation_error", "critical"),
+        section: requirement.section,
+        relatedRequirementId: requirement.id,
+        ...contradictionFeedback(requirement)
       });
     } else if (result.found && result.isWrongSection) {
       errors.push({

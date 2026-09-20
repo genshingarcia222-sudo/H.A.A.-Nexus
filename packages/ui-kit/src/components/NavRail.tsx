@@ -18,6 +18,8 @@ export interface NavRailProps {
   items: NavRailItem[];
   /** Injected so ui-kit doesn't depend on any particular router. */
   linkComponent?: ComponentType<NavLinkProps>;
+  /** Pinned to the bottom of the rail. Kept generic: ui-kit states no opinion about what goes here. */
+  footer?: ReactNode;
 }
 
 function DefaultLink({ to, children, ...rest }: NavLinkProps) {
@@ -28,7 +30,7 @@ function DefaultLink({ to, children, ...rest }: NavLinkProps) {
   );
 }
 
-export function NavRail({ brand, items, linkComponent }: NavRailProps) {
+export function NavRail({ brand, items, linkComponent, footer }: NavRailProps) {
   const Link = linkComponent ?? DefaultLink;
   return (
     <nav className="nexus-nav-rail" aria-label="Primary">
@@ -43,6 +45,7 @@ export function NavRail({ brand, items, linkComponent }: NavRailProps) {
           {item.label}
         </Link>
       ))}
+      {footer && <div className="nexus-nav-rail__footer">{footer}</div>}
     </nav>
   );
 }
