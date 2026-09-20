@@ -11,6 +11,64 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D5 Audit — Analytics and Competency Treatment Remains Undecided (2026-09-20)
+
+**An audit, not a decision. No production code changed.** D5 - whether
+Assessment attempts count in analytics and competency - is recorded as
+NOT AUTHORIZED and no option was supplied, so none was chosen.
+
+**Nothing is partially implemented.** `sessionStore.submit` folds an attempt's
+seven category scores into competency with no mode check, `computeAnalytics`
+filters only on "has a finite evaluation" and never on mode, and the Dashboard
+history lists every record's score without distinguishing mode. An Assessment
+attempt is indistinguishable from a Practice attempt everywhere downstream.
+
+**The three options do not cost the same, which is the point of the audit.**
+Separating *analytics* needs no schema change at all - `mode` is already
+persisted on every `SessionRecord` and `computeAnalytics` simply does not read
+it. Separating *competency* needs a migration: `competency_records` is
+`UNIQUE(user_id, domain)` with no mode dimension, so it would require migration
+003, the Rust DTO and repository, and a change to the `CompetencyRecord` shape.
+The two halves can therefore be answered independently, and an owner choosing
+"separately" should know one half is nearly free and the other is not.
+
+**D5 changes D3's inputs.** `generateRecommendations` reads all evaluated
+sessions with no mode filter, so recommendations are derived partly from
+Assessment history. D3 authorized the recommendation surface, not which
+attempts feed it - separating or excluding Assessment results would quietly
+change what D3 shows.
+
+**A gap that belongs to no decision.** D4 closed the Knowledge Base and
+Training during an active Assessment. Analytics and the Dashboard were
+deliberately excluded from D4 and remain reachable mid-attempt, showing
+aggregate performance from earlier attempts. That is not D2 (this attempt's
+performance), not D4 (answered for reference material only), and not D5 as
+worded (what counts, not what is visible during). Recorded so it is a decision
+rather than an oversight.
+
+**The tier axis is unenforced too, and is not D5.** `CAPABILITY_MATRIX`
+declares `canTrackCompetency` and `canViewAnalytics` false/false/true/true, but
+no application code reads either, so every tier gets both. Wiring it up would
+decide that by implementation, so it was left alone.
+
+**No tests were added.** There is no D5 rule to pin, and no enforcement
+boundary exists to mutation-test. Characterizing today's mode-agnostic fold
+would pin behaviour that the pending decision is expected to change.
+
+**Verification.** Documentation only. 356/356 nexus-core, 199/199 desktop,
+desktop typecheck clean, build clean, 17/17 preflight - run to confirm D1-D4
+remain intact, not because this checkpoint touched code. Rust untouched and not
+re-run.
+
+**Left untouched:** the pre-existing repo-wide typecheck failure at
+`question-bank/schema.test.ts:48` from the merged D11 work, which is being
+handled separately.
+
+**D1-D4 intact. D5 remains BLOCKED - owner decision required. D6 unresolved and
+untouched.**
+
+---
+
 ## D4 Resolved — Assessment Runs Closed-Book (2026-09-20)
 
 **Owner decision.** Knowledge Base OFF, Training OFF, direct route access
