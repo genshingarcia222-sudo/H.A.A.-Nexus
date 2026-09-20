@@ -11,6 +11,85 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Question Bank Repository and Read-Only Loader (2026-09-20)
+
+**The seam, not the runtime.** The canonical Question Bank had a schema and a
+validator but no way to get content into a consumer. This adds that layer and
+nothing beyond it: **there is still no selector.** Nothing randomises, sequences,
+builds a 10-question run, tracks seen items or decides what a learner sees.
+
+**`QuestionBankRepository` — three methods, deliberately.** `getById`,
+`getAll`, and `getProductionEligible`. A future Training run, a remediation
+surface and a future Learning Assessment all need *"give me the questions"* and
+*"give me this one"*; none needs a query language, and inventing one would
+encode guesses about selection nobody has made. *Implementation decision —
+autonomous.*
+
+`getProductionEligible()` is a **safety gate, not a query** — it applies the
+existing `isProductionEligible`, which already requires content status, review
+outcome *and* a recorded human verification to agree. It is how a learner-facing
+consumer avoids being handed candidates by default, and it promotes nothing.
+
+**`InMemoryQuestionBankRepository`** mirrors `InMemoryTrainingLessonRepository`,
+with two guarantees added because bank content carries provenance and a review
+lifecycle that must not drift: stored records are **private, deep-frozen
+clones** (a consumer cannot edit a question's status, rationale or source
+through a reference it was handed, and registering does not freeze the caller's
+own object), and **reads are deterministic** (registration order every time, a
+fresh array each call). A duplicate id throws rather than overwriting — one
+question would silently disappear, and with a citation attached that is a
+question whose source no longer matches its text.
+
+**The loader is split in two, and that is a constraint rather than a
+preference.** `nexus-core` production code contains no `node:` imports anywhere
+and the desktop app bundles the package for the browser through Vite, so
+`node:fs` on the public surface would break that build. `loader.ts` is
+platform-neutral and takes file contents somebody else has read; `loader-node.ts`
+does filesystem discovery and is **deliberately absent from the package index**.
+Verified, not assumed: the shipped browser bundle contains no `node:fs` and no
+loader-node symbol. *Implementation decision — constrained by existing
+requirements.*
+
+Loader behaviour: every problem in every file is reported rather than the first;
+**nothing loads unless everything validates**, because a partial load means a
+consumer silently working from a subset of a bank that carries provenance; ids
+must be unique across the whole bank, not merely within a file; and **status
+survives untouched** — a candidate that goes in comes out a candidate.
+
+**Assessment readiness — inspected, and deliberately not built on.** The finding
+matters: **Assessment today is a session mode over *scenarios*, not a
+question-based exam.** It grades a documentation draft against a Scenario's
+`requiredDocumentation` through the evaluation engine, and contains no question
+model at all. D1, D2, D3 and D4 are owner-authorized; D5 and D6 remain blocked.
+
+**No Assessment consumer interface was created**, because the current Assessment
+specification defines no question-based content requirement to anchor one to —
+writing it would mean inventing product semantics. The repository interface is
+already consumer-neutral, and that is the preparation.
+
+One engineering observation, flagged rather than decided: if a future Assessment
+draws from the same pool Training practises on, a learner can meet an exam
+question during practice, which defeats the exam. The bank can express either
+arrangement with no schema change. Which is correct is **PRODUCT DECISION —
+BLOCKED**. Nothing here assumes an answer, and no Assessment scoring, pass
+threshold, entitlement, completion rule or certification semantics was written.
+No medical Assessment content was generated — authoring belongs to the Nexus
+Project archive under its source rules, not to Claude Code.
+
+**Pilot 001 unchanged.** Still `05fa24d0…aaf3d`, still 12 items
+`CANDIDATE` / SOURCE-VERIFICATION-PENDING, still 0 production-eligible. It now
+also proves the *repository layer* can carry real authored content: adapted in
+memory, loaded through the real loader, every canonical field intact, and
+`getProductionEligible()` returns an empty list. It remains development/test
+data — not under `content/`, read by no loader in the application.
+
+**Verification.** 593/593 tests (394 nexus-core across 44 files — the previous
+356 plus 38 new — and 199 desktop across 22), typecheck clean, build clean,
+preflight exit 0 with 17/17 preflight self-tests. Question-bank suite: 86 tests
+across 7 files. Rust untouched and not re-run.
+
+---
+
 ## D4 Resolved — Assessment Runs Closed-Book (2026-09-20)
 
 **Owner decision.** Knowledge Base OFF, Training OFF, direct route access

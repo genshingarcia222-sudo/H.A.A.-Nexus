@@ -1,9 +1,10 @@
 # Training Question Bank — canonical architecture
 
-**Status:** schema, validator and tests implemented and **verified** — 48
-question-bank tests green within a 526/526 repository suite, typecheck, build
-and preflight clean. No runtime consumer exists, and none of the product
-decisions listed at the end has been answered.
+**Status:** schema, validator, repository, loader and tests implemented and
+**verified** — 86 question-bank tests green within a 593/593 repository suite,
+typecheck, build and preflight clean. There is still **no runtime consumer and
+no selector**: nothing chooses which questions a learner sees. None of the
+product decisions listed at the end has been answered.
 
 **Owner decision applied:** *Option B — a separate, reusable Training Question
 Bank*, recorded 2026-09-19 (`docs/DECISION_REGISTER.md` D11). Each question is
@@ -41,7 +42,10 @@ schema was added in anticipation of one.
 |---|---|
 | Schema | `packages/nexus-core/src/question-bank/schema.ts` |
 | Validator | `packages/nexus-core/src/question-bank/validate.ts` |
-| Tests | `schema.test.ts`, `validate.test.ts`, `content-qa.e2e.test.ts`, `pilot-compatibility.e2e.test.ts` |
+| Repository | `packages/nexus-core/src/question-bank/repository.ts` |
+| Loader (platform-neutral) | `packages/nexus-core/src/question-bank/loader.ts` |
+| Loader (filesystem discovery) | `packages/nexus-core/src/question-bank/loader-node.ts` |
+| Tests | `schema.test.ts`, `validate.test.ts`, `repository.test.ts`, `loader.test.ts`, `loader-node.test.ts`, `content-qa.e2e.test.ts`, `pilot-compatibility.e2e.test.ts` |
 | Bank content | `content/question-bank/` (empty; see its README) |
 | Pilot 001 fixture | `packages/nexus-core/src/question-bank/__fixtures__/` |
 
@@ -227,20 +231,144 @@ production-eligible is **0**. Tests fail if any of that changes here. No code in
 this checkpoint marks anything source-verified, and none can — only a person who
 opens the cited document may set `humanVerifiedBy`.
 
-## 7. Extension points
+## 7. The repository and the loader
 
-Deliberately left as seams, not built:
+These are the seam every future consumer goes through. Neither chooses, scores
+or shows anything.
 
-- **Selection.** `isProductionEligible()` is the gate a selector should ask
-  before a question reaches a learner. `variantGroup` is the signal a selector
-  should use to avoid near-duplicates. Neither is consumed by anything.
-- **Loading.** `content/question-bank/` has a validator and a content-QA test,
-  but no loader. Adding one is a separate, explicit step.
+### `QuestionBankRepository`
+
+Three methods, deliberately:
+
+```ts
+getById(questionId): TrainingQuestion | undefined
+getAll(): TrainingQuestion[]              // everything, status included
+getProductionEligible(): TrainingQuestion[]  // only what a learner may see
+```
+
+A future Training run, a remediation surface and a future Learning Assessment
+all need *"give me the questions"* and *"give me this one"*. None needs a query
+language, and inventing one would encode guesses about selection nobody has
+made.
+
+`getProductionEligible()` is a **safety gate, not a query**. It applies
+`isProductionEligible`, which already requires content status, review outcome
+*and* a recorded human verification to line up. It is how a learner-facing
+consumer avoids being handed candidates by default. It promotes nothing.
+
+`InMemoryQuestionBankRepository` mirrors `InMemoryTrainingLessonRepository` —
+register validated records, then read — with two guarantees added, because bank
+content carries provenance and a review lifecycle that must not drift:
+
+- **Stored records are private, deep-frozen clones.** A consumer cannot edit a
+  question's status, rationale or source through a reference it was handed;
+  registering does not freeze the caller's own object either.
+- **Reads are deterministic.** Registration order every time, and a fresh array
+  each call, so a consumer sorting or splicing the result cannot disturb the
+  next reader.
+
+A duplicate id throws rather than overwriting: one question would silently
+disappear, and with a citation attached that is a question whose source no
+longer matches its text.
+
+### The loader
+
+Split in two, and this is a constraint rather than a preference.
+`nexus-core` production code contains **no `node:` imports anywhere**, and the
+desktop app bundles the package for the browser through Vite. A `node:fs`
+import on the public surface would break that build.
+
+- **`loader.ts`** — platform-neutral. Takes file *contents* somebody else has
+  read; parses, validates, returns. Exported from the package index.
+- **`loader-node.ts`** — filesystem discovery only (`.json`, `_`-prefixed files
+  skipped as in scenario intake, sorted by name, a missing directory reads as
+  empty). **Not exported from the index**, so the browser never sees it; Node
+  callers import it by path. The build is checked: the shipped bundle contains
+  no `node:fs` and no loader-node symbol.
+
+Loader behaviour worth knowing:
+
+- **Every problem in every file is reported**, not just the first — an author
+  fixing content should see the whole list.
+- **Nothing loads unless everything validates.** A partial load means a consumer
+  silently working from a subset of a bank that carries provenance.
+- **Ids must be unique across the whole bank**, not merely within one file.
+- **Status survives untouched.** A candidate that goes in comes out a candidate.
+  The loader writes nothing and promotes nothing.
+
+`createQuestionBankRepository(files)` is the one-call path. The repository it
+returns holds every question that loaded, whatever its status, because
+development and validation tooling needs to see candidates — **being handed the
+repository is not permission to show its contents to anybody.**
+
+### Still seams, still not built
+
+- **Selection.** `getProductionEligible()` is the gate a selector should ask;
+  `variantGroup` is the signal it should use to avoid near-duplicates. Nothing
+  consumes either. Randomisation, 10-question runs, recency, seen-item history
+  and anti-memorisation logic are a separate checkpoint.
 - **Lesson linkage.** A future `linkedLessonIds`-style field would go on the
   question, not the lesson — but whether bank questions link to lessons at all
   is an open owner decision, so no field was added.
-- **Repository.** No in-memory bank repository exists yet;
-  `InMemoryTrainingLessonRepository` is the pattern when one is wanted.
+
+## 7a. Assessment readiness — what was found
+
+Inspected rather than assumed, so a future Learning Assessment is not built on a
+guess.
+
+```text
+ASSESSMENT READINESS
+
+Implemented:   Assessment exists as a SESSION MODE OVER SCENARIOS, not a
+               question-based exam. No-pause session machine
+               (PauseNotAllowedError), persisted `assessment` mode (migration
+               002, schema v2), entitlement gate `canStartAssessment`,
+               closed-book `mayAccessReferenceMaterial` + `ReferenceGate`,
+               live-feedback boundary (`mayRevealPerformance`,
+               `selectRevealableResult`), and the post-submission summary.
+               It grades a documentation draft against a Scenario's
+               requiredDocumentation via the evaluation engine.
+
+Documented:    docs/PHASE_8_3_ASSESSMENT_MODE.md — authorized requirements (§1),
+               implemented capabilities (§2), decision log (§3), remaining
+               work (§5).
+
+Owner-authorized: D1 (Assessment requires Pro), D2 (live-feedback principle),
+               D3 (all six post-submission surfaces ON), D4 (closed-book).
+
+Blocked:       D5 (analytics/competency treatment), D6 (interrupted-Assessment
+               policy), D7-D9. Phase 8.3 cannot close while D5 and D6 are open.
+
+Potential Question Bank reuse: the repository interface IS the seam. A future
+               question-based Learning Assessment would consume
+               `getProductionEligible()`. Nothing more is needed from the
+               content model today.
+
+Missing content requirements: before question-based Assessment content can be
+               authored, the owner must define coverage (which domains and skill
+               areas an assessment spans), length, scoring and pass/fail
+               semantics, whether rationale is shown and when — and, most
+               consequentially for content integrity, whether Assessment draws
+               from the SAME pool as Training or a RESERVED one.
+```
+
+**No Assessment consumer interface was created.** The current Assessment
+specification defines no question-based content requirement — it is
+scenario-based throughout — so there is nothing concrete to anchor one to, and
+writing it would mean inventing product semantics. The repository interface is
+already consumer-neutral; that is the preparation, and it is enough.
+
+**One engineering observation, flagged not decided.** If Assessment ever draws
+from the same pool Training practises on, a learner can meet an exam question
+during practice, which defeats the exam. The bank can express either
+arrangement — a reserved pool is a `domain`/`skillArea` convention plus a
+selector rule, needing no schema change. Which arrangement is correct is
+**PRODUCT DECISION — BLOCKED**, and nothing here assumes an answer.
+
+**Shared content does not mean shared behaviour.** Training may randomise,
+give immediate feedback and show rationale; Assessment may later differ on
+feedback timing, scoring, progression and completion. Those differences belong
+to the consumer, not to the content model, and none of them is implemented.
 
 ## 8. Explicitly unresolved
 
