@@ -277,18 +277,25 @@ manifest and in the compatibility test; on a Windows checkout git would have
 rewritten their line endings and changed those bytes, failing the integrity
 check for a reason unrelated to their content.
 
-**Verification — INCOMPLETE. No Node toolchain on this device.** `node`, `npm`
-and `pnpm` are not installed and `node_modules` is absent, so `pnpm -r test`,
-`pnpm -r typecheck`, `pnpm -r build` and `node tools/preflight/preflight.mjs`
-**could not be run**. This entry therefore claims no test count, and the
-question-bank suite has **never been executed**. What *was* verified, with a
-standalone Node binary and no project dependencies: every file parses, and an
-independent dependency-free restatement of the schema's rules, run against the
-real pilot fixture, passes — 12 questions, 7 sources, hash matching the manifest,
-0 above candidate, 0 human-verified, 0 production-eligible, no unrepresented
-field. That checks the *data* against the contract; it does not execute the
-TypeScript. **The suite must be run before this work is relied on.** Rust was
-untouched. Delivered on a feature branch for exactly this reason.
+**Verification — initially blocked, now complete.** When this work was written
+the authoring device had no Node toolchain at all, so nothing could be executed
+and the entry originally claimed no test count. The toolchain was subsequently
+restored (Node v22.23.2 and npm 10.9.8 from the official distribution, installed
+user-locally; pnpm 9.15.9 activated through corepack, matching the declared
+`packageManager`; `pnpm install --frozen-lockfile` with no lockfile change) and
+the suite was run for real.
+
+**526/526 tests pass** — 344/344 nexus-core (40 files: the previous 296 plus the
+48 new question-bank tests) and 182/182 desktop (21 files), with typecheck,
+build and preflight clean and 17/17 preflight self-tests passing. Preflight now
+reports D11 among the resolved decisions. Rust was untouched and not re-run.
+
+**One defect the suite caught, fixed.** `schema.test.ts` indexed
+`parsed.choices[0].why` directly, which fails `noUncheckedIndexedAccess` under
+`tsc --noEmit`. Replaced with a mapped assertion that also checks both
+explanations survive rather than only the first. *Implementation decision —
+autonomous*, test-only; no schema, validator or production behaviour changed.
+Everything else passed on the first execution.
 
 ---
 

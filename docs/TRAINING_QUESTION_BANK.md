@@ -1,7 +1,9 @@
 # Training Question Bank — canonical architecture
 
-**Status:** schema, validator and tests implemented. No runtime consumer exists,
-and none of the product decisions listed at the end has been answered.
+**Status:** schema, validator and tests implemented and **verified** — 48
+question-bank tests green within a 526/526 repository suite, typecheck, build
+and preflight clean. No runtime consumer exists, and none of the product
+decisions listed at the end has been answered.
 
 **Owner decision applied:** *Option B — a separate, reusable Training Question
 Bank*, recorded 2026-09-19 (`docs/DECISION_REGISTER.md` D11). Each question is
