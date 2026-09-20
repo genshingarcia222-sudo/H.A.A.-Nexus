@@ -629,12 +629,12 @@ fn get_competency_record_returns_exactly_the_requested_domain() {
         .unwrap();
     }
 
-    let found = competency::get_competency_record(db.conn(), "practice", "completeness")
+    let found = competency::get_competency_record(db.conn(), "practice", "practice", "completeness")
         .unwrap()
         .expect("record missing");
     assert_eq!(found.domain, "completeness");
     assert_eq!(found.avg_score, 60.0);
-    assert!(competency::get_competency_record(db.conn(), "practice", "terminology")
+    assert!(competency::get_competency_record(db.conn(), "practice", "practice", "terminology")
         .unwrap()
         .is_none());
 }

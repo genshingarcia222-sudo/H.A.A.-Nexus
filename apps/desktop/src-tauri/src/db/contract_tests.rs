@@ -132,7 +132,7 @@ fn competency_records_survive_a_database_round_trip_byte_for_byte() {
     let db = TempDb::new();
     let dto: CompetencyRecordDto = serde_json::from_str(COMPETENCY).unwrap();
     competency::upsert_competency_record(db.conn(), &dto).unwrap();
-    let loaded = competency::get_competency_record(db.conn(), "practice", &dto.domain)
+    let loaded = competency::get_competency_record(db.conn(), "practice", "practice", &dto.domain)
         .unwrap()
         .expect("record missing");
     assert_eq!(serde_json::to_value(&loaded).unwrap(), fixture(COMPETENCY));
@@ -158,7 +158,7 @@ fn a_batch_of_competency_records_is_written_all_or_nothing() {
     let result = competency::upsert_competency_records(db.conn_mut(), &[good.clone(), bad]);
     assert!(result.is_err(), "a rejected row must fail the batch");
 
-    let survivor = competency::get_competency_record(db.conn(), "practice", &good.domain).unwrap();
+    let survivor = competency::get_competency_record(db.conn(), "practice", "practice", &good.domain).unwrap();
     assert!(
         survivor.is_none(),
         "the valid row was committed even though the batch failed"
@@ -183,7 +183,7 @@ fn a_valid_competency_batch_writes_every_record() {
 
     for domain in domains {
         assert!(
-            competency::get_competency_record(db.conn(), "practice", domain)
+            competency::get_competency_record(db.conn(), "practice", "practice", domain)
                 .unwrap()
                 .is_some(),
             "{domain} missing after a successful batch"
