@@ -1,3 +1,7 @@
+// Call sites updated for decision D5 (2026-09-20): competency and analytics
+// are computed per result population. These fixtures are all practice-mode, so
+// they pass "practice" and assert exactly what they asserted before - the
+// population argument is threaded through, no expectation was changed.
 import { describe, expect, it } from "vitest";
 import { computeAnalytics } from "./compute.js";
 import type { SessionRecord } from "../persistence/types.js";
@@ -54,6 +58,7 @@ function makeError(errorType: EvaluationError["errorType"]): EvaluationError {
 
 function makeCompetency(domain: string, avgScore: number, attemptCount: number): CompetencyRecord {
   return {
+    population: "practice",
     domain,
     level: "developing",
     avgScore,
@@ -68,7 +73,7 @@ function makeCompetency(domain: string, avgScore: number, attemptCount: number):
 
 describe("computeAnalytics - empty-data behavior", () => {
   it("returns null average and insufficient-data trend with no sessions at all", () => {
-    const result = computeAnalytics([], [], 2);
+    const result = computeAnalytics("practice", [], [], 2);
     expect(result.sessionsEvaluated).toBe(0);
     expect(result.averageScore).toBeNull();
     expect(result.trend).toBe("insufficient-data");
@@ -79,7 +84,7 @@ describe("computeAnalytics - empty-data behavior", () => {
   });
 
   it("ignores in-progress (unevaluated) sessions entirely for scoring", () => {
-    const result = computeAnalytics([makeSession("A", null)], [], 2);
+    const result = computeAnalytics("practice", [makeSession("A", null)], [], 2);
     expect(result.sessionsEvaluated).toBe(0);
     expect(result.averageScore).toBeNull();
     // scenario progress still counts it as "attempted" even if not evaluated
@@ -90,7 +95,7 @@ describe("computeAnalytics - empty-data behavior", () => {
 describe("computeAnalytics - averages and trend", () => {
   it("computes a plain average with fewer than 4 sessions (insufficient-data trend)", () => {
     const sessions = [makeSession("A", 80), makeSession("A", 90)];
-    const result = computeAnalytics(sessions, [], 1);
+    const result = computeAnalytics("practice", sessions, [], 1);
     expect(result.averageScore).toBe(85);
     expect(result.trend).toBe("insufficient-data");
   });
@@ -98,19 +103,19 @@ describe("computeAnalytics - averages and trend", () => {
   it("detects an upward trend when recent sessions score meaningfully higher", () => {
     // newest-first: recent half scores much higher than older half
     const sessions = [makeSession("A", 95), makeSession("A", 92), makeSession("A", 60), makeSession("A", 58)];
-    const result = computeAnalytics(sessions, [], 1);
+    const result = computeAnalytics("practice", sessions, [], 1);
     expect(result.trend).toBe("up");
   });
 
   it("detects a downward trend when recent sessions score meaningfully lower", () => {
     const sessions = [makeSession("A", 55), makeSession("A", 58), makeSession("A", 90), makeSession("A", 92)];
-    const result = computeAnalytics(sessions, [], 1);
+    const result = computeAnalytics("practice", sessions, [], 1);
     expect(result.trend).toBe("down");
   });
 
   it("reports flat when scores are within the tolerance band", () => {
     const sessions = [makeSession("A", 81), makeSession("A", 80), makeSession("A", 79), makeSession("A", 80)];
-    const result = computeAnalytics(sessions, [], 1);
+    const result = computeAnalytics("practice", sessions, [], 1);
     expect(result.trend).toBe("flat");
   });
 });
@@ -118,7 +123,7 @@ describe("computeAnalytics - averages and trend", () => {
 describe("computeAnalytics - weak/strong areas", () => {
   it("excludes domains with zero attempts", () => {
     const competencies = [makeCompetency("HPI", 40, 3), makeCompetency("ROS", 0, 0)];
-    const result = computeAnalytics([], competencies, 1);
+    const result = computeAnalytics("practice", [], competencies, 1);
     expect(result.weakestAreas.map((a) => a.domain)).toEqual(["HPI"]);
   });
 
@@ -129,7 +134,7 @@ describe("computeAnalytics - weak/strong areas", () => {
       makeCompetency("C", 70, 5),
       makeCompetency("D", 20, 5)
     ];
-    const result = computeAnalytics([], competencies, 1);
+    const result = computeAnalytics("practice", [], competencies, 1);
     expect(result.weakestAreas.map((a) => a.domain)).toEqual(["D", "B", "C"]);
     expect(result.strongestAreas.map((a) => a.domain)).toEqual(["A", "C", "B"]);
   });
@@ -141,7 +146,7 @@ describe("computeAnalytics - error trends", () => {
       makeSession("A", 70, [makeError("omission"), makeError("omission")]),
       makeSession("A", 80, [makeError("fabrication")])
     ];
-    const result = computeAnalytics(sessions, [], 1);
+    const result = computeAnalytics("practice", sessions, [], 1);
     expect(result.errorTrends).toEqual([
       { errorType: "omission", count: 2 },
       { errorType: "fabrication", count: 1 }
@@ -149,7 +154,7 @@ describe("computeAnalytics - error trends", () => {
   });
 
   it("returns an empty array when no errors occurred", () => {
-    const result = computeAnalytics([makeSession("A", 100)], [], 1);
+    const result = computeAnalytics("practice", [makeSession("A", 100)], [], 1);
     expect(result.errorTrends).toEqual([]);
   });
 });
@@ -157,7 +162,7 @@ describe("computeAnalytics - error trends", () => {
 describe("computeAnalytics - scenario progress", () => {
   it("counts distinct scenarios attempted against the total available", () => {
     const sessions = [makeSession("A", 80), makeSession("A", 90), makeSession("B", 70)];
-    const result = computeAnalytics(sessions, [], 5);
+    const result = computeAnalytics("practice", sessions, [], 5);
     expect(result.scenarioProgress).toEqual({ attempted: 2, total: 5 });
   });
 });
@@ -167,7 +172,7 @@ describe("computeAnalytics - large history datasets", () => {
     const sessions = Array.from({ length: 200 }, (_, i) =>
       makeSession(i % 3 === 0 ? "A" : "B", 50 + (i % 50), i % 7 === 0 ? [makeError("omission")] : [])
     );
-    const result = computeAnalytics(sessions, [], 3);
+    const result = computeAnalytics("practice", sessions, [], 3);
     expect(result.sessionsEvaluated).toBe(200);
     expect(result.averageScore).not.toBeNull();
     expect(Number.isFinite(result.averageScore!)).toBe(true);
@@ -184,7 +189,7 @@ describe("computeAnalytics - malformed/incomplete data resilience", () => {
     (corrupted.evaluation as { overallScore: number }).overallScore = NaN;
     const sessions = [makeSession("A", 90), corrupted];
 
-    const result = computeAnalytics(sessions, [], 1);
+    const result = computeAnalytics("practice", sessions, [], 1);
     expect(result.sessionsEvaluated).toBe(1);
     expect(result.averageScore).toBe(90);
   });
@@ -195,8 +200,8 @@ describe("computeAnalytics - malformed/incomplete data resilience", () => {
     // bypasses the type system, to prove the runtime guard works.
     malformed.evaluation.errors = undefined;
 
-    expect(() => computeAnalytics([malformed], [], 1)).not.toThrow();
-    const result = computeAnalytics([malformed], [], 1);
+    expect(() => computeAnalytics("practice", [malformed], [], 1)).not.toThrow();
+    const result = computeAnalytics("practice", [malformed], [], 1);
     expect(result.errorTrends).toEqual([]);
   });
 });

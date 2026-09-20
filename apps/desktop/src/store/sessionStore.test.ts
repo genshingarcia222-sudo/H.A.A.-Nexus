@@ -52,7 +52,7 @@ describe("sessionStore - persistence integration (Phase 5)", () => {
     start(scenario, "practice");
     await submit();
 
-    const accuracyRecord = await competencyRepository.get("accuracy");
+    const accuracyRecord = await competencyRepository.get("practice", "accuracy");
     expect(accuracyRecord).toBeDefined();
     expect(accuracyRecord?.attemptCount).toBeGreaterThan(0);
   });

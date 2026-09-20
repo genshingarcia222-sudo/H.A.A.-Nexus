@@ -13,6 +13,7 @@
   --nexus-color-ink-secondary: #5b6673;
   --nexus-color-border: #d8dee4;
   --nexus-color-accent: #0f6e63;
+  --nexus-color-accent-hover: #0c574e;
   --nexus-color-accent-ink: #ffffff;
   --nexus-color-accent-muted: #e3efed;
   --nexus-color-critical: #b3261e;
@@ -41,6 +42,39 @@
   --nexus-space-3: 16px;
   --nexus-space-4: 24px;
   --nexus-space-5: 32px;
+}
+
+/*
+ * Dark theme. The same semantic tokens, redefined - there is deliberately no
+ * second colour system, so every component, inline style and badge that
+ * already reads a token follows automatically.
+ *
+ * Applied by `[data-theme="dark"]` on <html>, which the website sets before
+ * first paint (see index.html). The desktop shell is left on the light
+ * default unless it opts in.
+ *
+ * Contrast was chosen against the surface each token is actually used on:
+ * ink 15.8:1, secondary ink 7.3:1, accent ink on accent 5.1:1, and every
+ * status colour at or above 4.5:1 - all above the 4.5:1 minimum for body
+ * text, with borders kept visible rather than decorative.
+ */
+:root[data-theme="dark"] {
+  --nexus-color-bg: #0f1419;
+  --nexus-color-surface: #171d25;
+  --nexus-color-ink: #e6edf3;
+  --nexus-color-ink-secondary: #9aa7b4;
+  --nexus-color-border: #303a46;
+  --nexus-color-accent: #2aa094;
+  --nexus-color-accent-hover: #35b7aa;
+  --nexus-color-accent-ink: #04150f;
+  --nexus-color-accent-muted: #14302e;
+  --nexus-color-critical: #ff6b61;
+  --nexus-color-critical-muted: #3a1d1b;
+  --nexus-color-major: #e0a63c;
+  --nexus-color-major-muted: #33290f;
+  --nexus-color-minor: #9aa7b4;
+  --nexus-color-minor-muted: #232b34;
+  color-scheme: dark;
 }
 
 * {

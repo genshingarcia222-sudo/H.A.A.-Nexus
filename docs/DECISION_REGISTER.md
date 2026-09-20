@@ -308,6 +308,14 @@ was fabricated to make tiers look complete.
 **Blocked because:** authoring clinical scenarios is content work requiring
 clinical review, not an engineering decision.
 
+**Concrete consequence, measured 2026-09-20:** the released inventory is one
+difficulty-1 and one difficulty-3 scenario. Difficulty 3 is unlocked from
+**Practice** upward, so **no authored content exercises Pro's difficulty-4
+ceiling or Fast-Track's exclusive 5-6 range at all**. The entitlement ladder is
+implemented and enforced; there is simply nothing above difficulty 3 for the
+two paid tiers to unlock, which is a content gap rather than an engineering
+one.
+
 **Authoring on-ramp (2026-09-19, autonomous):** `content/incoming/` holds a
 template and an intake suite that validates drafts against the real schema
 and reports actionable errors per file, so authoring does not require reading
@@ -322,8 +330,50 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 (D3), closed-book access (D4), analytics/competency treatment (D5),
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
-authorized and enforced. **D3 and D4 were answered by the owner on 2026-09-20;
-D5-D9 remain unresolved.**
+authorized and enforced. **D3, D4, D5, D6 and D7 were all answered on
+2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them;
+D8 and D9 remain open.**
+
+**D7 — contradictory documentation — answered 2026-09-20 under delegated
+authority.** A note that documents a pertinent negative and asserts the
+opposite in the same section is a `critical_documentation_error`, at critical
+severity, counting against accuracy like any other unsupported assertion.
+Before this it cost nothing at all: the first match satisfied the requirement,
+so "No fever. Fever present." scored **accuracy 100 with no error**. No new
+error type, severity or scoring formula was invented -
+`critical_documentation_error` already existed with a critical floor and no
+evaluator produced it, and the score effect reuses the existing
+false-assertion counter. Scoped to pertinent negatives, where the existing
+negation machinery detects the contradiction reliably; this is not general
+contradiction detection. The note comparison's status union was extended in
+the same change, because otherwise a contradicted requirement would read back
+as "Documented" while the feedback list called it critical. Full record in
+`PHASE_8_3_ASSESSMENT_MODE.md` D7.
+
+**D6 — interrupted Assessments — answered 2026-09-20 under delegated
+authority.** A learner may **retake** an interrupted Assessment as a new
+attempt; exact in-place resume is **not** offered. The interrupted attempt is
+recorded as `abandoned`, not deleted, and contributes nothing. Resume was not
+selectable: it is the engineering half of **D8** (restoring an attempt changes
+elapsed time, which feeds the score), so choosing it would have decided D8. A
+terminal "no retake" lock was rejected as destructive and unsourced - and the
+score-shopping worry behind it does not apply, because **D2** shows the learner
+no performance during an active Assessment and **D5** means an interrupted
+Assessment carries no evaluation and counts in neither population. **No
+production change was required**: the existing Dashboard flow already did
+exactly this, and is now pinned by `interruptedAssessment.test.tsx`. Full
+record in `PHASE_8_3_ASSESSMENT_MODE.md` D6.
+
+**D5 — analytics and competency treatment — answered 2026-09-20.** Assessment
+results count **separately** from Practice results in both. The distinction is
+carried through the domain (`ResultPopulation`), the competency record, the
+repository key, SQLite (migration 003: `UNIQUE(user_id, population, domain)`)
+and the aggregation (`computeAnalytics` takes the population as a required
+argument), so a merged total cannot be produced by forgetting to filter.
+Simulation still counts as practice - D5 said nothing about it. Recommendations
+still read both populations, deliberately: D5 governs competency and analytics,
+and scoping recommendations would have invented a policy nobody supplied.
+Full record in `PHASE_8_3_ASSESSMENT_MODE.md` D5.
 
 **D4 — reference access during an Assessment — answered 2026-09-20.**
 Closed-book: Knowledge Base OFF, Training OFF, direct route access BLOCKED, and

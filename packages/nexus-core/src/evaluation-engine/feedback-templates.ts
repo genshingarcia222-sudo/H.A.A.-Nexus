@@ -42,6 +42,14 @@ export function incorrectNegativeFeedback(requirement: RequirementItem): Feedbac
   };
 }
 
+export function contradictionFeedback(requirement: RequirementItem): Feedback {
+  return {
+    what: `The ${requirement.section} section documents "${requirement.sourceFact}" and also asserts the opposite in the same section.`,
+    why: "A note that states both a finding and its negation cannot be acted on: a clinician reading it has no way to know which is true, and the contradiction may not be noticed at all.",
+    how: `Keep only the finding the encounter supports - here, "${requirement.acceptableVariants[0]}" - and remove the contradicting statement.`
+  };
+}
+
 export function fabricationFeedback(mention: NumericClinicalMention): Feedback {
   return {
     what: `A specific value ("${mention.raw}") was documented that the encounter never provided.`,

@@ -11,6 +11,311 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D7 Resolved — A Self-Contradictory Note Is a Critical Documentation Error (2026-09-20)
+
+**Decision under delegated authority.** A note that documents a pertinent
+negative **and** asserts the opposite in the same section is a
+`critical_documentation_error`, at critical severity, counting against
+accuracy like any other unsupported assertion.
+
+**What it was worth before: nothing.** `findFirstMatch` returns the *first*
+match, so a note reading "No fever. Fever present." satisfied the requirement
+and the contradiction was never examined. Measured before implementing
+anything, that note scored **accuracy 100 with no error at all** - a
+self-contradictory note graded identically to a correct one. Architecture §28
+requires contradictory learner input as an edge-case fixture but states no
+expected outcome, which is the gap this fills.
+
+**Nothing new was invented.** `critical_documentation_error` already existed
+in the taxonomy with a **critical** severity floor, and no evaluator path
+produced it - the architecture had reserved the type for defects dangerous
+regardless of category, which is what a self-contradictory note is. The score
+effect reuses the existing false-assertion counter, whose own comment already
+covered assertions of something false. No new error type, no new severity, no
+new scoring formula. `fabrication` (a value never provided),
+`incorrect_negative` (a clean reversal, which would collide with the existing
+path) and `incorrect_positive` (only half the defect) were each rejected for
+stated reasons.
+
+**Scoped honestly.** The rule covers pertinent negatives, where the existing
+negation machinery detects the contradiction reliably by reusing
+`detectReversedNegative`. It is not general contradiction detection.
+
+**A downstream defect found and fixed with it.** `critical_documentation_error`
+carries a `relatedRequirementId` but was not in the note comparison's
+`REQUIREMENT_STATUSES`, so a contradicted requirement would have read back as
+**Documented** while the feedback list called it critical - the exact
+divergence that component exists to prevent. The status union and the desktop
+labels now show **Contradictory**.
+
+**Mutation-checked.** Never detecting a contradiction failed 4 tests; dropping
+the pertinent-negative scope guard failed 1; reporting it with no score effect
+failed 1. All restored byte-identically. The scope-guard mutation initially
+*survived*: the first version of that test passed for the wrong reason,
+because the shipped requirements have no negated variants. It was rewritten to
+clear `isPertinentNegative` on the very requirement that does contradict,
+making the guard the single difference between the two cases.
+
+**Verification.** 390/390 nexus-core (+11), 228/228 desktop, typecheck clean,
+build clean. Rust untouched and not re-run - D7 changed no persistence or IPC.
+
+**Browser, inside a real Assessment:** accuracy 60, one critical documentation
+error with WHAT/WHY/HOW, and **Contradictory** in the note comparison.
+
+**D1-D6 intact. D8 and D9 remain unresolved and untouched.**
+
+---
+
+## Website: Dark Theme and Persistent Fast-Track Preview (2026-09-20)
+
+**Technical/UI execution, not a product decision.** This changes how the
+browser build looks and which tier it previews. It decides no policy and
+alters no learner-facing rule.
+
+**Dark theme, by token redefinition.** `theme.css` already exposed one set of
+semantic tokens, so dark mode redefines those same tokens under
+`:root[data-theme="dark"]` - there is no second colour system, and every
+component, inline style and badge that already read a token follows
+automatically. The one hardcoded colour in the codebase (the primary button
+hover) became `--nexus-color-accent-hover` so it follows too.
+`color-scheme: dark` is set so native controls and scrollbars match.
+
+**Contrast, measured (corrected 2026-09-20).** Recomputed from the shipped
+token values rather than estimated: ink 14.35:1 on surface and 15.67:1 on
+background; secondary ink 6.91:1 / 7.55:1; accent ink on accent 5.86:1; accent
+on surface 5.29:1 (the focus ring); critical 6.08:1, major 7.82:1, minor
+6.91:1. All text comfortably above the 4.5:1 AA threshold, and dark secondary
+text (6.91:1) is in fact *better* than the light theme's (5.84:1).
+
+Borders are the one figure worth stating plainly: `--nexus-color-border` sits
+at **1.47:1** against its surface, below the 3:1 guideline for non-text
+boundaries. That is a pre-existing characteristic of the design system, not a
+regression introduced here - the light theme's border is **1.36:1** - and the
+dark value is marginally the better of the two. Controls remain identifiable
+without relying on the border alone (distinct surface fill, 14.35:1 label
+text, 5.29:1 focus ring). Raising it in one theme only would change the
+product's visual language across the board, which is a design decision rather
+than an audit fix, so it is recorded here instead of being made unilaterally.
+
+**No light flash.** The attribute is set by a small inline script in
+`index.html`, before the module graph loads and before any stylesheet paints.
+**The desktop shell is untouched** - the script skips when the Tauri global is
+present, so the native app keeps the light default.
+
+**Persistent highest-tier preview.** The browser build runs as a Fast-Track
+*preview client*, persisted at `nexus.preview.subscriptionTier` as
+`{"version":1,"tier":"fast_track"}`. The tier is read from `TIER_ORDER`
+rather than hardcoded, so it follows the matrix if a higher tier is ever
+added.
+
+**It reuses the production path rather than bypassing it:** stored tier into
+`SubscriptionState`, into `resolveEntitlements`, into capabilities. A feature
+is visible only if the real matrix grants it to that tier. No
+feature-specific bypass, no forked matrix, no weakened capability rule - **if
+a gate is wrong, the preview shows it as wrong.** No fake subscription record
+is created, and no payment or production entitlement state is written or
+changed.
+
+**It never downgrades itself.** Missing, corrupt, unknown-tier,
+version-mismatched and throwing storage all resolve to the preview tier, and
+the value is re-persisted on load so stale state repairs in place. The stored
+value is the *selected tier*, not a snapshot of which features existed when it
+was written, so a newer build's Fast-Track features appear with no
+reactivation.
+
+**Confined to the website.** Tauri and the test environment both fall through
+to `NO_SUBSCRIPTION`. The `MODE !== "test"` guard matters: jsdom supplies
+`localStorage` and reports no Tauri global, so without it every desktop test
+would silently start at Fast-Track and the D1 entitlement tests would stop
+testing anything.
+
+**Honest labelling.** The rail shows "Preview: Agency Fast-Track" and
+"Development preview - not a subscription." It deliberately avoids
+Subscribed, Purchased or Paid: no production subscription state exists, and
+claiming one would be a lie to whoever is looking at the screen.
+
+**Verification.** 13 preview tests; 228/228 desktop, 390/390 nexus-core,
+typecheck clean, build clean. Browser: dark confirmed (`data-theme="dark"`,
+body `rgb(15,20,25)`), the badge present, the stored value correct, and both
+surviving a reload, and surviving a **fresh tab with a new JS context** -
+`sessionStorage` is null there, which proves the state is not session-scoped.
+Capability resolution through the real matrix was confirmed: **Assessment
+buttons appear and the Intermediate scenario is unlocked**, where Free showed
+neither.
+
+**Correction (2026-09-20 acceptance audit): those two observations are not
+Fast-Track-*exclusive*.** `canStartAssessment` is true from **Pro** upward
+(D1), and the Intermediate scenario is difficulty 3, unlocked from **Practice**
+upward. They prove the preview resolves capabilities correctly; they do not
+prove anything specific to the highest tier. Audited against the matrix, the
+five capabilities that actually distinguish Fast-Track from Pro are
+`maxScenarioDifficulty` 6, `canAccessTierExclusiveContent`,
+`canRequestTranscriptReview`, `canEarnCompletionCertificate` and
+`voiceQuality: "premium"` - and **four of the five are read by no application
+code at all**. The fifth is enforced, but no scenario above difficulty 3 has
+been authored, so Fast-Track's exclusive 5-6 range has nothing to unlock.
+
+**So there is currently no implemented Fast-Track-exclusive learner feature to
+display.** The preview mechanism is correct and proven; that part of the
+requirement is satisfied architecturally and is vacuous in content terms today.
+Nothing conceptual was surfaced to make the tier look fuller than it is.
+
+**A limitation this closes.** Every checkpoint since D1 reported that
+Assessment could not be exercised in a browser because no tier-switching
+surface existed. It can now, legitimately: a live Assessment confirmed **D4**
+(Training and Knowledge Base gone from the rail; a typed `#/knowledge-base`
+URL blocked by the closed-book notice), **D5** (Practice unchanged at 71/100
+over 4 sessions while Assessment showed 78/100 over 1, with its own competency
+records) and **D7** (the contradiction graded critical).
+
+**Persistence, as verified.** Reload: verified. Route navigation: verified.
+Fresh tab / new document context: verified, with `sessionStorage` empty.
+Browser process restart: **not browser-verified** - the environment offers no
+true restart - but the state is in `localStorage`, which survives restart by
+specification, and the fresh-tab result rules out session scoping. Application
+update: the stored value is `{"version":1,"tier":"fast_track"}` with no feature
+data in it, so a newer build's capabilities are read from the new matrix, not
+from storage; test- and source-verified rather than observed across two builds.
+A production build was not loaded - the dev build was used throughout.
+
+**No product policy changed:** D1-D7 behave exactly as decided; the preview
+only chooses which tier the browser resolves as.
+
+---
+
+## D6 Resolved — An Interrupted Assessment May Be Retaken (2026-09-20)
+
+**Decision under delegated authority. No production code changed.** A learner
+may retake an interrupted Assessment as a new attempt; exact in-place resume is
+not offered. The interrupted attempt is recorded as `abandoned` rather than
+deleted, and contributes nothing.
+
+**Resume was not selectable, and that is a rule rather than a preference.** A6
+records that exact mid-transcript resume is unimplemented and is *the
+engineering half of D8*: restoring an attempt changes elapsed time, which feeds
+`timeEfficiencyRatio` and therefore the score. Selecting it would have decided
+D8. The real option space was retake, or no retake at all.
+
+**Retake rather than a terminal lock.** A "no retake" rule would permanently
+cost a learner a scenario because their machine crashed - destructive,
+irreversible, and invented by no source. The exam-integrity worry behind such a
+rule is score-shopping, and it does not apply: **D2** shows the learner no
+performance information during an active Assessment, so there is nothing to
+shop against, and **D5** means an interrupted Assessment carries no evaluation
+and counts in neither population. A retake cannot launder a bad score because
+no score exists. The abandoned record keeps the audit trail.
+
+**Why no production change was required.** The existing Dashboard flow already
+implements exactly this policy: it offers "Start a new attempt" and "Discard",
+never a resume, and it starts the new attempt *before* abandoning the old
+record so a refused start cannot destroy the learner's work. D6 authorizes that
+behaviour; `interruptedAssessment.test.tsx` (7 tests) is what now stops it
+being changed by accident.
+
+**Adversarial checks confirmed the boundary is load-bearing:** abandoning the
+record before the start succeeds failed 2 tests, and carrying the old attempt's
+id forward - a disguised resume - failed 1. Both files restored byte-identically.
+
+**D5 acceptance, in the same pass.** The historical competency migration was
+re-checked against repository history rather than assumed: the Assessment entry
+point first existed at `34f727c`, so every competency record written before it
+is unambiguously practice or simulation. Between then and D5 an Assessment
+could in principle have folded into the shared record, but only under a Pro or
+Fast-Track subscription, and no persistence or tier-switching surface exists
+(D10) - so no production path did. `Simulation → Practice`, the preserved
+recommendation behaviour and the unchanged Dashboard were each re-verified;
+the recommendation engine and Dashboard are untouched by D5.
+
+**Verification.** 379/379 nexus-core, 215/215 desktop (+7), 55/55 Rust
+unchanged and not re-run (D6 touched no Rust), typecheck clean, build clean,
+17/17 preflight.
+
+**Browser.** The interrupted-session flow was exercised at
+`http://localhost:1420/`: a paused Practice attempt appeared under "Interrupted
+session" offering only "Start a new attempt" and "Discard" - no resume - and
+taking the retake moved the old record to `abandoned` in the history and
+started a fresh attempt. **This was a Practice session, not an Assessment**:
+an interrupted Assessment needs Pro and no tier-switching surface exists (D10).
+It is the same Dashboard code path, but that is the shared path, not an
+Assessment run.
+
+**Every Phase 8.3 Assessment decision is now resolved (D1-D6).** D7, D8 (with
+A6) and D9 remain open and are outside Assessment mode.
+
+---
+
+## D5 Resolved — Assessment Results Count Separately from Practice (2026-09-20)
+
+**Owner decision.** A completed Assessment contributes to **Assessment**
+competency and **Assessment** analytics, and to nothing else. It must not
+mutate, overwrite, or become indistinguishable from Practice competency, and
+must not be folded into Practice aggregates. The two are separate
+authoritative signals: training activity, and performance under formal exam
+conditions.
+
+**Separate means separate through persistence, not a label or a filter.**
+`ResultPopulation` and `resultPopulationFor(mode)` in the domain;
+`CompetencyRecord.population`; the repository keyed `get(population, domain)`,
+so there is no call that returns "the" record for a domain any more; **migration
+003** rebuilding `competency_records` as `UNIQUE(user_id, population, domain)`
+with the id as `user-population-domain`; and `computeAnalytics(population, ...)`
+where the population is a *required* argument and the filtering happens inside
+the domain function - so no caller can produce a merged total by forgetting to
+filter. `updateCompetencyRecord` throws rather than fold a score into another
+population's record.
+
+**Simulation counts as practice**, exactly where it always counted. D5
+separated Assessment from Practice and said nothing about simulation; giving it
+a third population would have been deciding something nobody decided.
+
+**Migration 003 assigns existing rows to `practice`.** Every record written
+before this came from the old mode-agnostic fold, and Assessment was
+unreachable for most of that period. That keeps a learner's training history;
+it does not claim those attempts were assessments. The dev-browser store
+applies the same rule to records that predate the field.
+
+**Recommendations were deliberately left alone, and that is the open
+question.** `generateRecommendations` still reads all evaluated sessions across
+both populations. D5 governs competency and analytics, which recommendations
+are neither, and no recommendation policy was supplied - scoping them would
+have invented one. **Still undecided: should recommendations after an
+Assessment be derived from Assessment history, Practice history, or both?**
+
+**No access control changed.** D5 is about how completed results are counted.
+Analytics and the Dashboard remain reachable exactly as before, no route guard
+or nav change was added, and D4's `ReferenceGate` still covers only the
+Knowledge Base and Training. The content archive was not touched: no repository
+was coupled to session mode and no content gained competency metadata.
+
+**Files.** `types/result-population.ts` (new), `competency-engine/index.ts`,
+`persistence/competency-repository.ts`, `analytics-engine/compute.ts`,
+`store/sessionStore.ts`, `routes/Analytics.tsx`, `tauriCompetencyRepository.ts`,
+`devBrowserRepositories.ts`, `migrations/003_competency_population.sql` (new),
+`db/competency.rs`, `db/models.rs`, `db/migrations.rs`, `commands.rs`, and the
+`competency-record.json` IPC fixture.
+
+**Mutation-checked.** Dropping the population from the persistence key (6
+failures), dropping the analytics filter (7), swapping the two populations (28)
+and collapsing them into one (11) each failed the suite. Every file restored
+byte-identically.
+
+**Verification.** 379/379 nexus-core (+23), 208/208 desktop (+9), **55/55 Rust**
+with `cargo fmt --check` and `cargo clippy --all-targets` clean, typecheck clean
+across the workspace, build clean, 17/17 preflight. Rust *was* re-run this time,
+because D5 changed the schema.
+
+**Browser.** At `http://localhost:1420/` the Analytics page now shows two
+labelled sections and no combined figure. A real Practice submission moved the
+Practice section from 3 to 4 scored sessions and updated its competency, while
+the Assessment section stayed at zero attempts. **The populated Assessment side
+could not be exercised in-browser** - it requires Pro and no tier-switching
+surface exists (D10) - so that half is covered by the end-to-end tests through
+the real submit path, not by clicking.
+
+**D1-D4 intact. D6 remains unresolved and untouched.**
+
+---
+
 ## D5 Audit — Analytics and Competency Treatment Remains Undecided (2026-09-20)
 
 **An audit, not a decision. No production code changed.** D5 - whether

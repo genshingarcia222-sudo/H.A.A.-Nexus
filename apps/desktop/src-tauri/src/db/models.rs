@@ -82,6 +82,9 @@ pub struct UserProfileDto {
 /// Mirrors nexus-core's CompetencyRecord (competency-engine/index.ts).
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CompetencyRecordDto {
+    /// Which body of results this record aggregates (decision D5): "practice"
+    /// or "assessment". Part of the record's identity, not a display label.
+    pub population: String,
     pub domain: String,
     pub level: String,
     #[serde(rename = "avgScore")]

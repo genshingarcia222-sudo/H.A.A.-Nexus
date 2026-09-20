@@ -1,7 +1,15 @@
 export type CompetencyLevel = "unassessed" | "introduced" | "developing" | "competent" | "advanced" | "mastered";
 export type CompetencyTrend = "up" | "down" | "flat";
 
+import type { ResultPopulation } from "../types/result-population.js";
+
 export interface CompetencyRecord {
+  /**
+   * Which body of results this record aggregates (decision D5). Practice and
+   * Assessment are separate populations, so the same learner and domain has
+   * up to one record per population and they never merge.
+   */
+  population: ResultPopulation;
   domain: string;
   level: CompetencyLevel;
   avgScore: number;
@@ -32,8 +40,13 @@ function computeLevel(avgScore: number, attemptCount: number, trend: CompetencyT
   return "introduced";
 }
 
-export function createUnassessedRecord(domain: string, now: number): CompetencyRecord {
+export function createUnassessedRecord(
+  population: ResultPopulation,
+  domain: string,
+  now: number
+): CompetencyRecord {
   return {
+    population,
     domain,
     level: "unassessed",
     avgScore: 0,
@@ -56,10 +69,19 @@ export function createUnassessedRecord(domain: string, now: number): CompetencyR
  */
 export function updateCompetencyRecord(
   existing: CompetencyRecord | undefined,
+  population: ResultPopulation,
   domain: string,
   newScore: number,
   now: number
 ): CompetencyRecord {
+  // A record only ever folds into its own population (D5). Passing another
+  // population's record here would silently merge two separate signals, so it
+  // is refused rather than quietly averaged.
+  if (existing && existing.population !== population) {
+    throw new Error(
+      `Cannot fold a ${population} score into a ${existing.population} competency record for "${domain}".`
+    );
+  }
   const previousScores = existing?.recentScores ?? [];
   const recentScores = [...previousScores, newScore].slice(-ROLLING_WINDOW);
   const attemptCount = (existing?.attemptCount ?? 0) + 1;
@@ -71,6 +93,7 @@ export function updateCompetencyRecord(
     newScore > priorAvg + TREND_TOLERANCE ? "up" : newScore < priorAvg - TREND_TOLERANCE ? "down" : "flat";
 
   return {
+    population,
     domain,
     level: computeLevel(avgScore, attemptCount, trend),
     avgScore,

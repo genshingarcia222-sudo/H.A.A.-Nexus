@@ -210,7 +210,62 @@ that surface, and the boundary test explicitly permits the content layer to
 read those repositories. No archive content was moved, deleted, gated or given
 entitlement metadata.
 
-### D5 — Do Assessment results count in analytics and competency? — **NOT AUTHORIZED**
+### D5 — Do Assessment results count in analytics and competency? — **RESOLVED**
+
+**Owner decision, 2026-09-20: separately.** A completed Assessment contributes
+to Assessment competency and Assessment analytics, and to nothing else. It
+must not mutate, overwrite, or become indistinguishable from Practice
+competency, and must not be folded into Practice aggregates. Practice and
+Assessment are two authoritative signals measuring different things: training
+activity, and performance under formal exam conditions.
+
+**Simulation counts as practice.** D5 separated Assessment from Practice and
+said nothing about simulation, so it stays exactly where it has always
+counted. Giving it a third population would be deciding something nobody
+decided.
+
+**The distinction survives persistence.** It is not a label, a UI filter, or
+something reconstructed from a merged total:
+
+| Layer | Boundary |
+|---|---|
+| Domain | `ResultPopulation` (`practice` \| `assessment`) and `resultPopulationFor(mode)` |
+| Competency record | `CompetencyRecord.population`; `updateCompetencyRecord` **throws** rather than fold a score into another population's record |
+| Repository | `get(population, domain)` - there is no call that returns "the" record for a domain, because there is no longer one |
+| SQLite | migration 003: `UNIQUE(user_id, population, domain)`, id rebuilt as `user-population-domain` |
+| Analytics | `computeAnalytics(population, …)` - population is a **required** argument and the filtering happens inside, so no caller can produce a merged total |
+| UI | Two labelled sections; no combined figure is rendered anywhere |
+
+**Migration 003 assigns existing rows to `practice`.** Provenance was checked
+rather than assumed: the Assessment entry point first existed at `34f727c`
+(D1), so **every competency record written before that commit is unambiguously
+practice or simulation** - no learner could start an Assessment at all. Between
+`34f727c` and D5 an Assessment could in principle have folded into the shared
+record, but only for a Pro or Fast-Track subscription, and there is no
+subscription persistence or tier-switching surface (D10), so no production path
+existed. The classification is therefore safe for real data and, in the one
+theoretical window, is the conservative choice: it preserves the learner's
+history rather than discarding rows whose provenance cannot be proven. The
+dev-browser store applies the same rule to records predating the field.
+
+**Recommendations were deliberately left alone.** `generateRecommendations`
+still reads all evaluated sessions across both populations. D5 governs
+competency and analytics, which recommendations are neither, and no
+recommendation policy was supplied - so scoping them to a population would
+have been inventing one. **This is the open question D5 did not answer:**
+should recommendations after an Assessment be derived from Assessment history,
+Practice history, or both? Recorded here rather than decided.
+
+**Verification:** 23 domain tests, 9 end-to-end tests through the real
+`sessionStore.submit`, and 55 Rust tests including the rebuilt schema. Four
+mutations confirmed the suite bites - dropping the population from the
+persistence key, dropping the analytics filter, swapping the two populations,
+and collapsing them into one each failed it, and every file was restored
+byte-identically.
+
+<details><summary>The audit that preceded this decision</summary>
+
+### D5 — evidence gathered while this decision was open
 
 - **Evidence examined:** Architecture Package §14/§18 (mode-agnostic); Business Model Spec §4 (competency and analytics tiering only).
 - **Why insufficient:** merging or separating exam results changes what learners are shown about their competency.
@@ -259,23 +314,126 @@ tracking and analytics. That is a separate pre-existing gap on the tier axis;
 D5 as worded is about mode. Wiring it up would decide it by implementation, so
 it was left alone.
 
-- **The exact decision still required:** do Assessment attempts count in competency and analytics (a) together with practice, (b) separately from practice, or (c) instead of practice - and, since the costs differ, whether the same answer applies to both competency and analytics.
+- **The decision as it was put to the owner:** (a) together with practice, (b) separately, or (c) instead of practice. **Answered: (b), separately, for both competency and analytics.** The predicted cost held - analytics needed no schema change, competency needed migration 003.
 
-### D6 — After an interrupted Assessment, may the learner start again or resume? — **NOT AUTHORIZED**
+</details>
+
+### D6 — After an interrupted Assessment, may the learner start again or resume? — **RESOLVED**
+
+**Decision, 2026-09-20, under delegated authority: a learner may retake an
+interrupted Assessment as a new attempt. Exact in-place resume is not
+offered.** The interrupted attempt is recorded as `abandoned` rather than
+deleted, and contributes nothing.
+
+**Why resume was not selectable.** A6 records that exact mid-transcript resume
+is unimplemented and is *the engineering half of D8*: restoring an attempt
+changes elapsed time, which feeds `timeEfficiencyRatio` and therefore the
+score. Choosing it would have decided D8, which is not this decision's to make.
+So the real option space was **retake** or **no retake at all**.
+
+**Why retake rather than a terminal lock.** A "no retake" rule would
+permanently cost a learner a scenario because their machine crashed - a
+destructive, irreversible outcome invented by no source. The exam-integrity
+worry behind such a rule is score-shopping, and it does not apply here: **D2**
+means the learner sees no performance information whatsoever during an active
+Assessment, so there is nothing to shop against, and the abandoned record keeps
+the audit trail. Under **D5** an interrupted Assessment carries no evaluation,
+so it counts in neither population - a retake cannot launder a bad score,
+because no score exists.
+
+**No production change was required.** The existing Dashboard flow already
+implements exactly this: it offers "Start a new attempt" and "Discard", never a
+resume, and it starts the new attempt *before* abandoning the old record so a
+refused start cannot destroy the learner's work. D6 authorizes that behaviour
+and `interruptedAssessment.test.tsx` now pins it, including that D1 still
+refuses a tier that may not start an Assessment.
+
+**Verified:** 7 tests through the real Dashboard. Two adversarial checks
+confirmed the boundary is load-bearing - abandoning the record before the start
+succeeds failed 2 tests, and carrying the old attempt's id forward (a disguised
+resume) failed 1 - and both files were restored byte-identically.
+
+**Still open, deliberately:** whether an interrupted *practice or simulation*
+attempt may be resumed in place is **D8**, and the transcript-position
+persistence it needs is **A6**. Neither was touched.
+
+<details><summary>The entry as it stood while this decision was open</summary>
+
+### D6 — evidence gathered while this decision was open
 
 - **Evidence examined:** the Dashboard's interrupted-session flow (implementation only).
 - **Why insufficient:** retake and resume rules are exam-integrity policy, a learner-facing restriction.
 - **Current state:** the generic "Start a new attempt" flow is unchanged.
-- **Decision required:** the retake/resume policy for interrupted Assessments.
+- **The decision as it was framed:** the retake/resume policy for interrupted Assessments. **Answered: retake allowed, resume not offered.**
+
+</details>
 
 ### Related open decision outside Assessment
 
-#### D7 — How is contradictory learner documentation graded? — **NOT AUTHORIZED**
+#### D7 — How is contradictory learner documentation graded? — **RESOLVED**
+
+**Decision, 2026-09-20, under delegated authority: a note that documents a
+pertinent negative and asserts the opposite in the same section is a
+`critical_documentation_error`, at critical severity, counting against accuracy
+like any other unsupported assertion.**
+
+**What it was before.** Nothing. `findFirstMatch` returns the *first* match, so
+"No fever. Fever present." satisfied the requirement and the contradiction was
+never looked at: measured before implementing, that note scored **accuracy 100
+with no error at all**. Architecture §28 requires "contradictory learner input"
+as an edge-case fixture but states no expected outcome, which is precisely the
+gap this decision fills.
+
+**No new classification was invented.** `critical_documentation_error` already
+existed in the taxonomy with a **critical** severity floor in `severity.ts`,
+and no evaluator path produced it - the architecture had reserved the type for
+defects dangerous regardless of category, which is exactly what a
+self-contradictory note is. The score effect reuses the existing
+`fabricationLikeCount`, whose own comment already described it as assertions of
+something false. No new error type, no new severity, no new scoring formula.
+
+**The option space, classified.** Two things are distinguished here because
+they are different: an option that *could* have been chosen and was not, and
+an option that was never available to choose.
+
+| Option | Status | Reason |
+|---|---|---|
+| No error (keep current behaviour) | SELECTABLE — not selected | Available, but ratifies a grading hole: a self-contradictory note scoring 100 |
+| `fabrication` | SELECTABLE — not selected | Means a value the encounter never provided; a contradiction fabricates no value, and reuse would blur a tested meaning |
+| `incorrect_negative` | SELECTABLE — not selected | Means a clean reversal; would collide with the existing `negationReversed` path and mislabel a note that *did* contain the correct negative |
+| `incorrect_positive` | SELECTABLE — not selected | Closer, but describes only half the defect - the danger is the contradiction, not the positive |
+| **`critical_documentation_error`** | **SELECTED** | Already in the taxonomy with a critical severity floor and no evaluator path producing it; the type the architecture reserved for defects dangerous regardless of category |
+| A new error type | EXCLUDED — authority conflict | §11-13 fix the error taxonomy; adding a member would invent a classification no source contemplates |
+| General contradiction detection | EXCLUDED — later-policy dependency | Grading contradictions between arbitrary positive findings requires positive-finding semantics no source defines, which is a separate product question |
+
+**Scope, stated honestly.** The rule covers **pertinent negatives**, where the
+existing negation machinery detects the contradiction reliably by reusing
+`detectReversedNegative`. It is not general contradiction detection and does
+not claim to be.
+
+**The downstream fix that came with it.** `critical_documentation_error`
+carries a `relatedRequirementId`, but was not in the note comparison's
+`REQUIREMENT_STATUSES` - so a contradicted requirement would have read back as
+"Documented" while the feedback list called it critical, the exact divergence
+that component exists to prevent. The status union and the desktop labels were
+extended to show **Contradictory**.
+
+**Verified:** 11 tests. Three mutations confirmed the boundary bites - never
+detecting a contradiction failed 4, dropping the pertinent-negative scope guard
+failed 1, and reporting it without any score effect failed 1 - all restored
+byte-identically. **Browser-verified inside a real Assessment**: accuracy 60,
+one "critical documentation error", and "Contradictory" in the note comparison.
+
+<details><summary>The entry as it stood while this decision was open</summary>
+
+#### D7 — evidence gathered while this decision was open
 
 - **Evidence examined:** Architecture Package §28 lists "contradictory learner input" as a required edge-case fixture but states no expected outcome; §11–§13 (evaluation, scoring, error classification) do not address documentation that asserts both a fact and its negation (for example, "No fever. Fever present."); Business Model Spec §6 (deterministic scoring) is silent.
 - **Why insufficient:** a fixture needs an expected result, and that result is scoring policy — which error type, what severity, what score effect. Pinning the evaluator's current behaviour as "expected" would silently convert implementation behaviour into a grading rule.
 - **Current state:** the evaluator's existing behaviour is unchanged and untested for this case.
-- **Decision required:** how contradictory documentation should be classified and scored.
+- **The decision as it was framed:** how contradictory documentation should be classified and scored. **Answered: `critical_documentation_error`, critical severity, accuracy-affecting.**
+
+</details>
 
 #### D8 — May an interrupted practice or simulation attempt be resumed? — **NOT AUTHORIZED**
 
@@ -336,7 +494,14 @@ it was left alone.
 | Learner entry point and mode-level start enforcement | **DONE** — `34f727c` |
 | Assessment results presentation | **DONE** — D3 = all six surfaces ON, satisfied by the existing summary and protected by tests |
 | Closed-book navigation restriction | **DONE** — D4 = closed-book, enforced at the route |
-| Analytics/competency separation | **BLOCKED** — D5 (may not be required) |
-| Interrupted-Assessment policy | **BLOCKED** — D6 |
+| Analytics/competency separation | **DONE** — D5 = separate populations, enforced in the domain, the schema and the aggregation |
+| Interrupted-Assessment policy | **DONE** — D6 = retake allowed, resume not offered; already satisfied, no production change |
 
-D1, D3 and D4 are decided: Assessment is reachable, runs closed-book, and gives the full results experience on submission. Phase 8.3 cannot close while D5 and D6 remain unanswered - how Assessment attempts count in analytics and competency, and what happens when one is interrupted, are still the owner's to decide.
+**Assessment is now verifiable in a real browser.** The website preview client
+(see the CHANGELOG entry "Website: Dark Theme and Persistent Fast-Track
+Preview") runs at the highest tier through the real capability matrix, which
+closed a limitation reported at every checkpoint from D1 onward: D4's
+closed-book boundary, D5's separate assessment population and D7's contradiction
+grading have each now been confirmed in a live Assessment, not only by tests.
+
+D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D7 (contradictory documentation), D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).

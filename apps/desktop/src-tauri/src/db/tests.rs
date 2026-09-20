@@ -386,6 +386,7 @@ fn profile_round_trips_and_defaults_to_the_seeded_local_user() {
 fn competency_upsert_keeps_exactly_one_row_per_domain() {
     let db = TestDb::new();
     let mut rec = CompetencyRecordDto {
+        population: "practice".to_string(),
         domain: "accuracy".to_string(),
         level: "developing".to_string(),
         avg_score: 60.0,
@@ -418,6 +419,7 @@ fn competency_upsert_keeps_exactly_one_row_per_domain() {
 fn competency_records_survive_a_restart() {
     let mut db = TestDb::new();
     let rec = CompetencyRecordDto {
+        population: "practice".to_string(),
         domain: "completeness".to_string(),
         level: "advanced".to_string(),
         avg_score: 91.0,
@@ -612,6 +614,7 @@ fn get_competency_record_returns_exactly_the_requested_domain() {
         competency::upsert_competency_record(
             db.conn(),
             &CompetencyRecordDto {
+                population: "practice".to_string(),
                 domain: domain.to_string(),
                 level: "developing".to_string(),
                 avg_score: score,
@@ -626,12 +629,14 @@ fn get_competency_record_returns_exactly_the_requested_domain() {
         .unwrap();
     }
 
-    let found = competency::get_competency_record(db.conn(), "completeness")
+    let found = competency::get_competency_record(db.conn(), "practice", "completeness")
         .unwrap()
         .expect("record missing");
     assert_eq!(found.domain, "completeness");
     assert_eq!(found.avg_score, 60.0);
-    assert!(competency::get_competency_record(db.conn(), "terminology")
-        .unwrap()
-        .is_none());
+    assert!(
+        competency::get_competency_record(db.conn(), "practice", "terminology")
+            .unwrap()
+            .is_none()
+    );
 }
