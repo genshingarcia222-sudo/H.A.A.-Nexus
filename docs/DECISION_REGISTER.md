@@ -149,6 +149,51 @@ correct-answer reference to resolve. The lesson schema itself was not changed.
 
 ---
 
+## D12 — Where does non-terminology reference knowledge live?
+
+**Blocked work:** turning Pilot Batch 001 (and any future regulatory or
+reference material) into canonical Knowledge records.
+
+**Current behaviour, verified 2026-09-20:** the only Knowledge Base in the
+product is the terminology lookup. Its schema is
+`{id, layTerm, clinicalTerm, acceptedAlternatives, category, context, explanation, commonMistakes}`
+and a search of `terminology-engine/schema.ts` for
+`jurisdiction|effectiveFrom|humanVerified|locator|provenance` returns **zero**
+matches. It carries no provenance, jurisdiction, effective-date, verification
+state or source-question relationship.
+
+**Why it cannot simply be reused:** the schema maps a *lay term to a clinical
+term* for scribe documentation. "Protected health information (PHI)" has no
+lay/clinical pair, and "October 1 2026 to September 30 2027" is not a
+terminology entry. Putting regulatory statements there would change the
+meaning of the surface learners reach during Practice (and which D4 closes
+during an Assessment), not just its contents.
+
+**Why it was not decided autonomously:** the Pilot Batch integration gate
+(§C2) records the carrying schema as *"an owner-level product shape decision;
+do not resolve it silently."* Adding a Knowledge record type is that decision.
+
+**Options the architecture supports:**
+
+| Option | Consequence |
+|---|---|
+| Extend the terminology schema | One lookup surface; dilutes a focused lay-to-clinical mapping with regulatory material that has different lifecycle and expiry needs |
+| A distinct Knowledge record type | Clean provenance, jurisdiction and effective dates; a second content system to load, validate, QA and gate |
+| Keep regulatory material as Question Bank items only | No new system; the material is only ever reachable as questions, never as reference |
+
+**Independent of this decision:** no Pilot 001 item may become learner-facing
+until a person completes the verification worksheet. All 12 carry
+`HUMAN-VERIFY-REQUIRED` with `humanVerifiedBy`/`humanVerifiedOn` null, and
+`question-bank/schema.ts` states that only a person who opened the cited
+document may fill them. **Both gates are separate**: deciding where knowledge
+lives does not verify it, and verifying it does not decide where it lives.
+
+**Unblocked:** nothing is waiting on engineering. The Question Bank schema,
+validator, repository, loader, selector and run lifecycle are all implemented
+and tested.
+
+---
+
 ## D10 — What persists a web learner's progress?
 
 **Blocked work:** roadmap step 4 (web-deployed build). Step 5 (PayMongo)
