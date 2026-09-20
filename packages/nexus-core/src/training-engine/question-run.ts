@@ -102,6 +102,18 @@ export function runProgress(state: TrainingRunState): { position: number; total:
 }
 
 /**
+ * How many questions have been answered and advanced past.
+ *
+ * Equal to `index`, but named for what it means: a completed run of ten reports
+ * ten, and a run abandoned midway reports how far it actually got. It counts
+ * *progress through the run*, not performance — nothing here knows or cares how
+ * many were right.
+ */
+export function answeredCount(state: TrainingRunState): number {
+  return Math.min(state.index, state.questions.length);
+}
+
+/**
  * Grades one answer against the question's **canonical** answer identity.
  *
  * Correctness is resolved through `correctChoiceId`, never through position,

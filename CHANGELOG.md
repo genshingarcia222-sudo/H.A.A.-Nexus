@@ -11,6 +11,84 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Training Run Lifecycle — Ten Questions, Completion and Restart (2026-09-20)
+
+**Mostly proof, deliberately little code.** M22 built the run; this checkpoint
+establishes that the *lifecycle* around it holds — that the sequence is chosen
+once and then left alone, that question ten ends the run rather than wrapping to
+an eleventh, and that a new run is a deliberate act inheriting nothing. Most of
+that was already correct by construction, so the honest work here was measuring
+it rather than rewriting it.
+
+**Added:** `answeredCount(state)` — progress through the run, **never a score**;
+an explicit "N of N questions answered" on completion; inspectable runtime state
+(`data-run-state`, `data-question-index`, `data-question-id`, `data-answered`,
+`data-total`) so the browser can be checked against actual state rather than
+appearance; and a clearer "Start a new run". No parallel run implementation, and
+no selector, diversity or eligibility logic added to or duplicated in the UI.
+
+**The selector runs once per run, never per question** — measured, not asserted.
+A counting repository tallies `getProductionEligible()`: **one call at creation,
+zero more** across ten answers and nine advances. A new run costs exactly one
+further call. Completion performs none, so the run cannot restart itself.
+
+**Question ten is terminal.** Advancing past it completes the run: ten of ten
+answered, no eleventh question, the index does not wrap to zero, and
+`selectChoice` / `submitAnswer` / `advanceToNextQuestion` all refuse with
+`run-complete` and the state object unchanged by identity.
+
+**Submission is still not progression**, and one Next means one question: four
+rapid activations advance exactly one, because only the first finds a submission
+to advance past.
+
+**A new run inherits nothing** — no selection, submission, correctness,
+rationale, explanation, lock or completion state — and **no learner history is
+created**: across three consecutive full runs the bank still reports twelve
+questions and twelve production-eligible, with nothing marked seen, used or
+spent.
+
+**Diversity untouched.** The selector's existing soft preference and its weights
+were not altered, and a uniform pool still fills a run of ten rather than
+failing. Determinism unchanged: same bank, filters, count and a **fresh** seeded
+source reproduce a sequence exactly.
+
+**One dev-only wrinkle, recorded rather than papered over.** `main.tsx` wraps the
+app in `<React.StrictMode>`, which deliberately double-invokes `useState`
+initialisers in development, so the dev browser selects twice at mount and
+advances an injected `RandomSource` twice. Development-only, not a correctness
+defect — the run is still exactly ten valid eligible questions, stable
+thereafter — and the invariant that matters still holds. Documented so a doubled
+dev-mode call is not later mistaken for a lifecycle bug.
+
+**Device 1 ↔ Device 2 synchronisation.** No live Device 1 session existed
+(`ListAgents` reported none) and no channel existed, so `.claude/sync/` was
+created as an explicit, inspectable bus. **No Device 1 knowledge payload was
+received, and none was invented**; the canonical archive and verified code were
+used instead. Verified M23 facts were written to
+`.claude/sync/DEVICE2_TO_DEVICE1.md` for reconciliation. These files are a bus,
+not a second knowledge base.
+
+**M22's push had already landed:** `origin/feat/training-question-bank` was
+already at `604017f`, verified by `ls-remote` rather than assumed. The branch is
+still **not merged into `main`** — `origin/main` is an ancestor, so it is a clean
+fast-forward, but merging five checkpoints past the repository's pull-request
+workflow is an owner decision and was left alone.
+
+**Documentation.** `docs/TRAINING_QUESTION_RUN.md` gained the lifecycle section.
+
+**Verification.** 778/778 tests (511 nexus-core across 51 files, 267 desktop
+across 26; 39 new), typecheck clean, build clean, preflight exit 0 with 17/17
+self-tests. Three typecheck errors in the new tests were caught and fixed before
+closing — vitest transpiles without typechecking, so a green test run is not a
+green build. **Browser-verified** in the dark theme: all ten questions walked
+with zero stale feedback at each, rapid ×4 Next advancing exactly one,
+completion with no eleventh question and no wrap, post-completion keyboard
+ignored, restart returning a clean 1/10 with a different opening question, and a
+20-question request against a 12-question pool rendering the explicit shortfall.
+Rust untouched and not re-run.
+
+---
+
 ## Training Answer Submission, Feedback and Reveal (2026-09-20)
 
 **The run a learner can actually use.** Selection could produce ten questions;

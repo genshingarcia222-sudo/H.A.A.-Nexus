@@ -375,3 +375,253 @@ describe("the synthetic preview bank", () => {
     expect(within(screen.getByRole("status")).getByText(/Correct|Incorrect/)).toBeTruthy();
   });
 });
+
+/**
+ * The run as a lifecycle: created once, walked through, finished, and restarted
+ * only on purpose.
+ */
+
+/** Counts how often the surface asks the bank for its eligible pool. */
+function countingBank(inner: InMemoryQuestionBankRepository) {
+  let calls = 0;
+  return {
+    calls: () => calls,
+    repo: {
+      getById: (id: string) => inner.getById(id),
+      getAll: () => inner.getAll(),
+      getProductionEligible: () => {
+        calls += 1;
+        return inner.getProductionEligible();
+      }
+    }
+  };
+}
+
+function twelveQuestions(): TrainingQuestion[] {
+  return Array.from({ length: 12 }, (_, i) =>
+    q({ questionId: `Q-LIFE-${i}`, question: `Lifecycle question ${i}?`, variantGroup: `G-${i % 6}` })
+  );
+}
+
+const runState = () => document.querySelector<HTMLElement>("[data-run-state]")!;
+const submitBtn = () => screen.getByRole("button", { name: /submit answer/i });
+const nextBtn = () => screen.queryByRole("button", { name: /next question/i });
+
+/** Answers the current question and advances. */
+function answerAndAdvance() {
+  fireEvent.click(document.querySelector<HTMLButtonElement>("[data-choice-id]")!);
+  fireEvent.click(submitBtn());
+  fireEvent.click(nextBtn()!);
+}
+
+describe("QuestionRun lifecycle: ten questions, then the end", () => {
+  it("creates a run of exactly ten and starts at 1 of 10", () => {
+    renderRun(twelveQuestions(), 10);
+    expect(screen.getByText("Question 1 of 10")).toBeTruthy();
+    expect(runState().dataset.total).toBe("10");
+    expect(runState().dataset.answered).toBe("0");
+    expect(runState().dataset.runState).toBe("answering");
+  });
+
+  it("asks the bank for its pool once per run, never per question", () => {
+    const { repo, calls } = countingBank(repoOf(twelveQuestions()));
+    render(<QuestionRun repository={repo} random={createSeededRandom(3)} count={10} />);
+    const afterMount = calls();
+    expect(afterMount).toBeGreaterThanOrEqual(1);
+
+    for (let i = 0; i < 3; i++) answerAndAdvance();
+
+    // Three questions later the sequence has not been re-chosen.
+    expect(calls()).toBe(afterMount);
+    expect(screen.getByText("Question 4 of 10")).toBeTruthy();
+  });
+
+  it("keeps the same question sequence for the whole run", () => {
+    renderRun(twelveQuestions(), 10);
+    const seen: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      seen.push(runState().dataset.questionId!);
+      if (i < 9) answerAndAdvance();
+    }
+    expect(new Set(seen).size).toBe(10);
+    expect(seen.every((id) => id.startsWith("Q-LIFE-"))).toBe(true);
+  });
+
+  it("advances exactly one question per Next, even under rapid clicks", () => {
+    renderRun(twelveQuestions(), 10);
+    fireEvent.click(document.querySelector<HTMLButtonElement>("[data-choice-id]")!);
+    fireEvent.click(submitBtn());
+
+    const next = nextBtn()!;
+    fireEvent.click(next);
+    fireEvent.click(next);
+    fireEvent.click(next);
+    next.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    // One advance, not four: the run cannot be skipped through.
+    expect(screen.getByText("Question 2 of 10")).toBeTruthy();
+    expect(runState().dataset.questionIndex).toBe("1");
+    expect(runState().dataset.answered).toBe("1");
+  });
+
+  it("does not advance on submission alone — feedback stays until Next", () => {
+    renderRun(twelveQuestions(), 10);
+    fireEvent.click(document.querySelector<HTMLButtonElement>("[data-choice-id]")!);
+    fireEvent.click(submitBtn());
+
+    expect(screen.getByText("Question 1 of 10")).toBeTruthy();
+    expect(runState().dataset.runState).toBe("submitted");
+    expect(screen.getByRole("status")).toBeTruthy();
+    expect(nextBtn()).toBeTruthy();
+  });
+
+  it("treats question ten as the last open question, not a completed one", () => {
+    renderRun(twelveQuestions(), 10);
+    for (let i = 0; i < 9; i++) answerAndAdvance();
+
+    expect(screen.getByText("Question 10 of 10")).toBeTruthy();
+    expect(runState().dataset.questionIndex).toBe("9");
+    expect(runState().dataset.answered).toBe("9");
+    expect(document.querySelectorAll("[data-choice-id]").length).toBeGreaterThan(0);
+
+    // The tenth answer's feedback is kept until the learner moves on.
+    fireEvent.click(document.querySelector<HTMLButtonElement>("[data-choice-id]")!);
+    fireEvent.click(submitBtn());
+    expect(screen.getByText("Question 10 of 10")).toBeTruthy();
+    expect(screen.getByRole("status").textContent).toMatch(/Correct|Incorrect/);
+  });
+
+  it("completes after question ten, reporting ten of ten and offering no eleventh", () => {
+    renderRun(twelveQuestions(), 10);
+    for (let i = 0; i < 10; i++) answerAndAdvance();
+
+    const status = screen.getByRole("status");
+    expect(status.textContent).toContain("Run complete");
+    expect(status.textContent).toContain("10 of 10 questions answered");
+    expect(status.dataset.runState).toBe("complete");
+    expect(status.dataset.answered).toBe("10");
+
+    // No eleventh question, and no wrap-around to the first.
+    expect(screen.queryByText("Question 11 of 10")).toBeNull();
+    expect(screen.queryByText("Question 1 of 10")).toBeNull();
+    expect(document.querySelectorAll("[data-choice-id]")).toHaveLength(0);
+    expect(screen.queryByRole("button", { name: /submit answer/i })).toBeNull();
+    expect(nextBtn()).toBeNull();
+  });
+
+  it("offers nothing to submit or activate once complete", () => {
+    renderRun(twelveQuestions(), 10);
+    for (let i = 0; i < 10; i++) answerAndAdvance();
+
+    // There is no control to press and no choice to pick; keyboard activation
+    // has no target either.
+    fireEvent.keyDown(document.body, { key: "Enter" });
+    fireEvent.keyDown(document.body, { key: " " });
+    expect(screen.getByRole("status").textContent).toContain("Run complete");
+    expect(document.querySelectorAll("[data-choice-id]")).toHaveLength(0);
+  });
+
+  it("does not restart itself", () => {
+    const { repo, calls } = countingBank(repoOf(twelveQuestions()));
+    render(<QuestionRun repository={repo} random={createSeededRandom(5)} count={10} />);
+    const afterMount = calls();
+    for (let i = 0; i < 10; i++) answerAndAdvance();
+
+    expect(screen.getByRole("status").textContent).toContain("Run complete");
+    // Completion does not quietly select a new run.
+    expect(calls()).toBe(afterMount);
+    expect(screen.getByRole("button", { name: /start a new run/i })).toBeTruthy();
+  });
+});
+
+describe("QuestionRun lifecycle: a new run is deliberate and inherits nothing", () => {
+  function completeARunThenRestart() {
+    renderRun(twelveQuestions(), 10);
+    for (let i = 0; i < 10; i++) answerAndAdvance();
+    fireEvent.click(screen.getByRole("button", { name: /start a new run/i }));
+  }
+
+  it("returns to question 1 of 10 with nothing carried over", () => {
+    completeARunThenRestart();
+
+    expect(screen.getByText("Question 1 of 10")).toBeTruthy();
+    expect(runState().dataset.questionIndex).toBe("0");
+    expect(runState().dataset.answered).toBe("0");
+    expect(runState().dataset.runState).toBe("answering");
+  });
+
+  it("clears the previous run's selection, feedback, rationale and completion", () => {
+    completeARunThenRestart();
+
+    expect(screen.queryByText(/Run complete/)).toBeNull();
+    expect(screen.queryByRole("status")).toBeNull();
+    expect(document.querySelectorAll("[data-testid^=why-]")).toHaveLength(0);
+    for (const choice of Array.from(document.querySelectorAll<HTMLButtonElement>("[data-choice-id]"))) {
+      expect(choice.getAttribute("aria-pressed")).toBe("false");
+      expect(choice.dataset.state).toBe("idle");
+      expect(choice.disabled).toBe(false);
+    }
+    expect(submitBtn().hasAttribute("disabled")).toBe(true);
+  });
+
+  it("selects again, because a new run is a new selection", () => {
+    const { repo, calls } = countingBank(repoOf(twelveQuestions()));
+    render(<QuestionRun repository={repo} random={createSeededRandom(9)} count={10} />);
+    const afterMount = calls();
+    for (let i = 0; i < 10; i++) answerAndAdvance();
+
+    fireEvent.click(screen.getByRole("button", { name: /start a new run/i }));
+    expect(calls()).toBe(afterMount + 1);
+    expect(screen.getByText("Question 1 of 10")).toBeTruthy();
+  });
+
+  it("is fully answerable again, with independent feedback", () => {
+    completeARunThenRestart();
+
+    fireEvent.click(document.querySelector<HTMLButtonElement>("[data-choice-id]")!);
+    fireEvent.click(submitBtn());
+    expect(screen.getByRole("status").textContent).toMatch(/Correct|Incorrect/);
+    expect(runState().dataset.runState).toBe("submitted");
+  });
+
+  it("introduces no learner history: the bank is untouched across runs", () => {
+    const bank = repoOf(twelveQuestions());
+    render(<QuestionRun repository={bank} random={createSeededRandom(2)} count={10} />);
+    for (let i = 0; i < 10; i++) answerAndAdvance();
+    fireEvent.click(screen.getByRole("button", { name: /start a new run/i }));
+
+    // Nothing was marked seen, used or spent.
+    expect(bank.getAll()).toHaveLength(12);
+    expect(bank.getProductionEligible()).toHaveLength(12);
+  });
+});
+
+describe("QuestionRun lifecycle: the surface owns no selection policy", () => {
+  it("renders whatever sequence the selector produced, without rebalancing it", () => {
+    // A deliberately lopsided pool: the surface must not reorder or re-pick to
+    // improve diversity — that is the selector's soft preference, applied once.
+    const lopsided = Array.from({ length: 12 }, (_, i) =>
+      q({ questionId: `Q-FLAT-${i}`, question: `Flat question ${i}?`, variantGroup: "ONE", skillArea: "Run mechanics" })
+    );
+    renderRun(lopsided, 10);
+
+    const seen: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      seen.push(runState().dataset.questionId!);
+      if (i < 9) answerAndAdvance();
+    }
+    expect(seen).toHaveLength(10);
+    expect(new Set(seen).size).toBe(10);
+  });
+
+  it("reproduces the same run from the same seed", () => {
+    const questions = twelveQuestions();
+
+    const first = render(<QuestionRun repository={repoOf(questions)} random={createSeededRandom(777)} count={10} />);
+    const firstId = runState().dataset.questionId;
+    first.unmount();
+
+    render(<QuestionRun repository={repoOf(questions)} random={createSeededRandom(777)} count={10} />);
+    expect(runState().dataset.questionId).toBe(firstId);
+  });
+});

@@ -1,8 +1,9 @@
 # The Training question run — answer, submit, see why
 
-**Status:** implemented and verified — 50 run/UI tests green within a 739/739
+**Status:** implemented and verified — 89 run/UI tests green within a 778/778
 repository suite, typecheck, build and preflight clean, and verified in a real
-browser.
+browser through a complete ten-question run, its completion boundary and a
+restart.
 
 **What it is not:** it scores nothing, stores nothing and remembers nothing. No
 number, no percentage, no pass/fail, no mastery, no history, no tier. It is the
@@ -114,6 +115,62 @@ test.
 
 A second submit is refused rather than re-evaluated, so a burst of clicks
 produces exactly one transition and one feedback block.
+
+## 6a. The run as a lifecycle
+
+A run is **created once, walked through, finished, and restarted only on
+purpose.**
+
+**Exactly ten, or an explicit shortfall.** With ten or more eligible questions
+the run holds exactly ten distinct ones. With nine, the selector returns
+`insufficient-eligible-content { requested: 10, available: 9 }` — there is no
+short run, no padding, no widened filter and no candidate content pulled in to
+make up the number.
+
+**The selector runs once per run, never per question.** Measured with a counting
+repository: one `getProductionEligible()` call at creation, and **zero more**
+across ten answers and nine advances. The sequence is chosen once and is stable
+from the first question to the last. A new run costs exactly one further call.
+
+**Submission is not progression.** Submitting never advances; the feedback and
+the revealed answer stay until the learner presses Next. One accepted advance
+per Next — four rapid activations move the run forward exactly one question,
+because only the first finds a submission to advance past.
+
+**Question ten is terminal.** Advancing past it completes the run:
+`answeredCount` reports ten of ten, there is no eleventh question, the index
+does not wrap to zero, and `selectChoice`, `submitAnswer` and
+`advanceToNextQuestion` all refuse with `run-complete` and the state object
+unchanged. Completion performs **no selection** — the run does not restart
+itself, and the call count proves it.
+
+**A new run inherits nothing.** Restarting resets to question one with no
+selection, no submission, no correctness, no rationale, no per-choice
+explanation, no lock and no completion state, and re-invokes the selector so the
+sequence is genuinely new.
+
+**No learner history is created.** Across three consecutive full runs the bank
+still reports twelve questions and twelve production-eligible. Nothing is marked
+seen, used or spent; question records stay frozen and unmodified. Where a
+seen-item history should live remains undecided, and `excludeQuestionIds` stays
+a caller-supplied seam rather than a store.
+
+`answeredCount(state)` counts **progress through the run, not performance**.
+Nothing here knows how many answers were right.
+
+### A development-only wrinkle worth knowing
+
+`main.tsx` wraps the app in `<React.StrictMode>`, which deliberately
+double-invokes `useState` initialisers in development. `QuestionRun` creates its
+run in such an initialiser, so **in the dev browser the selector runs twice at
+mount** and an injected `RandomSource` is advanced twice.
+
+This is development-only and is not a correctness defect: the rendered run is
+still exactly ten valid, eligible, distinct questions, stable thereafter, and
+the invariant that matters — *the selector is not re-invoked per question* —
+holds. Determinism is a property of `selectTrainingQuestions` given a source and
+is tested there; reproducing a run requires a **fresh** seeded source. Recorded
+so a doubled dev-mode call is not later mistaken for a lifecycle bug.
 
 ## 7. Progression resets everything
 

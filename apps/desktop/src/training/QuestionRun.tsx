@@ -3,6 +3,7 @@ import { Card, Button } from "@haa-nexus/ui-kit";
 import {
   DEFAULT_TRAINING_RUN_SIZE,
   advanceToNextQuestion,
+  answeredCount,
   currentQuestion,
   isRunComplete,
   isSubmitted,
@@ -93,17 +94,20 @@ export function QuestionRun({ repository, random, count = DEFAULT_TRAINING_RUN_S
   const state = run.state;
 
   if (isRunComplete(state)) {
+    // The end of the run is a terminal state, not a wrap-around: no question is
+    // rendered, so there is nothing to answer, and starting again is an
+    // explicit act the learner has to take.
     return (
       <Card title="Training run">
-        <p role="status" style={{ margin: 0 }}>
-          Run complete — {state.questions.length} questions answered.
+        <p role="status" data-run-state="complete" data-answered={answeredCount(state)} style={{ margin: 0 }}>
+          Run complete — {answeredCount(state)} of {state.questions.length} questions answered.
         </p>
         <p style={{ margin: "var(--nexus-space-2) 0 0 0", fontSize: "var(--nexus-font-size-xs)", color: "var(--nexus-color-ink-secondary)" }}>
           Nothing was scored or saved. Scoring, progress and history are separate, undecided capabilities.
         </p>
         <div style={{ marginTop: "var(--nexus-space-3)" }}>
           <Button variant="secondary" onClick={() => setRun(beginRun(bank, count, random))}>
-            Start another run
+            Start a new run
           </Button>
         </div>
       </Card>
@@ -121,6 +125,16 @@ export function QuestionRun({ repository, random, count = DEFAULT_TRAINING_RUN_S
 
   return (
     <Card title={`Question ${progress.position} of ${progress.total}`}>
+      {/* Runtime state, inspectable in the browser rather than inferred from
+          appearance. `answered` is progress through the run, never a score. */}
+      <div
+        data-run-state={submitted ? "submitted" : "answering"}
+        data-question-index={state.index}
+        data-question-id={question.questionId}
+        data-answered={answeredCount(state)}
+        data-total={progress.total}
+        hidden
+      />
       <QuestionBody
         question={question}
         state={state}
