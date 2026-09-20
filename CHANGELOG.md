@@ -11,6 +11,78 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D5 Resolved — Assessment Results Count Separately from Practice (2026-09-20)
+
+**Owner decision.** A completed Assessment contributes to **Assessment**
+competency and **Assessment** analytics, and to nothing else. It must not
+mutate, overwrite, or become indistinguishable from Practice competency, and
+must not be folded into Practice aggregates. The two are separate
+authoritative signals: training activity, and performance under formal exam
+conditions.
+
+**Separate means separate through persistence, not a label or a filter.**
+`ResultPopulation` and `resultPopulationFor(mode)` in the domain;
+`CompetencyRecord.population`; the repository keyed `get(population, domain)`,
+so there is no call that returns "the" record for a domain any more; **migration
+003** rebuilding `competency_records` as `UNIQUE(user_id, population, domain)`
+with the id as `user-population-domain`; and `computeAnalytics(population, ...)`
+where the population is a *required* argument and the filtering happens inside
+the domain function - so no caller can produce a merged total by forgetting to
+filter. `updateCompetencyRecord` throws rather than fold a score into another
+population's record.
+
+**Simulation counts as practice**, exactly where it always counted. D5
+separated Assessment from Practice and said nothing about simulation; giving it
+a third population would have been deciding something nobody decided.
+
+**Migration 003 assigns existing rows to `practice`.** Every record written
+before this came from the old mode-agnostic fold, and Assessment was
+unreachable for most of that period. That keeps a learner's training history;
+it does not claim those attempts were assessments. The dev-browser store
+applies the same rule to records that predate the field.
+
+**Recommendations were deliberately left alone, and that is the open
+question.** `generateRecommendations` still reads all evaluated sessions across
+both populations. D5 governs competency and analytics, which recommendations
+are neither, and no recommendation policy was supplied - scoping them would
+have invented one. **Still undecided: should recommendations after an
+Assessment be derived from Assessment history, Practice history, or both?**
+
+**No access control changed.** D5 is about how completed results are counted.
+Analytics and the Dashboard remain reachable exactly as before, no route guard
+or nav change was added, and D4's `ReferenceGate` still covers only the
+Knowledge Base and Training. The content archive was not touched: no repository
+was coupled to session mode and no content gained competency metadata.
+
+**Files.** `types/result-population.ts` (new), `competency-engine/index.ts`,
+`persistence/competency-repository.ts`, `analytics-engine/compute.ts`,
+`store/sessionStore.ts`, `routes/Analytics.tsx`, `tauriCompetencyRepository.ts`,
+`devBrowserRepositories.ts`, `migrations/003_competency_population.sql` (new),
+`db/competency.rs`, `db/models.rs`, `db/migrations.rs`, `commands.rs`, and the
+`competency-record.json` IPC fixture.
+
+**Mutation-checked.** Dropping the population from the persistence key (6
+failures), dropping the analytics filter (7), swapping the two populations (28)
+and collapsing them into one (11) each failed the suite. Every file restored
+byte-identically.
+
+**Verification.** 379/379 nexus-core (+23), 208/208 desktop (+9), **55/55 Rust**
+with `cargo fmt --check` and `cargo clippy --all-targets` clean, typecheck clean
+across the workspace, build clean, 17/17 preflight. Rust *was* re-run this time,
+because D5 changed the schema.
+
+**Browser.** At `http://localhost:1420/` the Analytics page now shows two
+labelled sections and no combined figure. A real Practice submission moved the
+Practice section from 3 to 4 scored sessions and updated its competency, while
+the Assessment section stayed at zero attempts. **The populated Assessment side
+could not be exercised in-browser** - it requires Pro and no tier-switching
+surface exists (D10) - so that half is covered by the end-to-end tests through
+the real submit path, not by clicking.
+
+**D1-D4 intact. D6 remains unresolved and untouched.**
+
+---
+
 ## D5 Audit — Analytics and Competency Treatment Remains Undecided (2026-09-20)
 
 **An audit, not a decision. No production code changed.** D5 - whether

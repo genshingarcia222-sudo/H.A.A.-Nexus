@@ -124,7 +124,12 @@ export class DevBrowserCompetencyRepository implements CompetencyRepository {
   constructor(private readonly storage: Storage = globalThis.localStorage) {}
 
   private all(): CompetencyRecord[] {
-    return readJson<CompetencyRecord[]>(this.storage, DEV_STORAGE_KEYS.competency, []);
+    const stored = readJson<CompetencyRecord[]>(this.storage, DEV_STORAGE_KEYS.competency, []);
+    // Records written before D5 have no population. They are read as
+    // practice, exactly as migration 003 does for the real database: they
+    // were produced by the old mode-agnostic fold, and dropping them would
+    // silently empty a developer's existing competency view.
+    return stored.map((record) => (record.population ? record : { ...record, population: "practice" }));
   }
 
   private write(records: CompetencyRecord[]): void {

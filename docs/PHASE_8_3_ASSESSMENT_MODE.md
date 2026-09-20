@@ -210,7 +210,55 @@ that surface, and the boundary test explicitly permits the content layer to
 read those repositories. No archive content was moved, deleted, gated or given
 entitlement metadata.
 
-### D5 — Do Assessment results count in analytics and competency? — **NOT AUTHORIZED**
+### D5 — Do Assessment results count in analytics and competency? — **RESOLVED**
+
+**Owner decision, 2026-09-20: separately.** A completed Assessment contributes
+to Assessment competency and Assessment analytics, and to nothing else. It
+must not mutate, overwrite, or become indistinguishable from Practice
+competency, and must not be folded into Practice aggregates. Practice and
+Assessment are two authoritative signals measuring different things: training
+activity, and performance under formal exam conditions.
+
+**Simulation counts as practice.** D5 separated Assessment from Practice and
+said nothing about simulation, so it stays exactly where it has always
+counted. Giving it a third population would be deciding something nobody
+decided.
+
+**The distinction survives persistence.** It is not a label, a UI filter, or
+something reconstructed from a merged total:
+
+| Layer | Boundary |
+|---|---|
+| Domain | `ResultPopulation` (`practice` \| `assessment`) and `resultPopulationFor(mode)` |
+| Competency record | `CompetencyRecord.population`; `updateCompetencyRecord` **throws** rather than fold a score into another population's record |
+| Repository | `get(population, domain)` - there is no call that returns "the" record for a domain, because there is no longer one |
+| SQLite | migration 003: `UNIQUE(user_id, population, domain)`, id rebuilt as `user-population-domain` |
+| Analytics | `computeAnalytics(population, …)` - population is a **required** argument and the filtering happens inside, so no caller can produce a merged total |
+| UI | Two labelled sections; no combined figure is rendered anywhere |
+
+**Migration 003 assigns existing rows to `practice`.** Every record written
+before this was produced by the old mode-agnostic fold, and Assessment was
+unreachable for most of that period. That keeps a learner's training history;
+it does not claim those attempts were assessments.
+
+**Recommendations were deliberately left alone.** `generateRecommendations`
+still reads all evaluated sessions across both populations. D5 governs
+competency and analytics, which recommendations are neither, and no
+recommendation policy was supplied - so scoping them to a population would
+have been inventing one. **This is the open question D5 did not answer:**
+should recommendations after an Assessment be derived from Assessment history,
+Practice history, or both? Recorded here rather than decided.
+
+**Verification:** 23 domain tests, 9 end-to-end tests through the real
+`sessionStore.submit`, and 55 Rust tests including the rebuilt schema. Four
+mutations confirmed the suite bites - dropping the population from the
+persistence key, dropping the analytics filter, swapping the two populations,
+and collapsing them into one each failed it, and every file was restored
+byte-identically.
+
+<details><summary>The audit that preceded this decision</summary>
+
+### D5 — evidence gathered while this decision was open
 
 - **Evidence examined:** Architecture Package §14/§18 (mode-agnostic); Business Model Spec §4 (competency and analytics tiering only).
 - **Why insufficient:** merging or separating exam results changes what learners are shown about their competency.
@@ -259,7 +307,9 @@ tracking and analytics. That is a separate pre-existing gap on the tier axis;
 D5 as worded is about mode. Wiring it up would decide it by implementation, so
 it was left alone.
 
-- **The exact decision still required:** do Assessment attempts count in competency and analytics (a) together with practice, (b) separately from practice, or (c) instead of practice - and, since the costs differ, whether the same answer applies to both competency and analytics.
+- **The decision as it was put to the owner:** (a) together with practice, (b) separately, or (c) instead of practice. **Answered: (b), separately, for both competency and analytics.** The predicted cost held - analytics needed no schema change, competency needed migration 003.
+
+</details>
 
 ### D6 — After an interrupted Assessment, may the learner start again or resume? — **NOT AUTHORIZED**
 
@@ -336,7 +386,7 @@ it was left alone.
 | Learner entry point and mode-level start enforcement | **DONE** — `34f727c` |
 | Assessment results presentation | **DONE** — D3 = all six surfaces ON, satisfied by the existing summary and protected by tests |
 | Closed-book navigation restriction | **DONE** — D4 = closed-book, enforced at the route |
-| Analytics/competency separation | **BLOCKED** — D5 (may not be required) |
+| Analytics/competency separation | **DONE** — D5 = separate populations, enforced in the domain, the schema and the aggregation |
 | Interrupted-Assessment policy | **BLOCKED** — D6 |
 
-D1, D3 and D4 are decided: Assessment is reachable, runs closed-book, and gives the full results experience on submission. Phase 8.3 cannot close while D5 and D6 remain unanswered - how Assessment attempts count in analytics and competency, and what happens when one is interrupted, are still the owner's to decide.
+D1, D3, D4 and D5 are decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, and counts as its own population. Phase 8.3 cannot close while D6 remains unanswered - what happens to an interrupted Assessment is still the owner's to decide.

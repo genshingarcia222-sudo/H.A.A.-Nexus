@@ -322,8 +322,19 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 (D3), closed-book access (D4), analytics/competency treatment (D5),
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
-authorized and enforced. **D3 and D4 were answered by the owner on 2026-09-20;
-D5-D9 remain unresolved.**
+authorized and enforced. **D3, D4 and D5 were answered by the owner on
+2026-09-20; D6-D9 remain unresolved.**
+
+**D5 — analytics and competency treatment — answered 2026-09-20.** Assessment
+results count **separately** from Practice results in both. The distinction is
+carried through the domain (`ResultPopulation`), the competency record, the
+repository key, SQLite (migration 003: `UNIQUE(user_id, population, domain)`)
+and the aggregation (`computeAnalytics` takes the population as a required
+argument), so a merged total cannot be produced by forgetting to filter.
+Simulation still counts as practice - D5 said nothing about it. Recommendations
+still read both populations, deliberately: D5 governs competency and analytics,
+and scoping recommendations would have invented a policy nobody supplied.
+Full record in `PHASE_8_3_ASSESSMENT_MODE.md` D5.
 
 **D4 — reference access during an Assessment — answered 2026-09-20.**
 Closed-book: Knowledge Base OFF, Training OFF, direct route access BLOCKED, and
