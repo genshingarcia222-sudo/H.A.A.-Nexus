@@ -11,6 +11,61 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Knowledge Base Integration Audit — Blocked, and Why (2026-09-20)
+
+**An audit, not an integration. No content was consumed and nothing was
+injected.** A Knowledge Base content integration was prepared; the audit that
+precedes it found there is nothing canonical to integrate into.
+
+**What the Knowledge Base actually is.** `KnowledgeBase.tsx` is a search box
+over `InMemoryTerminologyRepository`, backed by four entries in
+`content/terminology/terminology.json`. `TerminologyEntrySchema` is
+`{ id, layTerm, clinicalTerm, acceptedAlternatives[], category, context?,
+explanation, commonMistakes[] }` — **no article type, no provenance, no
+jurisdiction, no effective period, no release or version metadata, no lifecycle,
+no verification record and no supersession rule.** Architecture Package §17
+records this as deliberate: knowledge articles were folded into
+`training_lessons.category = 'reference'` for MVP, to revisit *"if reference
+content outgrows the lesson schema"*. That condition has arrived.
+
+**And the schema is not `.strict()`**, so sourced records pushed through it
+would be **silently stripped of their provenance** — exactly the hazard the
+Question Bank was built to prevent.
+
+**Two blockers, recorded rather than worked around.** No Device 1 handoff SHA
+exists (no content commit on any ref), and no canonical Knowledge Base content
+model exists. Creating one is a D11-shaped owner decision about a canonical
+content type, so it was not invented. No placeholder records were created.
+
+**What the audit confirmed as already correct.** *Assessment access needs no new
+policy*: `mayAccessReferenceMaterial` returns false for an assessment that is
+not completed, and `ReferenceGate` blocks direct navigation to
+`/knowledge-base` and `/training`, so any future Knowledge Base content is
+automatically closed-book during an attempt and reopens on submission — D4,
+already implemented and tested. **Knowledge Base content cannot become an
+Assessment answer key.** *Question Bank eligibility is untouched*:
+`getProductionEligible()` remains the single gate and Pilot 001 stays
+candidate-only.
+
+**FY2027 cannot currently be mislabelled as the active release** — for the
+strongest possible reason. `effectiveFrom`/`effectiveTo` exist only on the
+Question Bank's optional `codingReference`, and **nothing reads them**; the
+application has no "active coding release" concept, so it makes no claim to be
+wrong about. That is a fact about absence: the first surface that presents a
+release as current must compare the real date against the stored effective
+period rather than assuming the newest record wins.
+
+**Documentation.** `docs/KNOWLEDGE_BASE_INTEGRATION_AUDIT.md` (new) records the
+field-by-field gap and the seven ordered steps a real integration would need,
+none of which should begin before the owner decision.
+`.claude/sync/DEVICE2_TO_DEVICE1.md` carries the blockers and what to supply.
+
+**Not claimed:** no integration event, no injected record count, no merge, no
+production readiness. Tests, typecheck, build and preflight were unchanged by
+this audit because no source file was modified.
+
+---
+
 ## Training Run Lifecycle — Ten Questions, Completion and Restart (2026-09-20)
 
 **Mostly proof, deliberately little code.** M22 built the run; this checkpoint
