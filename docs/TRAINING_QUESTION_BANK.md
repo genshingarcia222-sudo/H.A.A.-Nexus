@@ -1,10 +1,11 @@
 # Training Question Bank — canonical architecture
 
 **Status:** schema, validator, repository, loader and tests implemented and
-**verified** — 86 question-bank tests green within a 593/593 repository suite,
-typecheck, build and preflight clean. There is still **no runtime consumer and
-no selector**: nothing chooses which questions a learner sees. None of the
-product decisions listed at the end has been answered.
+**verified** — 86 question-bank tests green within a 665/665 repository suite,
+typecheck, build and preflight clean. Its first consumer, the Training
+selector, now exists (`TRAINING_QUESTION_SELECTION.md`); there is still no
+learner-facing Training UI, nothing records an answer and nothing scores. None
+of the product decisions listed at the end has been answered.
 
 **Owner decision applied:** *Option B — a separate, reusable Training Question
 Bank*, recorded 2026-09-19 (`docs/DECISION_REGISTER.md` D11). Each question is
@@ -301,12 +302,18 @@ returns holds every question that loaded, whatever its status, because
 development and validation tooling needs to see candidates — **being handed the
 repository is not permission to show its contents to anybody.**
 
-### Still seams, still not built
+### The first consumer
 
-- **Selection.** `getProductionEligible()` is the gate a selector should ask;
-  `variantGroup` is the signal it should use to avoid near-duplicates. Nothing
-  consumes either. Randomisation, 10-question runs, recency, seen-item history
-  and anti-memorisation logic are a separate checkpoint.
+**Selection now exists**, in `training-engine`, not here — see
+`TRAINING_QUESTION_SELECTION.md`. It consumes `getProductionEligible()` as its
+pool and `variantGroup` as its diversity signal, exactly as this document
+anticipated, and it re-derives neither. The bank still answers only *what valid
+questions exist*.
+
+Still not built: recency, seen-item history and anti-memorisation persistence
+(`excludeQuestionIds` is a caller-supplied seam, not a store), adaptive
+difficulty, and any learner-facing Training UI.
+
 - **Lesson linkage.** A future `linkedLessonIds`-style field would go on the
   question, not the lesson — but whether bank questions link to lessons at all
   is an open owner decision, so no field was added.
@@ -333,16 +340,30 @@ Documented:    docs/PHASE_8_3_ASSESSMENT_MODE.md — authorized requirements (§
                implemented capabilities (§2), decision log (§3), remaining
                work (§5).
 
-Owner-authorized: D1 (Assessment requires Pro), D2 (live-feedback principle),
-               D3 (all six post-submission surfaces ON), D4 (closed-book).
+Owner-authorized: D1 (requires Pro), D2 (live-feedback principle), D3 (all six
+               post-submission surfaces ON), D4 (closed-book), D5 (Assessment
+               counts as its own population), D6 (an interrupted Assessment may
+               be retaken, not resumed). **Every Phase 8.3 Assessment decision
+               is now resolved.**
 
-Blocked:       D5 (analytics/competency treatment), D6 (interrupted-Assessment
-               policy), D7-D9. Phase 8.3 cannot close while D5 and D6 are open.
+Question-based Assessment support: NONE, and none is implied. Assessment's input
+               is a scenarioId/scenarioVersion and a documentation draft. No
+               multiple-choice question model exists anywhere in it, and no
+               Assessment code references the Question Bank — verified by
+               scanning: the only two mentions outside question-bank/ and
+               training-engine/ are a doc comment and the package barrel export.
+               A question-based "Learning Assessment" is a DIFFERENT, currently
+               non-existent capability.
+
+Blocked:       Outside Assessment mode — D7 (contradictory documentation), D8
+               (practice/simulation resume, with A6 as its engineering half),
+               D9 (evaluation failure), D10 (web persistence).
 
 Potential Question Bank reuse: the repository interface IS the seam. A future
                question-based Learning Assessment would consume
-               `getProductionEligible()`. Nothing more is needed from the
-               content model today.
+               `getProductionEligible()`, exactly as the Training selector now
+               does, and would bring its OWN selection rules rather than reusing
+               Training's. Nothing more is needed from the content model today.
 
 Missing content requirements: before question-based Assessment content can be
                authored, the owner must define coverage (which domains and skill

@@ -11,6 +11,96 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Training Question Selection — the 10-Question Run (2026-09-20)
+
+**The bank's first consumer.** The Question Bank could say what valid questions
+exist; nothing could say which ones a Training run should receive. This adds
+that, and only that. **No Training UI, nothing records an answer, nothing
+scores, nothing remembers what a learner has seen, and no tier governs access.**
+
+**Selection lives in `training-engine`, not in `question-bank`.** The bank is a
+reusable content source; selection is Training's runtime policy. Putting the
+selector inside the bank would make the content model responsible for one
+consumer's rules, and a future Learning Assessment — which will want different
+ones — would inherit Training's by default. *Implementation decision —
+autonomous.*
+
+**The 10-question contract.** `DEFAULT_TRAINING_RUN_SIZE` is 10. The selector
+returns exactly the requested count and never more; it **never repeats a
+question to fill a run** (seven eligible against a request for ten is
+`insufficient-eligible-content`, reported with `requested` and `available`); and
+it **never silently widens a filter** — six level-2 questions against a request
+for ten is insufficiency, not four level-5 questions quietly mixed in. A learner
+told they practised level 2 must have practised level 2.
+
+**Eligibility is not re-derived.** The pool is `getProductionEligible()`, the
+bank's own gate. There is one definition of "may a learner see this" and it
+lives with the content. Consequence, and it is tested: **a bank of candidates is
+an empty pool** — Pilot 001, with all 12 items `CANDIDATE`, yields
+`available: 0`.
+
+**Randomness is injected, never reached for.** `RandomSource` is a
+`() => number`, with `createSeededRandom` (mulberry32) for reproducibility:
+same request, same pool, same source ⇒ the same run every time. This exists so
+that "why did the learner get these ten?" is answerable; a selector sprinkled
+with ambient `Math.random()` cannot be reproduced and therefore cannot be
+debugged or fairly reviewed. It is deterministic, not cryptographic.
+*Implementation decision — autonomous.*
+
+**Diversity is a preference, not a constraint.** A greedy pass picks the
+remaining question that would least concentrate the run, ties broken by the
+deterministic shuffle, weighted `variantGroup` 8 · `learningObjective` 4 ·
+`skillArea` 2 · `questionType` 1 · `domain` 1. Undefined metadata contributes
+nothing, so questions without a variant group are not treated as one group.
+Diversity never fails a run and never overrides a filter — making `variantGroup`
+*hard* would convert a content-shape problem into a learner-visible
+insufficiency error, and where that line belongs is a product question
+deliberately left open.
+
+**The boundaries are checked, not trusted.**
+`question-selection.boundary.test.ts` scans the source: the selector may import
+only from `question-bank/`, may name no subscription tier, may not re-derive
+eligibility, and may hold no module-level mutable state — the same approach
+`liveFeedbackBoundary.invariant.test.ts` takes on the Assessment side. Each of
+entitlement, persistence and scoring would be easy to reach for while "just"
+making selection smarter, and each would quietly relocate a product decision
+into a content-adjacent module.
+
+**Assessment readiness — re-inspected, and deliberately not built on.** D5 and
+D6 resolved since the last checkpoint, so **every Phase 8.3 Assessment decision
+is now settled**. The finding that matters is unchanged: **Assessment is a
+session mode over *scenarios*, not a question-based exam.** Its input is a
+`scenarioId`/`scenarioVersion` and a documentation draft; it has no
+multiple-choice question model, and no Assessment code references the Question
+Bank — verified by scanning, the only two mentions outside `question-bank/` and
+`training-engine/` are a doc comment and the package barrel export. A
+question-based "Learning Assessment" is a different, currently non-existent
+capability, and a future one would bring its own selection rules rather than
+reuse Training's.
+
+**PRODUCT DECISION — BLOCKED: shared versus reserved question pool.** If
+Assessment ever draws from the pool Training practises on, a learner meets exam
+questions during practice and the exam is defeated. The bank and the selector
+can express either arrangement with no content-model rewrite — a reserved pool
+is a filter over existing metadata. Which is correct is the owner's. Nothing
+here assumes an answer, and no Assessment scoring, pass threshold, completion
+rule, certification semantics or Assessment entitlement was written. No medical
+content was generated: selection fixtures are structural variants of the
+existing bank fixture, with ids and classification metadata changed and the
+clinical text untouched.
+
+**Documentation.** `docs/TRAINING_QUESTION_SELECTION.md` (new);
+`TRAINING_QUESTION_BANK.md` updated for its first consumer and the refreshed
+readiness finding.
+
+**Verification.** 665/665 tests (450 nexus-core across 48 files — 33 new — and
+215 desktop across 24), typecheck clean, build clean, preflight exit 0 with
+17/17 preflight self-tests. **No browser verification was performed and none is
+claimed**: no UI was added, deliberately, since a dev diagnostic surface would
+have been scope this checkpoint does not need. Rust untouched and not re-run.
+
+---
+
 ## D6 Resolved — An Interrupted Assessment May Be Retaken (2026-09-20)
 
 **Decision under delegated authority. No production code changed.** A learner
