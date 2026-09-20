@@ -11,6 +11,106 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Training Answer Submission, Feedback and Reveal (2026-09-20)
+
+**The run a learner can actually use.** Selection could produce ten questions;
+nothing could answer one. This closes the loop — select, submit, see correct or
+incorrect, see the correct answer, read why, move on — and stops there.
+**Nothing is scored, nothing is stored, nothing is remembered.** No number, no
+percentage, no pass/fail, no mastery, no history, no tier.
+
+**The rules are in `nexus-core`, not in React.**
+`training-engine/question-run.ts` is a pure state machine and the single owner
+of what may happen next; `apps/desktop/src/training/QuestionRun.tsx` renders it
+and decides nothing. A rule enforced in a component is reachable only by
+rendering, and tends to be enforced twice — slightly differently — as soon as a
+second surface appears. *Implementation decision — autonomous.*
+
+**State is derived, not accumulated.** There is no `isSubmitted` flag beside an
+`isCorrect` flag beside a `showRationale` flag — independent booleans can express
+"submitted but still editable" or "correct and incorrect at once", and
+eventually do. There is one `submission`, absent or complete, and every question
+the UI asks is answered from it, so the revealed answer cannot disagree with the
+grade. Every transition returns either `ok` or `rejected` **with the unchanged
+state**, so a refused click cannot leave the run half-transitioned.
+
+**Correctness is canonical identity.** Grading resolves through
+`correctChoiceId` — never position, display order or answer text. Reordering
+choices cannot change which answer is right, and two choices with identical text
+stay distinguishable. `evaluateAnswer` returns null rather than a grade when the
+submitted id is not one of the question's choices, or when the question's own
+answer key does not resolve: **an ungradable answer is never treated as
+correct.**
+
+**Feedback is never colour alone.** Each choice carries a text marker, an
+`aria-label` containing it, a `data-state` attribute and a ✓/✗ glyph as well as
+border and fill, so the correct answer is identifiable with no colour perception
+at all.
+
+**Rationale is never fabricated.** It is required by the bank schema, so a valid
+question always has one and no "unavailable" state is reachable — nothing is
+generated when content is thin. Per-choice explanations are supplemental: their
+absence changes neither evaluation, feedback nor the reveal.
+
+**A real defect the tests found, fixed in the component rather than the test.**
+Submit was being *replaced* by Next in the same position. React reuses the DOM
+node when one button swaps for another in the same slot, so the second half of a
+double-click landed on Next and advanced the run — skipping the feedback the
+learner had just earned. Submit now stays put and goes inert; Next appears
+beside it. Locking is likewise a state rule and not merely a `disabled`
+attribute, so a keyboard activation or a synthetic event cannot change a
+submitted answer.
+
+**Progression leaves nothing behind.** Advancing rebuilds state from the
+questions and the new index alone, so no selection, correctness, rationale,
+per-choice explanation or lock survives. Tested per transition and across a full
+ten-question run, including that a choice id from the previous question is
+refused as unknown on the next.
+
+**Content safety at the boundary.** Questions arrive only through the selector,
+whose pool is `getProductionEligible()`; the component re-derives no
+eligibility, difficulty or diversity rule. When a run cannot be filled the
+surface says so with the requested and available counts and renders no question
+— **nothing fabricated, no filter widened, no difficulty lowered, no candidate
+content pulled in to make up the number.** That is the ordinary state of the
+real bank today: it is empty, because no authored question has passed human
+source verification, and Pilot Batch 001 remains candidate-only.
+
+**The preview fixture is synthetic and cannot leak.** Twelve non-medical
+questions *about the Nexus runtime itself* live in `src/preview/`, not under
+`content/`, so no loader, content-QA suite or preflight scan discovers them.
+Each carries the `SYNTHETIC-DEV-FIXTURE` flag, cites that file rather than an
+authority, and records plainly that no person verified it. They pass through the
+real validator and the real eligibility gate, because a preview that bypasses
+the production path proves nothing. **No medical content was authored**, and no
+pilot content was touched.
+
+**Assessment untouched.** Still scenario-based — a `scenarioId`/`scenarioVersion`
+and a documentation draft, with no question model. No question-based Assessment
+consumer was created, and the **shared-versus-reserved question pool remains a
+blocked product decision**.
+
+**Documentation.** `docs/TRAINING_QUESTION_RUN.md` (new).
+
+**Verification.** 739/739 tests (488 nexus-core across 50 files, 251 desktop
+across 26; 50 new), typecheck clean, build clean, preflight exit 0 with 17/17
+self-tests. **Browser-verified** at `http://localhost:1420/#/training` in the
+dark development theme: a ten-question run starts; Submit is inert until a
+choice is picked; a wrong answer shows the pick in red, reveals the correct
+answer in green and prints the rationale; a real double-click produces one
+feedback block and does **not** advance; keyboard and synthetic-event bypasses
+of the lock are refused; Next opens a completely clean question 2; a correct
+answer shows correct; and requesting more questions than exist renders the
+explicit shortfall with no question and no Submit. Rust untouched and not
+re-run.
+
+**One self-inflicted defect, found and repaired.** A PowerShell edit read
+`Training.tsx` as ANSI and corrupted its two `←` glyphs. Detected by scanning
+the touched files, repaired, and re-verified — the committed diff contains only
+intended additions.
+
+---
+
 ## D7 Resolved — A Self-Contradictory Note Is a Critical Documentation Error (2026-09-20)
 
 **Decision under delegated authority.** A note that documents a pertinent
