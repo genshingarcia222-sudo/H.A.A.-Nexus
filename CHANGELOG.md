@@ -244,6 +244,92 @@ intended additions.
 
 ---
 
+## Pilot Batch 001 Revision 3 — Source-Verified Against Retrieved Authority (2026-09-20)
+
+**External-source gate: PASS.** Every authoritative source was actually
+retrieved and read in this environment, not recalled. `WebFetch` returned HTTP
+403 for `hhs.gov`, so HHS pages were rendered in a real browser instead; the
+FY2027 ICD-10-CM Official Guidelines PDF was downloaded from `cms.gov`
+(121 pages) and text-extracted after installing `pypdf`.
+
+| Source | Authority | Retrieved | Readable |
+|---|---|---|---|
+| Summary of the HIPAA Privacy Rule | HHS/OCR | yes (browser) | yes |
+| Business Associates guidance | HHS/OCR | yes (browser) | yes |
+| Minimum-necessary exception list | HHS/OCR | yes (browser) | yes |
+| Treatment / payment / operations | HHS/OCR | yes (browser) | yes |
+| FY2027 ICD-10-CM Official Guidelines | CMS / NCHS | yes (PDF, 121pp) | yes |
+| ICD-10 code-set effective dates | CMS | yes | yes |
+
+**All 12 answer keys confirmed unchanged:** 1a 2b 3c 4d 5a 6b 7c 8d 9a 10b 11c
+12d, distribution 3/3/3/3. No key moved, and the position balance was treated
+as incidental rather than as evidence.
+
+**What the sources actually said**, quoted into each rationale: PHI naming and
+its FERPA/employment-record exclusions; the three covered-entity categories;
+treatment disclosures permitted without authorization; the **six** minimum-
+necessary exceptions; the treatment definition including consultation and
+referral; business-associate status turning on "creating, receiving,
+maintaining, or transmitting PHI" plus written satisfactory assurances;
+ICD-10-CM as the U.S. modification of WHO ICD-10; the Tabular List as "a
+structured list of codes divided into chapters based on body system or
+condition"; Index-then-Tabular with "it is essential to use both"; the FY2027
+period "(October 1, 2026 - September 30, 2027)"; "unspecified" codes for when
+the record "is insufficient to assign a more specific code"; and I.B.14's
+provider-documentation rule **with** its defined non-provider exceptions.
+
+**Corrections applied in revision 3.** Q1's stem softened to "generally used
+for", because the Rule excludes employment and FERPA records from PHI. Q12's
+stem now says "non-provider nurse" and "based on this note alone", and its
+rationale quotes I.B.14 including the exception list, so it no longer teaches
+the absolute rule that non-provider documentation can never support a code.
+Q10 carries `effectiveFrom: 2026-10-01` / `effectiveTo: 2027-09-30` using
+fields `CodingReferenceSchema` already had - no schema change - and records
+FY2027 as **FUTURE-EFFECTIVE** as of 2026-09-20, with FY2026 still in force.
+Q4, Q6 and Q3 rationales were corrected for over-absolute wording.
+
+**A frozen baseline stopped a mistake, and the guard was respected.** The first
+attempt edited
+`question-bank/__fixtures__/nexus-pilot-batch-001.candidates.r2.json`. That
+file is a **hash-pinned compatibility fixture**, not an authoring copy: its
+SHA-256 is asserted against the handoff manifest precisely so a silent edit
+fails loudly. It did. The fixture was reverted byte-for-byte
+(`05fa24d0…aaf3d` restored), and revision 3 was written as a **new artifact**
+instead - the convention this batch already uses, since r1 and r2 already
+coexist. The frozen baseline and the manifest hash are untouched.
+
+**The repository's own validator caught a regression I introduced.** The
+reworded Q12 choice (d) became the longest option, reintroducing the
+answer-length bias revision 2 removed. `validate_pilot_batch.py` failed it;
+the choice was shortened to 73 characters with its meaning intact, and the
+batch now reports `correct_is_longest=0`.
+
+**Verification state — machine, not human.** This is MACHINE source
+verification: the cited wording was located and read in the primary document.
+It is **not** the human gate. `question-bank/schema.ts` states that only a
+person who opened the cited document may fill
+`humanVerifiedBy`/`humanVerifiedOn`, so those stay `null`, every item stays
+`candidate`/`pending`, all 12 keep `HUMAN-VERIFY-REQUIRED`, and
+`productionEligible` remains **0**. Nothing was promoted and no reviewer
+identity, timestamp or approval was fabricated.
+
+**Knowledge Base: NOT GENERATED.** There is still no canonical Knowledge Base
+content model to generate into - the only "Knowledge Base" is the terminology
+lookup, whose schema carries no provenance, jurisdiction, effective period or
+verification state. That is **D12**, an open owner decision, and it is
+unchanged by source verification. Creating a Knowledge record type to receive
+this content would be deciding D12 silently.
+
+**Verification.** 778/778 tests (511 nexus-core + 267 desktop), typecheck
+clean, build clean. `validate_pilot_batch.py` on r3: PASS (structure and bias
+only; explicitly not a source or truth check), with the expected 12
+"no human verification recorded yet" warnings.
+
+**Files:** `Claude outputs/nexus-pilot-batch-001.candidates.r3.json` (new).
+The r2 fixture and the r2 authoring copy are unchanged.
+
+---
+
 ## D7 Resolved — A Self-Contradictory Note Is a Critical Documentation Error (2026-09-20)
 
 **Decision under delegated authority.** A note that documents a pertinent
