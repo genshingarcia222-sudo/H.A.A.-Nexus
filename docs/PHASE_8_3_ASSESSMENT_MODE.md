@@ -217,6 +217,50 @@ entitlement metadata.
 - **Current state:** analytics and competency remain mode-agnostic, unchanged.
 - **Decision required:** whether Assessment results are counted with, separately from, or instead of practice results.
 
+**Audited 2026-09-20 (evidence, not policy). Still NOT AUTHORIZED - no option was chosen.**
+
+**Nothing is partially implemented.** `sessionStore.submit` folds an attempt's
+seven category scores into competency with no mode check; `computeAnalytics`
+filters only on "has a finite evaluation", never on mode; the Dashboard history
+lists every record's score without distinguishing mode. An Assessment attempt is
+today indistinguishable from a Practice attempt everywhere downstream.
+
+**The three options do not cost the same, and that is the finding.**
+
+| | Analytics | Competency |
+|---|---|---|
+| **Counted with practice** (today) | no change | no change |
+| **Counted separately** | no schema change - `mode` is already persisted on every `SessionRecord` and `computeAnalytics` simply does not read it | **migration required** - `competency_records` is `UNIQUE(user_id, domain)` with no mode dimension, so separation needs migration 003, the Rust DTO and repository, and the `CompetencyRecord` shape |
+| **Counted instead of practice** | no schema change | no schema change, but changes what practice contributes to an existing learner's record |
+
+So "separately" is cheap for analytics and expensive for competency, and the
+two halves of this decision can be answered independently if the owner wants
+them to be.
+
+**D5 changes D3's inputs.** `generateRecommendations` reads *all* evaluated
+sessions with no mode filter, so recommendations after any attempt are derived
+partly from Assessment history. Separating or excluding Assessment results
+silently changes which recommendations D3 surfaces. D3 authorized the
+recommendation *surface*, not which attempts feed it, so this needs stating
+rather than assuming.
+
+**A related gap that belongs to no decision.** D4 closed the Knowledge Base and
+Training during an active Assessment; Analytics and the Dashboard were
+deliberately excluded from that decision and remain reachable mid-attempt,
+showing aggregate performance from previous attempts. That is not D2 (which
+covers *this* attempt's performance), not D4 (answered for reference material
+only), and not D5 as worded (which is about what *counts*, not what is
+*visible during*). Flagged so it is a decision rather than an oversight.
+
+**The tier axis is also unenforced, and is not D5.** `CAPABILITY_MATRIX`
+declares `canTrackCompetency` and `canViewAnalytics` as false/false/true/true,
+but no application code reads either, so every tier currently gets competency
+tracking and analytics. That is a separate pre-existing gap on the tier axis;
+D5 as worded is about mode. Wiring it up would decide it by implementation, so
+it was left alone.
+
+- **The exact decision still required:** do Assessment attempts count in competency and analytics (a) together with practice, (b) separately from practice, or (c) instead of practice - and, since the costs differ, whether the same answer applies to both competency and analytics.
+
 ### D6 — After an interrupted Assessment, may the learner start again or resume? — **NOT AUTHORIZED**
 
 - **Evidence examined:** the Dashboard's interrupted-session flow (implementation only).

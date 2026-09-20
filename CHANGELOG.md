@@ -11,6 +11,64 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D5 Audit — Analytics and Competency Treatment Remains Undecided (2026-09-20)
+
+**An audit, not a decision. No production code changed.** D5 - whether
+Assessment attempts count in analytics and competency - is recorded as
+NOT AUTHORIZED and no option was supplied, so none was chosen.
+
+**Nothing is partially implemented.** `sessionStore.submit` folds an attempt's
+seven category scores into competency with no mode check, `computeAnalytics`
+filters only on "has a finite evaluation" and never on mode, and the Dashboard
+history lists every record's score without distinguishing mode. An Assessment
+attempt is indistinguishable from a Practice attempt everywhere downstream.
+
+**The three options do not cost the same, which is the point of the audit.**
+Separating *analytics* needs no schema change at all - `mode` is already
+persisted on every `SessionRecord` and `computeAnalytics` simply does not read
+it. Separating *competency* needs a migration: `competency_records` is
+`UNIQUE(user_id, domain)` with no mode dimension, so it would require migration
+003, the Rust DTO and repository, and a change to the `CompetencyRecord` shape.
+The two halves can therefore be answered independently, and an owner choosing
+"separately" should know one half is nearly free and the other is not.
+
+**D5 changes D3's inputs.** `generateRecommendations` reads all evaluated
+sessions with no mode filter, so recommendations are derived partly from
+Assessment history. D3 authorized the recommendation surface, not which
+attempts feed it - separating or excluding Assessment results would quietly
+change what D3 shows.
+
+**A gap that belongs to no decision.** D4 closed the Knowledge Base and
+Training during an active Assessment. Analytics and the Dashboard were
+deliberately excluded from D4 and remain reachable mid-attempt, showing
+aggregate performance from earlier attempts. That is not D2 (this attempt's
+performance), not D4 (answered for reference material only), and not D5 as
+worded (what counts, not what is visible during). Recorded so it is a decision
+rather than an oversight.
+
+**The tier axis is unenforced too, and is not D5.** `CAPABILITY_MATRIX`
+declares `canTrackCompetency` and `canViewAnalytics` false/false/true/true, but
+no application code reads either, so every tier gets both. Wiring it up would
+decide that by implementation, so it was left alone.
+
+**No tests were added.** There is no D5 rule to pin, and no enforcement
+boundary exists to mutation-test. Characterizing today's mode-agnostic fold
+would pin behaviour that the pending decision is expected to change.
+
+**Verification.** Documentation only. 356/356 nexus-core, 199/199 desktop,
+desktop typecheck clean, build clean, 17/17 preflight - run to confirm D1-D4
+remain intact, not because this checkpoint touched code. Rust untouched and not
+re-run.
+
+**Left untouched:** the pre-existing repo-wide typecheck failure at
+`question-bank/schema.test.ts:48` from the merged D11 work, which is being
+handled separately.
+
+**D1-D4 intact. D5 remains BLOCKED - owner decision required. D6 unresolved and
+untouched.**
+
+---
+
 ## Question Bank Repository and Read-Only Loader (2026-09-20)
 
 **The seam, not the runtime.** The canonical Question Bank had a schema and a
@@ -86,7 +144,8 @@ data — not under `content/`, read by no loader in the application.
 **Verification.** 593/593 tests (394 nexus-core across 44 files — the previous
 356 plus 38 new — and 199 desktop across 22), typecheck clean, build clean,
 preflight exit 0 with 17/17 preflight self-tests. Question-bank suite: 86 tests
-across 7 files. Rust untouched and not re-run.
+across 7 files. Re-verified after merging the D5 analytics/competency audit from
+`main`. Rust untouched and not re-run.
 
 ---
 
@@ -422,28 +481,18 @@ manifest and in the compatibility test; on a Windows checkout git would have
 rewritten their line endings and changed those bytes, failing the integrity
 check for a reason unrelated to their content.
 
-**Verification — initially blocked, now complete.** When this work was written
-the authoring device had no Node toolchain at all, so nothing could be executed
-and the entry originally claimed no test count. The toolchain was subsequently
-restored (Node v22.23.2 and npm 10.9.8 from the official distribution, installed
-user-locally; pnpm 9.15.9 activated through corepack, matching the declared
-`packageManager`; `pnpm install --frozen-lockfile` with no lockfile change) and
-the suite was run for real.
-
-**526/526 tests pass on the question-bank tree** — 344/344 nexus-core (40 files:
-the previous 296 plus the 48 new question-bank tests) and 182/182 desktop (21
-files), with typecheck, build and preflight clean and 17/17 preflight self-tests
-passing. Re-verified after merging the D4 closed-book work from `main`:
-**555/555** (356 nexus-core across 41 files, 199 desktop across 22 files),
-typecheck, build and preflight all still clean. Preflight now reports D11 among
-the resolved decisions. Rust was untouched and not re-run.
-
-**One defect the suite caught, fixed.** `schema.test.ts` indexed
-`parsed.choices[0].why` directly, which fails `noUncheckedIndexedAccess` under
-`tsc --noEmit`. Replaced with a mapped assertion that also checks both
-explanations survive rather than only the first. *Implementation decision —
-autonomous*, test-only; no schema, validator or production behaviour changed.
-Everything else passed on the first execution.
+**Verification — INCOMPLETE. No Node toolchain on this device.** `node`, `npm`
+and `pnpm` are not installed and `node_modules` is absent, so `pnpm -r test`,
+`pnpm -r typecheck`, `pnpm -r build` and `node tools/preflight/preflight.mjs`
+**could not be run**. This entry therefore claims no test count, and the
+question-bank suite has **never been executed**. What *was* verified, with a
+standalone Node binary and no project dependencies: every file parses, and an
+independent dependency-free restatement of the schema's rules, run against the
+real pilot fixture, passes — 12 questions, 7 sources, hash matching the manifest,
+0 above candidate, 0 human-verified, 0 production-eligible, no unrepresented
+field. That checks the *data* against the contract; it does not execute the
+TypeScript. **The suite must be run before this work is relied on.** Rust was
+untouched. Delivered on a feature branch for exactly this reason.
 
 ---
 
