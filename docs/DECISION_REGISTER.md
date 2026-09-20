@@ -308,6 +308,14 @@ was fabricated to make tiers look complete.
 **Blocked because:** authoring clinical scenarios is content work requiring
 clinical review, not an engineering decision.
 
+**Concrete consequence, measured 2026-09-20:** the released inventory is one
+difficulty-1 and one difficulty-3 scenario. Difficulty 3 is unlocked from
+**Practice** upward, so **no authored content exercises Pro's difficulty-4
+ceiling or Fast-Track's exclusive 5-6 range at all**. The entitlement ladder is
+implemented and enforced; there is simply nothing above difficulty 3 for the
+two paid tiers to unlock, which is a content gap rather than an engineering
+one.
+
 **Authoring on-ramp (2026-09-19, autonomous):** `content/incoming/` holds a
 template and an intake suite that validates drafts against the real schema
 and reports actionable errors per file, so authoring does not require reading

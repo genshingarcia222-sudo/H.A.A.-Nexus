@@ -77,10 +77,25 @@ semantic tokens, so dark mode redefines those same tokens under
 `:root[data-theme="dark"]` - there is no second colour system, and every
 component, inline style and badge that already read a token follows
 automatically. The one hardcoded colour in the codebase (the primary button
-hover) became `--nexus-color-accent-hover` so it follows too. Contrast was
-chosen against the surface each token actually sits on: ink 15.8:1, secondary
-ink 7.3:1, accent ink on accent 5.1:1, and every status colour at or above
-4.5:1. `color-scheme: dark` is set so native controls and scrollbars match.
+hover) became `--nexus-color-accent-hover` so it follows too.
+`color-scheme: dark` is set so native controls and scrollbars match.
+
+**Contrast, measured (corrected 2026-09-20).** Recomputed from the shipped
+token values rather than estimated: ink 14.35:1 on surface and 15.67:1 on
+background; secondary ink 6.91:1 / 7.55:1; accent ink on accent 5.86:1; accent
+on surface 5.29:1 (the focus ring); critical 6.08:1, major 7.82:1, minor
+6.91:1. All text comfortably above the 4.5:1 AA threshold, and dark secondary
+text (6.91:1) is in fact *better* than the light theme's (5.84:1).
+
+Borders are the one figure worth stating plainly: `--nexus-color-border` sits
+at **1.47:1** against its surface, below the 3:1 guideline for non-text
+boundaries. That is a pre-existing characteristic of the design system, not a
+regression introduced here - the light theme's border is **1.36:1** - and the
+dark value is marginally the better of the two. Controls remain identifiable
+without relying on the border alone (distinct surface fill, 14.35:1 label
+text, 5.29:1 focus ring). Raising it in one theme only would change the
+product's visual language across the board, which is a design decision rather
+than an audit fix, so it is recorded here instead of being made unilaterally.
 
 **No light flash.** The attribute is set by a small inline script in
 `index.html`, before the module graph loads and before any stylesheet paints.
@@ -122,9 +137,28 @@ claiming one would be a lie to whoever is looking at the screen.
 **Verification.** 13 preview tests; 228/228 desktop, 390/390 nexus-core,
 typecheck clean, build clean. Browser: dark confirmed (`data-theme="dark"`,
 body `rgb(15,20,25)`), the badge present, the stored value correct, and both
-surviving a reload. Fast-Track gating verified through the real matrix -
-**Assessment buttons appear and the Intermediate scenario is unlocked**, where
-Free showed neither.
+surviving a reload, and surviving a **fresh tab with a new JS context** -
+`sessionStorage` is null there, which proves the state is not session-scoped.
+Capability resolution through the real matrix was confirmed: **Assessment
+buttons appear and the Intermediate scenario is unlocked**, where Free showed
+neither.
+
+**Correction (2026-09-20 acceptance audit): those two observations are not
+Fast-Track-*exclusive*.** `canStartAssessment` is true from **Pro** upward
+(D1), and the Intermediate scenario is difficulty 3, unlocked from **Practice**
+upward. They prove the preview resolves capabilities correctly; they do not
+prove anything specific to the highest tier. Audited against the matrix, the
+five capabilities that actually distinguish Fast-Track from Pro are
+`maxScenarioDifficulty` 6, `canAccessTierExclusiveContent`,
+`canRequestTranscriptReview`, `canEarnCompletionCertificate` and
+`voiceQuality: "premium"` - and **four of the five are read by no application
+code at all**. The fifth is enforced, but no scenario above difficulty 3 has
+been authored, so Fast-Track's exclusive 5-6 range has nothing to unlock.
+
+**So there is currently no implemented Fast-Track-exclusive learner feature to
+display.** The preview mechanism is correct and proven; that part of the
+requirement is satisfied architecturally and is vacuous in content terms today.
+Nothing conceptual was surfaced to make the tier look fuller than it is.
 
 **A limitation this closes.** Every checkpoint since D1 reported that
 Assessment could not be exercised in a browser because no tier-switching
@@ -134,8 +168,15 @@ URL blocked by the closed-book notice), **D5** (Practice unchanged at 71/100
 over 4 sessions while Assessment showed 78/100 over 1, with its own competency
 records) and **D7** (the contradiction graded critical).
 
-**Not verified:** a full browser close-and-reopen, and loading a production
-build - reload persistence and the dev build were verified instead.
+**Persistence, as verified.** Reload: verified. Route navigation: verified.
+Fresh tab / new document context: verified, with `sessionStorage` empty.
+Browser process restart: **not browser-verified** - the environment offers no
+true restart - but the state is in `localStorage`, which survives restart by
+specification, and the fresh-tab result rules out session scoping. Application
+update: the stored value is `{"version":1,"tier":"fast_track"}` with no feature
+data in it, so a newer build's capabilities are read from the new matrix, not
+from storage; test- and source-verified rather than observed across two builds.
+A production build was not loaded - the dev build was used throughout.
 
 **No product policy changed:** D1-D7 behave exactly as decided; the preview
 only chooses which tier the browser resolves as.
