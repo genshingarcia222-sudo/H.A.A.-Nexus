@@ -351,10 +351,13 @@ user-locally; pnpm 9.15.9 activated through corepack, matching the declared
 `packageManager`; `pnpm install --frozen-lockfile` with no lockfile change) and
 the suite was run for real.
 
-**526/526 tests pass** — 344/344 nexus-core (40 files: the previous 296 plus the
-48 new question-bank tests) and 182/182 desktop (21 files), with typecheck,
-build and preflight clean and 17/17 preflight self-tests passing. Preflight now
-reports D11 among the resolved decisions. Rust was untouched and not re-run.
+**526/526 tests pass on the question-bank tree** — 344/344 nexus-core (40 files:
+the previous 296 plus the 48 new question-bank tests) and 182/182 desktop (21
+files), with typecheck, build and preflight clean and 17/17 preflight self-tests
+passing. Re-verified after merging the D4 closed-book work from `main`:
+**555/555** (356 nexus-core across 41 files, 199 desktop across 22 files),
+typecheck, build and preflight all still clean. Preflight now reports D11 among
+the resolved decisions. Rust was untouched and not re-run.
 
 **One defect the suite caught, fixed.** `schema.test.ts` indexed
 `parsed.choices[0].why` directly, which fails `noUncheckedIndexedAccess` under
