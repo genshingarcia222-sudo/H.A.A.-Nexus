@@ -33,6 +33,7 @@ const STATUS_LABELS: Record<NoteComparisonStatus, string> = {
   documented: "Documented",
   omission: "Missing",
   incorrect_negative: "Reversed",
+  critical_documentation_error: "Contradictory",
   wrong_section: "Wrong section",
   incorrect_terminology: "Lay term"
 };
@@ -41,6 +42,7 @@ const STATUS_BADGE: Record<NoteComparisonStatus, string> = {
   documented: "nexus-badge nexus-badge--minor",
   omission: "nexus-badge nexus-badge--major",
   incorrect_negative: "nexus-badge nexus-badge--critical",
+  critical_documentation_error: "nexus-badge nexus-badge--critical",
   wrong_section: "nexus-badge nexus-badge--major",
   incorrect_terminology: "nexus-badge nexus-badge--minor"
 };

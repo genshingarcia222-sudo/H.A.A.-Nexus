@@ -14,6 +14,32 @@ export interface RequirementEvaluation {
   usedRawLayTerm: boolean;
   /** A pertinent-negative requirement where the bare concept appears without its required negation. */
   negationReversed: boolean;
+  /**
+   * The requirement is satisfied *and* the same section also asserts the
+   * opposite - a note that says both "No fever" and "Fever present"
+   * (decision D7).
+   *
+   * Only computed for pertinent negatives, which is where the existing
+   * negation machinery can detect the contradiction reliably. This is not
+   * general contradiction detection, and does not claim to be.
+   */
+  selfContradicted: boolean;
+}
+
+/**
+ * Whether a satisfied pertinent negative is contradicted elsewhere in its own
+ * section. Reuses `detectReversedNegative`, which already answers "does this
+ * text assert the bare concept without a negation cue" - the only difference
+ * is that here the correct negation is present too, which is what makes it a
+ * contradiction rather than a plain reversal.
+ */
+function isSelfContradicted(requirement: RequirementItem, draft: DocumentationDraft): boolean {
+  if (!requirement.isPertinentNegative) return false;
+  return detectReversedNegative(
+    draft[requirement.section],
+    requirement.acceptableVariants,
+    requirement.sourceFact
+  );
 }
 
 const ALL_SECTIONS: (keyof DocumentationDraft)[] = [
@@ -41,7 +67,8 @@ export function evaluateRequirement(
       matchedVariant: matchInTargetSection,
       isWrongSection: false,
       usedRawLayTerm: false,
-      negationReversed: false
+      negationReversed: false,
+      selfContradicted: isSelfContradicted(requirement, draft)
     };
   }
 
@@ -59,7 +86,8 @@ export function evaluateRequirement(
       matchedVariant: requirement.sourceFact,
       isWrongSection: false,
       usedRawLayTerm: true,
-      negationReversed: false
+      negationReversed: false,
+      selfContradicted: isSelfContradicted(requirement, draft)
     };
   }
 
@@ -75,7 +103,8 @@ export function evaluateRequirement(
         matchedVariant: match,
         isWrongSection: true,
         usedRawLayTerm: false,
-        negationReversed: false
+        negationReversed: false,
+        selfContradicted: false
       };
     }
   }
@@ -96,7 +125,8 @@ export function evaluateRequirement(
         matchedVariant: null,
         isWrongSection: false,
         usedRawLayTerm: false,
-        negationReversed: true
+        negationReversed: true,
+        selfContradicted: false
       };
     }
   }
@@ -108,6 +138,7 @@ export function evaluateRequirement(
     matchedVariant: null,
     isWrongSection: false,
     usedRawLayTerm: false,
-    negationReversed: false
+    negationReversed: false,
+    selfContradicted: false
   };
 }

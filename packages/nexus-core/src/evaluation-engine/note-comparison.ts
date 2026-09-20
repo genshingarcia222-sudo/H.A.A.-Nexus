@@ -25,7 +25,8 @@ export type NoteComparisonStatus =
   | "omission"
   | "incorrect_negative"
   | "wrong_section"
-  | "incorrect_terminology";
+  | "incorrect_terminology"
+  | "critical_documentation_error";
 
 export interface NoteComparisonExpectation {
   requirementId: string;
@@ -77,7 +78,11 @@ const REQUIREMENT_STATUSES: readonly NoteComparisonStatus[] = [
   "omission",
   "incorrect_negative",
   "wrong_section",
-  "incorrect_terminology"
+  "incorrect_terminology",
+  // Decision D7. Without this the comparison would read back "documented" for
+  // a requirement the feedback list calls a critical error - the exact
+  // divergence this component exists to prevent.
+  "critical_documentation_error"
 ];
 
 function statusFor(requirementId: string, errors: readonly EvaluationError[]): NoteComparisonStatus {
