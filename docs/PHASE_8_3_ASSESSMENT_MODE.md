@@ -370,12 +370,63 @@ persistence it needs is **A6**. Neither was touched.
 
 ### Related open decision outside Assessment
 
-#### D7 — How is contradictory learner documentation graded? — **NOT AUTHORIZED**
+#### D7 — How is contradictory learner documentation graded? — **RESOLVED**
+
+**Decision, 2026-09-20, under delegated authority: a note that documents a
+pertinent negative and asserts the opposite in the same section is a
+`critical_documentation_error`, at critical severity, counting against accuracy
+like any other unsupported assertion.**
+
+**What it was before.** Nothing. `findFirstMatch` returns the *first* match, so
+"No fever. Fever present." satisfied the requirement and the contradiction was
+never looked at: measured before implementing, that note scored **accuracy 100
+with no error at all**. Architecture §28 requires "contradictory learner input"
+as an edge-case fixture but states no expected outcome, which is precisely the
+gap this decision fills.
+
+**No new classification was invented.** `critical_documentation_error` already
+existed in the taxonomy with a **critical** severity floor in `severity.ts`,
+and no evaluator path produced it - the architecture had reserved the type for
+defects dangerous regardless of category, which is exactly what a
+self-contradictory note is. The score effect reuses the existing
+`fabricationLikeCount`, whose own comment already described it as assertions of
+something false. No new error type, no new severity, no new scoring formula.
+
+**Rejected, with reasons.** `fabrication` means a value the encounter never
+provided; a contradiction is not a fabricated value. `incorrect_negative` means
+a clean reversal, and would collide with the existing `negationReversed` path
+and mislabel a note that *did* contain the correct negative.
+`incorrect_positive` is closer but still describes only half the defect. Doing
+nothing was selectable but ratifies a grading hole.
+
+**Scope, stated honestly.** The rule covers **pertinent negatives**, where the
+existing negation machinery detects the contradiction reliably by reusing
+`detectReversedNegative`. It is not general contradiction detection and does
+not claim to be.
+
+**The downstream fix that came with it.** `critical_documentation_error`
+carries a `relatedRequirementId`, but was not in the note comparison's
+`REQUIREMENT_STATUSES` - so a contradicted requirement would have read back as
+"Documented" while the feedback list called it critical, the exact divergence
+that component exists to prevent. The status union and the desktop labels were
+extended to show **Contradictory**.
+
+**Verified:** 11 tests. Three mutations confirmed the boundary bites - never
+detecting a contradiction failed 4, dropping the pertinent-negative scope guard
+failed 1, and reporting it without any score effect failed 1 - all restored
+byte-identically. **Browser-verified inside a real Assessment**: accuracy 60,
+one "critical documentation error", and "Contradictory" in the note comparison.
+
+<details><summary>The entry as it stood while this decision was open</summary>
+
+#### D7 — evidence gathered while this decision was open
 
 - **Evidence examined:** Architecture Package §28 lists "contradictory learner input" as a required edge-case fixture but states no expected outcome; §11–§13 (evaluation, scoring, error classification) do not address documentation that asserts both a fact and its negation (for example, "No fever. Fever present."); Business Model Spec §6 (deterministic scoring) is silent.
 - **Why insufficient:** a fixture needs an expected result, and that result is scoring policy — which error type, what severity, what score effect. Pinning the evaluator's current behaviour as "expected" would silently convert implementation behaviour into a grading rule.
 - **Current state:** the evaluator's existing behaviour is unchanged and untested for this case.
-- **Decision required:** how contradictory documentation should be classified and scored.
+- **The decision as it was framed:** how contradictory documentation should be classified and scored. **Answered: `critical_documentation_error`, critical severity, accuracy-affecting.**
+
+</details>
 
 #### D8 — May an interrupted practice or simulation attempt be resumed? — **NOT AUTHORIZED**
 
@@ -438,5 +489,12 @@ persistence it needs is **A6**. Neither was touched.
 | Closed-book navigation restriction | **DONE** — D4 = closed-book, enforced at the route |
 | Analytics/competency separation | **DONE** — D5 = separate populations, enforced in the domain, the schema and the aggregation |
 | Interrupted-Assessment policy | **DONE** — D6 = retake allowed, resume not offered; already satisfied, no production change |
+
+**Assessment is now verifiable in a real browser.** The website preview client
+(see the CHANGELOG entry "Website: Dark Theme and Persistent Fast-Track
+Preview") runs at the highest tier through the real capability matrix, which
+closed a limitation reported at every checkpoint from D1 onward: D4's
+closed-book boundary, D5's separate assessment population and D7's contradiction
+grading have each now been confirmed in a live Assessment, not only by tests.
 
 D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D7 (contradictory documentation), D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).

@@ -11,6 +11,137 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D7 Resolved — A Self-Contradictory Note Is a Critical Documentation Error (2026-09-20)
+
+**Decision under delegated authority.** A note that documents a pertinent
+negative **and** asserts the opposite in the same section is a
+`critical_documentation_error`, at critical severity, counting against
+accuracy like any other unsupported assertion.
+
+**What it was worth before: nothing.** `findFirstMatch` returns the *first*
+match, so a note reading "No fever. Fever present." satisfied the requirement
+and the contradiction was never examined. Measured before implementing
+anything, that note scored **accuracy 100 with no error at all** - a
+self-contradictory note graded identically to a correct one. Architecture §28
+requires contradictory learner input as an edge-case fixture but states no
+expected outcome, which is the gap this fills.
+
+**Nothing new was invented.** `critical_documentation_error` already existed
+in the taxonomy with a **critical** severity floor, and no evaluator path
+produced it - the architecture had reserved the type for defects dangerous
+regardless of category, which is what a self-contradictory note is. The score
+effect reuses the existing false-assertion counter, whose own comment already
+covered assertions of something false. No new error type, no new severity, no
+new scoring formula. `fabrication` (a value never provided),
+`incorrect_negative` (a clean reversal, which would collide with the existing
+path) and `incorrect_positive` (only half the defect) were each rejected for
+stated reasons.
+
+**Scoped honestly.** The rule covers pertinent negatives, where the existing
+negation machinery detects the contradiction reliably by reusing
+`detectReversedNegative`. It is not general contradiction detection.
+
+**A downstream defect found and fixed with it.** `critical_documentation_error`
+carries a `relatedRequirementId` but was not in the note comparison's
+`REQUIREMENT_STATUSES`, so a contradicted requirement would have read back as
+**Documented** while the feedback list called it critical - the exact
+divergence that component exists to prevent. The status union and the desktop
+labels now show **Contradictory**.
+
+**Mutation-checked.** Never detecting a contradiction failed 4 tests; dropping
+the pertinent-negative scope guard failed 1; reporting it with no score effect
+failed 1. All restored byte-identically. The scope-guard mutation initially
+*survived*: the first version of that test passed for the wrong reason,
+because the shipped requirements have no negated variants. It was rewritten to
+clear `isPertinentNegative` on the very requirement that does contradict,
+making the guard the single difference between the two cases.
+
+**Verification.** 390/390 nexus-core (+11), 228/228 desktop, typecheck clean,
+build clean. Rust untouched and not re-run - D7 changed no persistence or IPC.
+
+**Browser, inside a real Assessment:** accuracy 60, one critical documentation
+error with WHAT/WHY/HOW, and **Contradictory** in the note comparison.
+
+**D1-D6 intact. D8 and D9 remain unresolved and untouched.**
+
+---
+
+## Website: Dark Theme and Persistent Fast-Track Preview (2026-09-20)
+
+**Technical/UI execution, not a product decision.** This changes how the
+browser build looks and which tier it previews. It decides no policy and
+alters no learner-facing rule.
+
+**Dark theme, by token redefinition.** `theme.css` already exposed one set of
+semantic tokens, so dark mode redefines those same tokens under
+`:root[data-theme="dark"]` - there is no second colour system, and every
+component, inline style and badge that already read a token follows
+automatically. The one hardcoded colour in the codebase (the primary button
+hover) became `--nexus-color-accent-hover` so it follows too. Contrast was
+chosen against the surface each token actually sits on: ink 15.8:1, secondary
+ink 7.3:1, accent ink on accent 5.1:1, and every status colour at or above
+4.5:1. `color-scheme: dark` is set so native controls and scrollbars match.
+
+**No light flash.** The attribute is set by a small inline script in
+`index.html`, before the module graph loads and before any stylesheet paints.
+**The desktop shell is untouched** - the script skips when the Tauri global is
+present, so the native app keeps the light default.
+
+**Persistent highest-tier preview.** The browser build runs as a Fast-Track
+*preview client*, persisted at `nexus.preview.subscriptionTier` as
+`{"version":1,"tier":"fast_track"}`. The tier is read from `TIER_ORDER`
+rather than hardcoded, so it follows the matrix if a higher tier is ever
+added.
+
+**It reuses the production path rather than bypassing it:** stored tier into
+`SubscriptionState`, into `resolveEntitlements`, into capabilities. A feature
+is visible only if the real matrix grants it to that tier. No
+feature-specific bypass, no forked matrix, no weakened capability rule - **if
+a gate is wrong, the preview shows it as wrong.** No fake subscription record
+is created, and no payment or production entitlement state is written or
+changed.
+
+**It never downgrades itself.** Missing, corrupt, unknown-tier,
+version-mismatched and throwing storage all resolve to the preview tier, and
+the value is re-persisted on load so stale state repairs in place. The stored
+value is the *selected tier*, not a snapshot of which features existed when it
+was written, so a newer build's Fast-Track features appear with no
+reactivation.
+
+**Confined to the website.** Tauri and the test environment both fall through
+to `NO_SUBSCRIPTION`. The `MODE !== "test"` guard matters: jsdom supplies
+`localStorage` and reports no Tauri global, so without it every desktop test
+would silently start at Fast-Track and the D1 entitlement tests would stop
+testing anything.
+
+**Honest labelling.** The rail shows "Preview: Agency Fast-Track" and
+"Development preview - not a subscription." It deliberately avoids
+Subscribed, Purchased or Paid: no production subscription state exists, and
+claiming one would be a lie to whoever is looking at the screen.
+
+**Verification.** 13 preview tests; 228/228 desktop, 390/390 nexus-core,
+typecheck clean, build clean. Browser: dark confirmed (`data-theme="dark"`,
+body `rgb(15,20,25)`), the badge present, the stored value correct, and both
+surviving a reload. Fast-Track gating verified through the real matrix -
+**Assessment buttons appear and the Intermediate scenario is unlocked**, where
+Free showed neither.
+
+**A limitation this closes.** Every checkpoint since D1 reported that
+Assessment could not be exercised in a browser because no tier-switching
+surface existed. It can now, legitimately: a live Assessment confirmed **D4**
+(Training and Knowledge Base gone from the rail; a typed `#/knowledge-base`
+URL blocked by the closed-book notice), **D5** (Practice unchanged at 71/100
+over 4 sessions while Assessment showed 78/100 over 1, with its own competency
+records) and **D7** (the contradiction graded critical).
+
+**Not verified:** a full browser close-and-reopen, and loading a production
+build - reload persistence and the dev build were verified instead.
+
+**No product policy changed:** D1-D7 behave exactly as decided; the preview
+only chooses which tier the browser resolves as.
+
+---
+
 ## D6 Resolved — An Interrupted Assessment May Be Retaken (2026-09-20)
 
 **Decision under delegated authority. No production code changed.** A learner
