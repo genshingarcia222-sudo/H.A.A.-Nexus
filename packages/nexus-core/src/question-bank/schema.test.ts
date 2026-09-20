@@ -45,7 +45,7 @@ describe("question bank schema: shapes it must accept", () => {
   it("accepts a question with per-choice explanations alongside the rationale", () => {
     const parsed = expectValid(fullyPopulatedQuestion);
     expect(parsed.rationale).toBe(minimalQuestion.rationale);
-    expect(parsed.choices[0].why).toBe("Correct: that is the term HHS uses.");
+    expect(parsed.choices[0]!.why).toBe("Correct: that is the term HHS uses.");
   });
 
   it("accepts a question with a variantGroup", () => {
