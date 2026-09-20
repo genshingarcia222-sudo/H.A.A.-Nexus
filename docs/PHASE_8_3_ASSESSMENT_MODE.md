@@ -392,12 +392,19 @@ self-contradictory note is. The score effect reuses the existing
 `fabricationLikeCount`, whose own comment already described it as assertions of
 something false. No new error type, no new severity, no new scoring formula.
 
-**Rejected, with reasons.** `fabrication` means a value the encounter never
-provided; a contradiction is not a fabricated value. `incorrect_negative` means
-a clean reversal, and would collide with the existing `negationReversed` path
-and mislabel a note that *did* contain the correct negative.
-`incorrect_positive` is closer but still describes only half the defect. Doing
-nothing was selectable but ratifies a grading hole.
+**The option space, classified.** Two things are distinguished here because
+they are different: an option that *could* have been chosen and was not, and
+an option that was never available to choose.
+
+| Option | Status | Reason |
+|---|---|---|
+| No error (keep current behaviour) | SELECTABLE — not selected | Available, but ratifies a grading hole: a self-contradictory note scoring 100 |
+| `fabrication` | SELECTABLE — not selected | Means a value the encounter never provided; a contradiction fabricates no value, and reuse would blur a tested meaning |
+| `incorrect_negative` | SELECTABLE — not selected | Means a clean reversal; would collide with the existing `negationReversed` path and mislabel a note that *did* contain the correct negative |
+| `incorrect_positive` | SELECTABLE — not selected | Closer, but describes only half the defect - the danger is the contradiction, not the positive |
+| **`critical_documentation_error`** | **SELECTED** | Already in the taxonomy with a critical severity floor and no evaluator path producing it; the type the architecture reserved for defects dangerous regardless of category |
+| A new error type | EXCLUDED — authority conflict | §11-13 fix the error taxonomy; adding a member would invent a classification no source contemplates |
+| General contradiction detection | EXCLUDED — later-policy dependency | Grading contradictions between arbitrary positive findings requires positive-finding semantics no source defines, which is a separate product question |
 
 **Scope, stated honestly.** The rule covers **pertinent negatives**, where the
 existing negation machinery detects the contradiction reliably by reusing
