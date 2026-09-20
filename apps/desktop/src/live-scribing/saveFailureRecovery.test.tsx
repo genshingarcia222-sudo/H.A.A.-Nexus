@@ -143,7 +143,7 @@ describe("save failure - what the learner sees", () => {
 
 describe("duplicate submission", () => {
   it("evaluates, saves, and folds an attempt into competency once, however many times submit is called", async () => {
-    const before = (await competencyRepository.get("accuracy"))?.attemptCount ?? 0;
+    const before = (await competencyRepository.get("practice", "accuracy"))?.attemptCount ?? 0;
     useSessionStore.getState().start(SCENARIO, "practice");
     const store = useSessionStore.getState();
 
@@ -151,7 +151,7 @@ describe("duplicate submission", () => {
     await useSessionStore.getState().submit();
 
     expect(await sessionRepository.list()).toHaveLength(1);
-    expect((await competencyRepository.get("accuracy"))?.attemptCount).toBe(before + 1);
+    expect((await competencyRepository.get("practice", "accuracy"))?.attemptCount).toBe(before + 1);
   });
 
   it("does not throw when submit is called on an already completed session", async () => {

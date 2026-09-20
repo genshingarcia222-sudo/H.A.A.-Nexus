@@ -432,7 +432,7 @@ fn a_database_from_a_newer_build_is_refused_and_left_untouched() {
         err,
         MigrationError::DatabaseNewerThanApp {
             database: 5,
-            app: 2
+            app: 3
         }
     ));
     assert_eq!(current_schema_version(&conn).unwrap(), 5);
@@ -590,7 +590,7 @@ fn schema_version_one_rejects_assessment_mode() {
 fn a_fresh_database_accepts_assessment_mode_and_still_rejects_unknown_modes() {
     let db = TempDb::new();
     let conn = init_connection(db.path.clone()).unwrap();
-    assert_eq!(current_schema_version(&conn).unwrap(), 2);
+    assert_eq!(current_schema_version(&conn).unwrap(), 3);
 
     for mode in ["practice", "simulation", "assessment"] {
         insert_session_with_mode(&conn, mode, mode).unwrap();
@@ -600,7 +600,7 @@ fn a_fresh_database_accepts_assessment_mode_and_still_rejects_unknown_modes() {
 }
 
 #[test]
-fn upgrading_a_version_one_database_to_two_keeps_every_session_attempt_and_evaluation() {
+fn upgrading_a_version_one_database_keeps_every_session_attempt_and_evaluation() {
     let db = TempDb::new();
     {
         let mut conn = db.open_unmigrated();
@@ -614,7 +614,7 @@ fn upgrading_a_version_one_database_to_two_keeps_every_session_attempt_and_evalu
     }
 
     let mut conn = init_connection(db.path.clone()).unwrap();
-    assert_eq!(current_schema_version(&conn).unwrap(), 2);
+    assert_eq!(current_schema_version(&conn).unwrap(), 3);
 
     for (id, mode) in [("v1-practice", "practice"), ("v1-simulation", "simulation")] {
         let record = sessions::get_session(&conn, id)

@@ -46,7 +46,9 @@ describe("question bank schema: shapes it must accept", () => {
     const parsed = expectValid(fullyPopulatedQuestion);
     expect(parsed.rationale).toBe(minimalQuestion.rationale);
     // Mapped rather than indexed: `noUncheckedIndexedAccess` is on, and this
-    // asserts both explanations survive rather than only the first.
+    // asserts both explanations survive rather than only the first. (main
+    // carried a `choices[0]!` variant of the same fix; this one keeps the
+    // second explanation under test and needs no non-null assertion.)
     expect(parsed.choices.map((c) => c.why)).toEqual([
       "Correct: that is the term HHS uses.",
       "A document, not the name for the information."

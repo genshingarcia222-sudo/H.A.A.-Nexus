@@ -11,6 +11,139 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D6 Resolved — An Interrupted Assessment May Be Retaken (2026-09-20)
+
+**Decision under delegated authority. No production code changed.** A learner
+may retake an interrupted Assessment as a new attempt; exact in-place resume is
+not offered. The interrupted attempt is recorded as `abandoned` rather than
+deleted, and contributes nothing.
+
+**Resume was not selectable, and that is a rule rather than a preference.** A6
+records that exact mid-transcript resume is unimplemented and is *the
+engineering half of D8*: restoring an attempt changes elapsed time, which feeds
+`timeEfficiencyRatio` and therefore the score. Selecting it would have decided
+D8. The real option space was retake, or no retake at all.
+
+**Retake rather than a terminal lock.** A "no retake" rule would permanently
+cost a learner a scenario because their machine crashed - destructive,
+irreversible, and invented by no source. The exam-integrity worry behind such a
+rule is score-shopping, and it does not apply: **D2** shows the learner no
+performance information during an active Assessment, so there is nothing to
+shop against, and **D5** means an interrupted Assessment carries no evaluation
+and counts in neither population. A retake cannot launder a bad score because
+no score exists. The abandoned record keeps the audit trail.
+
+**Why no production change was required.** The existing Dashboard flow already
+implements exactly this policy: it offers "Start a new attempt" and "Discard",
+never a resume, and it starts the new attempt *before* abandoning the old
+record so a refused start cannot destroy the learner's work. D6 authorizes that
+behaviour; `interruptedAssessment.test.tsx` (7 tests) is what now stops it
+being changed by accident.
+
+**Adversarial checks confirmed the boundary is load-bearing:** abandoning the
+record before the start succeeds failed 2 tests, and carrying the old attempt's
+id forward - a disguised resume - failed 1. Both files restored byte-identically.
+
+**D5 acceptance, in the same pass.** The historical competency migration was
+re-checked against repository history rather than assumed: the Assessment entry
+point first existed at `34f727c`, so every competency record written before it
+is unambiguously practice or simulation. Between then and D5 an Assessment
+could in principle have folded into the shared record, but only under a Pro or
+Fast-Track subscription, and no persistence or tier-switching surface exists
+(D10) - so no production path did. `Simulation → Practice`, the preserved
+recommendation behaviour and the unchanged Dashboard were each re-verified;
+the recommendation engine and Dashboard are untouched by D5.
+
+**Verification.** 379/379 nexus-core, 215/215 desktop (+7), 55/55 Rust
+unchanged and not re-run (D6 touched no Rust), typecheck clean, build clean,
+17/17 preflight.
+
+**Browser.** The interrupted-session flow was exercised at
+`http://localhost:1420/`: a paused Practice attempt appeared under "Interrupted
+session" offering only "Start a new attempt" and "Discard" - no resume - and
+taking the retake moved the old record to `abandoned` in the history and
+started a fresh attempt. **This was a Practice session, not an Assessment**:
+an interrupted Assessment needs Pro and no tier-switching surface exists (D10).
+It is the same Dashboard code path, but that is the shared path, not an
+Assessment run.
+
+**Every Phase 8.3 Assessment decision is now resolved (D1-D6).** D7, D8 (with
+A6) and D9 remain open and are outside Assessment mode.
+
+---
+
+## D5 Resolved — Assessment Results Count Separately from Practice (2026-09-20)
+
+**Owner decision.** A completed Assessment contributes to **Assessment**
+competency and **Assessment** analytics, and to nothing else. It must not
+mutate, overwrite, or become indistinguishable from Practice competency, and
+must not be folded into Practice aggregates. The two are separate
+authoritative signals: training activity, and performance under formal exam
+conditions.
+
+**Separate means separate through persistence, not a label or a filter.**
+`ResultPopulation` and `resultPopulationFor(mode)` in the domain;
+`CompetencyRecord.population`; the repository keyed `get(population, domain)`,
+so there is no call that returns "the" record for a domain any more; **migration
+003** rebuilding `competency_records` as `UNIQUE(user_id, population, domain)`
+with the id as `user-population-domain`; and `computeAnalytics(population, ...)`
+where the population is a *required* argument and the filtering happens inside
+the domain function - so no caller can produce a merged total by forgetting to
+filter. `updateCompetencyRecord` throws rather than fold a score into another
+population's record.
+
+**Simulation counts as practice**, exactly where it always counted. D5
+separated Assessment from Practice and said nothing about simulation; giving it
+a third population would have been deciding something nobody decided.
+
+**Migration 003 assigns existing rows to `practice`.** Every record written
+before this came from the old mode-agnostic fold, and Assessment was
+unreachable for most of that period. That keeps a learner's training history;
+it does not claim those attempts were assessments. The dev-browser store
+applies the same rule to records that predate the field.
+
+**Recommendations were deliberately left alone, and that is the open
+question.** `generateRecommendations` still reads all evaluated sessions across
+both populations. D5 governs competency and analytics, which recommendations
+are neither, and no recommendation policy was supplied - scoping them would
+have invented one. **Still undecided: should recommendations after an
+Assessment be derived from Assessment history, Practice history, or both?**
+
+**No access control changed.** D5 is about how completed results are counted.
+Analytics and the Dashboard remain reachable exactly as before, no route guard
+or nav change was added, and D4's `ReferenceGate` still covers only the
+Knowledge Base and Training. The content archive was not touched: no repository
+was coupled to session mode and no content gained competency metadata.
+
+**Files.** `types/result-population.ts` (new), `competency-engine/index.ts`,
+`persistence/competency-repository.ts`, `analytics-engine/compute.ts`,
+`store/sessionStore.ts`, `routes/Analytics.tsx`, `tauriCompetencyRepository.ts`,
+`devBrowserRepositories.ts`, `migrations/003_competency_population.sql` (new),
+`db/competency.rs`, `db/models.rs`, `db/migrations.rs`, `commands.rs`, and the
+`competency-record.json` IPC fixture.
+
+**Mutation-checked.** Dropping the population from the persistence key (6
+failures), dropping the analytics filter (7), swapping the two populations (28)
+and collapsing them into one (11) each failed the suite. Every file restored
+byte-identically.
+
+**Verification.** 379/379 nexus-core (+23), 208/208 desktop (+9), **55/55 Rust**
+with `cargo fmt --check` and `cargo clippy --all-targets` clean, typecheck clean
+across the workspace, build clean, 17/17 preflight. Rust *was* re-run this time,
+because D5 changed the schema.
+
+**Browser.** At `http://localhost:1420/` the Analytics page now shows two
+labelled sections and no combined figure. A real Practice submission moved the
+Practice section from 3 to 4 scored sessions and updated its competency, while
+the Assessment section stayed at zero attempts. **The populated Assessment side
+could not be exercised in-browser** - it requires Pro and no tier-switching
+surface exists (D10) - so that half is covered by the end-to-end tests through
+the real submit path, not by clicking.
+
+**D1-D4 intact. D6 remains unresolved and untouched.**
+
+---
+
 ## D5 Audit — Analytics and Competency Treatment Remains Undecided (2026-09-20)
 
 **An audit, not a decision. No production code changed.** D5 - whether

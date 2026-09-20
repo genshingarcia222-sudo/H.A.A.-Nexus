@@ -1,6 +1,7 @@
 import type { SessionRecord } from "../persistence/types.js";
 import type { CompetencyRecord } from "../competency-engine/index.js";
 import type { AnalyticsSummary, CompetencySnapshot, ErrorTrendEntry, PerformanceTrend } from "./types.js";
+import { resultPopulationFor, type ResultPopulation } from "../types/result-population.js";
 
 const TREND_TOLERANCE = 3;
 const MIN_SESSIONS_FOR_TREND = 4;
@@ -37,12 +38,23 @@ function computeTrend(scoresNewestFirst: number[]): PerformanceTrend {
  * analytics store or duplicated data (Architecture Package Section 18).
  * Every figure traces to a real evaluated session or competency record;
  * nothing here is synthesized for display.
+ *
+ * **One population at a time (decision D5).** Practice and Assessment results
+ * are separate signals and are never added together, so the population is a
+ * required argument rather than an optional filter: there is no way to call
+ * this and get a merged total. The filtering happens here, in the domain, so
+ * a caller cannot produce a combined aggregate by forgetting to filter - and
+ * passing unfiltered records is harmless, because anything outside the
+ * requested population is dropped before a single figure is computed.
  */
 export function computeAnalytics(
+  population: ResultPopulation,
   sessionsNewestFirst: SessionRecord[],
   competencyRecords: CompetencyRecord[],
   totalScenarioCount: number
 ): AnalyticsSummary {
+  sessionsNewestFirst = sessionsNewestFirst.filter((s) => resultPopulationFor(s.mode) === population);
+  competencyRecords = competencyRecords.filter((c) => c.population === population);
   const evaluated = sessionsNewestFirst.filter(
     // Defensive: excludes any record where evaluation exists but its score
     // is malformed (NaN, non-finite) rather than letting it silently poison

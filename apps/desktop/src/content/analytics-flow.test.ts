@@ -21,7 +21,7 @@ describe("analytics flow (Phase 7) - real submissions through to computeAnalytic
     await submit();
 
     const [sessions, competencies] = await Promise.all([sessionRepository.list(), competencyRepository.list()]);
-    const summary = computeAnalytics(sessions, competencies, scenarioRepository.list().length);
+    const summary = computeAnalytics("practice", sessions, competencies, scenarioRepository.list().length);
 
     expect(summary.sessionsEvaluated).toBe(1);
     expect(summary.averageScore).toBeGreaterThan(95);
@@ -38,7 +38,7 @@ describe("analytics flow (Phase 7) - real submissions through to computeAnalytic
     await submit();
 
     const [sessions, competencies] = await Promise.all([sessionRepository.list(), competencyRepository.list()]);
-    const summary = computeAnalytics(sessions, competencies, scenarioRepository.list().length);
+    const summary = computeAnalytics("practice", sessions, competencies, scenarioRepository.list().length);
 
     expect(summary.errorTrends.some((e) => e.errorType === "fabrication")).toBe(true);
   });
@@ -51,7 +51,7 @@ describe("analytics flow (Phase 7) - real submissions through to computeAnalytic
     await submit();
 
     const [sessions, competencies] = await Promise.all([sessionRepository.list(), competencyRepository.list()]);
-    const summary = computeAnalytics(sessions, competencies, scenarioRepository.list().length);
+    const summary = computeAnalytics("practice", sessions, competencies, scenarioRepository.list().length);
 
     // completeness is unambiguously the/a weakest domain (score 0, no ties
     // at that level for this scenario+empty-draft combination).

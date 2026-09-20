@@ -210,7 +210,62 @@ that surface, and the boundary test explicitly permits the content layer to
 read those repositories. No archive content was moved, deleted, gated or given
 entitlement metadata.
 
-### D5 — Do Assessment results count in analytics and competency? — **NOT AUTHORIZED**
+### D5 — Do Assessment results count in analytics and competency? — **RESOLVED**
+
+**Owner decision, 2026-09-20: separately.** A completed Assessment contributes
+to Assessment competency and Assessment analytics, and to nothing else. It
+must not mutate, overwrite, or become indistinguishable from Practice
+competency, and must not be folded into Practice aggregates. Practice and
+Assessment are two authoritative signals measuring different things: training
+activity, and performance under formal exam conditions.
+
+**Simulation counts as practice.** D5 separated Assessment from Practice and
+said nothing about simulation, so it stays exactly where it has always
+counted. Giving it a third population would be deciding something nobody
+decided.
+
+**The distinction survives persistence.** It is not a label, a UI filter, or
+something reconstructed from a merged total:
+
+| Layer | Boundary |
+|---|---|
+| Domain | `ResultPopulation` (`practice` \| `assessment`) and `resultPopulationFor(mode)` |
+| Competency record | `CompetencyRecord.population`; `updateCompetencyRecord` **throws** rather than fold a score into another population's record |
+| Repository | `get(population, domain)` - there is no call that returns "the" record for a domain, because there is no longer one |
+| SQLite | migration 003: `UNIQUE(user_id, population, domain)`, id rebuilt as `user-population-domain` |
+| Analytics | `computeAnalytics(population, …)` - population is a **required** argument and the filtering happens inside, so no caller can produce a merged total |
+| UI | Two labelled sections; no combined figure is rendered anywhere |
+
+**Migration 003 assigns existing rows to `practice`.** Provenance was checked
+rather than assumed: the Assessment entry point first existed at `34f727c`
+(D1), so **every competency record written before that commit is unambiguously
+practice or simulation** - no learner could start an Assessment at all. Between
+`34f727c` and D5 an Assessment could in principle have folded into the shared
+record, but only for a Pro or Fast-Track subscription, and there is no
+subscription persistence or tier-switching surface (D10), so no production path
+existed. The classification is therefore safe for real data and, in the one
+theoretical window, is the conservative choice: it preserves the learner's
+history rather than discarding rows whose provenance cannot be proven. The
+dev-browser store applies the same rule to records predating the field.
+
+**Recommendations were deliberately left alone.** `generateRecommendations`
+still reads all evaluated sessions across both populations. D5 governs
+competency and analytics, which recommendations are neither, and no
+recommendation policy was supplied - so scoping them to a population would
+have been inventing one. **This is the open question D5 did not answer:**
+should recommendations after an Assessment be derived from Assessment history,
+Practice history, or both? Recorded here rather than decided.
+
+**Verification:** 23 domain tests, 9 end-to-end tests through the real
+`sessionStore.submit`, and 55 Rust tests including the rebuilt schema. Four
+mutations confirmed the suite bites - dropping the population from the
+persistence key, dropping the analytics filter, swapping the two populations,
+and collapsing them into one each failed it, and every file was restored
+byte-identically.
+
+<details><summary>The audit that preceded this decision</summary>
+
+### D5 — evidence gathered while this decision was open
 
 - **Evidence examined:** Architecture Package §14/§18 (mode-agnostic); Business Model Spec §4 (competency and analytics tiering only).
 - **Why insufficient:** merging or separating exam results changes what learners are shown about their competency.
@@ -259,14 +314,59 @@ tracking and analytics. That is a separate pre-existing gap on the tier axis;
 D5 as worded is about mode. Wiring it up would decide it by implementation, so
 it was left alone.
 
-- **The exact decision still required:** do Assessment attempts count in competency and analytics (a) together with practice, (b) separately from practice, or (c) instead of practice - and, since the costs differ, whether the same answer applies to both competency and analytics.
+- **The decision as it was put to the owner:** (a) together with practice, (b) separately, or (c) instead of practice. **Answered: (b), separately, for both competency and analytics.** The predicted cost held - analytics needed no schema change, competency needed migration 003.
 
-### D6 — After an interrupted Assessment, may the learner start again or resume? — **NOT AUTHORIZED**
+</details>
+
+### D6 — After an interrupted Assessment, may the learner start again or resume? — **RESOLVED**
+
+**Decision, 2026-09-20, under delegated authority: a learner may retake an
+interrupted Assessment as a new attempt. Exact in-place resume is not
+offered.** The interrupted attempt is recorded as `abandoned` rather than
+deleted, and contributes nothing.
+
+**Why resume was not selectable.** A6 records that exact mid-transcript resume
+is unimplemented and is *the engineering half of D8*: restoring an attempt
+changes elapsed time, which feeds `timeEfficiencyRatio` and therefore the
+score. Choosing it would have decided D8, which is not this decision's to make.
+So the real option space was **retake** or **no retake at all**.
+
+**Why retake rather than a terminal lock.** A "no retake" rule would
+permanently cost a learner a scenario because their machine crashed - a
+destructive, irreversible outcome invented by no source. The exam-integrity
+worry behind such a rule is score-shopping, and it does not apply here: **D2**
+means the learner sees no performance information whatsoever during an active
+Assessment, so there is nothing to shop against, and the abandoned record keeps
+the audit trail. Under **D5** an interrupted Assessment carries no evaluation,
+so it counts in neither population - a retake cannot launder a bad score,
+because no score exists.
+
+**No production change was required.** The existing Dashboard flow already
+implements exactly this: it offers "Start a new attempt" and "Discard", never a
+resume, and it starts the new attempt *before* abandoning the old record so a
+refused start cannot destroy the learner's work. D6 authorizes that behaviour
+and `interruptedAssessment.test.tsx` now pins it, including that D1 still
+refuses a tier that may not start an Assessment.
+
+**Verified:** 7 tests through the real Dashboard. Two adversarial checks
+confirmed the boundary is load-bearing - abandoning the record before the start
+succeeds failed 2 tests, and carrying the old attempt's id forward (a disguised
+resume) failed 1 - and both files were restored byte-identically.
+
+**Still open, deliberately:** whether an interrupted *practice or simulation*
+attempt may be resumed in place is **D8**, and the transcript-position
+persistence it needs is **A6**. Neither was touched.
+
+<details><summary>The entry as it stood while this decision was open</summary>
+
+### D6 — evidence gathered while this decision was open
 
 - **Evidence examined:** the Dashboard's interrupted-session flow (implementation only).
 - **Why insufficient:** retake and resume rules are exam-integrity policy, a learner-facing restriction.
 - **Current state:** the generic "Start a new attempt" flow is unchanged.
-- **Decision required:** the retake/resume policy for interrupted Assessments.
+- **The decision as it was framed:** the retake/resume policy for interrupted Assessments. **Answered: retake allowed, resume not offered.**
+
+</details>
 
 ### Related open decision outside Assessment
 
@@ -336,7 +436,7 @@ it was left alone.
 | Learner entry point and mode-level start enforcement | **DONE** — `34f727c` |
 | Assessment results presentation | **DONE** — D3 = all six surfaces ON, satisfied by the existing summary and protected by tests |
 | Closed-book navigation restriction | **DONE** — D4 = closed-book, enforced at the route |
-| Analytics/competency separation | **BLOCKED** — D5 (may not be required) |
-| Interrupted-Assessment policy | **BLOCKED** — D6 |
+| Analytics/competency separation | **DONE** — D5 = separate populations, enforced in the domain, the schema and the aggregation |
+| Interrupted-Assessment policy | **DONE** — D6 = retake allowed, resume not offered; already satisfied, no production change |
 
-D1, D3 and D4 are decided: Assessment is reachable, runs closed-book, and gives the full results experience on submission. Phase 8.3 cannot close while D5 and D6 remain unanswered - how Assessment attempts count in analytics and competency, and what happens when one is interrupted, are still the owner's to decide.
+D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D7 (contradictory documentation), D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).

@@ -75,13 +75,14 @@ pub fn list_competency_records(state: State<DbState>) -> Result<Vec<CompetencyRe
 #[tauri::command]
 pub fn get_competency_record(
     state: State<DbState>,
+    population: String,
     domain: String,
 ) -> Result<Option<CompetencyRecordDto>, String> {
     let conn = state
         .0
         .lock()
         .map_err(|_| "Database lock poisoned".to_string())?;
-    competency::get_competency_record(&conn, &domain).map_err(map_err)
+    competency::get_competency_record(&conn, &population, &domain).map_err(map_err)
 }
 
 #[tauri::command]

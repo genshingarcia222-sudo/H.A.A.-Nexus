@@ -30,16 +30,20 @@ describe("TauriCompetencyRepository (Phase 7 accepted debt A10)", () => {
   it("looks up one domain with a single per-domain command instead of listing every record", async () => {
     invokeMock.mockResolvedValueOnce(record);
 
-    const found = await new TauriCompetencyRepository().get("accuracy");
+    const found = await new TauriCompetencyRepository().get("assessment", "accuracy");
 
     expect(found).toEqual(record);
     expect(invokeMock).toHaveBeenCalledTimes(1);
-    expect(invokeMock).toHaveBeenCalledWith("get_competency_record", { domain: "accuracy" });
+    // The population is part of the lookup key (D5), not a filter applied after.
+    expect(invokeMock).toHaveBeenCalledWith("get_competency_record", {
+      population: "assessment",
+      domain: "accuracy"
+    });
   });
 
   it("returns undefined, not null, for a domain that has never been scored", async () => {
     invokeMock.mockResolvedValueOnce(null);
-    expect(await new TauriCompetencyRepository().get("terminology")).toBeUndefined();
+    expect(await new TauriCompetencyRepository().get("practice", "terminology")).toBeUndefined();
   });
 });
 

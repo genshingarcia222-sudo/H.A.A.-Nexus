@@ -75,6 +75,7 @@ const ERROR_REQUIRED_KEYS = {
 } satisfies Record<Exclude<keyof EvaluationError, "relatedRequirementId">, true>;
 
 const COMPETENCY_KEYS = {
+  population: true,
   domain: true,
   level: true,
   avgScore: true,

@@ -11,6 +11,7 @@ import {
   updateDraftField,
   evaluateAttempt,
   updateCompetencyRecord,
+  resultPopulationFor,
   canAccessDifficulty,
   canStartMode,
   modeAllowsPause,
@@ -247,11 +248,18 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       // finds the session already completed and never finishes the fold. The
       // repository writes the batch atomically (one SQLite transaction), so
       // an attempt lands in every domain or in none.
+      // Which body of results this attempt belongs to (decision D5).
+      // Assessment and Practice are separate populations: this fold reads and
+      // writes only its own, so an assessment can never overwrite practice
+      // competency, or the reverse.
+      const population = resultPopulationFor(completedSession.mode);
       const foldedAt = Date.now();
       const updates = [];
       for (const domain of COMPETENCY_DOMAINS) {
-        const existing = await competencyRepository.get(domain);
-        updates.push(updateCompetencyRecord(existing, domain, result.categoryScores[domain], foldedAt));
+        const existing = await competencyRepository.get(population, domain);
+        updates.push(
+          updateCompetencyRecord(existing, population, domain, result.categoryScores[domain], foldedAt)
+        );
       }
       await competencyRepository.upsertMany(updates);
     } catch (err) {
