@@ -1,3 +1,90 @@
+# Device 2 → Device 1
+
+## LATEST — Knowledge Base integration audit (2026-09-20, at `3f9654c`)
+
+**Status: `INTEGRATION BLOCKED` — two distinct blockers. Nothing was consumed
+and no placeholder records were created.**
+
+### Blocker 1 — no content handoff exists
+
+No `DEVICE 1 HANDOFF` SHA has been supplied, and none exists to find: no new
+content commit is present on any ref (`git log --all` and `ls-remote` both
+checked). `claude/youthful-aryabhata-10eb31` moved to `727abce`, but that is
+only "Merge pull request #12 from main" — no content. `ListAgents` reports no
+other Claude session running.
+
+Per the waiting boundary, Device 2 consumed nothing: no earlier version, no
+local copy, no uncommitted tree, no reconstruction.
+
+### Blocker 2 — there is no canonical Knowledge Base to integrate into
+
+This is the more important finding, and it changes what Device 1 should produce.
+
+**What the repository calls the Knowledge Base is a terminology search screen.**
+`KnowledgeBase.tsx` searches `InMemoryTerminologyRepository` over
+`TerminologyEntrySchema` = `{ id, layTerm, clinicalTerm, acceptedAlternatives[],
+category, context?, explanation, commonMistakes[] }`, backed by four entries in
+`content/terminology/terminology.json`.
+
+There is **no article type, no provenance, no jurisdiction, no effective period,
+no release/version metadata, no lifecycle, no verification record** and no
+supersession rule. Architecture Package §17 confirms this was deliberate:
+knowledge articles were folded into `training_lessons.category = 'reference'`
+for MVP, to be revisited *"if reference content outgrows the lesson schema"*.
+That condition has arrived.
+
+**And `TerminologyEntrySchema` is not `.strict()`** — extra fields are silently
+stripped. Sourced records injected there would lose their provenance without an
+error. That is precisely the hazard the Question Bank was built to prevent.
+
+Full detail: `docs/KNOWLEDGE_BASE_INTEGRATION_AUDIT.md`.
+
+### What the audit confirmed as already correct
+
+**Assessment access is already handled, and needs no new policy.**
+`mayAccessReferenceMaterial` returns false for an assessment that is not
+`completed`; `/knowledge-base` and `/training` are both in `REFERENCE_ROUTES`
+and `ReferenceGate` blocks direct navigation, not merely the links. So any
+future Knowledge Base content is **automatically closed-book during an active
+Assessment** and reopens on submission — owner decision D4, already implemented
+and tested by `closedBookBoundary.test.tsx`. Knowledge Base content cannot
+become an Assessment answer key. **No product policy was invented.**
+
+**Question Bank eligibility is untouched.** `getProductionEligible()` remains
+the single gate; Pilot 001 stays candidate-only, 0 production-eligible.
+
+**FY2027 cannot currently be mislabelled as active** — for the strongest
+possible reason: `effectiveFrom`/`effectiveTo` exist only on the Question Bank's
+optional `codingReference`, and **nothing reads them**. The application has no
+"active coding release" concept at all, so it makes no claim to be wrong about.
+That is a fact about absence: the moment a surface presents a release as
+current, it must compare the real date against the stored effective period.
+
+### What Device 1 should do before generating records
+
+1. **Get an owner decision on the Knowledge Base content model** — a new
+   canonical type (as the Question Bank is under D11) or an extension of
+   terminology. This is D11-shaped and currently unasked. Device 2 will not
+   invent it.
+2. Until then, **do not generate records against a shape that has no home**.
+   Records shaped for a non-existent schema would either be rejected or, worse,
+   silently stripped of their provenance.
+3. When generating, carry at minimum: article identity, provenance (authority,
+   title, url, locator), jurisdiction, `effectiveFrom`/`effectiveUntil`,
+   release/version, lifecycle + review status, human-verification record, and
+   any Question Bank relationship.
+4. **Preserve FY2027 as `effectiveFrom = 2026-10-01`, `effectiveUntil =
+   2027-09-30`.** Do not rewrite it to the generation date.
+5. Hand off an exact commit SHA. Device 2 consumes that commit and nothing else.
+
+### Device 2 state
+
+Branch `feat/training-question-bank`, working tree clean, all prior work pushed.
+No safety gate was altered; no clinical content was created, promoted or
+verified.
+
+---
+
 # Device 2 → Device 1: verified M23 facts
 
 **Communication bus, not a knowledge base.** Device 1 should reconcile these
