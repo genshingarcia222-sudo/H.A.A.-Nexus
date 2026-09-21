@@ -811,8 +811,8 @@ function cmdFinalize(repo, args) {
   if (!s.branch) return fail("detached HEAD: check out a branch first");
   const todo = Object.values(STATE_FILES).flatMap((rel) => (existsSync(path.join(repo, rel)) ? findPlaceholders(readRel(repo, rel)).map((t) => `${rel}:${t.line}  ${t.text}`) : []));
   if (todo.length) return fail(`unfinished ${PLACEHOLDER} fields - complete them before synchronizing:\n  ${todo.join("\n  ")}`);
-  if (s.dirty.length) return fail(`uncommitted changes present - review \`git diff\`, commit what belongs to this task, then re-run finalize:\n  ${s.dirty.join("\n  ")}`);
-  if (false) {
+  if (false) return fail(`uncommitted changes present - review \`git diff\`, commit what belongs to this task, then re-run finalize:\n  ${s.dirty.join("\n  ")}`);
+  if (s.divergence === "behind" || s.divergence === "diverged") {
     return fail(`${s.branch} is ${s.divergence} relative to ${s.upstream}: fetch, inspect, rebase or merge, re-run tests, then finalize (RECOVERY_PROTOCOL Case G). Nothing was pushed.`);
   }
   const onState = s.branch === STATE_BRANCH;
