@@ -11,6 +11,49 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Pilot Batch 001 r3 Pinned Under Test; Q4 Review Flag Restored (2026-09-21)
+
+**Why.** Revision 3 lived only in `Claude outputs/`, so no repository test
+checked it. Its safeguards were enforced by one script run and nothing else.
+The owner supplied `nexus-pilot-001-package.zip`, the r2 handoff package, to
+use for this work. Every file in it is identical to the repository copies,
+ignoring line endings. Its r2 hashes to `05fa24d0…aaf3d`, which independently
+confirms that the frozen fixture matches the r2 that was handed off.
+
+**Found and fixed: r3 had silently dropped a review flag.** Q4
+(`NEXUS-L2-PRIV-000004`) lost `SECONDARY-SOURCE-OLD` in r3's first pass,
+and no revision note recorded it. The page's age was not re-established on
+2026-09-20, so the warning is restored for the human reviewer and recorded in
+`revisionNotes`. No answer, stem or choice changed.
+
+**New: `question-bank/pilot-r3.e2e.test.ts`** (10 tests). r3 is pinned as
+`__fixtures__/nexus-pilot-batch-001.candidates.r3.json` (SHA-256
+`8d845560…038791`) and marked `-text` in `.gitattributes`, like r2. The tests
+assert:
+- the same 12 ids and unchanged answer keys versus r2;
+- the same batch and item fields as r2;
+- no review-flag kind that r2 raised is dropped;
+- no correct choice is the uniquely longest option;
+- Q10 carries U.S. ICD-10-CM FY2027, 2026-10-01 → 2027-09-30;
+- r3 validates strictly and loads through the real loader;
+- every item is candidate/pending with `HUMAN-VERIFY-REQUIRED` and null
+  human-verifier fields;
+- nothing is production-eligible;
+- promoting an item without a human verifier is rejected.
+
+Two mutations were run: the pre-fix r3, and a lengthened Q12 correct choice.
+Each failed its guard by name, and the fixture was restored byte-identical.
+
+**Unchanged:** the r2 fixture and its manifest hash, the schema, the validator,
+production eligibility (0 of 12), D12 (open) and the human gate (0 of 12).
+
+**Verification.** 788/788 tests (521 nexus-core + 267 desktop), typecheck
+clean, build clean, `preflight` exit 0, `preflight:test` 17/17.
+`validate_pilot_batch.py` passes on both the zip's r2 and r3: 12 items,
+positions 3/3/3/3, `correct_is_longest=0`.
+
+---
+
 ## Knowledge Base Integration Audit — Blocked, and Why (2026-09-20)
 
 **An audit, not an integration. No content was consumed and nothing was

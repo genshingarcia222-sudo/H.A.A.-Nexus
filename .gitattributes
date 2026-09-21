@@ -4,3 +4,4 @@
 # nothing to do with the content, so these files are never converted.
 nexus-pilot-batch-001.candidates.json -text
 nexus-pilot-batch-001.candidates.r2.json -text
+nexus-pilot-batch-001.candidates.r3.json -text

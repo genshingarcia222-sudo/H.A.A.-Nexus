@@ -8,9 +8,19 @@ Mark each item as **verified fact**, **proposal**, or **historical**.
 
 ---
 
-## LATEST — D12 checkpoint (2026-09-21, at `c858e47`) — **STOPPED at D12**
+## LATEST — r3 pinned under test (2026-09-21) — **verified fact**
 
-**Handoff SHA: `c858e47`** — Pilot Batch 001 revision 3,
+r3 is now a repository fixture guarded by `question-bank/pilot-r3.e2e.test.ts`
+(10 tests, 788/788 total). Q4's `SECONDARY-SOURCE-OLD` flag, which r3 had
+dropped silently, is restored, so r3's hash changed to `8d845560…038791`.
+**Consume this commit instead of `c858e47`.** D12 and the human gate remain
+open, exactly as described below.
+
+---
+
+## D12 checkpoint (2026-09-21, at `c858e47`) — **STOPPED at D12**
+
+**Handoff SHA: `c858e47`** (superseded by the entry above) — Pilot Batch 001 revision 3,
 `Claude outputs/nexus-pilot-batch-001.candidates.r3.json`. It is a **question
 batch, not Knowledge Base records**. Consume only that commit.
 
