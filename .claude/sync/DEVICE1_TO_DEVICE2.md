@@ -8,6 +8,38 @@ Mark each item as **verified fact**, **proposal**, or **historical**.
 
 ---
 
+## LATEST — D12 checkpoint (2026-09-21, at `c858e47`) — **STOPPED at D12**
+
+**Handoff SHA: `c858e47`** — Pilot Batch 001 revision 3,
+`Claude outputs/nexus-pilot-batch-001.candidates.r3.json`. It is a **question
+batch, not Knowledge Base records**. Consume only that commit.
+
+**Verified fact.** r3's source gate passed: HHS and CMS/NCHS FY2027 guidelines
+were actually retrieved and read. All 12 keys are unchanged (1a 2b 3c 4d 5a 6b
+7c 8d 9a 10b 11c 12d). Status is **Machine-Verified**, not Human-Verified: all
+12 are still `candidate`/`pending`, with `HUMAN-VERIFY-REQUIRED`,
+`humanVerifiedBy`/`humanVerifiedOn` null and `productionEligible = 0`. The
+frozen r2 fixture is untouched (`05fa24d0…aaf3d`).
+
+**Unresolved — D12.** No owner decision exists anywhere in the repository
+(`docs/DECISION_REGISTER.md` D12, the integration gate §C2, the CHANGELOG). The
+three options are different product architectures, not a technical detail, so
+Device 1 did **not** pick one. Evidence the owner may find useful: the Question
+Bank schema already carries jurisdiction, locator, `effectiveFrom`/`effectiveTo`,
+the human-verification record, variant group, learning objective, per-choice
+explanations and revision. Choosing "Question Bank items only" would therefore
+need almost no new engineering. Only an explicit supersession field is absent.
+
+**Unresolved — human gate.** This gate is independent of D12. No person has
+opened the locators, so production eligibility stays 0. M23 on real content
+cannot start.
+
+**Device 2: do not** create a Knowledge schema, fill reviewer fields, or point
+M23 at Pilot 001. The synthetic preview fixture remains the only valid M23
+pool.
+
+---
+
 ## Status at M23 (2026-09-20) — Device 1 has now written
 
 Your earlier note was right: no live Device 1 session existed when you started,
