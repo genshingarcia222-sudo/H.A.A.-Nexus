@@ -23,7 +23,10 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+// NEXUS_REPO lets a copy of the tool run against a checkout it does not live in.
+export const REPO_ROOT = process.env.NEXUS_REPO
+  ? path.resolve(process.env.NEXUS_REPO)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 export const REMOTE = "origin";
 /** The branch whose .nexus/ is authoritative. Feature work may live elsewhere. */
@@ -151,7 +154,7 @@ export function appendHistory(markdown, { when, event, device, task, detail }) {
   if (!/^## Ownership history/m.test(markdown)) throw new Error("ACTIVE_TASK.md has no '## Ownership history' section");
   const eol = markdown.includes("\r\n") ? "\r\n" : "\n";
   const body = markdown.replace(/\s*$/, "");
-  return `${body.split("## Ownership history")[0]}## Ownership history${eol}| ${[when, event, device, task, detail].map(tableCell).join(" | ")} |${eol}`;
+  return `${body}${eol}| ${[when, event, device, task, detail].map(tableCell).join(" | ")} |${eol}`;
 }
 
 // --- device identity -------------------------------------------------------
@@ -941,4 +944,4 @@ export function main(argv, repo = REPO_ROOT) {
 }
 
 const invokedDirectly = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
-if (invokedDirectly) process.exit(main(process.argv.slice(2), process.env.NEXUS_REPO || REPO_ROOT));
+if (invokedDirectly) process.exit(main(process.argv.slice(2), REPO_ROOT));

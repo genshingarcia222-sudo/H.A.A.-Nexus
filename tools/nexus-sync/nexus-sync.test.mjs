@@ -333,11 +333,24 @@ test("no secret-shaped values in .nexus/ or tools/nexus-sync/", () => {
 console.log("\nend-to-end: two devices, one bare remote");
 
 const tmp = mkdtempSync(path.join(os.tmpdir(), "nexus-sync-test-"));
-const g = (cwd, ...args) => execFileSync("git", args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+
+// Every end-to-end git call and tool run must target a directory inside the
+// temp sandbox. An undefined directory would otherwise fall back to the
+// process cwd or REPO_ROOT - the real checkout - and a scenario that commits,
+// pushes or re-points `origin` would do it to the real repository.
+function sandboxed(dir) {
+  if (!dir || !path.resolve(dir).startsWith(path.resolve(tmp) + path.sep)) {
+    throw new Error(`refusing to operate outside the test sandbox: ${dir}`);
+  }
+  return dir;
+}
+const g = (cwd, ...args) =>
+  execFileSync("git", args, { cwd: cwd === tmp ? tmp : sandboxed(cwd), encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 const bare = path.join(tmp, "github.git");
 
 function run(repo, device, ...argv) {
+  sandboxed(repo);
   const saved = { log: console.log, error: console.error, env: process.env.NEXUS_DEVICE_ID };
   const out = [];
   console.log = (...a) => out.push(a.join(" "));
@@ -470,20 +483,37 @@ if (setupOk) {
     assert.equal(remoteBlock(STATE_FILES.registry)["DEVICE-02.status"], "ACTIVE");
   });
 
-  test("DEVICE-01 returns with local work: divergence stops start and finalize, and nothing is pushed or lost", () => {
+  // The next two scenarios are deliberately separate: with a dirty tree AND a
+  // divergence at once, either guard alone would satisfy the test.
+  test("uncommitted work on an in-sync branch blocks finalize and is left untouched", () => {
+    const scratch = path.join(dev2, "scratch.txt");
+    writeFileSync(scratch, "half-finished\n");
+    const before = remoteHead();
+    const f = run(dev2, "DEVICE-02", "finalize");
+    assert.equal(f.code, 1, f.out);
+    assert.match(f.out, /uncommitted changes present/);
+    assert.equal(remoteHead(), before, "finalize pushed or recorded with a dirty tree");
+    assert.equal(readFileSync(scratch, "utf8"), "half-finished\n");
+    rmSync(scratch);
+  });
+
+  test("DEVICE-01 returns with a committed local change: divergence stops start and finalize, nothing is pushed or lost", () => {
     writeFileSync(path.join(dev1, "app.txt"), "v2 from device 1\n");
     g(dev1, "commit", "-q", "-am", "device 1 work");
-    writeFileSync(path.join(dev1, "notes.txt"), "uncommitted thought\n");
+    const local = g(dev1, "rev-parse", "HEAD");
     const before = remoteHead();
     const s = run(dev1, "DEVICE-01", "start");
     assert.equal(s.code, 1);
     assert.match(s.out, /DIVERGED/);
     const f = run(dev1, "DEVICE-01", "finalize");
-    assert.equal(f.code, 1);
+    assert.equal(f.code, 1, f.out);
+    assert.match(f.out, /diverged/);
     assert.equal(remoteHead(), before, "finalize pushed while diverged");
+    assert.equal(g(dev1, "rev-parse", "HEAD"), local, "the local commit was rewritten");
+    writeFileSync(path.join(dev1, "notes.txt"), "uncommitted thought\n");
+    assert.deepEqual(run(dev1, "DEVICE-01", "recover").out.match(/Case [FG]/g), ["Case F", "Case G"]);
     assert.equal(readFileSync(path.join(dev1, "notes.txt"), "utf8"), "uncommitted thought\n", "uncommitted work was touched");
     assert.equal(readFileSync(path.join(dev1, "app.txt"), "utf8"), "v2 from device 1\n");
-    assert.deepEqual(run(dev1, "DEVICE-01", "recover").out.match(/Case [FG]/g), ["Case F", "Case G"]);
   });
 
   test("a handoff with unfinished fields cannot be synchronized", () => {
@@ -527,6 +557,19 @@ if (setupOk) {
     assert.match(remoteFile(STATE_FILES.task), /\| CLAIM \| DEVICE-01 \| T-1 \| accepted handoff from DEVICE-02 \|/);
   });
 
+  test("a checkout that is behind cannot write state until it synchronizes", () => {
+    // DEVICE-01's second checkout, then DEVICE-01 moves on from the first one.
+    // Ownership is not in question here, so only the behind-guard can refuse.
+    const second = cloneAs("device1-second-checkout");
+    assert.equal(run(dev3, "DEVICE-01", "heartbeat").code, 0);
+    const before = remoteHead();
+    const h = run(second, "DEVICE-01", "heartbeat");
+    assert.equal(h.code, 1, h.out);
+    assert.match(h.out, /synchronize first/);
+    assert.equal(remoteHead(), before);
+    assert.equal(g(second, "status", "--porcelain"), "", "a refused write left edits behind");
+  });
+
   test("network failure: writes refuse without --offline and finalize records REMOTE_SYNC_PENDING", () => {
     g(dev3, "remote", "set-url", "origin", path.join(tmp, "unreachable.git"));
     assert.equal(run(dev3, "DEVICE-01", "heartbeat").code, 1);
@@ -555,6 +598,26 @@ if (setupOk) {
     const all = g(bare, "rev-list", "--all").split("\n");
     const onMain = new Set(g(bare, "rev-list", "main").split("\n"));
     assert.deepEqual(all.filter((c) => !onMain.has(c)), []);
+  });
+
+  test("a push the remote does not end up holding is never reported as verified", () => {
+    // The remote accepts the push, then its post-receive hook moves the branch
+    // back - a push that "succeeded" but did not land. Only asking the remote
+    // (ls-remote) can tell.
+    const hook = path.join(bare, "hooks", "post-receive");
+    writeFileSync(hook, '#!/bin/sh\nwhile read old new ref; do\n  case "$old" in 0000000000000000000000000000000000000000) ;; *) git update-ref "$ref" "$old" ;; esac\ndone\n', { mode: 0o755 });
+    try {
+      writeFileSync(path.join(dev3, "app.txt"), "v4 lost in transit\n");
+      g(dev3, "commit", "-q", "-am", "work the remote drops");
+      const before = remoteHead();
+      const r = run(dev3, "DEVICE-01", "finalize");
+      assert.equal(remoteHead(), before, "the hook did not run; this scenario proves nothing");
+      assert.equal(r.code, 2, r.out);
+      assert.match(r.out, /REMOTE SYNC NOT VERIFIED/);
+      assert.doesNotMatch(r.out, /work verified on/);
+    } finally {
+      rmSync(hook);
+    }
   });
 }
 
