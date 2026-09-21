@@ -151,7 +151,7 @@ export function appendHistory(markdown, { when, event, device, task, detail }) {
   if (!/^## Ownership history/m.test(markdown)) throw new Error("ACTIVE_TASK.md has no '## Ownership history' section");
   const eol = markdown.includes("\r\n") ? "\r\n" : "\n";
   const body = markdown.replace(/\s*$/, "");
-  return `${body}${eol}| ${[when, event, device, task, detail].map(tableCell).join(" | ")} |${eol}`;
+  return `${body.split("## Ownership history")[0]}## Ownership history${eol}| ${[when, event, device, task, detail].map(tableCell).join(" | ")} |${eol}`;
 }
 
 // --- device identity -------------------------------------------------------
@@ -811,7 +811,7 @@ function cmdFinalize(repo, args) {
   if (!s.branch) return fail("detached HEAD: check out a branch first");
   const todo = Object.values(STATE_FILES).flatMap((rel) => (existsSync(path.join(repo, rel)) ? findPlaceholders(readRel(repo, rel)).map((t) => `${rel}:${t.line}  ${t.text}`) : []));
   if (todo.length) return fail(`unfinished ${PLACEHOLDER} fields - complete them before synchronizing:\n  ${todo.join("\n  ")}`);
-  if (false) return fail(`uncommitted changes present - review \`git diff\`, commit what belongs to this task, then re-run finalize:\n  ${s.dirty.join("\n  ")}`);
+  if (s.dirty.length) return fail(`uncommitted changes present - review \`git diff\`, commit what belongs to this task, then re-run finalize:\n  ${s.dirty.join("\n  ")}`);
   if (s.divergence === "behind" || s.divergence === "diverged") {
     return fail(`${s.branch} is ${s.divergence} relative to ${s.upstream}: fetch, inspect, rebase or merge, re-run tests, then finalize (RECOVERY_PROTOCOL Case G). Nothing was pushed.`);
   }
