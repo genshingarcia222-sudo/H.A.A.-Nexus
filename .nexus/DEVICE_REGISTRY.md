@@ -37,9 +37,9 @@ particular physical device.
 DEVICE-01.role: primary-implementation
 DEVICE-01.status: ACTIVE
 DEVICE-01.ownership: none
-DEVICE-01.latest_known_commit: 16c9a2f5e7f3746e8604a4fd726ea0850f1c9d46
-DEVICE-01.latest_activity: 2026-09-23T13:58:21.629Z
-DEVICE-01.last_successful_sync: NOT VERIFIED
+DEVICE-01.latest_known_commit: f3d525df1392d765751dd11f545c7b4003073142
+DEVICE-01.latest_activity: 2026-09-23T14:28:02.008Z
+DEVICE-01.last_successful_sync: 2026-09-23T14:28:02.008Z
 DEVICE-02.role: secondary-verification-audit
 DEVICE-02.status: UNKNOWN
 DEVICE-02.ownership: none
