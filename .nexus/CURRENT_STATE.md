@@ -17,15 +17,15 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
 ```yaml nexus-state
 project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
-active_branch: main
+active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
 current_phase: "Phase 8 - Commercialization (8.3 Assessment Mode)"
 current_milestone: "All Phase 8.3 Assessment decisions resolved (D1-D7); D8, D9, D10 open"
-baseline_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-last_verified_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17 (2026-09-21, DEVICE-01)"
-last_verified_build: "PASS - pnpm -r build (2026-09-21, DEVICE-01)"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-21, DEVICE-01)"
-last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-21, DEVICE-01)"
+baseline_commit: 1d7b209307e7f2a2490cd113116e65052aada980
+last_verified_commit: 1d7b209307e7f2a2490cd113116e65052aada980
+last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync 60/60 (2026-09-23, DEVICE-01)"
+last_verified_build: "PASS - pnpm -r build (2026-09-23, DEVICE-01)"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-23, DEVICE-01)"
+last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-23, DEVICE-01)"
 active_task: NEXUS-SYNC-001
 task_owner: DEVICE-01
 task_status: ACTIVE
