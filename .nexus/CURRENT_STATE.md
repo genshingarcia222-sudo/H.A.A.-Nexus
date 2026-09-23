@@ -59,6 +59,17 @@ Product and engineering work, with the canonical record for each:
 
 ## Known issues
 
+- **`da10dc9` contains a deliberately broken `tools/nexus-sync/nexus-sync.mjs`.**
+  It was captured from a transient mutation-test state by a commit made outside
+  the bootstrap session. `a1ee456` is the same kind of snapshot. Never restore
+  the tool from either commit. Later commits on `main` supersede both, and
+  history was not rewritten (CHANGELOG, 2026-09-22 entry).
+- **Shared working tree observed (2026-09-21).** While the bootstrap ran,
+  another session moved the primary checkout `D:\HAA_Nexus\H.A.A.-Nexus`
+  between `main` and `feat/training-question-bank`, and the worktree
+  `.claude/worktrees/youthful-aryabhata-10eb31` took over `main`. That session
+  was never identified. One session per working tree (DECISIONS N-004).
+
 - `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 still lists D7 as open, but D7 was
   resolved in `9872e11`. This is a stale sentence and was not changed by the
   sync bootstrap.

@@ -20,7 +20,7 @@ import {
   REPO_ROOT, REQUIRED_NEXUS_FILES, REQUIRED_KEYS, STATE_FILES, PLACEHOLDER, DEVICE_IDS,
   parseStateBlock, updateStateBlock, missingKeys, findPlaceholders, appendHistory, classifyDivergence,
   evaluateOwnership, planClaim, validateStateValues, redactUrl, parseArgs, readLocalDevice,
-  latestHandoff, buildHandoffEntry, insertHandoffEntry, startVerdict, recoveryCases, activityEvidence, main
+  latestHandoff, buildHandoffEntry, insertHandoffEntry, startVerdict, recoveryCases, activityEvidence, onStateBranch, pushTarget, main
 } from "./nexus-sync.mjs";
 
 let passed = 0;
@@ -98,6 +98,16 @@ test("classifies clean / ahead / behind / diverged", () => {
   assert.equal(classifyDivergence(2, 0), "ahead");
   assert.equal(classifyDivergence(0, 3), "behind");
   assert.equal(classifyDivergence(1, 1), "diverged");
+});
+
+test("the state branch is main, or any branch tracking origin/main, and publishes to main", () => {
+  assert.equal(onStateBranch({ branch: "main", upstream: "origin/main" }), true);
+  assert.equal(onStateBranch({ branch: "nexus/session", upstream: "origin/main" }), true);
+  assert.equal(onStateBranch({ branch: "feat/x", upstream: "origin/feat/x" }), false);
+  assert.equal(onStateBranch({ branch: "feat/x", upstream: null }), false);
+  assert.equal(onStateBranch({ branch: "", upstream: "origin/main" }), false);
+  assert.equal(pushTarget({ branch: "nexus/session", upstream: "origin/main" }), "main");
+  assert.equal(pushTarget({ branch: "feat/x", upstream: null }), "feat/x");
 });
 
 test("never prints credentials embedded in a remote URL", () => {
@@ -593,6 +603,27 @@ if (setupOk) {
     assert.equal(remoteHead(), g(dev3, "rev-parse", "HEAD"));
   });
 
+  test("a session worktree on its own branch tracking origin/main publishes state to main", () => {
+    // `main` can be checked out in only one worktree, and every live session
+    // gets its own (N-004), so this is the normal way to write state.
+    const wt = cloneAs("session-worktree");
+    g(wt, "switch", "-q", "-c", "session-1", "--track", "origin/main");
+    const h = run(wt, "DEVICE-01", "heartbeat");
+    assert.equal(h.code, 0, h.out);
+    assert.equal(remoteHead(), g(wt, "rev-parse", "HEAD"));
+    assert.equal(g(bare, "branch", "--list", "session-1"), "", "the session branch was published instead of main");
+    writeFileSync(path.join(wt, "app.txt"), "v5 from a session worktree\n");
+    g(wt, "commit", "-q", "-am", "worktree work");
+    const work = g(wt, "rev-parse", "HEAD");
+    const f = run(wt, "DEVICE-01", "finalize");
+    assert.equal(f.code, 0, f.out);
+    assert.equal(remoteHead(), g(wt, "rev-parse", "HEAD"));
+    const c = remoteBlock(STATE_FILES.current);
+    assert.equal(c.sync_status, "REMOTE_SYNCED");
+    assert.equal(c.last_sync_commit, work);
+    assert.equal(g(bare, "branch", "--list", "session-1"), "");
+  });
+
   test("the tool never rewrote published history", () => {
     // Every commit ever pushed is still reachable from the remote branch.
     const all = g(bare, "rev-list", "--all").split("\n");
@@ -607,6 +638,8 @@ if (setupOk) {
     const hook = path.join(bare, "hooks", "post-receive");
     writeFileSync(hook, '#!/bin/sh\nwhile read old new ref; do\n  case "$old" in 0000000000000000000000000000000000000000) ;; *) git update-ref "$ref" "$old" ;; esac\ndone\n', { mode: 0o755 });
     try {
+      g(dev3, "fetch", "-q", "origin");
+      g(dev3, "merge", "-q", "--ff-only", "origin/main");
       writeFileSync(path.join(dev3, "app.txt"), "v4 lost in transit\n");
       g(dev3, "commit", "-q", "-am", "work the remote drops");
       const before = remoteHead();

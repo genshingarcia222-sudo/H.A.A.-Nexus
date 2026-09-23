@@ -61,10 +61,10 @@ Entries are appended and never rewritten. A superseded decision gets
 | | |
 |---|---|
 | **Date** | 2026-09-21 |
-| **Context** | The legacy bus records that the two devices once shared one checkout. |
+| **Context** | The legacy bus records that the two devices once shared one checkout. It happened again during the bootstrap itself: another session switched branches in, and committed from, the checkout this work was running in (CHANGELOG, 2026-09-22). |
 | **Decision** | `.nexus/local-device.yaml` (gitignored) holds only `device_id`. `NEXUS_DEVICE_ID` overrides it for a shell. No hostnames, users or credentials are committed. |
 | **Reason** | A committed identity would be wrong on the other device, and a shared checkout needs a per-session override. |
-| **Impact** | Each checkout runs `init-device` once. |
+| **Impact** | Each checkout runs `init-device` once. Each live session gets its own worktree or clone; two sessions never share one working tree. |
 | **Affected Components** | `.gitignore`, `tools/nexus-sync` |
 | **Superseded By** | — |
 

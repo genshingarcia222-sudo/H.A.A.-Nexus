@@ -260,8 +260,8 @@ export function remoteBranchSha(repo, branch) {
  * origin/main is read, because a feature branch's .nexus/ is not shared state.
  */
 export function readState(repo, snapshot) {
-  const fromTree = snapshot.branch === STATE_BRANCH;
-  const source = fromTree ? "working tree (main)" : `${REMOTE}/${STATE_BRANCH}`;
+  const fromTree = onStateBranch(snapshot);
+  const source = fromTree ? `working tree (${snapshot.branch}, publishes to ${STATE_BRANCH})` : `${REMOTE}/${STATE_BRANCH}`;
   const read = (rel) => {
     if (fromTree) return existsSync(path.join(repo, rel)) ? readFileSync(path.join(repo, rel), "utf8") : null;
     return git(repo, ["show", `${REMOTE}/${STATE_BRANCH}:${rel}`], { allowFail: true });
@@ -483,22 +483,38 @@ function commitState(repo, files, subject, device, body = "") {
   return git(repo, ["rev-parse", "HEAD"]);
 }
 
-/** Plain push, then ask the remote itself which commit its branch points at. */
-export function pushAndVerify(repo, branch) {
+/**
+ * A checkout is on the state branch when it is `main`, or when its branch
+ * tracks origin/main. Git lets `main` be checked out in only one worktree, and
+ * every live session gets its own worktree (DECISIONS N-004), so a session
+ * worktree works on its own branch tracking origin/main and pushes HEAD:main.
+ */
+export function onStateBranch(snapshot) {
+  return Boolean(snapshot.branch) && (snapshot.branch === STATE_BRANCH || snapshot.upstream === `${REMOTE}/${STATE_BRANCH}`);
+}
+
+/** The remote branch this checkout publishes to: its upstream on origin, else its own name. */
+export function pushTarget(snapshot) {
+  const prefix = `${REMOTE}/`;
+  return snapshot.upstream && snapshot.upstream.startsWith(prefix) ? snapshot.upstream.slice(prefix.length) : snapshot.branch;
+}
+
+/** Plain push of HEAD to `target`, then ask the remote itself which commit that branch points at. */
+export function pushAndVerify(repo, target) {
   const head = git(repo, ["rev-parse", "HEAD"]);
   const hasUpstream = git(repo, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], { allowFail: true });
   try {
-    git(repo, hasUpstream ? ["push", REMOTE, branch] : ["push", "-u", REMOTE, branch]);
+    git(repo, ["push", ...(hasUpstream ? [] : ["-u"]), REMOTE, `HEAD:refs/heads/${target}`]);
   } catch (e) {
     return { pushed: false, verified: false, head, error: e.message.split("\n").slice(-1)[0] };
   }
-  const remote = remoteBranchSha(repo, branch);
-  git(repo, ["fetch", REMOTE, branch], { allowFail: true });
+  const remote = remoteBranchSha(repo, target);
+  git(repo, ["fetch", REMOTE, target], { allowFail: true });
   return { pushed: true, verified: remote.reachable && remote.sha === head, head, remoteSha: remote.sha };
 }
 
 function requireWritableState(repo, snapshot, files, { offline }) {
-  if (snapshot.branch !== STATE_BRANCH) return `state is recorded on ${STATE_BRANCH}; current branch is ${snapshot.branch || "(detached)"}. Switch to ${STATE_BRANCH} (commit or preserve work first).`;
+  if (!onStateBranch(snapshot)) return `state is recorded on ${STATE_BRANCH}; current branch ${snapshot.branch || "(detached)"} is neither ${STATE_BRANCH} nor tracking ${REMOTE}/${STATE_BRANCH}. Use a checkout of ${STATE_BRANCH}, or \`git switch -c <name> --track ${REMOTE}/${STATE_BRANCH}\` in your own worktree.`;
   if (snapshot.fetched === false && !offline) return `cannot reach ${REMOTE} (${snapshot.fetchError}); re-run with --offline to record locally as REMOTE_SYNC_PENDING`;
   if (snapshot.divergence === "behind" || snapshot.divergence === "diverged") return `${STATE_BRANCH} is ${snapshot.divergence} relative to ${snapshot.upstream}: synchronize first (\`nexus-sync start --pull\` or RECOVERY_PROTOCOL Case G)`;
   const dirtyState = git(repo, ["status", "--porcelain", "--", ...files]);
@@ -818,7 +834,8 @@ function cmdFinalize(repo, args) {
   if (s.divergence === "behind" || s.divergence === "diverged") {
     return fail(`${s.branch} is ${s.divergence} relative to ${s.upstream}: fetch, inspect, rebase or merge, re-run tests, then finalize (RECOVERY_PROTOCOL Case G). Nothing was pushed.`);
   }
-  const onState = s.branch === STATE_BRANCH;
+  const onState = onStateBranch(s);
+  const target = pushTarget(s);
   const stateFiles = [STATE_FILES.current, STATE_FILES.registry];
   const iso = new Date().toISOString();
   const report = [];
@@ -827,9 +844,9 @@ function cmdFinalize(repo, args) {
   if (s.fetched === false) {
     work = { verified: false, head: s.head, error: s.fetchError };
   } else if (s.divergence !== "clean") {
-    work = pushAndVerify(repo, s.branch);
+    work = pushAndVerify(repo, target);
   } else {
-    const remote = remoteBranchSha(repo, s.branch);
+    const remote = remoteBranchSha(repo, target);
     work = { verified: remote.reachable && remote.sha === s.head, head: s.head, remoteSha: remote.sha, error: remote.reachable ? null : "remote unreachable" };
   }
 
@@ -844,7 +861,7 @@ function cmdFinalize(repo, args) {
     report.forEach((l) => console.log(l));
     return 2;
   }
-  report.push(`work verified on ${REMOTE}/${s.branch}: ${work.head}`);
+  report.push(`work verified on ${REMOTE}/${target}: ${work.head}`);
 
   if (!onState) {
     report.push(`sync record lives on ${STATE_BRANCH}: after this branch is merged, run finalize on ${STATE_BRANCH}`);

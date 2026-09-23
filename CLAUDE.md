@@ -5,6 +5,23 @@
 The GitHub repository is the canonical source of truth for implementation state.
 Do not assume the previous Claude Project conversation is available. Read the repository documents before making architectural changes.
 
+## Session start — distributed workstations (mandatory, every session)
+
+Nexus is worked on from two logical workstations, DEVICE-01 and DEVICE-02. Either may be off, and any Claude session may be lost. Persistent project memory lives in `.nexus/`. Protocol: `.nexus/SYNC_PROTOCOL.md`. Recovery: `.nexus/RECOVERY_PROTOCOL.md`.
+
+Authority order: **remote Git (a verified pushed commit) > `.nexus/` on `main` > Git history and files > local uncommitted work > conversational memory.** If memory disagrees with the repository, the repository is right.
+
+Before editing anything:
+
+1. `node tools/nexus-sync/nexus-sync.mjs start`. This fetches, identifies the device, classifies the branch (clean/ahead/behind/diverged), reads `.nexus/CURRENT_STATE.md`, `ACTIVE_TASK.md` and `HANDOFF.md`, and judges task ownership. **Exit code 1 = STOP** until what it names is resolved.
+2. If the device is unidentified, ask the user which device this is, then run `init-device DEVICE-0X`. Never guess.
+3. Never modify the scope of a task another device owns while it is live. Take over a stale task only with `claim --takeover --reason "..."`.
+4. Never discard uncommitted or diverged work (RECOVERY_PROTOCOL Cases F and G). Never reset, clean or force-push.
+5. Never treat `ListAgents`, agent reachability or an earlier conversation as project state. An unreachable device or agent does not block work: continue from the last pushed state.
+6. Do not share a working tree with another live session. Use a separate worktree or clone per session.
+
+Before calling meaningful work complete: run the relevant checks, update `CHANGELOG.md` and `.nexus/`, commit, then run `nexus-sync release` (or `handoff`) and `nexus-sync finalize`. Report the final commit SHA. Say "synchronized" only when `finalize` printed `REMOTE SYNC VERIFIED`. Otherwise report `LOCAL COMMIT COMPLETE / REMOTE SYNC NOT VERIFIED`.
+
 ## Required context files
 
 Read these before major implementation work:
