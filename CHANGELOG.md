@@ -54,7 +54,7 @@ and continue without the previous conversation.
   Divergence, a dirty tree, a behind branch and unfinished handoff fields each
   stop it.
 
-**Verification.** 58 nexus-sync tests: pure logic, validation of the real
+**Verification.** 60 nexus-sync tests: pure logic, validation of the real
 `.nexus/` files (complete, consistent, placeholder-free, secret-free, identity
 gitignored), and end-to-end scenarios against real temporary repositories with
 a bare remote. The scenarios cover claim, stale takeover, divergence refusal,
@@ -62,31 +62,46 @@ local-work preservation, a behind checkout, handoff, idempotent finalize,
 fresh-clone recovery with both devices gone, network failure and restoration,
 and a push the remote silently drops.
 
-**Mutation-checked.** Ten mutations were killed: no staleness, finalize
-ignoring divergence, finalize ignoring a dirty tree, no owner confirmation,
-history overwritten, push never verified, a broken trailer lookup, placeholders
-ignored, writes allowed while behind, and the offline refusal removed. Three of
-them initially **survived**, and each exposed a real test gap:
+**Mutation-checked.** Eleven mutations, all killed, none surviving: no
+staleness, `finalize` ignoring divergence, `start` ignoring divergence,
+`finalize` ignoring a dirty tree, no owner confirmation, history overwritten,
+push never verified, a broken trailer lookup, placeholders ignored, writes
+allowed while behind, and the offline refusal removed. Three of them initially
+**survived**, and each exposed a real test gap:
 - Divergence and a dirty tree were tested together, so each guard masked the
   other. They are now separate scenarios.
 - No test challenged push verification. A remote whose post-receive hook moves
   the branch back now does.
 - No owner ever tried to write from a clean but behind checkout.
 
-The mutations ran on a scratch copy of the tool.
+The mutations ran on a scratch copy of the tool, never the repository file. One
+mutation reported itself **NOT APPLIED** on the final re-run, because an edit
+had moved the code it targeted and its pattern silently stopped matching; an
+unapplied mutation proves nothing, so it was corrected and re-run until it
+killed. A second pattern failed to match because the working tree is CRLF.
 
 Application suites re-run on the final tree: nexus-core 390/390, desktop
 228/228, preflight 17/17, typecheck and build clean, `cargo test` 55/55. These
 counts are identical to the pre-bootstrap baseline `865d31e` (BASELINE.md B-001).
 
-**Incident recorded, not rewritten.** During implementation, a process outside
-this session committed and pushed the in-progress working tree to `main` as
-`d23e867`, `a1ee456`, `da10dc9` and `75f3746` (GUI-style messages "update" /
-"Update"). `a1ee456` and `da10dc9` captured `nexus-sync.mjs` while an in-place
-mutation test had it temporarily altered, so **`da10dc9` contains a deliberately
-broken tool**. Do not check out its `tools/nexus-sync`. `75f3746` restored the
-correct file, and this entry's commit supersedes all four. Pushed history was
-**not** rewritten or force-pushed.
+**Incident recorded, not rewritten.** During implementation, **five** commits
+made outside this session captured its in-progress working tree and pushed it
+to `main`: `d23e867`, `a1ee456`, `da10dc9`, `75f3746` and `492beb9`, all with
+GUI-style messages ("update" / "Update"). `a1ee456` and `da10dc9` captured
+`nexus-sync.mjs` while an in-place mutation test had it temporarily altered, so
+**`da10dc9` contains a deliberately broken tool**. Never restore
+`tools/nexus-sync` from it. `75f3746` restored the correct file, `492beb9`
+carries the worktree-branch support, and this entry's commit supersedes all
+five. Pushed history was **not** rewritten or force-pushed.
+
+**The writer was identified** on 2026-09-23, before finalization: GitHub
+Desktop, driven by a person, not a daemon. Its own log records
+`create commit` for this repository at 10:56:18Z followed by
+`git push origin nexus/sync-bootstrap:main` — i.e. it published this session's
+worktree branch onto `main`. No Git hook, `core.hooksPath`, scheduled task or
+Claude hook is involved; there is no repository-level automation. Both other
+Claude sessions on the machine confirmed they were holding all writes and had
+made none of the five commits.
 
 At the same time, another session moved the primary checkout between `main`
 and `feat/training-question-bank`. That is exactly the shared-working-tree
@@ -95,6 +110,12 @@ and landed with a plain fast-forward push. The test sandbox guard (no
 end-to-end git call may run outside the temp directory) was added after a
 review of this incident: an undefined directory could otherwise have reached
 the real checkout. There is no evidence that it ever did.
+
+**Operational consequence.** A GUI committing a working tree on a timer or a
+click is indistinguishable, in Git, from the device's own work, and it can
+capture a tree mid-edit. While a verification window is open, close GitHub
+Desktop or leave it unpushed. This is the practical case for `finalize`: the
+remote is asked what it actually holds, rather than assumed.
 
 **Not done, deliberately.** `origin/feat/training-question-bank` and its legacy
 `.claude/sync/` bus were left untouched, because merging them is an escalated

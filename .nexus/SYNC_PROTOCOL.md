@@ -27,7 +27,7 @@ code **1 = STOP**.
 | 5 | Determine the branch | `git branch --show-current`. **Detached = STOP** |
 | 6 | Determine divergence | `clean` / `ahead` / `behind` / `diverged` against the upstream. **diverged = STOP**; behind with local changes = STOP; behind and clean → `start --pull` fast-forwards |
 | 7 | Inspect recent commits | last five, printed |
-| 8 | READ CURRENT STATE | `.nexus/CURRENT_STATE.md`: from the working tree on `main`, from `origin/main` elsewhere |
+| 8 | READ CURRENT STATE | `.nexus/CURRENT_STATE.md`: from the working tree when the branch is `main` or tracks `origin/main`, from `origin/main` elsewhere (N-002) |
 | 9 | Read ACTIVE_TASK | `.nexus/ACTIVE_TASK.md` |
 | 10 | Read HANDOFF | newest entry of `.nexus/HANDOFF.md` |
 | 11 | VERIFY BASELINE | `baseline_commit` / `last_verified_commit` are shown; the recorded sync commit is checked against `origin/main` |

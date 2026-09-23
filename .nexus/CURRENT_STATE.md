@@ -64,11 +64,17 @@ Product and engineering work, with the canonical record for each:
   the bootstrap session. `a1ee456` is the same kind of snapshot. Never restore
   the tool from either commit. Later commits on `main` supersede both, and
   history was not rewritten (CHANGELOG, 2026-09-22 entry).
+- **An external GUI commits and pushes this repository.** Five commits —
+  `d23e867`, `a1ee456`, `da10dc9`, `75f3746`, `492beb9` — were made outside any
+  Claude session, with generic "update" / "Update" messages. Identified on
+  2026-09-23 from its own log as **GitHub Desktop**, which committed and ran
+  `git push origin nexus/sync-bootstrap:main`. It can capture a working tree
+  mid-edit. Close it, or leave it unpushed, during a verification window.
 - **Shared working tree observed (2026-09-21).** While the bootstrap ran,
   another session moved the primary checkout `D:\HAA_Nexus\H.A.A.-Nexus`
   between `main` and `feat/training-question-bank`, and the worktree
-  `.claude/worktrees/youthful-aryabhata-10eb31` took over `main`. That session
-  was never identified. One session per working tree (DECISIONS N-004).
+  `.claude/worktrees/youthful-aryabhata-10eb31` took over `main`. One session
+  per working tree (DECISIONS N-004).
 
 - `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 still lists D7 as open, but D7 was
   resolved in `9872e11`. This is a stale sentence and was not changed by the

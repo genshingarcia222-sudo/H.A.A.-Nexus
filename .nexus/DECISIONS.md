@@ -38,9 +38,9 @@ Entries are appended and never rewritten. A superseded decision gets
 |---|---|
 | **Date** | 2026-09-21 |
 | **Context** | State needs one place both devices read. Feature branches are private until merged. |
-| **Decision** | `.nexus/` on `main` is authoritative. On any other branch, `nexus-sync` reads state from `origin/main`, and writing commands (`claim`, `heartbeat`, `handoff`, `release`, the `finalize` sync record) run only on `main`. Feature work may live on branches, and the task records the branch name. |
-| **Reason** | It matches the repository's existing practice: direct commits to `main` alongside PR merges. It also avoids inventing a branching model. |
-| **Impact** | Claims and handoffs are small `nexus(sync):` commits on `main`. |
+| **Decision** | `.nexus/` on `main` is authoritative. A checkout counts as being on the state branch when it is `main` **or when its branch tracks `origin/main`**; such a checkout reads state from its working tree and publishes with `HEAD:main`. Anywhere else, `nexus-sync` reads state from `origin/main` and refuses to write it. Feature work may live on branches, and the task records the branch name. |
+| **Reason** | It matches the repository's existing practice: direct commits to `main` alongside PR merges, without inventing a branching model. The tracking-branch clause was added on 2026-09-22, when the first version of this decision made the writing commands unreachable for the workflow N-004 requires: Git allows `main` to be checked out in only one worktree, so a second session's worktree could never run `claim`, `heartbeat`, `handoff`, `release` or the `finalize` sync record. |
+| **Impact** | Claims and handoffs are small `nexus(sync):` commits that land on `main`, whichever tracking branch they were made from. |
 | **Affected Components** | `tools/nexus-sync` |
 | **Superseded By** | — |
 
