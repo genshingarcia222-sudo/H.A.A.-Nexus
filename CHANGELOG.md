@@ -370,6 +370,95 @@ only; explicitly not a source or truth check), with the expected 12
 
 **Files:** `Claude outputs/nexus-pilot-batch-001.candidates.r3.json` (new).
 The r2 fixture and the r2 authoring copy are unchanged.
+## Distributed Workstation Sync and Recovery Protocol (2026-09-22)
+
+**Infrastructure only. No application behaviour changed.** Nexus no longer
+depends on any device, Claude session or agent connection staying alive. The
+GitHub repository is the single source of truth, and a new `.nexus/` directory
+is the persistent project memory. Any fresh clone can reconstruct the project
+and continue without the previous conversation.
+
+**What exists now.**
+- **`.nexus/` state.** `CURRENT_STATE`, `ACTIVE_TASK` (with an append-only
+  ownership history), `HANDOFF`, `DEVICE_REGISTRY` (DEVICE-01 / DEVICE-02),
+  `BASELINE`, `DECISIONS` (process decisions N-001 to N-007, pointing to
+  `docs/DECISION_REGISTER.md` for product decisions rather than copying them),
+  `SYNC_PROTOCOL` (the one lifecycle, fetch → … → record synchronization) and
+  `RECOVERY_PROTOCOL` (Cases A–H). Each state file carries one flat
+  `yaml nexus-state` block that the tooling parses. Unknown values are written
+  `NOT VERIFIED`, never invented.
+- **`tools/nexus-sync/`.** A zero-dependency Node CLI plus a PowerShell entry
+  point, following the `tools/preflight` convention. Commands: `status`,
+  `start` (exit 1 = STOP), `recover`, `init-device`, `claim`, `heartbeat`,
+  `handoff`, `release`, `finalize`. `pnpm nexus-sync` / `pnpm nexus-sync:test`.
+- **Per-checkout identity.** `.nexus/local-device.yaml` is gitignored, and
+  `NEXUS_DEVICE_ID` overrides it per session. No hostnames or credentials are
+  committed.
+- **`CLAUDE.md`** now tells every session to run `start` before editing, and
+  never to trust conversational memory over the repository. `README.md` points
+  to `.nexus/README.md` for the two-device how-to.
+
+**Guarantees, each tested.**
+- Task ownership is advisory, not a lock. A held task goes **STALE** after
+  `stale_after_hours` (12) with no evidence from the remote: a heartbeat, a
+  `Nexus-Device:` trailer commit, or a task-branch commit. So a shut-down device
+  can never deadlock the project.
+- A takeover keeps the previous owner's history and records the reason. A
+  still-live owner also needs `--owner-confirmed`.
+- "Synchronized" means the remote was asked (`git ls-remote`) and reports
+  exactly the local HEAD. Otherwise the tool prints
+  `LOCAL COMMIT COMPLETE / REMOTE SYNC NOT VERIFIED` and records
+  `REMOTE_SYNC_PENDING`.
+- The tool never force-pushes, resets, cleans, rebases, stashes or discards.
+  Divergence, a dirty tree, a behind branch and unfinished handoff fields each
+  stop it.
+
+**Verification.** 58 nexus-sync tests: pure logic, validation of the real
+`.nexus/` files (complete, consistent, placeholder-free, secret-free, identity
+gitignored), and end-to-end scenarios against real temporary repositories with
+a bare remote. The scenarios cover claim, stale takeover, divergence refusal,
+local-work preservation, a behind checkout, handoff, idempotent finalize,
+fresh-clone recovery with both devices gone, network failure and restoration,
+and a push the remote silently drops.
+
+**Mutation-checked.** Ten mutations were killed: no staleness, finalize
+ignoring divergence, finalize ignoring a dirty tree, no owner confirmation,
+history overwritten, push never verified, a broken trailer lookup, placeholders
+ignored, writes allowed while behind, and the offline refusal removed. Three of
+them initially **survived**, and each exposed a real test gap:
+- Divergence and a dirty tree were tested together, so each guard masked the
+  other. They are now separate scenarios.
+- No test challenged push verification. A remote whose post-receive hook moves
+  the branch back now does.
+- No owner ever tried to write from a clean but behind checkout.
+
+The mutations ran on a scratch copy of the tool.
+
+Application suites re-run on the final tree: nexus-core 390/390, desktop
+228/228, preflight 17/17, typecheck and build clean, `cargo test` 55/55. These
+counts are identical to the pre-bootstrap baseline `865d31e` (BASELINE.md B-001).
+
+**Incident recorded, not rewritten.** During implementation, a process outside
+this session committed and pushed the in-progress working tree to `main` as
+`d23e867`, `a1ee456`, `da10dc9` and `75f3746` (GUI-style messages "update" /
+"Update"). `a1ee456` and `da10dc9` captured `nexus-sync.mjs` while an in-place
+mutation test had it temporarily altered, so **`da10dc9` contains a deliberately
+broken tool**. Do not check out its `tools/nexus-sync`. `75f3746` restored the
+correct file, and this entry's commit supersedes all four. Pushed history was
+**not** rewritten or force-pushed.
+
+At the same time, another session moved the primary checkout between `main`
+and `feat/training-question-bank`. That is exactly the shared-working-tree
+hazard N-004 addresses, so the bootstrap was finished in an isolated worktree
+and landed with a plain fast-forward push. The test sandbox guard (no
+end-to-end git call may run outside the temp directory) was added after a
+review of this incident: an undefined directory could otherwise have reached
+the real checkout. There is no evidence that it ever did.
+
+**Not done, deliberately.** `origin/feat/training-question-bank` and its legacy
+`.claude/sync/` bus were left untouched, because merging them is an escalated
+owner decision (N-007). DEVICE-02 has never run the tool, so its registry
+record stays `UNKNOWN` / `NOT VERIFIED` until its first `start`.
 
 ---
 
