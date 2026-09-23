@@ -52,18 +52,18 @@ reviewed commit.
 task_id: NEXUS-SYNC-001
 task_name: Establish the distributed workstation sync and recovery protocol
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-09-21T03:35:47Z
-last_update: 2026-09-21T03:35:47Z
+last_update: 2026-09-23T13:58:21.629Z
 stale_after_hours: 12
 expected_scope: "Add .nexus/ state, tools/nexus-sync, protocol docs; integrate CLAUDE.md, README, CHANGELOG, .gitignore. No application behaviour change."
 affected_areas: ".nexus/, tools/nexus-sync/, CLAUDE.md, README.md, CHANGELOG.md, .gitignore, package.json"
 branch: main
 claim_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-last_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
+last_commit: 16c9a2f5e7f3746e8604a4fd726ea0850f1c9d46
 handoff_required: no
 handoff_to: none
-next_action: "Validate, commit, push and verify the bootstrap; then release as COMPLETE and finalize"
+next_action: "DEVICE-02: git pull --ff-only, then nexus-sync init-device DEVICE-02 and nexus-sync start"
 ```
 
 ## Ownership history
@@ -74,3 +74,4 @@ Timestamps are UTC.
 | When (UTC) | Event | Device | Task | Detail |
 |---|---|---|---|---|
 | 2026-09-21T03:35:47Z | CLAIM | DEVICE-01 | NEXUS-SYNC-001 | bootstrap of the sync protocol, recorded by hand because the tooling did not exist yet |
+| 2026-09-23T13:58:21.629Z | RELEASE COMPLETE | DEVICE-01 | NEXUS-SYNC-001 | complete |

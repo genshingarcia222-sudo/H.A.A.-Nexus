@@ -36,9 +36,9 @@ particular physical device.
 ```yaml nexus-state
 DEVICE-01.role: primary-implementation
 DEVICE-01.status: ACTIVE
-DEVICE-01.ownership: NEXUS-SYNC-001
-DEVICE-01.latest_known_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-DEVICE-01.latest_activity: 2026-09-21T03:35:47Z
+DEVICE-01.ownership: none
+DEVICE-01.latest_known_commit: 16c9a2f5e7f3746e8604a4fd726ea0850f1c9d46
+DEVICE-01.latest_activity: 2026-09-23T13:58:21.629Z
 DEVICE-01.last_successful_sync: NOT VERIFIED
 DEVICE-02.role: secondary-verification-audit
 DEVICE-02.status: UNKNOWN
