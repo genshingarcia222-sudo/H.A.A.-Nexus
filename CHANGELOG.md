@@ -11,6 +11,57 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 2 — Assessment Items and Quality Rules (2026-09-24)
+
+**The question record is extended, not replaced** (rows 04–08, 12, 45, 54).
+`AssessmentItem` is the D11 `TrainingQuestion` plus D12's fields: `modality`,
+`responseFormat`, `contextRef`, `targetSegmentIds`, `knowledgeRefs`,
+`additionalEvidence`, `competencyRefs`, `collections`, `modalityDetail`,
+`applicability`, `provenance`, `revision` and `supersedes`.
+
+**The inherited rules are applied, not copied.** `question-bank/schema.ts` now
+exports `TrainingQuestionObjectSchema` and `refineTrainingQuestion`; the item
+calls the latter. This is a pure refactor — `TrainingQuestionSchema` is still
+the same object plus exactly the same rules, and every existing bank test
+passes unchanged. Commenting out that one call fails three item tests by name,
+so the two records cannot drift apart.
+
+**Seven modalities**, closed and required, orthogonal to `questionType`
+(process versus task shape). v1 stays single-best-answer: writing a SOAP note
+belongs to the documentation evaluator that already grades drafts. Each
+modality's structure is enforced — a case context where the task is about a
+case and none for direct knowledge; a SOAP task; an error domain; comparison
+criteria; both ends of a transformation; and for workflow, three or more steps
+with a `canonicalOrder` that must be a permutation of them, so a reordered
+variant never re-derives the truth.
+
+**References must resolve, and pins must hold.** A `contextRef` is
+`id@revision`; the corpus rejects a pin to a revision it does not hold, a
+segment target that is not in that context, a situational item citing a SOAP
+note, a `variantGroup` with no concept behind it, and a jurisdiction no cited
+source speaks for (a federal source covers a state claim; never the reverse).
+
+**Dates may not disagree**: `validUntil`, `applicability` and
+`codingReference` must state one window or the item is rejected.
+
+**Quality rules ported** from `validate_pilot_batch.py` into three tiers.
+STRUCTURAL and POLICY are errors; HEURISTIC are warnings and are never
+verification. Production-only rules do not block an author drafting a
+candidate. Includes the answer-length bias that revision 2 of the pilot
+existed to remove.
+
+**Unchanged.** Every existing Question Bank field and behaviour, the loader,
+repository, selector, M22/M23, the frozen fixtures, and Pilot Batch 001 at
+**0 of 12 human-verified, 0 production-eligible**. No tier, learner or
+delivery field entered a corpus record.
+
+**Verification.** 915 tests (648 nexus-core + 267 desktop; 54 new), typecheck
+clean, build clean, preflight exit 0. Two mutations were run — removing the
+inherited-rule call, and disabling the context requirement — and each failed
+its tests by name before the file was restored byte-identical.
+
+---
+
 ## D12 Resolved — Knowledge Corpus, Work Package 1 (2026-09-23)
 
 **Decision.** D12 is **RESOLVED**: reference knowledge gets a canonical

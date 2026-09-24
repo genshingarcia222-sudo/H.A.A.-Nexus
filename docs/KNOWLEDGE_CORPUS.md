@@ -21,7 +21,7 @@ One body of evidence-backed, provenance-aware, versioned records:
 | `CaseContext` | Synthetic situational or SOAP case material, shared by items | WP1 |
 | `AssessmentConcept` | What a family of variants tests | WP1 |
 | `CompetencyNode` | A node in the Training competency registry | WP1 |
-| `AssessmentItem` | The D11 Training Question, extended with modality and context | WP2 |
+| `AssessmentItem` | The D11 Training Question, extended with modality and context | WP2 ✔ |
 | `Reviewer`, `ReviewRecord` | Who may verify, and the record of each review | WP3 |
 | `ConflictRecord` | A declared or detected conflict between records | WP4 |
 
@@ -75,6 +75,47 @@ be a second trust model.
   question resting on the rule can never teach the absolute version of it.
 - **Ids are opaque after minting.** The domain and level inside an id are hints
   for humans reading a diff; nothing parses them.
+
+## 4a. The assessment item (WP2)
+
+`AssessmentItem` is `TrainingQuestionSchema`'s object plus D12's fields. The
+inherited cross-field rules are **applied, not copied**: `schema.ts` exports
+`refineTrainingQuestion`, and the item calls it. Removing that call fails three
+tests by name, so the two records cannot drift into meaning different things.
+
+- **Seven modalities**, closed and required, orthogonal to `questionType`.
+  `questionType` is the cognitive process; modality is the shape of the task.
+- **Single best answer only in v1.** Writing a SOAP note stays with the
+  documentation evaluator that already grades drafts.
+- **Each modality carries its own required structure**: a case context for
+  situational, SOAP, error-detection and transformation items; none for direct
+  knowledge; a SOAP task; an error domain; comparison criteria; both ends of a
+  transformation; and for workflow, at least three steps with a
+  `canonicalOrder` that must be a permutation of them — the one place a
+  workflow's true order is stored.
+- **Three to five choices.** Two is a coin flip; more than five is a reading
+  test.
+- **Dates may not disagree.** `validUntil`, `applicability` and
+  `codingReference` must state the same window, or the item is rejected rather
+  than leaving a reader to believe whichever field they happened to read.
+- **Jurisdiction is earned.** An item may not claim to apply where none of its
+  cited sources speak. A federal source covers a state claim; the reverse never
+  holds, and there is no fallback in either direction.
+
+### Quality rules (WP2)
+
+`quality.ts` ports `validate_pilot_batch.py` into three tiers. STRUCTURAL and
+POLICY findings are errors; HEURISTIC findings are warnings and are **never**
+verification — nothing here reads a source. Production-only rules (every choice
+explained, knowledge grounding, applicability, registry-form citation) do not
+block an author drafting a candidate.
+
+Ported and extended: answer-length bias, much-shorter answers, duplicate choice
+text, all/none-of-the-above options, ICD items without a release, unlisted
+code-like tokens, absolute wording with no exception cited, article cues in the
+stem, modality/question-type mismatch, per-file answer-position cap
+(`ceil(n/4)+1`, the pilot validator's own), duplicate ids and near-duplicate
+stems by trigram overlap.
 
 ## 5. What is deliberately absent
 

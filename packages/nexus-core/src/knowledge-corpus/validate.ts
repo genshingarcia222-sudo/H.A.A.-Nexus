@@ -7,7 +7,9 @@ import {
   SourceRecordSchema
 } from "./schema.js";
 import type { AssessmentConcept, CaseContext, CompetencyNode, KnowledgeRecord, SourceRecord } from "./schema.js";
-import { CONCEPT_ID_PATTERN, CONTEXT_ID_PATTERN, KNOWLEDGE_ID_PATTERN } from "./ids.js";
+import { AssessmentItemSchema } from "./item.js";
+import type { AssessmentItem } from "./item.js";
+import { CONCEPT_ID_PATTERN, CONTEXT_ID_PATTERN, ITEM_ID_PATTERN, KNOWLEDGE_ID_PATTERN, parsePinnedRef } from "./ids.js";
 
 /**
  * Corpus-level validation: the checks that only make sense across records.
@@ -32,6 +34,7 @@ export const KnowledgeCorpusSchema = z
     knowledge: z.array(KnowledgeRecordSchema).default([]),
     contexts: z.array(CaseContextSchema).default([]),
     concepts: z.array(AssessmentConceptSchema).default([]),
+    items: z.array(AssessmentItemSchema).default([]),
     competencies: z.array(CompetencyNodeSchema).default([])
   })
   .strict();
@@ -51,8 +54,22 @@ function lifecycleRecords(corpus: KnowledgeCorpus): { id: string; revision: numb
   return [
     ...corpus.knowledge.map((record, index) => ({ id: record.id, revision: record.revision, where: `knowledge.${index}` })),
     ...corpus.contexts.map((record, index) => ({ id: record.id, revision: record.revision, where: `contexts.${index}` })),
-    ...corpus.concepts.map((record, index) => ({ id: record.id, revision: record.revision, where: `concepts.${index}` }))
+    ...corpus.concepts.map((record, index) => ({ id: record.id, revision: record.revision, where: `concepts.${index}` })),
+    ...corpus.items.map((record, index) => ({ id: record.questionId, revision: record.revision, where: `items.${index}` }))
   ];
+}
+
+/**
+ * Whether a source's jurisdiction covers a record's (D12-25).
+ *
+ * A federal source covers a state record ("US" covers "US-CA"): the state is
+ * inside the federal scope. The reverse is not true, and there is deliberately
+ * no fallback in either direction beyond this containment — silently serving a
+ * California rule as a federal one would change what the record claims.
+ */
+function jurisdictionCovers(sourceJurisdiction: string, recordJurisdiction: string): boolean {
+  if (sourceJurisdiction === recordJurisdiction) return true;
+  return recordJurisdiction.startsWith(`${sourceJurisdiction}-`);
 }
 
 function checkIdShape(errors: string[], where: string, id: string, pattern: RegExp, shape: string): void {
@@ -115,6 +132,9 @@ export function validateKnowledgeCorpus(raw: unknown): KnowledgeCorpusValidation
   for (const [index, record] of corpus.concepts.entries()) {
     checkIdShape(errors, `concepts.${index}`, record.id, CONCEPT_ID_PATTERN, "variantGroup");
   }
+  for (const [index, record] of corpus.items.entries()) {
+    checkIdShape(errors, `items.${index}`, record.questionId, ITEM_ID_PATTERN, "NEXUS-L<difficulty>-<DOMAIN>-<nnnnnn>");
+  }
 
   // --- Evidence ---------------------------------------------------------
   const evidenceBearing: { where: string; evidence: { ref: string }[] }[] = [
@@ -166,6 +186,103 @@ export function validateKnowledgeCorpus(raw: unknown): KnowledgeCorpusValidation
     }
   }
 
+  // --- Items ------------------------------------------------------------
+  const contextsById = new Map(corpus.contexts.map((record) => [record.id, record]));
+  const conceptIds = new Set(corpus.concepts.map((record) => record.id));
+  const sourcesById = new Map(corpus.sources.map((source) => [source.id, source]));
+
+  for (const [index, item] of corpus.items.entries()) {
+    const where = `items.${index}`;
+
+    // Evidence: the inherited `source`, when it uses the registry form, plus
+    // anything the item adds.
+    if ("ref" in item.source && !seenSourceIds.has(item.source.ref)) {
+      errors.push(`${where}.source.ref: "${item.source.ref}" is not a source in this corpus`);
+    }
+    for (const [linkIndex, link] of item.additionalEvidence.entries()) {
+      if (!seenSourceIds.has(link.ref)) {
+        errors.push(`${where}.additionalEvidence.${linkIndex}.ref: "${link.ref}" is not a source in this corpus`);
+      }
+    }
+    for (const [entryIndex, entry] of item.machineVerification.entries()) {
+      if (!seenSourceIds.has(entry.sourceRef)) {
+        errors.push(`${where}.machineVerification.${entryIndex}.sourceRef: "${entry.sourceRef}" is not a source in this corpus`);
+      }
+    }
+
+    for (const [refIndex, ref] of item.knowledgeRefs.entries()) {
+      if (!knowledgeById.has(ref)) {
+        errors.push(`${where}.knowledgeRefs.${refIndex}: "${ref}" is not a knowledge record in this corpus`);
+      }
+    }
+
+    // A variantGroup is a concept id (D12-45): variants of one concept share
+    // their truth, and the concept is where that shared truth is recorded.
+    if (item.variantGroup && !conceptIds.has(item.variantGroup)) {
+      errors.push(`${where}.variantGroup: "${item.variantGroup}" has no AssessmentConcept in this corpus`);
+    }
+
+    // Context: pinned, resolvable, and at the exact revision the item names.
+    if (item.contextRef) {
+      const pinned = parsePinnedRef(item.contextRef);
+      const context = pinned ? contextsById.get(pinned.id) : undefined;
+      if (pinned && !context) {
+        errors.push(`${where}.contextRef: "${pinned.id}" is not a context in this corpus`);
+      } else if (pinned && context && context.revision !== pinned.revision) {
+        errors.push(
+          `${where}.contextRef: "${item.contextRef}" pins revision ${pinned.revision}, but the corpus holds revision ${context.revision}`
+        );
+      } else if (pinned && context) {
+        const segmentIds = new Set(
+          context.kind === "SCENARIO"
+            ? context.information.map((segment) => segment.segmentId)
+            : [
+                ...context.sections.subjective,
+                ...context.sections.objective,
+                ...context.sections.assessment,
+                ...context.sections.plan,
+                ...context.unplaced
+              ].map((segment) => segment.segmentId)
+        );
+        for (const [targetIndex, segmentId] of (item.targetSegmentIds ?? []).entries()) {
+          if (!segmentIds.has(segmentId)) {
+            errors.push(
+              `${where}.targetSegmentIds.${targetIndex}: "${segmentId}" is not a segment of ${pinned.id}@${pinned.revision}`
+            );
+          }
+        }
+        if (item.modality === "SOAP" && context.kind !== "SOAP_NOTE") {
+          errors.push(`${where}.contextRef: a SOAP item must cite a SOAP_NOTE context, not ${context.kind}`);
+        }
+        if (item.modality === "SITUATIONAL" && context.kind !== "SCENARIO") {
+          errors.push(`${where}.contextRef: a SITUATIONAL item must cite a SCENARIO context, not ${context.kind}`);
+        }
+      }
+    }
+
+    // Jurisdiction: an item may not claim to apply somewhere none of its
+    // sources speak for.
+    const jurisdictions = item.applicability?.jurisdictions ?? [];
+    if (jurisdictions.length > 0 && !jurisdictions.includes("UNIVERSAL")) {
+      const refs = [
+        ...("ref" in item.source ? [item.source.ref] : []),
+        ...item.additionalEvidence.map((link) => link.ref)
+      ];
+      const sourceJurisdictions = refs
+        .map((ref) => sourcesById.get(ref)?.jurisdiction)
+        .filter((value): value is string => typeof value === "string");
+      if (sourceJurisdictions.length > 0) {
+        for (const jurisdiction of jurisdictions) {
+          if (!sourceJurisdictions.some((source) => jurisdictionCovers(source, jurisdiction))) {
+            errors.push(
+              `${where}.applicability.jurisdictions: "${jurisdiction}" is not covered by any cited source (${sourceJurisdictions.join(", ")})`
+            );
+          }
+        }
+      }
+    }
+  }
+
   // --- Competency tree --------------------------------------------------
   const competencyById = new Map(corpus.competencies.map((node) => [node.id, node]));
   for (const [index, node] of corpus.competencies.entries()) {
@@ -194,7 +311,8 @@ export function validateKnowledgeCorpus(raw: unknown): KnowledgeCorpusValidation
   const competencyBearing: { where: string; refs: string[] }[] = [
     ...corpus.knowledge.map((record, index) => ({ where: `knowledge.${index}`, refs: record.competencyRefs })),
     ...corpus.contexts.map((record, index) => ({ where: `contexts.${index}`, refs: record.competencyRefs })),
-    ...corpus.concepts.map((record, index) => ({ where: `concepts.${index}`, refs: record.competencyRefs }))
+    ...corpus.concepts.map((record, index) => ({ where: `concepts.${index}`, refs: record.competencyRefs })),
+    ...corpus.items.map((record, index) => ({ where: `items.${index}`, refs: record.competencyRefs }))
   ];
   for (const bearer of competencyBearing) {
     for (const [index, ref] of bearer.refs.entries()) {
@@ -225,11 +343,12 @@ export function validateKnowledgeCorpus(raw: unknown): KnowledgeCorpusValidation
 function findRecord(
   corpus: KnowledgeCorpus,
   id: string
-): KnowledgeRecord | CaseContext | AssessmentConcept | undefined {
+): KnowledgeRecord | CaseContext | AssessmentConcept | AssessmentItem | undefined {
   return (
     corpus.knowledge.find((record) => record.id === id) ??
     corpus.contexts.find((record) => record.id === id) ??
-    corpus.concepts.find((record) => record.id === id)
+    corpus.concepts.find((record) => record.id === id) ??
+    corpus.items.find((record) => record.questionId === id)
   );
 }
 
