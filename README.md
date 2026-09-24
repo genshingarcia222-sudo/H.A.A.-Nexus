@@ -115,6 +115,25 @@ behaves exactly as on desktop. Persistence is the open piece: outside Tauri the
 repositories are in-memory, so a refresh loses progress (see D10 in
 `docs/PHASE_8_3_ASSESSMENT_MODE.md`).
 
+## Working across two devices
+
+Nexus is developed from two logical workstations, DEVICE-01 and DEVICE-02.
+Either can be switched off at any moment without losing project state, because
+GitHub is the only source of truth and `.nexus/` is the persistent project
+memory: current state, task ownership, handoffs, baselines and decisions. No
+Claude session or agent connection is ever part of synchronization.
+
+**How do I use Device 1 and Device 2 with Nexus?** See
+[`.nexus/README.md`](.nexus/README.md). It covers first and second device
+setup, daily start, task claim and handoff, normal shutdown, recovery after a
+crash or device loss, remote sync verification and conflict recovery.
+
+```bash
+node tools/nexus-sync/nexus-sync.mjs init-device DEVICE-01   # once per checkout
+node tools/nexus-sync/nexus-sync.mjs start                   # every session
+node tools/nexus-sync/nexus-sync.mjs finalize                # push + verify on GitHub
+```
+
 ## Repo layout
 
 ```
@@ -123,6 +142,8 @@ packages/nexus-core  # Pure TypeScript engine services, no UI, no Tauri
 packages/ui-kit      # Shared, module-agnostic React components + design tokens
 docs/                # Architecture package, business model spec, Phase 7 audit,
                      # Phase 8.3 Assessment Mode decision log
+tools/               # preflight (readiness), nexus-sync (two-device sync)
+.nexus/              # persistent project memory: state, task, handoffs, protocols
 ```
 
 ## Running what's verified today

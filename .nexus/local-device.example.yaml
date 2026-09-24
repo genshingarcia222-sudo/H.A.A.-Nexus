@@ -1,0 +1,9 @@
+# Template for .nexus/local-device.yaml - the identity of ONE checkout.
+#
+# Create the real file with:
+#   node tools/nexus-sync/nexus-sync.mjs init-device DEVICE-01
+#
+# The real file is gitignored and must never be committed. It contains only
+# the logical workstation ID - no hostnames, usernames, tokens or credentials.
+# NEXUS_DEVICE_ID, when set, overrides it for the current shell.
+device_id: DEVICE-01

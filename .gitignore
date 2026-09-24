@@ -23,3 +23,9 @@ apps/desktop/src-tauri/gen/schemas/
 *.pem
 *.key
 secrets.json
+
+# Per-checkout workstation identity for the distributed sync protocol
+# (.nexus/DECISIONS.md N-004). It names which logical device (DEVICE-01 or
+# DEVICE-02) this checkout is, so it is different on every machine and must
+# never be committed. The tracked template is .nexus/local-device.example.yaml.
+.nexus/local-device.yaml
