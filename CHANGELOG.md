@@ -11,6 +11,55 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Resolved — Knowledge Corpus, Work Package 1 (2026-09-23)
+
+**Decision.** D12 is **RESOLVED**: reference knowledge gets a canonical
+`KnowledgeRecord`, the D11 Question Bank is **extended rather than replaced**,
+and both cite one shared source registry. The terminology lookup is untouched.
+The authority is the owner-commissioned specification
+`NEXUS_D12_KNOWLEDGE_BASE_ARCHITECTURE_AND_IMPLEMENTATION_HANDOFF` v1.0.0
+(decision rows D12-01 … D12-57); `docs/DECISION_REGISTER.md` and
+`docs/KNOWLEDGE_CORPUS.md` record it.
+
+**Branch isolation.** All Question Bank and D12 work stays on
+`feat/training-question-bank`. Nothing in this entry touches `main`.
+
+**New: `packages/nexus-core/src/knowledge-corpus/`** (rows 01–03, 09–11,
+13–16, 27, 29) — `SourceRecord`, `KnowledgeRecord`, `CaseContext` (SCENARIO
+and SOAP_NOTE), `AssessmentConcept`, `CompetencyNode`, plus corpus-level
+reference resolution and id conventions.
+
+What the schemas enforce: strict objects with named errors for unknown keys;
+every citation resolving to a source in the corpus; machine verification that
+cannot impersonate a person (`verifier` must begin `machine:`) and never moves
+a record up the ladder; provenance that makes machine-drafted content name a
+machine author; `synthetic: true` required on case material (Architecture §27);
+effective dates stored but temporal state never stored; contexts cited as
+`id@revision` so an edit cannot silently change an approved item; exceptions as
+their own linked records; ids opaque after minting.
+
+**Reused, not restated.** The lifecycle ladder, review statuses and the human
+verification record are imported from `question-bank/schema.ts`. One definition
+of "production-eligible", one of "a person verified this".
+
+**Unchanged.** Every existing Question Bank field, the loader, repository,
+selector, M22/M23 run behaviour, the frozen r2 (`05fa24d0…aaf3d`) and r3
+(`8d845560…038791`) fixtures, and the terminology lookup. Pilot Batch 001 is
+still **0 of 12 human-verified, 0 production-eligible** — D12 builds the gate,
+it does not cross it. D10, A2, A7, the Training tier values, adaptive
+difficulty and the Assessment pool question all remain open, each with a
+default that changes nothing today.
+
+**Verification.** 839 tests (572 nexus-core + 267 desktop; 51 new), typecheck
+clean, build clean, `preflight` exit 0. The existing 788 passed unchanged.
+
+**Still to come**, in the specification's order: the item extension with
+modality and context (WP2), the review-record cross-check (WP3), deliverability
+(WP4), the deterministic build (WP5), pilot conversion (WP6), the delivery
+engine (WP7), the exposure ledger (WP8) and Training integration (WP9).
+
+---
+
 ## Pilot Batch 001 r3 Pinned Under Test; Q4 Review Flag Restored (2026-09-21)
 
 **Why.** Revision 3 lived only in `Claude outputs/`, so no repository test

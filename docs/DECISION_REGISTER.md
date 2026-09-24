@@ -149,9 +149,45 @@ correct-answer reference to resolve. The lesson schema itself was not changed.
 
 ---
 
-## D12 — Where does non-terminology reference knowledge live?
+## D12 — Where does non-terminology reference knowledge live? — **RESOLVED**
 
-**Blocked work:** turning Pilot Batch 001 (and any future regulatory or
+**Resolved** by the owner-commissioned specification
+`NEXUS_D12_KNOWLEDGE_BASE_ARCHITECTURE_AND_IMPLEMENTATION_HANDOFF` **v1.0.0**
+(2026-09-21), derived from this branch at `5bcf9f9`.
+
+| | |
+|---|---|
+| **Decision** | D12 — canonical reference-knowledge architecture |
+| **Selected value** | **A Nexus Knowledge Corpus**: a new `KnowledgeRecord` type for sourced reference statements, the D11 Question Bank **extended** for questions, and one shared source registry behind both |
+| **Rejected alternatives** | extending the terminology lookup; keeping regulatory material as Question Bank items only |
+| **Owner-authorized** | YES (2026-09-21, via the commissioned specification) |
+| **Status** | RESOLVED; implementation proceeds by the specification's ordered work packages on `feat/training-question-bank` |
+
+**Delivery, decided with it:** tiers define an eligibility *envelope* — allowed
+difficulties, modalities, domains, collections and session sizes — and never
+own a fixed inventory of questions. A selection engine draws each session from
+the eligible pool at runtime, preferring what a learner has not seen and
+steering cross-learner exposure toward a configurable target (default 1-in-7).
+Delivery history lives in a separate exposure ledger; **no corpus record may
+name a learner, a tier, a pool or a delivery.**
+
+**Unchanged by this decision, and not silently decided by it:** the human
+verification gate (Pilot 001 stands at 0 of 12, 0 production-eligible), D10
+(web persistence), A2 (competency-domain alignment), A7, the Training tier
+values, whether adaptive difficulty is switched on, and whether a future
+question-based Assessment shares Training's pool. Each has a shipped default
+that changes nothing about today's behaviour.
+
+**Implementation state:** work package 1 (corpus record families and
+cross-record resolution) is implemented and tested in
+`packages/nexus-core/src/knowledge-corpus/`. Later packages extend the question
+record with modality and context, add the review-record cross-check, the
+deliverability predicate, the deterministic build, the pilot conversion, the
+delivery engine and the exposure ledger.
+
+### Evidence considered while this decision was open
+
+**What it was blocking:** turning Pilot Batch 001 (and any future regulatory or
 reference material) into canonical Knowledge records.
 
 **Current behaviour, verified 2026-09-20:** the only Knowledge Base in the
@@ -173,7 +209,7 @@ during an Assessment), not just its contents.
 (§C2) records the carrying schema as *"an owner-level product shape decision;
 do not resolve it silently."* Adding a Knowledge record type is that decision.
 
-**Options the architecture supports:**
+**The options that were open:**
 
 | Option | Consequence |
 |---|---|
