@@ -316,6 +316,46 @@ product can make.
 
 **Adaptive difficulty is off by default**, cannot leave the envelope, and with
 no history is inert.
+## 4g. The exposure ledger (WP8, first half)
+
+`persistence/delivery-event-repository.ts` records one item delivered to one
+learner in one session, with its selection trace, the corpus release, the
+policy and envelope versions, and the D5 population. `learnerRef` is
+pseudonymous — a name or an email there would be a privacy defect.
+
+**Append-only by contract.** No update, no delete. A duplicate delivery id is
+refused rather than accepted, because a silently accepted copy inflates every
+exposure count. An answer is recorded once and never overwritten. Correctness
+without the choice that produced it, and an answer timestamped before its
+delivery, are both rejected.
+
+**The one-way rule holds here too.** An event may name a record; no record may
+name an event. Exposure history cannot change what a correct answer is.
+
+`buildExposureSnapshot` reads the ledger so the selector never has to. It
+defaults to `LEARNER_ONLY`: one device cannot see other learners. Stratum
+counts appear only when a ledger is declared shared, and only counts cross
+over — no other learner's reference reaches the snapshot.
+
+**Still to do in WP8:** the desktop SQLite table (migration 004), its IPC
+commands and contract fixtures. The web binding waits on D10.
+
+## 6. Where the work stands
+
+| Work package | State |
+|---|---|
+| WP1 corpus families and references | Complete |
+| WP2 assessment items, modalities, quality rules | Complete |
+| WP3 review log and anti-fabrication | Complete |
+| WP4 deliverability, time, jurisdiction, conflicts | Complete |
+| WP5 deterministic build and invalidation | Complete |
+| WP6 Pilot 001 conversion | Complete (no knowledge records drafted; nothing written to `content/`) |
+| WP7 dynamic delivery, envelopes, exposure policy | Complete |
+| WP8 exposure ledger | Contract and in-memory adapter complete; SQLite, IPC and fixtures outstanding |
+| WP9 Training integration and browser verification | Not started |
+
+Independent of all of it: **Pilot Batch 001 stands at 0 of 12 human-verified
+and 0 production-eligible**, and no learner-facing behaviour has changed.
 ## 5. What is deliberately absent
 
 No selector, no tier, no learner, no exposure history, no scoring, and no

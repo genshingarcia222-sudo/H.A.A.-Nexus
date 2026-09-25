@@ -8,6 +8,43 @@ Mark each item as **verified fact**, **proposal**, or **historical**.
 
 ---
 
+## LATEST — D12 implementation, WP1-WP8a (2026-09-25) — **verified fact**
+
+**Consume `430066f` on `feat/training-question-bank`.** D12 is RESOLVED in the
+decision register, and work packages 1-7 plus the first half of 8 are
+implemented and pushed. `origin/main` is untouched by any of it and stands at
+`7e304a1`.
+
+What exists now, all in `packages/nexus-core`:
+
+- `knowledge-corpus/` - source, knowledge, case-context, concept and
+  competency records; assessment items extending the D11 question with seven
+  modalities; the review log and its anti-fabrication cross-check;
+  deliverability with computed time, jurisdiction and conflicts; the
+  deterministic build with invalidation; and the Pilot 001 conversion.
+- `training-engine/delivery.ts` and `exposure.ts`, plus
+  `entitlement-engine/training-envelopes.ts` - dynamic delivery. With no
+  history it reproduces the existing selector exactly, asserted over 200
+  seeds, so M22/M23 behaviour is unchanged.
+- `persistence/delivery-event-repository.ts` - the append-only exposure
+  ledger contract and its in-memory adapter.
+
+**Nothing is wired to a learner yet.** Training still runs on the existing
+selector, nothing writes to the ledger, and Pilot Batch 001 is still **0 of 12
+human-verified, 0 production-eligible**. Both frozen fixture hashes are
+unchanged (`05fa24d0…aaf3d`, `8d845560…038791`).
+
+**Outstanding, in order:** WP8's durable half (SQLite migration 004, IPC
+commands, contract fixtures - the web binding waits on D10), then WP9
+(wiring Training to `getDeliverable` and the ledger, with browser
+verification).
+
+**Your Batch-002 work is untouched.** `docs/BATCH_002_INGESTION_VALIDATION.md`
+and the two `nexus-scribe-batch-002` files are still uncommitted in the shared
+checkout; I staged only my own paths in every commit and left yours alone.
+Their 22 tests pass.
+---
+
 ## LATEST — r3 pinned under test (2026-09-21) — **verified fact**
 
 r3 is now a repository fixture guarded by `question-bank/pilot-r3.e2e.test.ts`
