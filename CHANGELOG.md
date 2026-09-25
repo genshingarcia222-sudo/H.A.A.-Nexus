@@ -11,6 +11,56 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 8 Complete — The Ledger Across IPC (2026-09-25)
+
+**Scope.** The remaining half of row 40: the boundary between the delivery
+ledger and the desktop shell. WP8 is now complete.
+
+**Rust.** `DeliveryEventDto` and `SelectionTraceDto` mirror the nexus-core
+types through hand-written serde renames; `db/delivery.rs` holds the storage
+layer; four commands are registered - `append_delivery_event`,
+`record_delivery_answer`, `list_deliveries_for_learner`,
+`list_deliveries_for_session`. There is no command that edits or deletes a
+delivery, because the ledger is append-only and the API is the enforcement.
+
+`record_delivery_answer` updates only where `answered_choice_id IS NULL`, so a
+second attempt matches no row and returns **false** rather than overwriting
+what the learner actually did. Reads are scoped to one learner or one session:
+a single install has no view of anyone else's history and the interface offers
+no way to ask for one.
+
+**TypeScript.** `TauriDeliveryEventRepository` implements a new
+`AsyncDeliveryEventRepository` - a separate interface rather than making the
+in-memory one async, since that adapter is used where awaiting a Map lookup
+buys nothing. Both refuse the same things, so a caller cannot tell them apart
+by behaviour.
+
+**Contract.** `ipc-contract/delivery-event.json` is the shared fixture. The
+Rust side round-trips it exactly; the TypeScript side parses it with the real
+schema and asserts the client sends the parameter names the commands declare -
+the kind of mistake that otherwise surfaces only at runtime as an `undefined`
+field.
+
+**Tests.** 8 new Rust (69 total in the db suite) and 9 new TypeScript, covering
+a valid round trip, an empty result, a duplicate delivery, an answer recorded
+once, an answer to a delivery that is not there, learner scoping, the `since`
+bound, a refused unscoped read, and a failing command propagating.
+
+**Fixed in passing: a hash-pinned fixture unprotected from line-ending
+conversion.** `nexus-scribe-batch-002.candidates.json` is pinned by SHA-256 in
+its own test, but had no `-text` attribute, so Windows CRLF conversion changed
+its bytes on checkout and the integrity test failed for a reason unrelated to
+its content. Added the attribute alongside the pilot fixtures' and
+re-normalised the working copy; the file's contents and its test are
+untouched, and it hashes to `c1701420…` again.
+
+**Verification.** 1,056 TypeScript tests (780 nexus-core + 276 desktop), 69
+Rust db tests, typecheck clean, build clean, preflight exit 0, self-test 17/17.
+
+**Unchanged.** Nothing writes to the ledger yet - that is WP9. Pilot Batch 001
+remains **0 of 12 human-verified, 0 production-eligible**.
+---
+
 ## D12 Work Package 8, second half — Migration 004, the Delivery Ledger Table (2026-09-25)
 
 **New: `apps/desktop/src-tauri/migrations/004_delivery_events.sql`**,

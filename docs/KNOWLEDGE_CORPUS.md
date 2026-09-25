@@ -337,8 +337,10 @@ defaults to `LEARNER_ONLY`: one device cannot see other learners. Stratum
 counts appear only when a ledger is declared shared, and only counts cross
 over — no other learner's reference reaches the snapshot.
 
-**Still to do in WP8:** the desktop SQLite table (migration 004), its IPC
-commands and contract fixtures. The web binding waits on D10.
+The desktop binding is complete: migration 004 holds the table, four IPC
+commands carry it, and `ipc-contract/delivery-event.json` is the shared
+fixture both sides are tested against. There is no command that edits or
+deletes a delivery. The web binding still waits on D10.
 
 ## 6. Where the work stands
 
@@ -351,7 +353,7 @@ commands and contract fixtures. The web binding waits on D10.
 | WP5 deterministic build and invalidation | Complete |
 | WP6 Pilot 001 conversion | Complete (no knowledge records drafted; nothing written to `content/`) |
 | WP7 dynamic delivery, envelopes, exposure policy | Complete |
-| WP8 exposure ledger | Contract and in-memory adapter complete; SQLite, IPC and fixtures outstanding |
+| WP8 exposure ledger | Complete: contract, in-memory adapter, SQLite migration 004, IPC commands and shared fixture |
 | WP9 Training integration and browser verification | Not started |
 
 Independent of all of it: **Pilot Batch 001 stands at 0 of 12 human-verified
