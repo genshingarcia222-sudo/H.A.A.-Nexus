@@ -11,6 +11,53 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 5 — The Deterministic Corpus Build (2026-09-25)
+
+**Scope.** Rows 30-34 and 55: turn authoring files into a release that can be
+pointed at, and report what has moved underneath it.
+
+**New: `knowledge-corpus/build.ts`.** `buildCorpus` is a pure function of the
+files (sorted by path) and an injected hash function. No clock, no network, no
+randomness, no environment: the same inputs produce a byte-identical bundle and
+the same `releaseId`, asserted across rebuilds, across file order and across
+build dates. Canonical JSON sorts keys and leaves arrays alone, because the
+order of a SOAP note's segments or a workflow's canonical steps is content.
+
+**A failed build emits nothing.** No partial bundle, because a partial bundle
+looks like a release. Files merge rather than overlay, so two files defining
+one id is a duplicate-id error, not last-one-wins.
+
+**Incremental support.** Each partition carries its own hash and the ids it
+contributes; `diffPartitions` names added, changed, removed and unchanged
+files. Cross-reference validation still runs over the whole index, since a
+reference can break because something else moved.
+
+**`detectUnbumpedRevisions`** catches a record edited at the same revision -
+how an approval quietly comes to cover words nobody approved.
+
+**`invalidationReport`** lists records whose sources changed, were withdrawn or
+were superseded since review. It derives and never mutates: nothing is
+downgraded, the record simply stops being deliverable until a person reads the
+new bytes. A candidate nobody had verified is not invalidated by a source
+change.
+
+**Tests.** 23 new. **Mutation checks:** five guards removed one at a time -
+hidden validation errors (2 tests failed), the unbumped-revision check (1), the
+source-changed invalidation (1), the canonical key sort (1), and the path sort.
+The path-sort mutation initially **survived**, because the determinism test used
+two files feeding different families; the test was rewritten so both feed the
+same family, after which the mutation failed as it should. All files were
+restored byte-identical.
+
+**Verification.** 990 tests (723 nexus-core + 267 desktop), typecheck clean,
+build clean, preflight exit 0, preflight self-test 17/17. Rust untouched and
+not run.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**; frozen fixture hashes intact; no delivery, tier or
+exposure behaviour added.
+---
+
 ## D12 Work Package 4 — Deliverability, Time, Jurisdiction and Conflicts (2026-09-25)
 
 **Scope.** Rows 20, 23–26, 28: separate "is this record finished and verified"
