@@ -181,7 +181,7 @@ The limitation carried since Phase 1 (apt Rust 1.75 below Tauri v2's MSRV) is re
 
 **Still unverified, deferred to Phase 9 (Tauri packaging/release hardening):** `pnpm tauri dev` (launching the real webview) and `tauri build` (MSI/NSIS bundling) have not been run. Compilation is verified; packaging is not.
 
-**Minor, unfixed:** `main.rs` lacks `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so a console window will appear behind release builds on Windows. Phase 9 item.
+**Minor, fixed 2026-09-25 (Phase 9):** `main.rs` now carries `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so release builds no longer open a console window behind the application. `tauri dev` keeps its console. Guarded by a source-scanning test, since `debug_assertions` is always on under `cargo test`.
 
 ## 6. Analytics readiness audit — PASS (capability restored, not built)
 

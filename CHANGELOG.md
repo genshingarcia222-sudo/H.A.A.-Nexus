@@ -11,6 +11,34 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 9 — Release Builds Are Windowed, Not Console (2026-09-25)
+
+**The first Phase 9 item, and the only one that is not owner-gated.** The
+Phase 7 audit recorded it as "minor, unfixed": `main.rs` lacked
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so every
+Windows release build opened a console window behind the application. Signing,
+auto-update and packaging hardening - the rest of Phase 9 - need certificates
+and a release feed, which are the owner's to supply.
+
+The attribute is conditional on `not(debug_assertions)`, so `tauri dev` keeps
+its console, where `println!` and panic output are how a developer sees what
+the Rust side is doing.
+
+**Guarded by a test.** The attribute is easy to delete by accident and its
+absence is invisible until someone installs a release build. `debug_assertions`
+is always on under `cargo test`, so the test scans the source instead - the
+same approach the selector's boundary test uses.
+
+**Verification.** 70 Rust tests (1 new), and `cargo check --release` compiles
+clean, which is the check that matters because the attribute only applies under
+`not(debug_assertions)`. `tauri build` was not re-run: bundling is unchanged by
+this and remains Phase 9 work.
+
+**Unchanged.** No TypeScript, no application behaviour in development, and no
+content. Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
 ## D12 Decision Register Brought Up to Date (2026-09-25)
 
 The D12 entry still read "work package 1 ... is implemented", written when

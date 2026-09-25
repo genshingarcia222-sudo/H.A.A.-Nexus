@@ -1,3 +1,12 @@
+// Release builds are a windowed application, not a console one.
+//
+// Without this, Windows opens a console behind the app window for every
+// release build - the defect Phase 7 recorded as an open Phase 9 item. It is
+// conditional on `not(debug_assertions)` so `tauri dev` keeps its console,
+// where `println!` and panic output are how a developer sees what the Rust
+// side is doing.
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 // Phase 5: SQLite-backed persistence for sessions, profile, and competency
 // records. Scenario content itself still ships as bundled JSON (Phase 2/3),
 // not imported into the DB - see migrations/001_initial.sql for the full
@@ -42,4 +51,20 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running H.A.A. Nexus");
+}
+
+/// The release-hardening attribute is easy to delete by accident and its
+/// absence is invisible until someone installs a release build and sees a
+/// console window behind it. Scanning the source is the only way to assert it
+/// from a test, since `debug_assertions` is always on under `cargo test`.
+#[cfg(test)]
+mod release_hardening_tests {
+    #[test]
+    fn release_builds_are_windowed_not_console() {
+        let source = include_str!("main.rs");
+        assert!(
+            source.contains(r#"#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]"#),
+            "main.rs must keep the windows_subsystem attribute, or release builds open a console window"
+        );
+    }
 }
