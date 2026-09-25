@@ -11,6 +11,56 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 9 — Training Runs on the Delivery Layer (2026-09-25)
+
+**Scope.** Rows 49-53: Training selects through the D12 delivery engine. This
+is integration, not a Training redesign - the run state machine, the
+presentation, the feedback and the rationale are untouched.
+
+**The seam is one function.** `QuestionRun`'s `beginRun` now calls
+`selectDelivery` instead of `selectTrainingQuestions`. The pool is still
+`repository.getProductionEligible()`, so there remains exactly one definition
+of what a learner may see and candidate content cannot reach a run. What
+changed is *which* eligible questions a run receives: the tier's envelope, the
+repetition policy and the inherited diversity weights now apply, and the run
+carries the delivery traces.
+
+The tier comes from the entitlement store; the date is fixed once per run, so
+a session that began before midnight does not change what it may deliver
+because the day rolled over. With no exposure history, delivery reduces to
+exactly the previous selection - which is why all 39 existing Training tests
+pass unchanged.
+
+**Corrected: the envelope was stricter than today's behaviour.** Session size
+shipped as 10/10/10, which refused the smaller runs the Training surface has
+always accepted through its `count` prop. It is now 1-10 with a default of
+ten. Pinning the minimum at ten would have been a new restriction wearing the
+clothes of the status quo; the delivery test now checks a run above the
+ceiling is refused while a smaller one succeeds.
+
+**Tests.** 6 new integration tests: the rendered run matches what
+`selectDelivery` produces for the same seed (so a second selection path would
+diverge), reproducibility for a seed, a candidate-only bank serving nothing, an
+insufficient pool reported rather than padded, an over-size session refused
+without rendering a question, and no trace, stratum, policy or exposure
+vocabulary reaching the screen.
+
+**Browser (localhost:1420/#/training).** Training opened, a run started at
+1 of 10, an answer submitted showed feedback, the correct answer and its
+rationale, Next advanced to question 2 (`data-question-index` 1,
+`data-answered` 1, `data-total` 10), and a scan of the rendered text found no
+internal delivery vocabulary. No console errors.
+
+**Verification.** 1,062 tests (780 nexus-core + 282 desktop), typecheck clean,
+build clean, preflight exit 0, self-test 17/17.
+
+**Not done, and deliberately.** Nothing writes to the exposure ledger yet:
+that needs a learner identity and a persistence decision, which is D10's
+territory, so novelty is inert rather than invented. Pilot Batch 001 remains
+**0 of 12 human-verified, 0 production-eligible**, and the run still draws on
+the synthetic preview bank.
+---
+
 ## D12 Work Package 8 Complete — The Ledger Across IPC (2026-09-25)
 
 **Scope.** The remaining half of row 40: the boundary between the delivery

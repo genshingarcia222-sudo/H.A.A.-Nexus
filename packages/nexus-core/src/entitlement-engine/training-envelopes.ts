@@ -14,8 +14,11 @@ import type { Tier } from "../types/subscription.js";
  *
  * **The initial values reproduce today's behaviour exactly** (D12-37). Training
  * has no tier gating right now — D11 left `difficultyLevel` deliberately
- * unmapped to any tier — so every envelope is open, and runs are ten questions
- * as `DEFAULT_TRAINING_RUN_SIZE` says. Which tier should receive which
+ * unmapped to any tier — so every envelope is open. A run defaults to ten, as
+ * `DEFAULT_TRAINING_RUN_SIZE` says, and the bound is 1–10 because the Training
+ * surface already accepts a smaller run through its `count` prop; pinning the
+ * minimum at ten would be a new restriction wearing the clothes of the status
+ * quo. Which tier should receive which
  * difficulties or modalities is a commercial decision nobody has taken, and
  * inventing one here would answer it by implementation.
  */
@@ -40,7 +43,7 @@ const OPEN_ENVELOPE = (tier: Tier): TierEnvelope => ({
   modalities: "ALL",
   domains: "ALL",
   collections: "ALL",
-  sessionSize: { min: 10, max: 10, default: 10 },
+  sessionSize: { min: 1, max: 10, default: 10 },
   adaptiveAllowed: false,
   temporalModes: ["CURRENT_ONLY"]
 });

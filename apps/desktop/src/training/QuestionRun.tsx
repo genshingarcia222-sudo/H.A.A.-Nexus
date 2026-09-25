@@ -8,16 +8,20 @@ import {
   isRunComplete,
   isSubmitted,
   runProgress,
+  resolveTrainingEnvelope,
   selectChoice,
-  selectTrainingQuestions,
+  selectDelivery,
   startTrainingRun,
   submitAnswer,
+  type DeliveryTrace,
   type QuestionBankRepository,
   type RandomSource,
+  type Tier,
   type TrainingQuestion,
   type TrainingRunState
 } from "@haa-nexus/nexus-core";
 import { previewQuestionRepository } from "../preview/previewQuestionBank.js";
+import { useEntitlementStore } from "../store/entitlementStore.js";
 
 /**
  * The Training question run surface.
@@ -46,25 +50,67 @@ export interface QuestionRunProps {
   /** Injected so a run can be reproduced exactly. */
   random?: RandomSource;
   count?: number;
+  /** Defaults to the learner's current tier; injected by tests. */
+  tier?: Tier;
+  /** The date deliverability is judged against. Supplied, never read from a clock here. */
+  asOf?: string;
 }
 
 type RunStart =
-  | { kind: "ready"; state: TrainingRunState }
+  | { kind: "ready"; state: TrainingRunState; traces: DeliveryTrace[] }
   | { kind: "insufficient"; requested: number; available: number }
   | { kind: "invalid"; errors: string[] };
 
-function beginRun(repository: QuestionBankRepository, count: number, random?: RandomSource): RunStart {
-  const result = selectTrainingQuestions(repository, { count }, random);
-  if (result.status === "success") return { kind: "ready", state: startTrainingRun(result.questions) };
+/**
+ * Starts a run through the D12 delivery layer (work package 9).
+ *
+ * The pool is still the bank's own gate - `getProductionEligible()` - so there
+ * is one definition of what a learner may see, and candidate content cannot
+ * reach a run through here. What changed is *which* of those questions this run
+ * receives: the delivery engine applies the tier's envelope, the repetition
+ * policy and the inherited diversity weights, and returns a trace explaining
+ * every choice.
+ *
+ * Exposure arrives empty because nothing writes to the ledger yet, so delivery
+ * reduces to exactly the selection this screen made before - asserted in
+ * nexus-core over 200 seeds, and again by this component's tests.
+ */
+function beginRun(
+  repository: QuestionBankRepository,
+  count: number,
+  tier: Tier,
+  asOf: string,
+  random?: RandomSource
+): RunStart {
+  const result = selectDelivery({
+    pool: repository.getProductionEligible(),
+    request: { count, asOf },
+    envelope: resolveTrainingEnvelope(tier),
+    random
+  });
+  if (result.status === "success") {
+    return { kind: "ready", state: startTrainingRun(result.questions), traces: result.traces };
+  }
   if (result.status === "insufficient-eligible-content") {
     return { kind: "insufficient", requested: result.requested, available: result.available };
   }
   return { kind: "invalid", errors: result.errors };
 }
 
-export function QuestionRun({ repository, random, count = DEFAULT_TRAINING_RUN_SIZE }: QuestionRunProps) {
+export function QuestionRun({
+  repository,
+  random,
+  count = DEFAULT_TRAINING_RUN_SIZE,
+  tier,
+  asOf
+}: QuestionRunProps) {
   const bank = useMemo(() => repository ?? previewQuestionRepository(), [repository]);
-  const [run, setRun] = useState<RunStart>(() => beginRun(bank, count, random));
+  const currentTier = useEntitlementStore((store) => store.subscription.tier);
+  const deliveryTier = tier ?? currentTier;
+  // One date for the whole run: a run that began before midnight should not
+  // change what it may deliver because the day rolled over mid-session.
+  const deliveryDate = useMemo(() => asOf ?? new Date().toISOString().slice(0, 10), [asOf]);
+  const [run, setRun] = useState<RunStart>(() => beginRun(bank, count, deliveryTier, deliveryDate, random));
 
   if (run.kind === "insufficient") {
     // The honest state, and the common one today: the real bank is empty
@@ -106,7 +152,7 @@ export function QuestionRun({ repository, random, count = DEFAULT_TRAINING_RUN_S
           Nothing was scored or saved. Scoring, progress and history are separate, undecided capabilities.
         </p>
         <div style={{ marginTop: "var(--nexus-space-3)" }}>
-          <Button variant="secondary" onClick={() => setRun(beginRun(bank, count, random))}>
+          <Button variant="secondary" onClick={() => setRun(beginRun(bank, count, deliveryTier, deliveryDate, random))}>
             Start a new run
           </Button>
         </div>
@@ -121,7 +167,10 @@ export function QuestionRun({ repository, random, count = DEFAULT_TRAINING_RUN_S
   const progress = runProgress(state);
 
   // Every transition is the state machine's answer, never a local edit.
-  const apply = (next: ReturnType<typeof selectChoice>) => setRun({ kind: "ready", state: next.state });
+  // The traces belong to the run, not to a transition: a state machine step
+  // changes what the learner is doing, never why these questions were chosen.
+  const apply = (next: ReturnType<typeof selectChoice>) =>
+    setRun({ kind: "ready", state: next.state, traces: run.traces });
 
   return (
     <Card title={`Question ${progress.position} of ${progress.total}`}>

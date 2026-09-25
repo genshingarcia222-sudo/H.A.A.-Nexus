@@ -354,7 +354,7 @@ deletes a delivery. The web binding still waits on D10.
 | WP6 Pilot 001 conversion | Complete (no knowledge records drafted; nothing written to `content/`) |
 | WP7 dynamic delivery, envelopes, exposure policy | Complete |
 | WP8 exposure ledger | Complete: contract, in-memory adapter, SQLite migration 004, IPC commands and shared fixture |
-| WP9 Training integration and browser verification | Not started |
+| WP9 Training integration and browser verification | Complete: Training selects through the delivery engine; ledger writing deferred to D10 |
 
 Independent of all of it: **Pilot Batch 001 stands at 0 of 12 human-verified
 and 0 production-eligible**, and no learner-facing behaviour has changed.

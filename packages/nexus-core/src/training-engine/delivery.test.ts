@@ -115,7 +115,7 @@ describe("the envelope constrains, and refuses rather than narrows", () => {
     for (const envelope of Object.values(TRAINING_DELIVERY_ENVELOPES)) {
       expect(envelope.difficultyLevels).toEqual([1, 2, 3, 4, 5, 6]);
       expect(envelope.modalities).toBe("ALL");
-      expect(envelope.sessionSize).toEqual({ min: 10, max: 10, default: 10 });
+      expect(envelope.sessionSize).toEqual({ min: 1, max: 10, default: 10 });
       expect(envelope.adaptiveAllowed).toBe(false);
     }
   });
@@ -133,8 +133,13 @@ describe("the envelope constrains, and refuses rather than narrows", () => {
   });
 
   it("refuses a session size the tier does not allow", () => {
-    const result = selectDelivery({ pool: pool(30), request: { count: 5, asOf: ASOF }, envelope: OPEN });
-    expect(result.status).toBe("invalid-request");
+    // Above the ceiling, not merely different: a smaller run is something the
+    // Training surface has always been able to ask for.
+    const tooLarge = selectDelivery({ pool: pool(30), request: { count: 25, asOf: ASOF }, envelope: OPEN });
+    expect(tooLarge.status).toBe("invalid-request");
+
+    const smaller = selectDelivery({ pool: pool(30), request: { count: 5, asOf: ASOF }, envelope: OPEN });
+    expect(smaller.status).toBe("success");
   });
 
   it("filters the pool by the envelope's difficulties", () => {
