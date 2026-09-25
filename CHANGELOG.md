@@ -11,6 +11,45 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 8, first half — The Exposure Ledger Contract (2026-09-25)
+
+**Scope.** Row 39, and the storage-independent half of row 40. The durable
+adapters are **not** done: the desktop SQLite table, its IPC commands and
+fixtures are the next step, and the web binding still waits on D10.
+
+**New: `persistence/delivery-event-repository.ts`,
+`persistence/exposure-service.ts`.** A `DeliveryEvent` records one item
+delivered to one learner in one session, with its selection trace, the corpus
+release, the policy and envelope versions, and the D5 population so Practice
+and Assessment can never merge. `learnerRef` is pseudonymous; a name or an
+email in that field is a privacy defect.
+
+**Append-only by contract.** There is no update and no delete. A duplicate
+delivery id is refused rather than accepted, because a silently accepted copy
+inflates every exposure count. An answer may be recorded once and never
+overwritten. Correctness without the choice that produced it, and an answer
+timestamped before its delivery, are both rejected.
+
+**The ledger is outside the corpus.** An event may name a record; no record
+may name an event. Exposure history therefore cannot change what a question's
+correct answer is.
+
+**`buildExposureSnapshot`** is the seam that keeps selection pure: it reads
+the ledger and hands the selector a snapshot. It defaults to
+`LEARNER_ONLY` — a single-device install cannot see other learners, and
+stratum counts are built only when a ledger is declared shared. When they
+are, only counts cross over: a test asserts no other learner's reference
+appears in the snapshot.
+
+**Tests.** 15 new. **Verification.** 1,047 tests (780 nexus-core + 267
+desktop), typecheck clean, build clean, preflight exit 0. Rust untouched and
+not run.
+
+**Unchanged.** Nothing writes to this ledger yet, Training still runs on the
+existing selector, and Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
 ## D12 Work Package 7 — Dynamic Delivery (2026-09-25)
 
 **Scope.** Rows 35-38, 41-48 and 57: choose what a session receives, without
