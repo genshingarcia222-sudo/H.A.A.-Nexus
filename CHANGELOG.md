@@ -11,6 +11,40 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 8, second half — Migration 004, the Delivery Ledger Table (2026-09-25)
+
+**New: `apps/desktop/src-tauri/migrations/004_delivery_events.sql`**,
+registered in the migration list, taking the desktop schema to version 4.
+The migration is **additive**: one new table and three indexes, no existing
+table touched, so a rollback is a DROP and nothing else.
+
+The table enforces in SQL what the TypeScript contract enforces in code:
+`delivery_id` is the primary key, so a duplicate is refused rather than
+counted twice; correctness cannot be stored without the choice that produced
+it; an answer cannot precede its delivery; and `population` is CHECKed against
+the D5 split, so Practice and Assessment stay distinguishable by constraint
+rather than by convention. `learner_ref` is pseudonymous.
+
+Indexes match the two questions the selector actually asks - what has this
+learner seen and how recently, and how often has a concept been served under
+comparable conditions - plus one session's deliveries in order.
+
+**Tests.** 6 new Rust tests. Three existing tests asserted schema version 3
+and were updated to 4; the three synthetic-migration assertions were left at 3
+because they run their own fixture lists, not the real registry. Rust: 61
+passed, 0 failed.
+
+**Verification.** 1,047 TypeScript tests (780 nexus-core + 267 desktop),
+typecheck clean, build clean, preflight exit 0, and the Rust db suite green.
+
+**Still outstanding for WP8:** the IPC commands and contract fixtures that
+would let the frontend write to this table. Nothing writes to it yet, and the
+web binding still waits on D10.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
 ## D12 Work Package 8, first half — The Exposure Ledger Contract (2026-09-25)
 
 **Scope.** Row 39, and the storage-independent half of row 40. The durable

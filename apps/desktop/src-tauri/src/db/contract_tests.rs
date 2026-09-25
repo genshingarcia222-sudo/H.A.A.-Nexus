@@ -264,3 +264,110 @@ fn the_profile_survives_a_database_round_trip_byte_for_byte() {
         .expect("profile missing");
     assert_eq!(serde_json::to_value(&loaded).unwrap(), fixture(PROFILE));
 }
+
+// --- migration 004: the exposure ledger (D12 work package 8) --------------
+
+/// One well-formed ledger row, so each test below differs from the valid case
+/// in exactly one way.
+fn insert_delivery(conn: &Connection, delivery_id: &str) -> rusqlite::Result<usize> {
+    conn.execute(
+        "INSERT INTO delivery_events (
+            delivery_id, session_id, learner_ref, population,
+            item_id, item_revision, corpus_release_id, policy_version,
+            envelope_id, tier_at_delivery, modality, difficulty_level,
+            jurisdictions, delivered_at, delivered_on, slot_index, trace
+         ) VALUES (?1, 'S-1', 'learner-7f3a', 'practice',
+            'NEXUS-L1-PRIV-000001', 1, 'release-abc', 'training.default@1',
+            'training.free@1', 'free', 'DIRECT_KNOWLEDGE', 1,
+            '[\"US\"]', '2026-09-25T09:00:00Z', '2026-09-25', 0, '{}')",
+        rusqlite::params![delivery_id],
+    )
+}
+
+#[test]
+fn migration_004_creates_the_delivery_ledger() {
+    let db = TempDb::new();
+    insert_delivery(db.conn(), "D-0001").expect("a well-formed delivery should insert");
+    let count: i64 = db
+        .conn()
+        .query_row("SELECT COUNT(*) FROM delivery_events", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(count, 1);
+}
+
+#[test]
+fn the_schema_version_reaches_four() {
+    let db = TempDb::new();
+    let version: String = db
+        .conn()
+        .query_row(
+            "SELECT value FROM application_metadata WHERE key = 'schema_version'",
+            [],
+            |row| row.get(0),
+        )
+        .unwrap();
+    assert_eq!(version, "4");
+}
+
+#[test]
+fn a_duplicate_delivery_id_is_refused_rather_than_counted_twice() {
+    // A silently accepted duplicate would inflate every exposure count, which
+    // is the one thing the ledger exists to measure.
+    let db = TempDb::new();
+    insert_delivery(db.conn(), "D-0001").unwrap();
+    assert!(insert_delivery(db.conn(), "D-0001").is_err());
+}
+
+#[test]
+fn correctness_cannot_be_recorded_without_the_choice_that_produced_it() {
+    let db = TempDb::new();
+    insert_delivery(db.conn(), "D-0001").unwrap();
+    assert!(db
+        .conn()
+        .execute(
+            "UPDATE delivery_events SET correct = 1 WHERE delivery_id = 'D-0001'",
+            [],
+        )
+        .is_err());
+    db.conn()
+        .execute(
+            "UPDATE delivery_events SET correct = 1, answered_choice_id = 'a' WHERE delivery_id = 'D-0001'",
+            [],
+        )
+        .expect("an answer with its choice should record");
+}
+
+#[test]
+fn an_answer_cannot_precede_its_delivery() {
+    let db = TempDb::new();
+    insert_delivery(db.conn(), "D-0001").unwrap();
+    assert!(db
+        .conn()
+        .execute(
+            "UPDATE delivery_events SET answered_choice_id = 'a', answered_at = '2026-09-25T08:00:00Z' WHERE delivery_id = 'D-0001'",
+            [],
+        )
+        .is_err());
+}
+
+#[test]
+fn a_population_outside_the_d5_split_is_rejected() {
+    // D5: Practice and Assessment stay distinguishable by constraint, not by
+    // convention.
+    let db = TempDb::new();
+    assert!(db
+        .conn()
+        .execute(
+            "UPDATE delivery_events SET population = 'exam' WHERE delivery_id = 'D-0001'",
+            [],
+        )
+        .is_ok()); // no rows yet: the UPDATE matches nothing
+    insert_delivery(db.conn(), "D-0001").unwrap();
+    assert!(db
+        .conn()
+        .execute(
+            "UPDATE delivery_events SET population = 'exam' WHERE delivery_id = 'D-0001'",
+            [],
+        )
+        .is_err());
+}
