@@ -133,7 +133,7 @@ function validate(request: TrainingSelectionRequest, count: number): string[] {
 }
 
 /** Fisher-Yates, driven entirely by the injected source. */
-function shuffle<T>(items: T[], random: RandomSource): T[] {
+export function shuffle<T>(items: T[], random: RandomSource): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
@@ -156,7 +156,7 @@ function shuffle<T>(items: T[], random: RandomSource): T[] {
  * Undefined metadata contributes nothing — questions with no variant group are
  * not treated as all belonging to one.
  */
-const DIVERSITY_WEIGHTS: readonly [keyof TrainingQuestion, number][] = [
+export const DIVERSITY_WEIGHTS: readonly [keyof TrainingQuestion, number][] = [
   ["variantGroup", 8],
   ["learningObjective", 4],
   ["skillArea", 2],
@@ -164,7 +164,7 @@ const DIVERSITY_WEIGHTS: readonly [keyof TrainingQuestion, number][] = [
   ["domain", 1]
 ];
 
-function concentrationCost(question: TrainingQuestion, chosen: TrainingQuestion[]): number {
+export function concentrationCost(question: TrainingQuestion, chosen: TrainingQuestion[]): number {
   let cost = 0;
   for (const [field, weight] of DIVERSITY_WEIGHTS) {
     const value = question[field];

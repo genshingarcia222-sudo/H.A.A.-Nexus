@@ -11,6 +11,60 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 7 — Dynamic Delivery (2026-09-25)
+
+**Scope.** Rows 35-38, 41-48 and 57: choose what a session receives, without
+giving any tier an inventory.
+
+**New: `training-engine/delivery.ts`, `training-engine/exposure.ts`,
+`entitlement-engine/training-envelopes.ts`.** Delivery **composes** the
+existing selector: the injected RandomSource, Fisher-Yates and the diversity
+weights are imported and used unchanged, and the new module sits beside
+`question-selection.ts` so that file keeps its boundary test intact. The only
+change to the selector is that three internals are now exported.
+
+**Compatibility is the load-bearing claim.** With an empty snapshot, adaptive
+off and an open envelope, delivery reproduces the existing selector's run
+exactly for the same seed - asserted over 200 seeds.
+
+**Envelopes, not inventories.** Frozen data beside CAPABILITY_MATRIX gives
+each tier allowed difficulties, modalities, domains, collections and session
+size. Every tier ships **open**, matching today's ungated Training, because
+inventing gating would answer a commercial question nobody has asked. A
+request outside its envelope is refused rather than narrowed.
+
+**Preference order:** no concept twice in a session; the learner's own
+novelty; cross-learner over-exposure; adaptive distance; the inherited
+diversity cost; the seeded shuffle.
+
+**1-in-7 is a ceiling on a share, not a ban.** It applies only with a shared
+ledger, a sample of at least 50, and at least seven concepts in the stratum;
+otherwise CROSS_USER_NOT_MEASURABLE, INSUFFICIENT_SAMPLE or
+TARGET_INFEASIBLE_POOL_TOO_SMALL is recorded. On a single-device install it
+is never measurable, and the traces say so rather than implying a
+distribution nobody can see. An over-exposed concept is ranked last of its
+class, never removed, and repetition never causes insufficiency.
+
+**Every delivery carries a trace** with reason codes, including the best
+novelty that was available - so a pick that was not the freshest must justify
+itself. No field claims global uniqueness.
+
+**Adaptive difficulty ships off**, cannot leave the envelope, and is inert
+without history.
+
+**Tests.** 23 new. **Mutation checks:** five guards - learner novelty,
+diversity, cross-user ranking, the shared-ledger requirement and the envelope
+difficulty filter - each failed a test when removed. Files restored
+byte-identical.
+
+**Verification.** 1,032 tests (765 nexus-core + 267 desktop), typecheck clean,
+build clean, preflight exit 0, self-test 17/17.
+
+**Unchanged.** No ledger is written yet (WP8) and Training still runs on the
+existing selector (WP9). Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
 ## D12 Work Package 6 — Pilot Batch 001 Conversion (2026-09-25)
 
 **Scope.** Row 56 (with 04): turn revision 3 into candidate corpus records

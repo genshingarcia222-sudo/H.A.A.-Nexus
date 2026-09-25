@@ -268,6 +268,54 @@ conversion states the gap rather than filling it. The converted records are
 also not written into `content/` yet: no loader reads corpus files, and
 committing unread content would add unreviewed clinical material to the
 repository for no gain.
+## 4f. Dynamic delivery (WP7)
+
+`training-engine/delivery.ts` decides which questions a session receives. It
+**composes** the existing selector rather than replacing it: the injected
+`RandomSource`, Fisher-Yates and the diversity weights are imported and used
+unchanged, and the module sits beside `question-selection.ts` so that file
+keeps its boundary test — the selector still imports nothing but the question
+bank.
+
+**The compatibility rule.** With an empty exposure snapshot, adaptive off and
+an open envelope, delivery reproduces the existing selector's run exactly for
+the same seed. Asserted over 200 seeds, because every later behaviour is only
+safe if this holds.
+
+**Tiers define an envelope, never an inventory.**
+`entitlement-engine/training-envelopes.ts` holds frozen data beside
+`CAPABILITY_MATRIX`: allowed difficulties, modalities, domains, collections,
+session size, whether adaptive is permitted. **Every tier ships open**,
+because Training has no gating today and inventing some would answer a
+commercial question nobody has asked. A request outside its envelope is
+refused, never quietly narrowed.
+
+**The preference order**, lexicographic: never repeat a concept inside a
+session; then the learner's own novelty (unseen, stale, recent); then
+cross-learner over-exposure; then adaptive distance; then the inherited
+diversity cost; then the seeded shuffle. A learner's own novelty outranks
+cross-learner balance, because being asked something you just answered is a
+worse experience than a concept being slightly over-represented.
+
+**Exposure is per concept, held outside the corpus**, and arrives as a
+snapshot the caller computes. An empty snapshot is valid and means "no
+history available" — never "nobody has seen this".
+
+**1-in-7 is a ceiling on a share, not a ban.** It applies only where it can be
+measured (a shared ledger), where the sample is large enough (50 deliveries)
+and where it is achievable (at least seven concepts in the stratum).
+Otherwise the engine records `CROSS_USER_NOT_MEASURABLE`,
+`INSUFFICIENT_SAMPLE` or `TARGET_INFEASIBLE_POOL_TOO_SMALL` and carries on.
+On a single-device install it is never measurable, and the traces say so.
+
+**Every delivery carries a trace**: novelty, the best novelty that was
+available, cross-user share, diversity cost, pool size, stratum and reason
+codes. When a fresher item existed and was not taken, the trace must say why.
+No field claims global uniqueness; "new to you" is the strongest claim the
+product can make.
+
+**Adaptive difficulty is off by default**, cannot leave the envelope, and with
+no history is inert.
 ## 5. What is deliberately absent
 
 No selector, no tier, no learner, no exposure history, no scoring, and no
