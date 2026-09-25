@@ -35,6 +35,10 @@ fn main() {
             commands::get_competency_record,
             commands::upsert_competency_record,
             commands::upsert_competency_records,
+            commands::append_delivery_event,
+            commands::record_delivery_answer,
+            commands::list_deliveries_for_learner,
+            commands::list_deliveries_for_session,
         ])
         .run(tauri::generate_context!())
         .expect("error while running H.A.A. Nexus");

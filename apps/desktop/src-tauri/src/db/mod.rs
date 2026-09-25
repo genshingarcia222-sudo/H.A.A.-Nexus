@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 
 pub mod competency;
+pub mod delivery;
 pub mod migrations;
 pub mod models;
 pub mod profile;

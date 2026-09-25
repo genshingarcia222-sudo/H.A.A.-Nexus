@@ -7,8 +7,8 @@
 //! the frontend would receive `undefined` for a field - while every other
 //! Rust and TypeScript test stayed green.
 
-use super::models::{CompetencyRecordDto, SessionRecordDto, UserProfileDto};
-use super::{competency, init_connection, profile, sessions};
+use super::models::{CompetencyRecordDto, DeliveryEventDto, SessionRecordDto, UserProfileDto};
+use super::{competency, delivery, init_connection, profile, sessions};
 use rusqlite::Connection;
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
@@ -370,4 +370,121 @@ fn a_population_outside_the_d5_split_is_rejected() {
             [],
         )
         .is_err());
+}
+
+// --- exposure ledger IPC contract (D12 work package 8) -------------------
+
+const DELIVERY_EVENT: &str = include_str!("../../../ipc-contract/delivery-event.json");
+
+#[test]
+fn delivery_event_matches_the_ipc_contract_exactly() {
+    assert_exact_round_trip::<DeliveryEventDto>(DELIVERY_EVENT);
+}
+
+#[test]
+fn a_delivery_survives_a_database_round_trip_byte_for_byte() {
+    let db = TempDb::new();
+    let dto: DeliveryEventDto = serde_json::from_str(DELIVERY_EVENT).unwrap();
+    delivery::append_delivery_event(db.conn(), &dto).unwrap();
+    let loaded = delivery::list_deliveries_for_learner(db.conn(), "learner-7f3a", None).unwrap();
+    assert_eq!(loaded.len(), 1);
+    assert_eq!(
+        serde_json::to_value(&loaded[0]).unwrap(),
+        fixture(DELIVERY_EVENT)
+    );
+}
+
+#[test]
+fn an_empty_ledger_answers_with_an_empty_list_rather_than_an_error() {
+    let db = TempDb::new();
+    assert!(delivery::list_deliveries_for_learner(db.conn(), "nobody", None)
+        .unwrap()
+        .is_empty());
+    assert!(delivery::list_deliveries_for_session(db.conn(), "no-such-run")
+        .unwrap()
+        .is_empty());
+}
+
+#[test]
+fn a_duplicate_delivery_is_reported_as_an_error_across_the_boundary() {
+    let db = TempDb::new();
+    let dto: DeliveryEventDto = serde_json::from_str(DELIVERY_EVENT).unwrap();
+    delivery::append_delivery_event(db.conn(), &dto).unwrap();
+    assert!(delivery::append_delivery_event(db.conn(), &dto).is_err());
+}
+
+#[test]
+fn an_answer_is_recorded_once_and_a_second_attempt_reports_false() {
+    // False rather than an overwrite: a learner's recorded answer is history,
+    // and quietly rewriting it would make the ledger unauditable.
+    let db = TempDb::new();
+    let dto: DeliveryEventDto = serde_json::from_str(DELIVERY_EVENT).unwrap();
+    delivery::append_delivery_event(db.conn(), &dto).unwrap();
+
+    let first = delivery::record_delivery_answer(
+        db.conn(),
+        &dto.delivery_id,
+        "a",
+        true,
+        "2026-09-25T09:00:30Z",
+    )
+    .unwrap();
+    assert!(first);
+
+    let second = delivery::record_delivery_answer(
+        db.conn(),
+        &dto.delivery_id,
+        "b",
+        false,
+        "2026-09-25T09:01:00Z",
+    )
+    .unwrap();
+    assert!(!second);
+
+    let loaded = delivery::list_deliveries_for_session(db.conn(), &dto.session_id).unwrap();
+    assert_eq!(loaded[0].answered_choice_id.as_deref(), Some("a"));
+    assert_eq!(loaded[0].correct, Some(true));
+}
+
+#[test]
+fn answering_a_delivery_that_is_not_there_reports_false_rather_than_failing() {
+    let db = TempDb::new();
+    let recorded =
+        delivery::record_delivery_answer(db.conn(), "D-absent", "a", true, "2026-09-25T09:00:30Z")
+            .unwrap();
+    assert!(!recorded);
+}
+
+#[test]
+fn a_learner_sees_only_their_own_deliveries() {
+    let db = TempDb::new();
+    let mine: DeliveryEventDto = serde_json::from_str(DELIVERY_EVENT).unwrap();
+    let mut theirs = mine.clone();
+    theirs.delivery_id = "other-delivery".to_string();
+    theirs.learner_ref = "learner-other".to_string();
+
+    delivery::append_delivery_event(db.conn(), &mine).unwrap();
+    delivery::append_delivery_event(db.conn(), &theirs).unwrap();
+
+    let loaded = delivery::list_deliveries_for_learner(db.conn(), "learner-7f3a", None).unwrap();
+    assert_eq!(loaded.len(), 1);
+    assert_eq!(loaded[0].learner_ref, "learner-7f3a");
+}
+
+#[test]
+fn the_since_bound_filters_by_delivery_date() {
+    let db = TempDb::new();
+    let older: DeliveryEventDto = serde_json::from_str(DELIVERY_EVENT).unwrap();
+    let mut newer = older.clone();
+    newer.delivery_id = "newer-delivery".to_string();
+    newer.delivered_at = "2026-10-02T09:00:00Z".to_string();
+    newer.delivered_on = "2026-10-02".to_string();
+
+    delivery::append_delivery_event(db.conn(), &older).unwrap();
+    delivery::append_delivery_event(db.conn(), &newer).unwrap();
+
+    let recent =
+        delivery::list_deliveries_for_learner(db.conn(), "learner-7f3a", Some("2026-10-01")).unwrap();
+    assert_eq!(recent.len(), 1);
+    assert_eq!(recent[0].delivery_id, "newer-delivery");
 }

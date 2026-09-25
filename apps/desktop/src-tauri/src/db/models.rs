@@ -100,3 +100,80 @@ pub struct CompetencyRecordDto {
     #[serde(rename = "updatedAt")]
     pub updated_at: i64,
 }
+
+/// Mirrors nexus-core's SelectionTrace
+/// (`training-engine/delivery.ts`, stored by `persistence/delivery-event-repository.ts`).
+///
+/// Evidence about one selection decision. It is carried across IPC whole and
+/// stored as canonical JSON: the columns beside it hold everything selection
+/// needs to query, so the trace stays readable rather than shredded.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SelectionTraceDto {
+    pub novelty: String,
+    #[serde(rename = "bestNoveltyAvailable")]
+    pub best_novelty_available: String,
+    #[serde(rename = "crossUserOverExposed")]
+    pub cross_user_over_exposed: bool,
+    #[serde(rename = "crossUserShare", skip_serializing_if = "Option::is_none")]
+    pub cross_user_share: Option<f64>,
+    #[serde(rename = "diversityCost")]
+    pub diversity_cost: f64,
+    #[serde(rename = "poolSize")]
+    pub pool_size: i64,
+    #[serde(rename = "stratumKey")]
+    pub stratum_key: String,
+    pub reasons: Vec<String>,
+}
+
+/// Mirrors nexus-core's DeliveryEvent (`persistence/delivery-event-repository.ts`).
+///
+/// One item delivered to one learner in one session (D12 work package 8). The
+/// ledger is append-only: there is a command to append and a command to record
+/// an answer exactly once, and no command that edits or deletes anything.
+///
+/// `learner_ref` is pseudonymous. A name or an email arriving in that field
+/// would be a privacy defect, not a display choice.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct DeliveryEventDto {
+    #[serde(rename = "deliveryId")]
+    pub delivery_id: String,
+    #[serde(rename = "sessionId")]
+    pub session_id: String,
+    #[serde(rename = "learnerRef")]
+    pub learner_ref: String,
+    #[serde(rename = "cohortRef", skip_serializing_if = "Option::is_none")]
+    pub cohort_ref: Option<String>,
+    /// D5: "practice" or "assessment", part of the row's identity.
+    pub population: String,
+    #[serde(rename = "itemId")]
+    pub item_id: String,
+    #[serde(rename = "itemRevision")]
+    pub item_revision: i64,
+    #[serde(rename = "conceptId", skip_serializing_if = "Option::is_none")]
+    pub concept_id: Option<String>,
+    #[serde(rename = "corpusReleaseId")]
+    pub corpus_release_id: String,
+    #[serde(rename = "policyVersion")]
+    pub policy_version: String,
+    #[serde(rename = "envelopeId")]
+    pub envelope_id: String,
+    #[serde(rename = "tierAtDelivery")]
+    pub tier_at_delivery: String,
+    pub modality: String,
+    #[serde(rename = "difficultyLevel")]
+    pub difficulty_level: i64,
+    pub jurisdictions: Vec<String>,
+    #[serde(rename = "deliveredAt")]
+    pub delivered_at: String,
+    #[serde(rename = "deliveredOn")]
+    pub delivered_on: String,
+    #[serde(rename = "slotIndex")]
+    pub slot_index: i64,
+    #[serde(rename = "answeredChoiceId", skip_serializing_if = "Option::is_none")]
+    pub answered_choice_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub correct: Option<bool>,
+    #[serde(rename = "answeredAt", skip_serializing_if = "Option::is_none")]
+    pub answered_at: Option<String>,
+    pub trace: SelectionTraceDto,
+}
