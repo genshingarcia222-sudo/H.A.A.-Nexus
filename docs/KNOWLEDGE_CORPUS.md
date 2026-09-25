@@ -198,6 +198,36 @@ deterministic build and a reproducible selection both depend on it.
 build is WP5; until then this answers "may this be delivered", and the release
 gate is the other half of "will it be".
 
+## 4d. The deterministic build (WP5)
+
+`buildCorpus` is a **pure function** of the authoring files, sorted by path,
+plus the hash function it is handed. No clock, no network, no randomness, no
+environment — so the same inputs always produce a byte-identical bundle and the
+same `releaseId`. Tests assert exactly that, including across file order and
+across build dates.
+
+- **Canonical output**: keys sorted, two-space indent, LF, trailing newline.
+  Array order is never touched, because the order of a SOAP note's segments or
+  a workflow's canonical steps is content, not formatting.
+- **Failure emits nothing.** A corpus that does not validate produces no
+  release at all; a partial bundle would look like a release.
+- **Files merge, they do not overlay.** Two files defining one id is a
+  duplicate-id error, never last-one-wins.
+- **Incremental**: each partition carries its own hash, and `diffPartitions`
+  names what was added, changed, removed or left alone. Cross-reference
+  validation still runs over the whole index, because a reference can break
+  when something *else* changes.
+- **`detectUnbumpedRevisions`** catches content edited at the same revision —
+  the way an approval silently comes to cover words nobody approved.
+- **`invalidationReport`** lists records whose sources have moved, been
+  withdrawn or been superseded since review. It **derives; it never mutates**:
+  no status is rewritten, the record simply stops being deliverable until
+  someone reads the new bytes. A candidate nobody had verified is not
+  "invalidated" — it was never resting on those bytes.
+
+The release reports, rather than decides: `upcoming` lists state changes due
+within 60 days so re-verification can be scheduled before a pool empties.
+
 ## 5. What is deliberately absent
 
 No selector, no tier, no learner, no exposure history, no scoring, and no
