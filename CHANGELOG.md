@@ -11,6 +11,57 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 4 — Deliverability, Time, Jurisdiction and Conflicts (2026-09-25)
+
+**Scope.** Rows 20, 23–26, 28: separate "is this record finished and verified"
+from "may it be delivered today".
+
+**New: `temporal.ts`, `conflict.ts`, `eligibility.ts`.**
+
+**Temporal state is computed, never stored.** A record carries dates; whether
+it is future, current, expired or impossible is derived at the date asked
+about, and `asOf` is always an input — nothing here reads the clock. The window
+is the **intersection** of the record's own dates, its pinned context's and
+every cited source's, so an item resting on next year's guidelines is not this
+year's content whatever its own dates say. `CURRENT_ONLY` is the default;
+`INCLUDE_FUTURE` is opt-in; an empty window is `IMPOSSIBLE`, never current.
+`upcomingTransitions` reports changes due within 60 days so re-verification can
+be scheduled before a pool quietly empties.
+
+**`isDeliverable` reports every reason a record is held back**, not the first:
+the static gate (review chain, knowledge grounding, a concept, an
+applicability, quality errors, a source whose authority class may stand alone);
+jurisdiction match, with `UNIVERSAL` answering any request; sources still
+active and still the bytes that were reviewed; pinned context and cited
+knowledge themselves eligible and unexpired; no open conflict; not superseded.
+
+**Conflicts are recorded, never adjudicated.** An open conflict stops every
+record it names, on both sides. Structural overlaps can be *suggested*
+mechanically; contradictions are declared by a person, because choosing between
+two authoritative-looking claims about HIPAA or coding is a judgement about
+truth. A resolution must say how and by whom.
+
+**A source change stops delivery without rewriting anything.** When a
+`snapshotHash` moves, the record is derived as undeliverable rather than
+edited, so nothing is lost and no status is silently downgraded.
+
+**Tests.** 25 new: temporal arithmetic at both inclusive boundaries, the
+complete delivering corpus, and one case per held-back condition.
+
+**Mutation checks.** Four guards removed one at a time — the temporal gate (2
+tests failed), the source-changed check (1), the open-conflict block (1) and
+the window intersection (4). All files restored byte-identical.
+
+**Not yet enforced:** release-manifest membership, which is work package 5.
+Until then this answers "may this be delivered"; the release gate is the other
+half of "will it be".
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**. Frozen fixture hashes intact. No delivery engine,
+exposure ledger or tier behaviour was added.
+
+---
+
 ## D12 Work Package 3 — The Review Log, and Anti-Fabrication (2026-09-25)
 
 **Scope.** Rows 17–19, 21, 22: make a claimed human verification checkable

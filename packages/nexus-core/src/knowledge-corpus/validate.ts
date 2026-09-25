@@ -11,6 +11,7 @@ import { AssessmentItemSchema } from "./item.js";
 import type { AssessmentItem } from "./item.js";
 import { CONCEPT_ID_PATTERN, CONTEXT_ID_PATTERN, ITEM_ID_PATTERN, KNOWLEDGE_ID_PATTERN, parsePinnedRef } from "./ids.js";
 import { ReviewRecordSchema, ReviewerSchema, checkReviewChain } from "./review.js";
+import { ConflictRecordSchema } from "./conflict.js";
 import type { ReviewChainSubject } from "./review.js";
 
 /**
@@ -40,7 +41,8 @@ export const KnowledgeCorpusSchema = z
     competencies: z.array(CompetencyNodeSchema).default([]),
     reviewers: z.array(ReviewerSchema).default([]),
     /** Append-only: a changed mind is a new record, never an edited one. */
-    reviews: z.array(ReviewRecordSchema).default([])
+    reviews: z.array(ReviewRecordSchema).default([]),
+    conflicts: z.array(ConflictRecordSchema).default([])
   })
   .strict();
 
@@ -324,6 +326,22 @@ export function validateKnowledgeCorpus(raw: unknown): KnowledgeCorpusValidation
             `reviews.${index}.target: "${review.target}" reviews revision ${pinned.revision}, but the corpus holds revision ${revision}`
           );
         }
+      }
+    }
+  }
+
+  // A conflict about records the corpus does not hold blocks nothing and can
+  // be reviewed by nobody.
+  const seenConflictIds = new Set<string>();
+  for (const [index, conflict] of corpus.conflicts.entries()) {
+    if (seenConflictIds.has(conflict.id)) {
+      errors.push(`conflicts.${index}.id: duplicate conflict id "${conflict.id}"`);
+    }
+    seenConflictIds.add(conflict.id);
+    for (const [refIndex, ref] of conflict.records.entries()) {
+      const pinned = parsePinnedRef(ref);
+      if (pinned && !findRecord(corpus, pinned.id)) {
+        errors.push(`conflicts.${index}.records.${refIndex}: "${pinned.id}" is not a record in this corpus`);
       }
     }
   }

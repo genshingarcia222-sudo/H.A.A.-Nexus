@@ -23,7 +23,7 @@ One body of evidence-backed, provenance-aware, versioned records:
 | `CompetencyNode` | A node in the Training competency registry | WP1 |
 | `AssessmentItem` | The D11 Training Question, extended with modality and context | WP2 ✔ |
 | `Reviewer`, `ReviewRecord` | Who may verify, and the record of each review | WP3 ✔ |
-| `ConflictRecord` | A declared or detected conflict between records | WP4 |
+| `ConflictRecord` | A declared or detected conflict between records | WP4 ✔ |
 
 Runtime structures — delivery policy, exposure ledger, selection traces — are
 **not** corpus families. They live outside it and may reference records; no
@@ -158,6 +158,45 @@ request-changes-then-approve path without inventing a quorum.
 **One honest limit.** Whether a flag or a claim was *removed* cannot be seen
 from a single snapshot; that needs history, and Git holds it. What is enforced
 here is the stronger property: a claim that is present must be backed.
+
+## 4c. Deliverability (WP4)
+
+Two predicates, kept apart on purpose.
+
+**`isCorpusProductionEligible`** is static: is this record finished, reviewed
+and verified? It delegates to the bank's own `isProductionEligible` for items,
+then adds what a bank question has no fields for — the review chain, knowledge
+grounding, a concept, an applicability, quality errors, and at least one source
+whose authority class may stand alone.
+
+**`isDeliverable`** is relative to a date and a request. It reports every
+reason a record is held back, not just the first:
+
+- **Temporal state is computed at `asOf`**, never stored, and the window is the
+  *intersection* of the record's own dates, its pinned context's and every
+  source's. An item resting on next year's guidelines is not this year's
+  content, whatever its own dates say. `CURRENT_ONLY` is the default;
+  `INCLUDE_FUTURE` is opt-in; an empty window is `IMPOSSIBLE`, never current.
+- **Jurisdiction** must match the request, with `UNIVERSAL` answering any.
+- **Sources must still be what was reviewed.** A changed `snapshotHash`, or a
+  withdrawn or superseded source, stops delivery without altering the record —
+  the change is derived, so nothing is rewritten and nothing is lost.
+- **Dependencies must hold.** A pinned context and every cited knowledge record
+  must themselves be production-eligible and unexpired.
+- **An open conflict stops every record it names**, on both sides. The corpus
+  never picks a winner between two authoritative-looking claims; a resolution
+  must say how and by whom.
+- **Superseded content is history**, not inventory.
+
+`upcomingTransitions` reports records changing state within 60 days, so
+re-verification can be scheduled before a pool quietly empties.
+
+Nothing here reads the clock: `asOf` is always an input, because a
+deterministic build and a reproducible selection both depend on it.
+
+**Not yet enforced here:** membership of a release manifest. The deterministic
+build is WP5; until then this answers "may this be delivered", and the release
+gate is the other half of "will it be".
 
 ## 5. What is deliberately absent
 
