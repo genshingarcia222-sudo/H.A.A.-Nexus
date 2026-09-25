@@ -11,6 +11,52 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 6 — Pilot Batch 001 Conversion (2026-09-25)
+
+**Scope.** Row 56 (with 04): turn revision 3 into candidate corpus records
+without touching r3 or moving anyone through the human gate.
+
+**New: `knowledge-corpus/pilot-conversion.ts`.** Conversion reads the frozen
+r3 fixture and writes new records. Modality and authority class are **plan
+inputs, not inferences** - both are judgements, and the D12 rule is that
+modality is authored rather than guessed from wording. An item the plan does
+not name is not converted, and the omission is reported.
+
+**Text moves verbatim.** A situational stem splits at its final question
+sentence; the case becomes a CaseContext and `caseSummary + " " + question`
+reproduces r3's original exactly, asserted for all three situational items -
+including the one whose case contains a quoted full stop.
+
+Produces 8 sources, 12 items, 3 scenario contexts and one concept per variant
+group stating the batch's own learning objective. r3's prose retrieval note
+becomes a structured machine entry whose verifier must begin `machine:`.
+
+**Q9 stays DIRECT_KNOWLEDGE** despite its workflow-sequencing questionType:
+WORKFLOW needs discrete steps and a canonical order, r3 has neither, and
+conversion must not invent them.
+
+**Tests.** 19 new. **Mutation checks:** four guards - the verbatim split (2
+tests failed), the modality-assignment flag (1), a machine entry naming a
+person (3), and re-adding a missing HUMAN-VERIFY-REQUIRED flag. That last
+mutation initially **survived**, because every r3 item already carries the
+flag so the branch never ran; a test with a stripped batch was added and the
+mutation then failed. All files restored byte-identical.
+
+**Not done here.** No KnowledgeRecords were drafted: turning a rationale into
+a proposition is authoring, not conversion, and production eligibility
+requires them - so the conversion reports the gap instead of filling it. The
+records are also not written into `content/` yet, because no loader reads
+corpus files and committing unread clinical content would add unreviewed
+material for no gain.
+
+**Verification.** 1,009 tests (742 nexus-core + 267 desktop), typecheck clean
+(one error in a new test was found and fixed), build clean, preflight exit 0,
+self-test 17/17. Both frozen fixture hashes unchanged.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**, and `deliverableItems` returns nothing at any date.
+---
+
 ## D12 Work Package 5 — The Deterministic Corpus Build (2026-09-25)
 
 **Scope.** Rows 30-34 and 55: turn authoring files into a release that can be

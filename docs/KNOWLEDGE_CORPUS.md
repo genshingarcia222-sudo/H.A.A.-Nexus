@@ -228,6 +228,46 @@ across build dates.
 The release reports, rather than decides: `upcoming` lists state changes due
 within 60 days so re-verification can be scheduled before a pool empties.
 
+## 4e. Pilot Batch 001 conversion (WP6)
+
+`pilot-conversion.ts` turns revision 3 into candidate corpus records. It
+**reads** r3 and **writes new** records; the batch artifact and both
+hash-pinned fixtures are never touched, and the suite asserts r3's hash
+before and after.
+
+Two things are inputs rather than inferences, because both are judgements:
+**modality** (the D12 rule is that modality is authored, never guessed from
+wording) and **authority class** (which class a publisher belongs to is a fact
+about the source, not a string match on its id). An item the plan does not
+name is not converted, and the omission is reported.
+
+**Text moves verbatim.** A situational stem is split at its final question
+sentence: the case becomes a `CaseContext`, the question stays on the item,
+and `caseSummary + " " + question` reproduces r3's original exactly. The test
+checks all three situational items, including the one whose case contains a
+quotation with a full stop inside it.
+
+What conversion produces: 8 sources, 12 items, 3 scenario contexts and one
+concept per variant group, whose statement is the batch's own learning
+objective, verbatim. r3's prose retrieval note becomes a structured machine
+entry whose verifier must begin `machine:`, so it can never pass for a
+person's sign-off.
+
+**Q9 stays DIRECT_KNOWLEDGE** although its `questionType` is
+workflow-sequencing: WORKFLOW requires discrete steps and a canonical order,
+r3 holds neither, and conversion must not invent them. A reviewer may author
+them as a new revision.
+
+**Every gate stays shut.** All twelve remain `candidate` / `pending` with null
+human-verification fields, and `deliverableItems` returns nothing — today or
+at any later date.
+
+**Not done here:** knowledge records. Drafting a proposition from a rationale
+is authoring, not conversion, and production eligibility requires them, so
+conversion states the gap rather than filling it. The converted records are
+also not written into `content/` yet: no loader reads corpus files, and
+committing unread content would add unreviewed clinical material to the
+repository for no gain.
 ## 5. What is deliberately absent
 
 No selector, no tier, no learner, no exposure history, no scoring, and no
