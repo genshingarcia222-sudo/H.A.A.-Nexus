@@ -10,6 +10,8 @@ import type { AssessmentConcept, CaseContext, CompetencyNode, KnowledgeRecord, S
 import { AssessmentItemSchema } from "./item.js";
 import type { AssessmentItem } from "./item.js";
 import { CONCEPT_ID_PATTERN, CONTEXT_ID_PATTERN, ITEM_ID_PATTERN, KNOWLEDGE_ID_PATTERN, parsePinnedRef } from "./ids.js";
+import { ReviewRecordSchema, ReviewerSchema, checkReviewChain } from "./review.js";
+import type { ReviewChainSubject } from "./review.js";
 
 /**
  * Corpus-level validation: the checks that only make sense across records.
@@ -35,7 +37,10 @@ export const KnowledgeCorpusSchema = z
     contexts: z.array(CaseContextSchema).default([]),
     concepts: z.array(AssessmentConceptSchema).default([]),
     items: z.array(AssessmentItemSchema).default([]),
-    competencies: z.array(CompetencyNodeSchema).default([])
+    competencies: z.array(CompetencyNodeSchema).default([]),
+    reviewers: z.array(ReviewerSchema).default([]),
+    /** Append-only: a changed mind is a new record, never an edited one. */
+    reviews: z.array(ReviewRecordSchema).default([])
   })
   .strict();
 
@@ -281,6 +286,91 @@ export function validateKnowledgeCorpus(raw: unknown): KnowledgeCorpusValidation
         }
       }
     }
+  }
+
+  // --- Review log (WP3) -------------------------------------------------
+  const seenReviewerIds = new Set<string>();
+  for (const [index, reviewer] of corpus.reviewers.entries()) {
+    if (seenReviewerIds.has(reviewer.id)) {
+      errors.push(`reviewers.${index}.id: duplicate reviewer id "${reviewer.id}"`);
+    }
+    seenReviewerIds.add(reviewer.id);
+  }
+  const reviewersById = new Map(corpus.reviewers.map((reviewer) => [reviewer.id, reviewer]));
+
+  const seenReviewIds = new Set<string>();
+  for (const [index, review] of corpus.reviews.entries()) {
+    if (seenReviewIds.has(review.id)) {
+      errors.push(`reviews.${index}.id: duplicate review id "${review.id}"`);
+    }
+    seenReviewIds.add(review.id);
+
+    // A review by nobody the registry knows is a signature without a signer.
+    const reviewer = reviewersById.get(review.reviewerId);
+    if (!reviewer) {
+      errors.push(`reviews.${index}.reviewerId: "${review.reviewerId}" is not a registered reviewer`);
+    }
+
+    // A review of something that is not here cannot be checked by anyone.
+    const pinned = parsePinnedRef(review.target);
+    if (pinned) {
+      const targeted = findRecord(corpus, pinned.id);
+      if (!targeted) {
+        errors.push(`reviews.${index}.target: "${pinned.id}" is not a record in this corpus`);
+      } else {
+        const revision = "revision" in targeted ? targeted.revision : undefined;
+        if (revision !== undefined && revision !== pinned.revision) {
+          errors.push(
+            `reviews.${index}.target: "${review.target}" reviews revision ${pinned.revision}, but the corpus holds revision ${revision}`
+          );
+        }
+      }
+    }
+  }
+
+  // Every record that walks the ladder must be able to prove its claim. The
+  // subject carries only what the check needs, so the rule is stated once and
+  // applies identically to knowledge, contexts, concepts and items.
+  const reviewSubjects: ReviewChainSubject[] = [
+    ...corpus.knowledge.map((record, index) => ({
+      where: `knowledge.${index}`,
+      id: record.id,
+      revision: record.revision,
+      contentStatus: record.contentStatus,
+      reviewStatus: record.reviewStatus,
+      verification: record.verification,
+      flags: record.flags
+    })),
+    ...corpus.contexts.map((record, index) => ({
+      where: `contexts.${index}`,
+      id: record.id,
+      revision: record.revision,
+      contentStatus: record.contentStatus,
+      reviewStatus: record.reviewStatus,
+      verification: record.verification,
+      flags: record.flags
+    })),
+    ...corpus.concepts.map((record, index) => ({
+      where: `concepts.${index}`,
+      id: record.id,
+      revision: record.revision,
+      contentStatus: record.contentStatus,
+      reviewStatus: record.reviewStatus,
+      verification: record.verification,
+      flags: record.flags
+    })),
+    ...corpus.items.map((record, index) => ({
+      where: `items.${index}`,
+      id: record.questionId,
+      revision: record.revision,
+      contentStatus: record.contentStatus,
+      reviewStatus: record.reviewStatus,
+      verification: record.verification,
+      flags: record.flags
+    }))
+  ];
+  for (const subject of reviewSubjects) {
+    errors.push(...checkReviewChain(subject, corpus.reviews, reviewersById));
   }
 
   // --- Competency tree --------------------------------------------------

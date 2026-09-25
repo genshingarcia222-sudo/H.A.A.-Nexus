@@ -11,6 +11,60 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Work Package 3 — The Review Log, and Anti-Fabrication (2026-09-25)
+
+**Scope.** Rows 17–19, 21, 22: make a claimed human verification checkable
+against an actual review record, rather than trusted because it is written
+down.
+
+**New: `knowledge-corpus/review.ts`.** `Reviewer` is a registered person; a
+machine identity can neither be registered as one nor record a review, since an
+agent able to do either could approve its own work. `ReviewRecord` is one
+append-only review event with a reviewer, date, stage (SOURCE, CONTENT, FINAL),
+decision (APPROVE, REQUEST_CHANGES, REJECT), the source snapshots the reviewer
+opened, and a `target` pinned as `id@revision`.
+
+**Enforced by the corpus validator, for knowledge, contexts, concepts and
+items alike:** a human-verification claim must have an approved SOURCE review
+of that exact revision behind it; the claimed verifier and date must be the
+approver and the approval date; the reviewer must be registered and active; a
+review of another record or an earlier revision does not count; the claimed
+status must have every stage it requires, each stage's latest review being an
+approval; `production-eligible` also needs `reviewStatus: approved`; a record
+may not claim a source snapshot the review does not record; and a record still
+flagged `HUMAN-VERIFY-REQUIRED` may not simultaneously claim verification.
+
+**Not decided here:** reviewer qualifications, how many reviewers a record
+needs, and any approval threshold. Multiple reviews per stage are allowed and
+the latest decides, which supports request-changes-then-approve without
+inventing a quorum.
+
+**Honest limit.** Whether a claim or flag was *removed* cannot be detected from
+a single snapshot — that needs history, which Git holds. What is enforced is
+that a claim which is present must be backed.
+
+**Tests.** 27 new, covering the valid chain, both a rejected-then-approved
+history and a candidate that claims nothing, and every fabrication route:
+no review behind the claim, unregistered reviewer, inactive reviewer, wrong
+reviewer, wrong date, half a verification, invented snapshot, review of another
+record, review of an earlier revision, review of a record not in the corpus,
+duplicate ids, status ahead of its evidence, and flag/claim contradiction.
+
+**Mutation checks.** Four guards were removed one at a time — the
+claim-needs-an-approval rule (5 tests failed), the reviewer-identity match (1),
+the required-stage loop (3), and the whole cross-check (12). Every file was
+restored byte-identical afterwards.
+
+**Verification.** 942 tests (675 nexus-core + 267 desktop; 27 new), typecheck
+clean, build clean, preflight exit 0, preflight self-test 17/17. Rust was not
+touched and was not run.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible** — WP3 hardens the gate, it does not move anyone through
+it. Both frozen fixture hashes intact. No WP4–WP9 work was performed.
+
+---
+
 ## D12 Work Package 2 — Assessment Items and Quality Rules (2026-09-24)
 
 **The question record is extended, not replaced** (rows 04–08, 12, 45, 54).

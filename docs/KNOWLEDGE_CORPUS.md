@@ -22,7 +22,7 @@ One body of evidence-backed, provenance-aware, versioned records:
 | `AssessmentConcept` | What a family of variants tests | WP1 |
 | `CompetencyNode` | A node in the Training competency registry | WP1 |
 | `AssessmentItem` | The D11 Training Question, extended with modality and context | WP2 ✔ |
-| `Reviewer`, `ReviewRecord` | Who may verify, and the record of each review | WP3 |
+| `Reviewer`, `ReviewRecord` | Who may verify, and the record of each review | WP3 ✔ |
 | `ConflictRecord` | A declared or detected conflict between records | WP4 |
 
 Runtime structures — delivery policy, exposure ledger, selection traces — are
@@ -116,6 +116,48 @@ code-like tokens, absolute wording with no exception cited, article cues in the
 stem, modality/question-type mismatch, per-file answer-position cap
 (`ceil(n/4)+1`, the pilot validator's own), duplicate ids and near-duplicate
 stems by trigram overlap.
+
+## 4b. The review log (WP3)
+
+The bank already forbade claiming a status above `candidate` without a recorded
+human verifier. On its own that rule is honest but unenforceable: a name and a
+date typed into a record look exactly like a name and a date earned by reading
+the source. WP3 makes the claim checkable.
+
+**Reviewer** is a registered person. A machine identity cannot be registered as
+one and cannot record a review — an agent able to do either could approve its
+own work. **ReviewRecord** is one review event, append-only, naming the
+reviewer, the date, the stage, the decision, the source snapshots the reviewer
+opened, and a `target` pinned as `id@revision`.
+
+What the corpus now enforces:
+
+- **The claim must have a review behind it.** A `humanVerifiedBy` /
+  `humanVerifiedOn` pair with no approved SOURCE review of that exact revision
+  is rejected.
+- **The verifier must be the approver.** The names and the dates must match the
+  SOURCE approval, and the reviewer must be registered and active.
+- **The review must be of this record.** A review targeting another record, or
+  an earlier revision, does not satisfy the claim — a reviewer verified words
+  that have since changed.
+- **Status cannot outrun evidence.** `source-verified` needs SOURCE;
+  `content-reviewed` needs SOURCE and CONTENT; `approved` and
+  `production-eligible` need all three, each one's *latest* review being an
+  approval. `production-eligible` additionally needs `reviewStatus: approved`.
+- **Snapshots cannot be invented.** A record may not claim to have been checked
+  against a source snapshot the review does not record.
+- **Flags and claims may not contradict.** A record still carrying
+  `HUMAN-VERIFY-REQUIRED` cannot also claim verification or a status above
+  candidate.
+
+Deliberately not decided here: how many reviewers a record needs, who is
+qualified to review what, and any approval threshold. Multiple reviews per
+stage are allowed and the latest decides, which supports the normal
+request-changes-then-approve path without inventing a quorum.
+
+**One honest limit.** Whether a flag or a claim was *removed* cannot be seen
+from a single snapshot; that needs history, and Git holds it. What is enforced
+here is the stronger property: a claim that is present must be backed.
 
 ## 5. What is deliberately absent
 
