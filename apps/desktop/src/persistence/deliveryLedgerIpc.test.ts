@@ -28,7 +28,10 @@ describe("the shared fixture is the contract", () => {
 
   it("carries a pseudonymous learner reference, not a person's name", () => {
     expect(event.learnerRef).toMatch(/^learner-/);
-    expect(JSON.stringify(deliveryEventFixture)).not.toMatch(/@|email|firstName|lastName/i);
+    // An address, not any "@": policy and envelope ids are pinned as
+    // "training.default@1", which is a version, not a mailbox.
+    expect(JSON.stringify(deliveryEventFixture)).not.toMatch(/[\w.+-]+@[\w-]+\.[\w.]+/);
+    expect(JSON.stringify(deliveryEventFixture)).not.toMatch(/email|firstName|lastName|fullName/i);
   });
 });
 
