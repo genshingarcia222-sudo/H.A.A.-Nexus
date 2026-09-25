@@ -109,6 +109,28 @@ export interface DeliveryEventRepository {
   size: number;
 }
 
+/**
+ * The same contract across a process boundary.
+ *
+ * The desktop ledger lives behind IPC, so every call is asynchronous. It is a
+ * separate interface rather than making the in-memory one async: the in-memory
+ * adapter is used in tests and in runtimes with no store, where forcing every
+ * caller to await a Map lookup buys nothing. Both are append-only, and both
+ * refuse the same things - a duplicate delivery, an unknown delivery, and a
+ * second answer - so a caller cannot tell them apart by behaviour.
+ *
+ * `size` is deliberately absent: counting a durable ledger is a query, not a
+ * property, and nothing in selection needs it.
+ */
+export interface AsyncDeliveryEventRepository {
+  append(event: DeliveryEvent): Promise<void>;
+  recordAnswer(
+    deliveryId: string,
+    answer: { answeredChoiceId: string; correct: boolean; answeredAt: string }
+  ): Promise<void>;
+  find(query?: DeliveryEventQuery): Promise<DeliveryEvent[]>;
+}
+
 export class DuplicateDeliveryError extends Error {
   constructor(deliveryId: string) {
     super(`delivery "${deliveryId}" is already recorded`);
