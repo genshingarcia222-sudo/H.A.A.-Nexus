@@ -11,6 +11,49 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 — The 1-in-7 Target, Measured (2026-09-25)
+
+**Why.** The D12 contract's acceptance list (Section 38) asks for a simulated
+run proving the delivery engine actually holds the cross-user exposure target,
+not merely that `assessCrossUserExposure` classifies a share correctly. That
+simulation was the one specified test still missing after WP9.
+
+**New: `training-engine/selection-crossuser.test.ts`** - 2,000 deterministic
+sessions of ten (20,000 deliveries) over twenty concepts in one stratum, with
+every delivery folded back into the rolling window the next session reads.
+Compliance holds: every measured window stays at or under 1/7 plus tolerance.
+
+**What the simulation revealed, and it is worth recording.** Written the
+obvious way, that test passes **whether or not the cross-user key is wired**
+in - verified by deleting the key and watching it stay green. The reason is
+structural: a session never serves one concept twice, so with K eligible
+concepts a concept's share is already bounded near 1/K, and once K reaches
+seven - the point where a 1/7 ceiling becomes reachable at all - that bound is
+tighter than the target. **The ceiling is a backstop, not the mechanism**, and
+a steady-state run cannot tell the difference.
+
+So the suite now contains a discriminating case instead: one pick per session,
+eight concepts, no learner history, nothing chosen yet - novelty ties and
+diversity cost is zero, so the over-exposed concept is the only thing the
+engine can be deciding on. It is served **0 times in 200 sessions** while its
+share stays above target; with the key removed it is served **32**. That
+mutation is what makes the test worth having.
+
+Also covered: an infeasible stratum (five concepts) records
+`TARGET_INFEASIBLE_POOL_TOO_SMALL` and forces nothing, and a single-device
+install records `CROSS_USER_NOT_MEASURABLE` with no share at all.
+
+**No production code changed.** This checkpoint is test and documentation
+only.
+
+**Verification.** 784 nexus-core tests (4 new), typecheck clean. The desktop
+suite and build were not re-run: nothing outside `nexus-core` test sources
+changed.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**; no eligibility, review or delivery gate was altered.
+---
+
 ## D12 Work Package 9 — Training Runs on the Delivery Layer (2026-09-25)
 
 **Scope.** Rows 49-53: Training selects through the D12 delivery engine. This
