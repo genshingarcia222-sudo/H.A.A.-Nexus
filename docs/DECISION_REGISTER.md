@@ -178,12 +178,25 @@ values, whether adaptive difficulty is switched on, and whether a future
 question-based Assessment shares Training's pool. Each has a shipped default
 that changes nothing about today's behaviour.
 
-**Implementation state:** work package 1 (corpus record families and
-cross-record resolution) is implemented and tested in
-`packages/nexus-core/src/knowledge-corpus/`. Later packages extend the question
-record with modality and context, add the review-record cross-check, the
-deliverability predicate, the deterministic build, the pilot conversion, the
-delivery engine and the exposure ledger.
+**Implementation state (2026-09-25):** all nine work packages are implemented,
+tested and pushed on `feat/training-question-bank`. The corpus record families,
+the assessment item with its seven modalities, the review log and its
+anti-fabrication cross-check, deliverability with computed time and conflicts,
+the deterministic build with source invalidation, the Pilot 001 conversion, the
+dynamic delivery engine, and the exposure ledger (contract, in-memory adapter,
+SQLite migration 004 and IPC) all exist. Training selects through the delivery
+engine. `docs/KNOWLEDGE_CORPUS.md` carries the per-package table.
+
+**What that does not mean.** No learner-facing content changed. Pilot Batch 001
+is still **0 of 12 human-verified with 0 production-eligible**, and Training
+still runs on the synthetic preview bank. Deliberately outstanding, each for a
+reason rather than an oversight: knowledge records for the pilot (drafting a
+proposition from a rationale is authoring, not conversion); writing to the
+exposure ledger from Training and the web ledger binding (both need a learner
+identity and a persistence decision, which is **D10**); the per-tier envelope
+values (a commercial decision, so every tier ships open); adaptive difficulty
+(off by default); and whether a question-based Assessment shares Training's
+pool.
 
 ### Evidence considered while this decision was open
 

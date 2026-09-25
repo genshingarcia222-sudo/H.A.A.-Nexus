@@ -11,6 +11,23 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D12 Decision Register Brought Up to Date (2026-09-25)
+
+The D12 entry still read "work package 1 ... is implemented", written when
+that was true. All nine are now implemented, tested and pushed, so the
+register said something the repository had outgrown - and the register is the
+first place another device looks.
+
+Corrected to state what exists, and, more importantly, what still does not:
+Pilot Batch 001 remains **0 of 12 human-verified with 0 production-eligible**,
+Training still runs on the synthetic preview bank, and the outstanding items
+(pilot knowledge records, ledger writing, the web binding, per-tier envelope
+values, adaptive difficulty, the Assessment pool question) are each listed
+with the reason they are outstanding rather than left to look like oversights.
+
+Documentation only: no code, tests, content or gates changed.
+---
+
 ## D12 — The 1-in-7 Target, Measured (2026-09-25)
 
 **Why.** The D12 contract's acceptance list (Section 38) asks for a simulated
