@@ -18,17 +18,17 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
 project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
-current_phase: "Phase 8 - Commercialization (8.3 Assessment Mode)"
-current_milestone: "All Phase 8.3 Assessment decisions resolved (D1-D7); D8, D9, D10 open"
+current_phase: "Phase 9 - Packaging & Release Hardening (ENTRY: specification authored only; Phase 8 is NOT closed)"
+current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
 baseline_commit: 1d7b209307e7f2a2490cd113116e65052aada980
 last_verified_commit: 1d7b209307e7f2a2490cd113116e65052aada980
 last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync 60/60 (2026-09-23, DEVICE-01)"
 last_verified_build: "PASS - pnpm -r build (2026-09-23, DEVICE-01)"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-23, DEVICE-01)"
 last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-23, DEVICE-01)"
-active_task: NEXUS-SYNC-001
-task_owner: DEVICE-01
-task_status: COMPLETE
+active_task: P9-001
+task_owner: DEVICE-02
+task_status: HANDOFF_PENDING
 last_successful_sync: 2026-09-23T14:28:02.008Z
 last_sync_device: DEVICE-01
 last_sync_commit: f3d525df1392d765751dd11f545c7b4003073142
@@ -40,6 +40,16 @@ recovery_status: "none - no recovery in progress"
 
 Product and engineering work, with the canonical record for each:
 
+- **Phase 9 decisions D13 to D16.** All four are open owner decisions and
+  all Phase 9 implementation is blocked on them. See
+  `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` §5. D13 (code-signing
+  identity) needs a credential; D14 (update-feed location) is entangled with
+  D10 and prevents Phase 9 closing before D10 is decided; D15 (merge
+  `feat/training-question-bank`, whose tip `de2c2d1` already addresses P9-A) is
+  the previously escalated branch decision; D16 (release/version policy) has
+  no external dependency. Phase 9 items requiring a built or installed Windows
+  artifact must be implemented on DEVICE-01 — DEVICE-02 cannot run WiX/NSIS or
+  `cargo test` (§6 of that document).
 - **D8** (practice/simulation resume, with A6 as its engineering half) and
   **D9** (evaluation-failure behaviour). Both are open owner decisions. See
   `docs/PHASE_8_3_ASSESSMENT_MODE.md` §3.

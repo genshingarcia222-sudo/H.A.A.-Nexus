@@ -401,6 +401,100 @@ today; D3 left that exactly as it was rather than ratifying it.
 
 ---
 
+## D13 — What code-signing identity signs the installers?
+
+**Blocked work:** Phase 9 items P9-B (installer signing) and P9-E (bundle
+metadata, whose `publisher` is normally the signing identity). See
+`docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`.
+
+**Current behaviour, verified in the repository:** `tauri.conf.json` `bundle`
+declares `active`, `targets: ["msi","nsis"]` and `icon`, and **no signing
+configuration** — no `windows.certificateThumbprint`, no `digestAlgorithm`, no
+`timestampUrl`. `tauri build` produces a working 3.6 MB MSI and 2.5 MB NSIS
+setup, both unsigned, which raises SmartScreen warnings on end-user machines.
+
+| Option | Consequence |
+|---|---|
+| OV certificate | Cheapest real option; SmartScreen reputation must still accumulate per-binary |
+| EV certificate | Immediate SmartScreen reputation; higher cost, hardware token, stricter identity vetting |
+| Azure Trusted Signing | No token to manage, subscription-based; ties releases to an Azure tenant |
+| Self-signed | Internal pilot only; every external installation shows an untrusted-publisher warning |
+
+The distinguishing question is not technical: it is whether installers are
+distributed outside the pilot group.
+
+**Not fabricable.** A signing identity is a purchased legal credential. No code
+change can substitute for it, and the key must never be committed — `.gitignore`
+already covers `*.pem`, `*.key` and `secrets.json`.
+
+---
+
+## D14 — Where does the auto-update feed live?
+
+**Blocked work:** Phase 9 item P9-C (auto-update).
+
+**Current behaviour, verified in the repository:** the updater is **absent, not
+merely unconfigured**. `apps/desktop/src-tauri/Cargo.toml` `[dependencies]` lists
+`tauri`, `serde`, `serde_json` and `rusqlite` — no `tauri-plugin-updater` — and
+`tauri.conf.json` has no `plugins.updater` block and no
+`bundle.createUpdaterArtifacts`. Architecture Package §21 records the plugin as
+"architected for but not wired to a release feed until Phase 9".
+
+| Option | Consequence |
+|---|---|
+| GitHub Releases | No infrastructure to run; release assets and update metadata are public |
+| First-party hosting | Private distribution and access control; **pre-commits Phase 10 cloud infrastructure** |
+
+**Depends on D10.** Choosing first-party hosting selects cloud infrastructure
+that D10 has not yet decided. **Phase 9 therefore cannot close before D10 is
+decided.**
+
+Note that Tauri's updater verifies a detached signature using an
+**update-signing keypair that is separate from the installer code-signing
+certificate in D13**. Both are needed; neither substitutes for the other.
+
+---
+
+## D15 — Is `feat/training-question-bank` merged, or is its fix reimplemented?
+
+**Blocked work:** Phase 9 item P9-A (Windows release builds open a console
+window).
+
+**Current behaviour, verified in the repository:**
+`apps/desktop/src-tauri/src/main.rs` on `main` does **not** carry
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` (confirmed
+absent at `7e304a1`). The unmerged branch `origin/feat/training-question-bank`
+has tip commit `de2c2d1` *"fix(desktop): release builds are windowed, not
+console"*, which by its subject addresses exactly this.
+
+| Option | Consequence |
+|---|---|
+| Merge the branch | Fix arrives with it; also brings the Training question run (M23), Pilot 001 r3 and open decision **D12** — the escalation this decision restates |
+| Reimplement on `main` | One attribute line now; creates a conflicting change in `main.rs` when the branch is later merged |
+| Retire the branch | Resolves the long-standing escalation; discards whatever else it carries |
+
+This restates an escalation outstanding since 2026-09-21, recorded in
+`.nexus/CURRENT_STATE.md` "Pending work" and process decision N-007. **P9-A was
+deliberately not implemented** pending this decision, to avoid the conflict.
+
+---
+
+## D16 — What is the release and version policy?
+
+**Blocked work:** Phase 9 item P9-D.
+
+**Current behaviour, verified in the repository:** `tauri.conf.json` `version` is
+`0.1.0` and root `package.json` `version` is `0.1.0`. Nothing enforces that they
+agree. There is no tagging convention, no channel policy (stable/beta), no
+release checklist, and no mapping from `CHANGELOG.md` to a release —
+`CHANGELOG.md` is a development log, not a release log.
+
+**No external dependency.** Unlike D13 and D14 this needs no credential and
+no provider, so it is the cheapest Phase 9 decision to resolve and is authorable
+on either device.
+
+---
+
 ## Roadmap steps 4 and 5
 
 | Step | State |
