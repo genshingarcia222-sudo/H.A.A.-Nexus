@@ -1,0 +1,2095 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000006",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-DOCT-KB001-000061",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "Dr. Saoirse Mbeki-Lantz is seeing Emeka Solberg (MRN SYN-5647) about worsening leg swelling. Extract what is pertinent for this visit.",
+      "goldBehavior": "Pertinence is decided by the presenting problem, not by what is interesting. Carry forward the six-week-old medication change as the only recent change in the list, the absence of swelling at either prior visit, the hypertension, and the standing work and longer commute. Leave the 1998 appendicectomy and the rhinitis out. Present the medication change as a documented sequence of events, not as a cause.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Carries the recent medication change forward as the single recent change.",
+          "credit": 0.25,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Carries the documented absence of prior swelling, which is pertinent negative evidence.",
+          "credit": 0.25,
+          "evidenceRef": "F3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Omits the 1998 appendicectomy and the rhinitis.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "States the sequence without asserting a cause.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scribe",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "589b195b135fae3a",
+        "scenarioFingerprint": "cf8fa0a7f1a50584",
+        "competencyFingerprint": "8b915a5a8cbd5109",
+        "evidenceLayoutFingerprint": "9c111ba04b22ec44",
+        "answerPatternFingerprint": "d78ac3e334d3f0f4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000062",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "NP Caius Ostrowski is seeing Fenella Quintanilla (MRN SYN-2914) about worsening leg swelling. Extract what is pertinent for this visit. Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Pertinence is decided by the presenting problem, not by what is interesting. Carry forward the six-week-old medication change as the only recent change in the list, the absence of swelling at either prior visit, the hypertension, and the standing work and longer commute. Leave the 1998 appendicectomy and the rhinitis out. Present the medication change as a documented sequence of events, not as a cause.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Carries the recent medication change forward as the single recent change.",
+          "credit": 0.25,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Carries the documented absence of prior swelling, which is pertinent negative evidence.",
+          "credit": 0.25,
+          "evidenceRef": "F3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Omits the 1998 appendicectomy and the rhinitis.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "States the sequence without asserting a cause.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scribe",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "d58655be1f74ede2",
+        "scenarioFingerprint": "52dfcefd538219c5",
+        "competencyFingerprint": "8b915a5a8cbd5109",
+        "evidenceLayoutFingerprint": "f186cd81ce4c969c",
+        "answerPatternFingerprint": "d78ac3e334d3f0f4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000063",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — a calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "PA Yolanda Trevisani is seeing Gideon Marchetti-Oyelaran (MRN SYN-6073) about worsening leg swelling. Extract what is pertinent for this visit. Nothing in this record is labelled as important.",
+      "goldBehavior": "Pertinence is decided by the presenting problem, not by what is interesting. Carry forward the six-week-old medication change as the only recent change in the list, the absence of swelling at either prior visit, the hypertension, and the standing work and longer commute. Leave the 1998 appendicectomy and the rhinitis out. Present the medication change as a documented sequence of events, not as a cause.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Carries the recent medication change forward as the single recent change.",
+          "credit": 0.25,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Carries the documented absence of prior swelling, which is pertinent negative evidence.",
+          "credit": 0.25,
+          "evidenceRef": "F3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Omits the 1998 appendicectomy and the rhinitis.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "States the sequence without asserting a cause.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scribe",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "718deb1ce64c629f",
+        "scenarioFingerprint": "16f5a713bd2fd3b0",
+        "competencyFingerprint": "8b915a5a8cbd5109",
+        "evidenceLayoutFingerprint": "bc59e2c1976545e2",
+        "answerPatternFingerprint": "d78ac3e334d3f0f4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000064",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Dr. Imani Farrokhzad is seeing Halina Berkovits (MRN SYN-1528) about worsening leg swelling. Extract what is pertinent for this visit. If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (when the calcium-channel blocker was started relative to the onset of swelling), name Dr. Imani Farrokhzad as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"when the calcium-channel blocker was started relative to the onset of swelling\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "F1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scribe",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "78d561626b53490b",
+        "scenarioFingerprint": "d5d5e73a9b2088fe",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "08359be8f5b188bb",
+        "answerPatternFingerprint": "bcc447422b1e68ff"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000065",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__CONTRADICTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#CONTRADICTION"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2026-08-13: states the opposite of the entry at F2 — \"the medication list has been unchanged for two years\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "Dr. Teodoro Haakonsen is seeing Ignatius Nwachukwu (MRN SYN-9461) about worsening leg swelling. Extract what is pertinent for this visit. Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (F2 and OP-X1), state that neither is marked as an amendment of the other, name Dr. Teodoro Haakonsen as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to Dr. Teodoro Haakonsen instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "scribe",
+      "nextActionOwner": "Dr. Teodoro Haakonsen",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "1f2c59b187bdb6ae",
+        "scenarioFingerprint": "14b23eccb8750a09",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "7a1f03971a236c74",
+        "answerPatternFingerprint": "9adf49a1f150cb7b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000066",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__SAFETY_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#SAFETY_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"One leg swelled up overnight and the calf is hot and tender to touch.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "Dr. Ngozi Brandtsen is seeing Jovana Petrakis-Hume (MRN SYN-3807) about worsening leg swelling. Extract what is pertinent for this visit. Something the patient said while this was being handled has not been written down anywhere.",
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Ngozi Brandtsen or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "scribe",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "ad5ce36cb1de949a",
+        "scenarioFingerprint": "c14aa0e19abbb49e",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "fcd7c17b7e657e82",
+        "answerPatternFingerprint": "a38acc44dd5d701d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000067",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__WRONG_RECIPIENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#WRONG_RECIPIENT"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "Dr. Rurik Vandeveer is seeing Kwabena Lindqvist (MRN SYN-7134) about worsening leg swelling. Extract what is pertinent for this visit. The destination on the request and the destination in the chart are not the same.",
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with Dr. Rurik Vandeveer or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "scribe",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "4532bbbf791c1691",
+        "scenarioFingerprint": "c63031e52c34964c",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "e09bb3d8c08b0059",
+        "answerPatternFingerprint": "1815d466c7c2e09e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000068",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#IDENTITY_NEAR_MATCH"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Lorelai Abubakar-Stern, MRN SYN-4592, DOB 1958-06-21; and Lorelai Abubakar-Stern, MRN SYN-4593, DOB 1958-06-01. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "Dr. Saoirse Mbeki-Lantz is seeing Lorelai Abubakar-Stern (MRN SYN-4592) about worsening leg swelling. Extract what is pertinent for this visit. The name on the request matches two different patients.",
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "scribe",
+      "nextActionOwner": "Dr. Saoirse Mbeki-Lantz",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "5df443e2dcc5337c",
+        "scenarioFingerprint": "c72f40d68c18b758",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "7d8c3df0dbb360c9",
+        "answerPatternFingerprint": "2e5699ecf9baf896"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000069",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#OWNERSHIP_AMBIGUOUS"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "NP Caius Ostrowski is seeing Arden Kowalczyk (MRN SYN-4419) about worsening leg swelling. Extract what is pertinent for this visit. Two handoff notes each assume the other person did it, and nobody has.",
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scribe",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "db8009751094c6ca",
+        "scenarioFingerprint": "88cad4ceccd9babc",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "4c55214d8b3e629a",
+        "answerPatternFingerprint": "0e097a4018434c4f"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000070",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__STALE_PREREQUISITE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#STALE_PREREQUISITE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year.",
+            "section": "Medications",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The medication reconciliation performed at the last visit is recorded as valid through 2027-03-16. The action this task sets up is scheduled for 2027-03-23, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2027-02-23",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "PA Yolanda Trevisani is seeing Bassey Oduya (MRN SYN-7291) about worsening leg swelling. Extract what is pertinent for this visit. The system shows this as ready to proceed.",
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The medication reconciliation performed at the last visit expires on 2027-03-16 and the action falls on 2027-03-23, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "scribe",
+      "nextActionOwner": "PA Yolanda Trevisani",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "05c9282f87d5f33f",
+        "scenarioFingerprint": "a8906f715bfc1009",
+        "competencyFingerprint": "cc77458d642e2465",
+        "evidenceLayoutFingerprint": "093b39c25d5d91bf",
+        "answerPatternFingerprint": "3502fb96a47ee3aa"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000071",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__PROVENANCE_STRIPPED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#PROVENANCE_STRIPPED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Hypertension, managed. Osteoarthritis of both knees. Seasonal rhinitis. Appendicectomy 1998.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "F3",
+            "text": "Two visits in the past year, both for knee pain. No swelling recorded at either.",
+            "section": "Recent notes",
+            "decisive": false
+          },
+          {
+            "ref": "F4",
+            "text": "Works standing; recently began a longer commute.",
+            "section": "Social",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "Dr. Imani Farrokhzad is seeing Arden Kowalczyk-Reyes (MRN SYN-4418) about worsening leg swelling. Extract what is pertinent for this visit. The fact you need is in the record three times and attributed nowhere.",
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scribe",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "d12ccaf2a3f569bb",
+        "scenarioFingerprint": "06535edaa389e5b5",
+        "competencyFingerprint": "933fec7dc3f2ea20",
+        "evidenceLayoutFingerprint": "cfdef34f533e601b",
+        "answerPatternFingerprint": "3e6a30e22f45dcfa"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB001-000072",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE__MULTI_STAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000006#MULTI_STAGE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2026-03-17, walk-in at the front desk: the task opens as described — Dr. Teodoro Haakonsen is seeing Bassey Oduya (MRN SYN-7290) about worsening leg swelling. Extract what is pertinent for this visit. P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-03-17",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2026-03-17",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: A calcium-channel blocker was started six weeks ago and is the only change to the medication list in the past year. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2026-04-14",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "The extraction was used as the referral summary without the medication timeline. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2026-04-14",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "Dr. Teodoro Haakonsen is seeing Bassey Oduya (MRN SYN-7290) about worsening leg swelling. Extract what is pertinent for this visit. Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB001-000061",
+      "variantOf": "KB-DOCT-KB001-000061",
+      "templateId": "KB-VART-KB001-000006",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB001-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "scribe",
+      "nextActionOwner": "Dr. Teodoro Haakonsen",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "97e6b098222c92b0",
+        "scenarioFingerprint": "51bef86e911c1165",
+        "competencyFingerprint": "85ceb8e10ab72a59",
+        "evidenceLayoutFingerprint": "a8cc74f40e4f71d7",
+        "answerPatternFingerprint": "8c32feb285add4ca"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

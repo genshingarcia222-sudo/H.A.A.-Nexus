@@ -1,0 +1,45 @@
+{
+  "registryId": "KB-REG-DIFFICULTY",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section X (owner-supplied, 2026-09-26)",
+  "principle": "Difficulty measures reasoning complexity, not terminology complexity. A record whose only hard part is an unfamiliar word is EASY.",
+  "mappingNote": "The repository Question Bank carries a separate 6-level authoring difficulty (1 Foundation .. 6 Master). These five bands are the archive's model and are NOT that scale. repositoryLevelHint is an advisory mapping for a future ingestion contract only; nothing consumes it today and it implies no entitlement tier.",
+  "bands": [
+    {
+      "id": "EASY",
+      "ordinal": 1,
+      "repositoryLevelHint": [1, 2],
+      "requires": { "principalTasks": 1, "maxDependencies": 1, "traps": 1, "ambiguity": "MINIMAL" },
+      "description": "One principal task, minimal ambiguity, low dependency count, basic recognition or application, one main trap."
+    },
+    {
+      "id": "MODERATE",
+      "ordinal": 2,
+      "repositoryLevelHint": [3],
+      "requires": { "minLogicalSteps": 2, "maxLogicalSteps": 3, "interactingFacts": true, "missingOrConflictingElements": 1, "prioritization": true },
+      "description": "Two to three logical steps over interacting facts, exactly one missing or conflicting element, and a prioritisation call."
+    },
+    {
+      "id": "HARD",
+      "ordinal": 3,
+      "repositoryLevelHint": [4],
+      "requires": { "minDependencies": 3, "maxDependencies": 5, "competingPriorities": true, "contradictionOrScopeBoundary": true, "evidenceDiscipline": true, "downstreamConsequences": true },
+      "description": "Three to five dependencies, competing priorities, a contradiction or a scope boundary, evidence discipline, and a downstream consequence."
+    },
+    {
+      "id": "VERY_HARD",
+      "ordinal": 4,
+      "repositoryLevelHint": [5],
+      "requires": { "minDependencies": 5, "incompleteInformation": true, "timePressure": true, "competingObjectives": true, "multiplePlausiblePaths": true, "oneDefensibleSequence": true },
+      "description": "Five or more dependencies, incomplete information under time pressure, competing objectives with safety/privacy/coding implications, and several plausible paths of which one is defensible."
+    },
+    {
+      "id": "REALISTIC_PREMIUM",
+      "ordinal": 5,
+      "repositoryLevelHint": [6],
+      "requires": { "multiStage": true, "delayedClues": true, "evolvingEvidence": true, "multipleRoles": true, "ownershipTransitions": true, "branchingConsequences": true, "replayable": true, "auditReconstruction": true },
+      "description": "A multi-stage encounter with delayed clues, evolving evidence, several roles, ownership transitions, branching consequences, replay and audit reconstruction.",
+      "accessNote": "Charter section XXXIII: Realistic Premium is a distinct access class. Presence in the corpus grants no entitlement."
+    }
+  ]
+}

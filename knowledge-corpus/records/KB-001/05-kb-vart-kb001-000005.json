@@ -1,0 +1,2334 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000005",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB001-000049",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Gideon Marchetti-Oyelaran. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Rosemark Internal Medicine share this name.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "An inbound call about Gideon Marchetti-Oyelaran arrives at Rosemark Internal Medicine. Put the intake steps in the order that protects the patient.",
+      "steps": [
+        "Read back the agreed action, owner and timeframe.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Establish who is calling and their relationship to the patient.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Determine what the caller needs and who owns it.",
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling."
+      ],
+      "canonicalOrder": [
+        3,
+        2,
+        5,
+        6,
+        4,
+        0,
+        1
+      ],
+      "goldBehavior": "Identity and caller authority come before the request, and screening comes before administrative handling. Confirm two independent identifiers for the patient, establish who is calling and on what basis, take the reason in the caller's words, screen for anything clinical, then determine the need and the owner, read back the action and timeframe, and document with the identifiers you confirmed. An open referral record on the screen is not the patient.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Places identifier confirmation first, before any part of the request is acted on.",
+          "credit": 0.25,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes caller identity and authority before discussing the referral.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Screens for clinical content before administrative handling.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Ends with read-back to a named owner and documentation of the identifiers confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "9cf6ecb6be7eeb61",
+        "scenarioFingerprint": "d0d6db047ae890a3",
+        "competencyFingerprint": "e9fea3da9f21e763",
+        "evidenceLayoutFingerprint": "065e753afdf8c053",
+        "answerPatternFingerprint": "1b89e085346d6eb0"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000050",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Halina Berkovits. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Cedar Hollow Family Practice share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "An inbound call about Halina Berkovits arrives at Cedar Hollow Family Practice. Put the intake steps in the order that protects the patient. Read to the end of the record before answering: the material is not in the order you need it.",
+      "steps": [
+        "Read back the agreed action, owner and timeframe.",
+        "Determine what the caller needs and who owns it.",
+        "Establish who is calling and their relationship to the patient.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling."
+      ],
+      "canonicalOrder": [
+        3,
+        2,
+        5,
+        6,
+        1,
+        0,
+        4
+      ],
+      "goldBehavior": "Identity and caller authority come before the request, and screening comes before administrative handling. Confirm two independent identifiers for the patient, establish who is calling and on what basis, take the reason in the caller's words, screen for anything clinical, then determine the need and the owner, read back the action and timeframe, and document with the identifiers you confirmed. An open referral record on the screen is not the patient.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Places identifier confirmation first, before any part of the request is acted on.",
+          "credit": 0.25,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes caller identity and authority before discussing the referral.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Screens for clinical content before administrative handling.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Ends with read-back to a named owner and documentation of the identifiers confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "5da6b3061c013d85",
+        "scenarioFingerprint": "b002ced79a084f0b",
+        "competencyFingerprint": "e9fea3da9f21e763",
+        "evidenceLayoutFingerprint": "36c56f0ae36eb884",
+        "answerPatternFingerprint": "1b89e085346d6eb0"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000051",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Ignatius Nwachukwu. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Northgate Specialty Associates share this name.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "An inbound call about Ignatius Nwachukwu arrives at Northgate Specialty Associates. Put the intake steps in the order that protects the patient. Nothing in this record is labelled as important.",
+      "steps": [
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Determine what the caller needs and who owns it.",
+        "Read back the agreed action, owner and timeframe.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Establish who is calling and their relationship to the patient."
+      ],
+      "canonicalOrder": [
+        5,
+        6,
+        0,
+        1,
+        3,
+        4,
+        2
+      ],
+      "goldBehavior": "Identity and caller authority come before the request, and screening comes before administrative handling. Confirm two independent identifiers for the patient, establish who is calling and on what basis, take the reason in the caller's words, screen for anything clinical, then determine the need and the owner, read back the action and timeframe, and document with the identifiers you confirmed. An open referral record on the screen is not the patient.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Places identifier confirmation first, before any part of the request is acted on.",
+          "credit": 0.25,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes caller identity and authority before discussing the referral.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Screens for clinical content before administrative handling.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Ends with read-back to a named owner and documentation of the identifiers confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "b702c306c542ec56",
+        "scenarioFingerprint": "74ab2a46d3c4a094",
+        "competencyFingerprint": "e9fea3da9f21e763",
+        "evidenceLayoutFingerprint": "a251c20ae7b13d5a",
+        "answerPatternFingerprint": "1b89e085346d6eb0"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000052",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Jovana Petrakis-Hume. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Larkspur Community Clinic share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "An inbound call about Jovana Petrakis-Hume arrives at Larkspur Community Clinic. Put the intake steps in the order that protects the patient. If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "steps": [
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Read back the agreed action, owner and timeframe.",
+        "Determine what the caller needs and who owns it.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Establish who is calling and their relationship to the patient."
+      ],
+      "canonicalOrder": [
+        5,
+        6,
+        0,
+        1,
+        4,
+        3,
+        2
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (who the caller is and what authority they have to act for this patient), name Dr. Ngozi Brandtsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"who the caller is and what authority they have to act for this patient\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "E1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "8d95e56ff88d5153",
+        "scenarioFingerprint": "e20baa4ed79b766f",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "f4781f47add79f2a",
+        "answerPatternFingerprint": "56f79982e2c82e27"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000053",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__CONTRADICTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#CONTRADICTION"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Kwabena Lindqvist. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Rosemark Internal Medicine share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2026-05-04: states the opposite of the entry at E2 — \"the caller was identified and verified at the start of the call\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "An inbound call about Kwabena Lindqvist arrives at Rosemark Internal Medicine. Put the intake steps in the order that protects the patient. Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "steps": [
+        "Establish who is calling and their relationship to the patient.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Determine what the caller needs and who owns it.",
+        "Read back the agreed action, owner and timeframe.",
+        "Establish the reason for the call in the caller's own words.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner."
+      ],
+      "canonicalOrder": [
+        5,
+        0,
+        4,
+        1,
+        2,
+        3,
+        6
+      ],
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (E2 and OP-X1), state that neither is marked as an amendment of the other, name Dr. Rurik Vandeveer as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to Dr. Rurik Vandeveer instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "1c290d5ffd63b843",
+        "scenarioFingerprint": "1773f26fcf1a5f2f",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "429463a9e457d866",
+        "answerPatternFingerprint": "9b0b5524921fecdd"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000054",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__SAFETY_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#SAFETY_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Lorelai Abubakar-Stern. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Cedar Hollow Family Practice share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"She's been really short of breath since yesterday, that's partly why I'm calling.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-06-22",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "An inbound call about Lorelai Abubakar-Stern arrives at Cedar Hollow Family Practice. Put the intake steps in the order that protects the patient. Something the patient said while this was being handled has not been written down anywhere.",
+      "steps": [
+        "Determine what the caller needs and who owns it.",
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Read back the agreed action, owner and timeframe.",
+        "Establish who is calling and their relationship to the patient.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner."
+      ],
+      "canonicalOrder": [
+        5,
+        4,
+        1,
+        2,
+        0,
+        3,
+        6
+      ],
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Saoirse Mbeki-Lantz or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "Dr. Saoirse Mbeki-Lantz",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "90e0bb16f976e5b0",
+        "scenarioFingerprint": "83620c1952bab42c",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "70c4f32000a9f773",
+        "answerPatternFingerprint": "45eca0b3cd1a8a97"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000055",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__WRONG_RECIPIENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#WRONG_RECIPIENT"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Arden Kowalczyk. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Northgate Specialty Associates share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "An inbound call about Arden Kowalczyk arrives at Northgate Specialty Associates. Put the intake steps in the order that protects the patient. The destination on the request and the destination in the chart are not the same.",
+      "steps": [
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Establish who is calling and their relationship to the patient.",
+        "Read back the agreed action, owner and timeframe.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Determine what the caller needs and who owns it."
+      ],
+      "canonicalOrder": [
+        5,
+        2,
+        0,
+        1,
+        6,
+        3,
+        4
+      ],
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with NP Caius Ostrowski or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "NP Caius Ostrowski",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "5824e2ad02765897",
+        "scenarioFingerprint": "53bc11b80c7992c4",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "54f681f4d0a72357",
+        "answerPatternFingerprint": "fdd4897cdd39ba12"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000056",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#IDENTITY_NEAR_MATCH"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Bassey Oduya, MRN SYN-7291, DOB 1961-11-20; and Bassey Oduya, MRN SYN-7292, DOB 1961-11-28. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Bassey Oduya. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Larkspur Community Clinic share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "An inbound call about Bassey Oduya arrives at Larkspur Community Clinic. Put the intake steps in the order that protects the patient. The name on the request matches two different patients.",
+      "steps": [
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Establish who is calling and their relationship to the patient.",
+        "Read back the agreed action, owner and timeframe.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Determine what the caller needs and who owns it."
+      ],
+      "canonicalOrder": [
+        4,
+        2,
+        0,
+        1,
+        6,
+        3,
+        5
+      ],
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "PA Yolanda Trevisani",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "2a8dbd930528bc49",
+        "scenarioFingerprint": "4b8b39d32974fab5",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "528098379ebe7556",
+        "answerPatternFingerprint": "2e5699ecf9baf896"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000057",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#OWNERSHIP_AMBIGUOUS"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Arden Kowalczyk-Reyes. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Rosemark Internal Medicine share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "An inbound call about Arden Kowalczyk-Reyes arrives at Rosemark Internal Medicine. Put the intake steps in the order that protects the patient. Two handoff notes each assume the other person did it, and nobody has.",
+      "steps": [
+        "Read back the agreed action, owner and timeframe.",
+        "Determine what the caller needs and who owns it.",
+        "Establish who is calling and their relationship to the patient.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Establish the reason for the call in the caller's own words."
+      ],
+      "canonicalOrder": [
+        3,
+        2,
+        6,
+        4,
+        1,
+        0,
+        5
+      ],
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "c1f52d092951b76a",
+        "scenarioFingerprint": "c3779413b3daa6bd",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "559b0f56053e03a9",
+        "answerPatternFingerprint": "0e097a4018434c4f"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000058",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__STALE_PREREQUISITE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#STALE_PREREQUISITE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Bassey Oduya. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record.",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Cedar Hollow Family Practice share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The patient's recorded authorisation for this caller to act on their behalf is recorded as valid through 2026-12-29. The action this task sets up is scheduled for 2027-01-05, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "An inbound call about Bassey Oduya arrives at Cedar Hollow Family Practice. Put the intake steps in the order that protects the patient. The system shows this as ready to proceed.",
+      "steps": [
+        "Determine what the caller needs and who owns it.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Read back the agreed action, owner and timeframe.",
+        "Confirm two independent identifiers for the patient the call concerns.",
+        "Establish who is calling and their relationship to the patient.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Establish the reason for the call in the caller's own words."
+      ],
+      "canonicalOrder": [
+        3,
+        4,
+        6,
+        1,
+        0,
+        2,
+        5
+      ],
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The patient's recorded authorisation for this caller to act on their behalf expires on 2026-12-29 and the action falls on 2027-01-05, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "Dr. Teodoro Haakonsen",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "6aa1bb9ff5f6ee87",
+        "scenarioFingerprint": "5739517fe918c5a4",
+        "competencyFingerprint": "a7b5ede2dfacf189",
+        "evidenceLayoutFingerprint": "0121ee4bc58a22ee",
+        "answerPatternFingerprint": "0a0ee8918e82d24f"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000059",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__PROVENANCE_STRIPPED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#PROVENANCE_STRIPPED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Caller: \"I'm ringing about Corrin Vasquez-Lund. I need the referral moved to a different clinic.\"",
+            "section": "Call",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "E3",
+            "text": "Two patients at Northgate Specialty Associates share this name.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "An inbound call about Corrin Vasquez-Lund arrives at Northgate Specialty Associates. Put the intake steps in the order that protects the patient. The fact you need is in the record three times and attributed nowhere.",
+      "steps": [
+        "Establish the reason for the call in the caller's own words.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Establish who is calling and their relationship to the patient.",
+        "Read back the agreed action, owner and timeframe.",
+        "Determine what the caller needs and who owns it.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Confirm two independent identifiers for the patient the call concerns."
+      ],
+      "canonicalOrder": [
+        6,
+        2,
+        0,
+        1,
+        4,
+        3,
+        5
+      ],
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "63f59af1094ddd36",
+        "scenarioFingerprint": "0daf21d15b7bccf2",
+        "competencyFingerprint": "a7e82cdebfd9551c",
+        "evidenceLayoutFingerprint": "4c444b9e0a8eebeb",
+        "answerPatternFingerprint": "3e6a30e22f45dcfa"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000060",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M03",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D01"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__MULTI_STAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000005#MULTI_STAGE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2027-02-23, walk-in at the front desk: the task opens as described — An inbound call about Delphine Achterberg arrives at Larkspur Community Clinic. Put the intake steps in the order that protects the patient. P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: The caller has not been identified, their relationship to the patient is unknown, and no identifier for the patient has been confirmed. The coordinator's screen is already open on a referral record. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2027-03-23",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "The referral was moved on the unverified caller's instruction and the patient missed the appointment. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2027-03-23",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "An inbound call about Delphine Achterberg arrives at Larkspur Community Clinic. Put the intake steps in the order that protects the patient. Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "steps": [
+        "Establish who is calling and their relationship to the patient.",
+        "Determine what the caller needs and who owns it.",
+        "Screen for anything requiring clinical attention before administrative handling.",
+        "Read back the agreed action, owner and timeframe.",
+        "Establish the reason for the call in the caller's own words.",
+        "Document the call, the identifiers confirmed and the action, and route it to the named owner.",
+        "Confirm two independent identifiers for the patient the call concerns."
+      ],
+      "canonicalOrder": [
+        6,
+        0,
+        4,
+        2,
+        1,
+        3,
+        5
+      ],
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000049",
+      "variantOf": "KB-WFLW-KB001-000049",
+      "templateId": "KB-VART-KB001-000005",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "b4ca637c7f0dfe52",
+        "scenarioFingerprint": "a5e2e2493eb88552",
+        "competencyFingerprint": "31e19260879c3494",
+        "evidenceLayoutFingerprint": "3cb07c4a2b5249b2",
+        "answerPatternFingerprint": "8c32feb285add4ca"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

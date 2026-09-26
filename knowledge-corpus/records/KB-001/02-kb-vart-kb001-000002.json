@@ -1,0 +1,2408 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000002",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB001-000013",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-05-04: note created by M. Okonjo. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-06-01: note signed by NP Caius Ostrowski.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Rosemark Internal Medicine's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A quality review of Arden Kowalczyk's 2026-05-04 encounter at Rosemark Internal Medicine is under way. Which actions does the audit trail require?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Log the amendment as an auditability defect and refer it to NP Caius Ostrowski and the records owner.",
+          "why": "Correct: a content change with no author breaks the trail, and only the owner can repair it."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Attribute the amendment to M. Okonjo, who created the note and is the likeliest amender.",
+          "why": "That is a guess written into an audit trail, which is worse than the gap it fills.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "Accept the trail: the note is signed, and the signature covers everything in it.",
+          "why": "A signature cannot vouch for provenance the record does not hold.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "e",
+          "text": "Remove the unattributed amendment so the trail is internally consistent.",
+          "why": "Deleting the evidence of a defect is not resolving it, and it destroys the record of a clinical content change.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Report the amendment as an auditability defect rather than a formatting issue. State that entry 2 changed clinical content with no author, timestamp or reason, that the signature in entry 3 therefore covers text whose provenance is unknown, and that the defect must be recorded and referred to NP Caius Ostrowski and the records owner. Do not repair the trail by inferring who made the change.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing author, timestamp and reason on the amendment.",
+          "credit": 0.34,
+          "evidenceRef": "B2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that the later signature now covers content of unknown provenance.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the defect and refers it, rather than inferring the amender.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "e5d6263b329578c5",
+        "scenarioFingerprint": "f8f9e2b514262cc0",
+        "competencyFingerprint": "c114552ba37dccfe",
+        "evidenceLayoutFingerprint": "f3cfd3056c05511f",
+        "answerPatternFingerprint": "7510b5790c6d5d8a"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000014",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-06-22: note created by R. Skibinski. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-07-20: note signed by PA Yolanda Trevisani.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B3",
+            "text": "Cedar Hollow Family Practice's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A quality review of Bassey Oduya's 2026-06-22 encounter at Cedar Hollow Family Practice is under way. Which actions does the audit trail require? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Log the amendment as an auditability defect and refer it to PA Yolanda Trevisani and the records owner.",
+          "why": "Correct: a content change with no author breaks the trail, and only the owner can repair it."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "d",
+          "text": "Attribute the amendment to R. Skibinski, who created the note and is the likeliest amender.",
+          "why": "That is a guess written into an audit trail, which is worse than the gap it fills.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "e",
+          "text": "Accept the trail: the note is signed, and the signature covers everything in it.",
+          "why": "A signature cannot vouch for provenance the record does not hold.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Report the amendment as an auditability defect rather than a formatting issue. State that entry 2 changed clinical content with no author, timestamp or reason, that the signature in entry 3 therefore covers text whose provenance is unknown, and that the defect must be recorded and referred to PA Yolanda Trevisani and the records owner. Do not repair the trail by inferring who made the change.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing author, timestamp and reason on the amendment.",
+          "credit": 0.34,
+          "evidenceRef": "B2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that the later signature now covers content of unknown provenance.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the defect and refers it, rather than inferring the amender.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "690cabd3317da58c",
+        "scenarioFingerprint": "a9bd93e6a9e37e42",
+        "competencyFingerprint": "c114552ba37dccfe",
+        "evidenceLayoutFingerprint": "0c87c31e5ea5ee9c",
+        "answerPatternFingerprint": "e9ba5503643e0f2c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000015",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-08-13: note created by T. Alvarado-Ng. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-09-10: note signed by Dr. Imani Farrokhzad.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B3",
+            "text": "Northgate Specialty Associates's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "A quality review of Arden Kowalczyk-Reyes's 2026-08-13 encounter at Northgate Specialty Associates is under way. Which actions does the audit trail require? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Imani Farrokhzad and the records owner.",
+          "why": "Correct: a content change with no author breaks the trail, and only the owner can repair it."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Attribute the amendment to T. Alvarado-Ng, who created the note and is the likeliest amender.",
+          "why": "That is a guess written into an audit trail, which is worse than the gap it fills.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "e",
+          "text": "Accept the trail: the note is signed, and the signature covers everything in it.",
+          "why": "A signature cannot vouch for provenance the record does not hold.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Report the amendment as an auditability defect rather than a formatting issue. State that entry 2 changed clinical content with no author, timestamp or reason, that the signature in entry 3 therefore covers text whose provenance is unknown, and that the defect must be recorded and referred to Dr. Imani Farrokhzad and the records owner. Do not repair the trail by inferring who made the change.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing author, timestamp and reason on the amendment.",
+          "credit": 0.34,
+          "evidenceRef": "B2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that the later signature now covers content of unknown provenance.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the defect and refers it, rather than inferring the amender.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "fe9e419920f3a04a",
+        "scenarioFingerprint": "6de52bea5d171574",
+        "competencyFingerprint": "c114552ba37dccfe",
+        "evidenceLayoutFingerprint": "a7e833323351da91",
+        "answerPatternFingerprint": "65fd17c3bd2d5755"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000016",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-09-01: note created by L. Haverford. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-09-29: note signed by Dr. Teodoro Haakonsen.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Larkspur Community Clinic's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "A quality review of Bassey Oduya's 2026-09-01 encounter at Larkspur Community Clinic is under way. Which actions does the audit trail require? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "State that who made the amendment in entry 2, when, and why is not in the record, request it from Dr. Teodoro Haakonsen, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Teodoro Haakonsen and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "e",
+          "text": "Attribute the amendment to L. Haverford, who created the note and is the likeliest amender.",
+          "why": "That is a guess written into an audit trail, which is worse than the gap it fills.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (who made the amendment in entry 2, when, and why), name Dr. Teodoro Haakonsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"who made the amendment in entry 2, when, and why\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "B1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "5b3540b6ec8cd2dc",
+        "scenarioFingerprint": "b2adf3c804f7324e",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "943bf21cef231428",
+        "answerPatternFingerprint": "dac02b3ad5ba826d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000017",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__CONTRADICTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#CONTRADICTION"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-11-05: note created by D. Eluwande. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-12-03: note signed by Dr. Ngozi Brandtsen.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Rosemark Internal Medicine's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2026-11-05: states the opposite of the entry at B2 — \"the amendment in entry 2 carries a full author and reason\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "A quality review of Corrin Vasquez-Lund's 2026-11-05 encounter at Rosemark Internal Medicine is under way. Which actions does the audit trail require? Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Surface both entries, state that neither is marked as an amendment, and route the resolution to Dr. Ngozi Brandtsen.",
+          "why": "Correct: an unexplained contradiction is escalated with both sides named, never resolved by whoever noticed it."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Take the later entry, since the most recent documentation reflects the current state of the chart.",
+          "why": "Recency is not authority. Without an amendment or a stated reason, a later entry may be the error rather than the correction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Reconcile the two entries into one consistent summary so downstream readers are not confused.",
+          "why": "That deletes the conflict instead of resolving it, and the reader who most needs to see it never will.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Ngozi Brandtsen and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: a second entry contradicts the decisive one and neither is plainly authoritative, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (B2 and OP-X1), state that neither is marked as an amendment of the other, name Dr. Ngozi Brandtsen as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "B2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to Dr. Ngozi Brandtsen instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "100c25be3e472d41",
+        "scenarioFingerprint": "c797ff45cde92a92",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "3a2bfe1b496d1fe9",
+        "answerPatternFingerprint": "2373d2c694d52494"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000018",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__SAFETY_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#SAFETY_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-12-08: note created by P. Kirchmayer. Entry 2, same day: note amended, amender not recorded. Entry 3, 2027-01-05: note signed by Dr. Rurik Vandeveer.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Cedar Hollow Family Practice's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"I told someone about the chest tightness at that visit and I can't see it written anywhere.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "A quality review of Delphine Achterberg's 2026-12-08 encounter at Cedar Hollow Family Practice is under way. Which actions does the audit trail require? Something the patient said while this was being handled has not been written down anywhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hand the volunteered statement to a clinician now, confirm acceptance, then resume the administrative task.",
+          "why": "Correct: recognition, documentation, routing and closing the loop come before routine completion."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Finish the administrative task first so the record is complete, then add a note about what the patient said.",
+          "why": "Ordering the routine task ahead of a volunteered red flag is the failure this case exists to teach. The note may sit unread.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Reassure the patient that the symptom is common and unlikely to be serious, and offer the next routine appointment.",
+          "why": "That is a clinical judgment, and it is outside a support role's authorised scope however reasonable it sounds.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Rurik Vandeveer and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: a red flag appears alongside the administrative task, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Rurik Vandeveer or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "e5b3051ef897d09d",
+        "scenarioFingerprint": "7ebef43f6a8e51b8",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "fea26e22352138e9",
+        "answerPatternFingerprint": "b863b142c994e292"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000019",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__WRONG_RECIPIENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#WRONG_RECIPIENT"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2027-01-14: note created by M. Okonjo. Entry 2, same day: note amended, amender not recorded. Entry 3, 2027-02-11: note signed by Dr. Saoirse Mbeki-Lantz.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Northgate Specialty Associates's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "A quality review of Emeka Solberg's 2027-01-14 encounter at Northgate Specialty Associates is under way. Which actions does the audit trail require? The destination on the request and the destination in the chart are not the same.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the transmission, confirm the authorised destination against the chart, then send only the minimum necessary.",
+          "why": "Correct: an unconfirmed destination is a disclosure risk, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Send to the destination on the cover sheet, since the requester knows where the material should go.",
+          "why": "The requester's cover sheet is not the authorised destination, and material sent to the wrong recipient cannot be unsent.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "d",
+          "text": "Send to both destinations so the material certainly reaches the right one.",
+          "why": "Sending twice doubles the disclosure and guarantees one of them is unauthorised.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Saoirse Mbeki-Lantz and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: the destination on the request does not match the destination in the chart, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with Dr. Saoirse Mbeki-Lantz or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "Dr. Saoirse Mbeki-Lantz",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "dd671077d7dd92ab",
+        "scenarioFingerprint": "e0dfebd87b3269c3",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "82ff24a5568115b3",
+        "answerPatternFingerprint": "5f7f3e7ee1bfe2fe"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000020",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#IDENTITY_NEAR_MATCH"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Fenella Quintanilla, MRN SYN-2914, DOB 2001-05-06; and Fenella Quintanilla, MRN SYN-2915, DOB 2001-05-14. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2027-02-23: note created by R. Skibinski. Entry 2, same day: note amended, amender not recorded. Entry 3, 2027-03-23: note signed by NP Caius Ostrowski.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Larkspur Community Clinic's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A quality review of Fenella Quintanilla's 2027-02-23 encounter at Larkspur Community Clinic is under way. Which actions does the audit trail require? The name on the request matches two different patients.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the task and confirm MRN and date of birth against the request before anything attaches to a patient.",
+          "why": "Correct: two independent identifiers precede any action, and a near match is not a match."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Use the record whose demographics are the closest fit to the request.",
+          "why": "Closeness is exactly what produces wrong-patient events. A near match is the hazard, not the resolution.",
+          "trapType": "TRAP_NEAREST_NAME_MATCH"
+        },
+        {
+          "id": "d",
+          "text": "Use the more recently active record, since that is the one the request most likely concerns.",
+          "why": "Recent activity is not identification, and a wrong-patient filing is a hard failure however likely the guess was.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to NP Caius Ostrowski and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: two records match on name and differ on identifier, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "NP Caius Ostrowski",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "4c3beab33448b8b9",
+        "scenarioFingerprint": "67056a213adbf786",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "dc7a633509a2a8e7",
+        "answerPatternFingerprint": "d1efabefee5eee3d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000021",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#OWNERSHIP_AMBIGUOUS"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-02-09: note created by T. Alvarado-Ng. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-03-09: note signed by PA Yolanda Trevisani.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Rosemark Internal Medicine's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A quality review of Gideon Marchetti-Oyelaran's 2026-02-09 encounter at Rosemark Internal Medicine is under way. Which actions does the audit trail require? Two handoff notes each assume the other person did it, and nobody has.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Name a single owner, get explicit acknowledgement, and record the acceptance with a deadline.",
+          "why": "Correct: a handoff closes on acknowledgement by a named owner, not on a note being written."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Re-send the item to the shared queue so whoever picks it up next can action it.",
+          "why": "A shared queue has no owner, which is the condition that produced the four-day gap.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Note in the chart that the handoff was documented by both parties and move on.",
+          "why": "Both notes exist and the work is still undone. Documentation of a handoff is not completion of one.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to PA Yolanda Trevisani and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: two people each recorded that the other would take it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "ffc80e1109c49203",
+        "scenarioFingerprint": "05d8abc64906f7f7",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "27c88983232424cd",
+        "answerPatternFingerprint": "03ff6d82ae4cc730"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000022",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__STALE_PREREQUISITE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#STALE_PREREQUISITE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-03-17: note created by L. Haverford. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-04-14: note signed by Dr. Imani Farrokhzad.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it.",
+            "section": "Audit trail",
+            "decisive": true
+          },
+          {
+            "ref": "B3",
+            "text": "Cedar Hollow Family Practice's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The records owner's sign-off on the amendment log is recorded as valid through 2026-04-07. The action this task sets up is scheduled for 2026-04-14, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A quality review of Halina Berkovits's 2026-03-17 encounter at Cedar Hollow Family Practice is under way. Which actions does the audit trail require? The system shows this as ready to proceed.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the action, state that the prerequisite expires before the scheduled date, and get it renewed first.",
+          "why": "Correct: a ready indicator is not a check that the prerequisite still covers the date."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Proceed, since the system shows the item as ready and the prerequisite was valid when it was obtained.",
+          "why": "It was valid when obtained and is not valid on the date that matters. A ready flag is a display, not a date comparison.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "d",
+          "text": "Proceed and renew the prerequisite retroactively afterwards if anyone asks.",
+          "why": "Retroactive cover is not cover, and it puts the patient at the front of a cancellation.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Imani Farrokhzad and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: a prerequisite the task depends on expired before the scheduled date, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The records owner's sign-off on the amendment log expires on 2026-04-07 and the action falls on 2026-04-14, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "Dr. Imani Farrokhzad",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "5d40c591cf92b5cc",
+        "scenarioFingerprint": "8a9ce04e0b02c470",
+        "competencyFingerprint": "cf2c44d80352f95f",
+        "evidenceLayoutFingerprint": "d01cd5fbd340693d",
+        "answerPatternFingerprint": "8fdfa11a27246a07"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000023",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__PROVENANCE_STRIPPED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#PROVENANCE_STRIPPED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "Entry 1, 2026-05-04: note created by D. Eluwande. Entry 2, same day: note amended, amender not recorded. Entry 3, 2026-06-01: note signed by Dr. Teodoro Haakonsen.",
+            "section": "Audit trail",
+            "decisive": false
+          },
+          {
+            "ref": "B3",
+            "text": "Northgate Specialty Associates's internal documentation policy, as stated for this scenario, requires every amendment to carry an author, a timestamp and a reason.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A quality review of Ignatius Nwachukwu's 2026-05-04 encounter at Northgate Specialty Associates is under way. Which actions does the audit trail require? The fact you need is in the record three times and attributed nowhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Trace the fact to its originating author and note before relying on it, and mark it unverified until then.",
+          "why": "Correct: provenance is what makes a carried-forward fact usable, and repetition is not provenance."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Rely on it: it appears consistently in three separate notes, which is stronger than a single entry.",
+          "why": "The three notes are copies of each other, not three observations. Consistency between copies says nothing.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Teodoro Haakonsen and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: the deciding fact is present but nobody is recorded as having said it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "e",
+          "text": "Attribute the amendment to D. Eluwande, who created the note and is the likeliest amender.",
+          "why": "That is a guess written into an audit trail, which is worse than the gap it fills.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "B2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "aa975215254a8e9b",
+        "scenarioFingerprint": "d17ba5850e5688b7",
+        "competencyFingerprint": "62dbf2ebd8bf64c4",
+        "evidenceLayoutFingerprint": "da09787ef786311e",
+        "answerPatternFingerprint": "dca1ef100762a181"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000024",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M15",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "AUDIT_COMPLETENESS__MULTI_STAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit and QA",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000002#MULTI_STAGE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2026-06-22, walk-in at the front desk: the task opens as described — A quality review of Jovana Petrakis-Hume's 2026-06-22 encounter at Larkspur Community Clinic is under way. Which actions does the audit trail require? P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: The amendment in entry 2 changed the assessment text. No author, no timestamp beyond the date, and no reason for the amendment are recorded against it. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2026-07-20",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "The unattributed amendment has since been cited in a payer review of the encounter. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2026-07-20",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A quality review of Jovana Petrakis-Hume's 2026-06-22 encounter at Larkspur Community Clinic is under way. Which actions does the audit trail require? Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Reconstruct the stages, apply the late fact, name the current owner, and correct the patient's expectation.",
+          "why": "Correct: a late fact delivered to a former owner is a routing failure, and the audit trail has to show it."
+        },
+        {
+          "id": "b",
+          "text": "Record the check that was performed and its outcome, so the next reader can see the review happened and what it found.",
+          "why": "Correct: an unrecorded check is indistinguishable from no check."
+        },
+        {
+          "id": "c",
+          "text": "Apply the new fact and update the record to the correct end state, without reciting the intermediate stages.",
+          "why": "The end state is right and the history is gone. Audit reconstruction is the point: the routing failure becomes invisible and repeats.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Return the item to the original opener's inbox, since the deciding message went to them.",
+          "why": "They are off rota for the week. Routing to an unattended inbox is what already delayed this by two days.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "e",
+          "text": "Log the amendment as an auditability defect and refer it to Dr. Ngozi Brandtsen and the records owner.",
+          "why": "Correct in this family's unmutated case and wrong here: a multi-stage encounter where the deciding clue arrives after ownership has moved, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "B2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000013",
+      "variantOf": "KB-QUES-KB001-000013",
+      "templateId": "KB-VART-KB001-000002",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "5de45d46df8b76e7",
+        "scenarioFingerprint": "22b94e8e03566253",
+        "competencyFingerprint": "129a4b4c6ea0c45a",
+        "evidenceLayoutFingerprint": "24ee40b2e1424350",
+        "answerPatternFingerprint": "05ec5bff42269344"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

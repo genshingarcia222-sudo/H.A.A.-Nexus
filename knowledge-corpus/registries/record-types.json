@@ -1,0 +1,27 @@
+{
+  "registryId": "KB-REG-RECORD-TYPES",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section XX (owner-supplied, 2026-09-26)",
+  "idPattern": "KB-[TYPE]-[BATCH]-[SEQUENCE]",
+  "idRule": "Ids are opaque after minting. The type and batch inside an id are hints for a human reading a diff; nothing parses them to derive behaviour. Ids are never recycled, including for rejected records.",
+  "recordTypes": [
+    { "id": "KNOWLEDGE_RULE", "token": "KNOW", "carriesLifecycle": true },
+    { "id": "TERMINOLOGY", "token": "TERM", "carriesLifecycle": true },
+    { "id": "WORKFLOW", "token": "WFLW", "carriesLifecycle": true },
+    { "id": "QUESTION", "token": "QUES", "carriesLifecycle": true },
+    { "id": "SCENARIO", "token": "SCEN", "carriesLifecycle": true },
+    { "id": "CHART_PACKET", "token": "CHRT", "carriesLifecycle": true, "syntheticRequired": true },
+    { "id": "COMMUNICATION_EVENT", "token": "COMM", "carriesLifecycle": true, "syntheticRequired": true },
+    { "id": "DOCUMENTATION_TASK", "token": "DOCT", "carriesLifecycle": true },
+    { "id": "ERROR_PATTERN", "token": "ERRP", "carriesLifecycle": true },
+    { "id": "REMEDIATION", "token": "REMD", "carriesLifecycle": true },
+    { "id": "COMPETENCY_RULE", "token": "COMP", "carriesLifecycle": true },
+    { "id": "SOURCE_RECORD", "token": "SRCE", "carriesLifecycle": false },
+    { "id": "SIMULATION_TEMPLATE", "token": "SIMT", "carriesLifecycle": true },
+    { "id": "VARIANT_TEMPLATE", "token": "VART", "carriesLifecycle": true },
+    { "id": "RUBRIC", "token": "RUBR", "carriesLifecycle": true },
+    { "id": "ASSESSMENT_GATE", "token": "GATE", "carriesLifecycle": true },
+    { "id": "REFERENCE_MATERIAL", "token": "REFM", "carriesLifecycle": true },
+    { "id": "VERSION_RECORD", "token": "VERS", "carriesLifecycle": false }
+  ]
+}
