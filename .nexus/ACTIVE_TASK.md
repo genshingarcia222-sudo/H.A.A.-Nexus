@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-001
 task_name: "Phase 9 entry: author the packaging and release-hardening specification"
 owner: DEVICE-02
-status: ACTIVE
+status: HANDOFF_PENDING
 started_at: 2026-09-26T00:42:04.345Z
-last_update: 2026-09-26T00:42:04.345Z
+last_update: 2026-09-26T00:47:54.651Z
 stale_after_hours: 12
 expected_scope: "Author docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md from repository evidence; CHANGELOG + .nexus state. No application, Rust, or bundler-config behaviour change."
 affected_areas: "docs/, CHANGELOG.md, .nexus/"
 branch: claude/busy-edison-atzxdd
 claim_commit: 7e304a1f0759cae3a07e96182da84dc477690c7d
-last_commit: 7e304a1f0759cae3a07e96182da84dc477690c7d
-handoff_required: no
-handoff_to: none
-next_action: "Owner decisions D-P9-1..D-P9-4; implementation requires DEVICE-01 (Windows)"
+last_commit: 1f694f8e512d399a261da3a1e7fdecf25dbb1b6a
+handoff_required: yes
+handoff_to: DEVICE-01
+next_action: "Resolve D15 first (it decides whether P9-A is a merge or a code change), then D16 and P9-D which need no credential. D13 then P9-B/P9-E. D14 then P9-C last, because D14 is entangled with the open D10."
 ```
 
 ## Ownership history
@@ -76,3 +76,4 @@ Timestamps are UTC.
 | 2026-09-21T03:35:47Z | CLAIM | DEVICE-01 | NEXUS-SYNC-001 | bootstrap of the sync protocol, recorded by hand because the tooling did not exist yet |
 | 2026-09-23T13:58:21.629Z | RELEASE COMPLETE | DEVICE-01 | NEXUS-SYNC-001 | complete |
 | 2026-09-26T00:42:04.345Z | CLAIM | DEVICE-02 | P9-001 | claimed |
+| 2026-09-26T00:47:54.651Z | HANDOFF | DEVICE-02 | P9-001 | to DEVICE-01: Resolve D15 first (it decides whether P9-A is a merge or a code change), then D16 and P9-D which need no credential. D13 then P9-B/P9-E. D14 then P9-C last, because D14 is entangled with the open D10. |

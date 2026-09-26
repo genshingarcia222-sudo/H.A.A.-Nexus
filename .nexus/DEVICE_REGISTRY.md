@@ -41,10 +41,10 @@ DEVICE-01.latest_known_commit: f3d525df1392d765751dd11f545c7b4003073142
 DEVICE-01.latest_activity: 2026-09-23T14:28:02.008Z
 DEVICE-01.last_successful_sync: 2026-09-23T14:28:02.008Z
 DEVICE-02.role: secondary-verification-audit
-DEVICE-02.status: ACTIVE
-DEVICE-02.ownership: P9-001
-DEVICE-02.latest_known_commit: 7e304a1f0759cae3a07e96182da84dc477690c7d
-DEVICE-02.latest_activity: 2026-09-26T00:42:04.345Z
+DEVICE-02.status: HANDOFF_PENDING
+DEVICE-02.ownership: none
+DEVICE-02.latest_known_commit: 1f694f8e512d399a261da3a1e7fdecf25dbb1b6a
+DEVICE-02.latest_activity: 2026-09-26T00:47:54.651Z
 DEVICE-02.last_successful_sync: NOT VERIFIED
 ```
 
