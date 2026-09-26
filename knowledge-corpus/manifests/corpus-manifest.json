@@ -150,7 +150,7 @@
     "Competency coverage is uneven: KB-D07 and KB-D10 carry 12 records each against KB-D12's 96. Both under-covered axes are source-dependent, which is why they were not expanded here.",
     "The knowledge-corpus engine on feat/training-question-bank (owner decision D12) is not merged to main and is not imported by these tools. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
   ],
-  "lastVerifiedCommit": "6c92a303590d759e45ce2c906a5938098d654402",
+  "lastVerifiedCommit": "989e717d248792528d1e9aee2ae625c07fa6b842",
   "branch": "feat/knowledgebase-expansion",
   "checksums": {
     "registries/access-classes.json": "e5ad2a35dab255d27136d639b966c79811981cdc926d30a0fe3d6ae4253fdbb3",
