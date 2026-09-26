@@ -71,19 +71,19 @@ Consequences, in order of how often they matter:
 ```yaml nexus-state
 registry_version: 1
 S-phases-building.DEVICE-01.attached_at: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen_commit: 544814a85cec938a2ae1e6d72b4411c6575d9662
+S-phases-building.DEVICE-01.last_seen: 2026-09-26T13:11:25.551Z
+S-phases-building.DEVICE-01.last_seen_commit: 3dae25e2dc0cd74167d36adc3b4b6fe8e8ee3ce3
 S-phases-building.name: "PHASES BUILDING"
 S-phases-building.role: "orchestrator: authoritative phase plan, task partition, integration and conflict policy"
 S-phases-building.status: ACTIVE
 S-phases-building.control_version: P9-2026-09-26-002
 S-phases-building.branch: main
-S-phases-building.next_action: "Owner decisions D15, D16, D13, then D14 (needs D10). Phase 9 implementation stays blocked; DEVICE-02 runs the C-02 documentation-accuracy sweep."
+S-phases-building.next_action: "Session registry delivered (NEXUS-SYNC-002). DEVICE-02: run nexus-sync session register --name \"PHASES BUILDING\" to attach, then the C-02 documentation sweep. Owner: D15, D16, D13, then D14 (needs D10)."
 S-phases-building.created_by: DEVICE-01
 S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
-S-phases-building.updated_at: 2026-09-26T13:00:46.532Z
-S-phases-building.revision: 1
+S-phases-building.updated_at: 2026-09-26T13:11:25.551Z
+S-phases-building.revision: 2
 ```
 
 ## Registration history
@@ -95,3 +95,4 @@ it replaced. Timestamps are UTC.
 | When (UTC) | Event | Device | Session | Detail |
 |---|---|---|---|---|
 | 2026-09-26T13:00:46.532Z | REGISTER | DEVICE-01 | S-phases-building | registered as PHASES BUILDING, role orchestrator: authoritative phase plan, task partition, integration and conflict policy, status ACTIVE |
+| 2026-09-26T13:11:25.551Z | UPDATE | DEVICE-01 | S-phases-building | set next_action at revision 2 |
