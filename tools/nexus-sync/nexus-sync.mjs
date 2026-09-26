@@ -191,6 +191,15 @@ export function appendHistory(markdown, { when, event, device, task, detail }, s
 // another device's value records the value it replaced.
 
 /** The canonical id for a logical session name. Case, spacing and punctuation collapse. */
+/**
+ * Line endings and a trailing newline are checkout details, not differences:
+ * Git stores LF and checks CRLF out on Windows, and `git show` arrives trimmed.
+ */
+function sameText(a, b) {
+  const norm = (s) => s.replace(/\r\n/g, "\n").replace(/\s+$/, "");
+  return norm(a) === norm(b);
+}
+
 export function sessionId(name) {
   const slug = String(name || "")
     .toLowerCase()
@@ -1055,7 +1064,7 @@ function readCanonicalRegistry(repo, ctx) {
     source: remote !== null ? `${REMOTE}/${STATE_BRANCH}:${rel} (canonical)` : `${rel} in this checkout (remote unreadable)`,
     registry,
     sessions: parseSessions(registry),
-    localDiffers: remote !== null && local !== null && local !== remote
+    localDiffers: remote !== null && local !== null && !sameText(local, remote)
   };
 }
 

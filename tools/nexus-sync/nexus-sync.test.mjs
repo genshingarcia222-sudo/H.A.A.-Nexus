@@ -548,6 +548,14 @@ try {
   writeFileSync(taskFile, updateStateBlock(readFileSync(taskFile, "utf8"), { task_id: "SEED-0", status: "COMPLETE", owner: "DEVICE-01", stale_after_hours: "0.0003" }));
   const curFile = path.join(seed, STATE_FILES.current);
   writeFileSync(curFile, updateStateBlock(readFileSync(curFile, "utf8"), { active_task: "SEED-0", task_owner: "DEVICE-01", task_status: "COMPLETE", sync_status: "REMOTE_SYNC_PENDING" }));
+  // The real registry carries real sessions and real history rows; the
+  // scenarios below must start from an empty one.
+  const regFile = path.join(seed, STATE_FILES.sessions);
+  const regMd = readFileSync(regFile, "utf8")
+    .split(/\r?\n/)
+    .filter((l) => !/^S-[a-z0-9-]+\./.test(l.trim()) && !/^\| 20\d\d-/.test(l.trim()))
+    .join("\n");
+  writeFileSync(regFile, updateStateBlock(regMd, { registry_version: "0" }));
   writeFileSync(path.join(seed, ".gitignore"), ".nexus/local-device.yaml\n");
   writeFileSync(path.join(seed, "app.txt"), "v1\n");
   g(seed, "add", "-A");
@@ -909,6 +917,22 @@ if (setupOk) {
     assert.deepEqual(Object.keys(s.devices).sort(), ["DEVICE-01", "DEVICE-02"]);
     // No conversation uuid, window or process id was ever written into shared state.
     assert.doesNotMatch(remoteFile(STATE_FILES.sessions), /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+  });
+
+  test("a CRLF working copy is not reported as differing from the canonical one", () => {
+    // Git stores LF and checks CRLF out on Windows, so a byte comparison would
+    // tell every Windows checkout that its registry is stale.
+    const crlf = cloneAs("session-crlf");
+    const rel = STATE_FILES.sessions;
+    const file = path.join(crlf, rel);
+    const lf = readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+    writeFileSync(file, lf.replace(/\n/g, "\r\n"));
+    const quiet = run(crlf, "DEVICE-02", "session", "list");
+    assert.match(quiet.out, /S-phases-building/);
+    assert.doesNotMatch(quiet.out, /differs from the canonical one/);
+    // A real content difference still reports.
+    writeFileSync(file, lf.replace("registry_version:", "registry_version:  "));
+    assert.match(run(crlf, "DEVICE-02", "session", "list").out, /differs from the canonical one/);
   });
 
   test("the tool never rewrote published history", () => {
