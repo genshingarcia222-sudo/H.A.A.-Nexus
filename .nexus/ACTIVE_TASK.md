@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-002
 task_name: "Phase 9 DEVICE-01 lane: P9-A and P9-B"
 owner: DEVICE-01
-status: BLOCKED
+status: COMPLETE
 started_at: 2026-09-26T01:13:50.833Z
-last_update: 2026-09-26T01:30:20.834Z
+last_update: 2026-09-26T12:09:31.679Z
 stale_after_hours: 12
 expected_scope: "Classify and validate P9-A (windows_subsystem) and P9-B (installer signing) against the merged Phase 9 specification. Implementation only where no open decision authorizes otherwise. No decision may be resolved by this task."
 affected_areas: "apps/desktop/src-tauri/, docs/, CHANGELOG.md"
 branch: claude/device01-phase9
 claim_commit: 7a78a9d03944ae29e020593e65d93133ef5a7634
-last_commit: b5ec790bae22b3645f66320ddd3996e642732970
+last_commit: 293308242e907b79aa4f4b588b4974a7da59c777
 handoff_required: no
 handoff_to: none
-next_action: "Owner decisions, in the specification's recommended order: D15 (PR #3 is now MERGEABLE after the owner updated the branch from main, but the decision is still unrecorded), then D16, then D13, then D14 - and D14 needs D10 first. Record each in docs/DECISION_REGISTER.md before the work it gates starts. Do not begin Phase 10; Architecture Package section 22 is unstarted by design."
+next_action: "Owner-directed: NEXUS-SYNC-002, the canonical cross-device session registry. Phase 9 implementation stays blocked on D13-D16."
 ```
 
 ## Ownership history
@@ -81,3 +81,4 @@ Timestamps are UTC.
 | 2026-09-26T01:12:18.314Z | RELEASE COMPLETE | DEVICE-01 | P9-001 | Specification authored by DEVICE-02 and merged to main in PR #13 (merge commit 39dbd06); the task's recorded scope is finished. No Phase 9 implementation was in its scope. |
 | 2026-09-26T01:13:50.833Z | CLAIM | DEVICE-01 | P9-002 | claimed |
 | 2026-09-26T01:30:20.834Z | RELEASE BLOCKED | DEVICE-01 | P9-002 | Both DEVICE-01 lane items are gated on open owner decisions: P9-A on D15 (merge feat/training-question-bank, whose tip fixes it, or reimplement on main) and P9-B on D13 (a purchased code-signing credential). Neither may be implemented without converting an open decision into implementation authority. The lane delivered measured evidence instead; see docs/PHASE_9_DEVICE01_VALIDATION.md. Phase 9 as a whole cannot close: P9-C is gated on D14 (itself entangled with the open D10), the policy half of P9-D on D16, and P9-E on D13 plus an unrecorded legal identity. |
+| 2026-09-26T12:09:31.679Z | RELEASE COMPLETE | DEVICE-01 | P9-002 | Recorded scope was classification and validation of P9-A and P9-B, delivered in docs/PHASE_9_DEVICE01_VALIDATION.md. Both items remain unimplemented and blocked by D15 and D13; that blockage is tracked as decisions in docs/DECISION_REGISTER.md and in docs/PHASES_BUILDING_CONTROL.md, not as a held task. |
