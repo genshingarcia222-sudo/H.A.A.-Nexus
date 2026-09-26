@@ -11,6 +11,128 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 9 — DEVICE-01 lane validated; P9-A and P9-B blocked (2026-09-26)
+
+**Validation only. No application, Rust, or bundler-configuration behaviour
+changed.** DEVICE-01 took the P9-001 handoff from DEVICE-02 (PR #13, merged as
+`39dbd06`), closed it, and opened its Phase 9 lane — **P9-A** (release builds
+show a console window) and **P9-B** (installer signing) — as P9-002. Both turn
+out to be blocked by open owner decisions, so this checkpoint records measured
+evidence instead of an implementation. `docs/PHASE_9_DEVICE01_VALIDATION.md` is
+the record.
+
+**P9-A: BLOCKED BY D15 — not implemented.** The specification forbids fixing it
+on `main` before D15, and D15 is open. What this adds is measurement rather than
+source reading: the release binary built from `main` has PE `Subsystem` **3**
+(`IMAGE_SUBSYSTEM_WINDOWS_CUI`) — the field the Windows loader reads to decide
+whether to allocate a console, so the defect is confirmed in the artifact, not
+just in the absence of an attribute. The NSIS installer that delivers it is
+already `Subsystem` 2 (GUI), which is why the console has only ever been visible
+once the app itself runs.
+
+**D15 now has measured inputs, and is still open.** A release build of
+`feat/training-question-bank` at `de2c2d1` produces `Subsystem` **2** (GUI), so
+that branch really does fix P9-A — verified by building it in a throwaway
+worktree, not inferred from its commit subject. But the branch is 41 commits
+ahead of `main` across 85 files, adding a delivery-events subsystem, a migration
+and **+29 lines in `main.rs`**; merging it and reimplementing one attribute line
+are not comparable options. Separately, while this ran, the repository owner
+merged `main` into that branch through GitHub's web UI (`28fa2d1`), so **PR #3
+is now `MERGEABLE`**. That makes the merge *possible*; it does not *record* the
+decision, D15 is still blocked in `docs/DECISION_REGISTER.md`, and PR #3 was not
+merged.
+
+**P9-B: BLOCKED BY D13 — not implemented.** A repository-wide search for
+`certificateThumbprint`, `digestAlgorithm`, `timestampUrl` and `signCommand`
+returns no match, and `Get-AuthenticodeSignature` reports **`NotSigned`, no
+signer** for all three artifacts. P9-B is blocked on a purchased credential D13
+has not selected; configuring a thumbprint for a certificate that does not exist
+would break the build rather than sign it.
+
+**Verified on DEVICE-01 at `894a425`.** nexus-core 390/390, desktop 228/228,
+preflight 17/17, nexus-sync 60/60, `pnpm -r typecheck` clean, `cargo test`
+**55/55** (rustc 1.98.1) — every count identical to baseline B-002, none
+regressed. `tauri build` completed end to end and reproduced README's recorded
+figures exactly: 9.78 MB exe, 3.61 MB MSI, 2.54 MB NSIS setup. This closes the
+Phase 9 specification's §2 note that the Phase 7 audit's "packaging unverified"
+text was stale.
+
+**Not verified.** No installer was run on a clean Windows machine and no
+SmartScreen behaviour was observed (Phase 9 exit criterion 2 still requires
+both). The console defect is established from the PE header, not by launching
+the application. Nothing about P9-C, P9-D or P9-E — DEVICE-02's lane. No
+decision was resolved: **D13, D14, D15, D16** all remain open, and **Phase 9
+cannot close**. Phase 8 is unaffected and still open.
+
+---
+
+## Phase 9 (DEVICE-02 lane) — Version Parity Enforcement (2026-09-26)
+
+**Tooling and tests only. No application, Rust, or bundler-configuration
+behaviour changed.** DEVICE-02's Phase 9 lane is P9-C, P9-D and P9-E. Of those,
+exactly one piece was implementable without pre-empting an open decision, and it
+is the piece delivered here.
+
+**P9-D, enforcement half — implemented.** `tools/preflight/preflight.mjs` now
+reads the four places this product declares its version — root `package.json`,
+`apps/desktop/package.json`, `apps/desktop/src-tauri/tauri.conf.json` and the
+`[package]` table of `apps/desktop/src-tauri/Cargo.toml` — and reports whether
+they agree, in a new `VERSION PARITY (P9-D)` section. P9-D recorded that
+"nothing enforces that they agree"; now something does. A version bump that
+updates some of the four and not the rest fails
+`node tools/preflight/preflight.test.mjs` with a message naming every file and
+its version, before it can ship an installer whose advertised version disagrees
+with the binary inside it.
+
+The `[package]` version is read by walking TOML tables rather than with a
+file-wide regex, because dependency tables carry their own `version` keys
+(`rusqlite = { version = "0.31" }`) and a file-wide match would sometimes return
+one of those instead. CRLF input is handled, since the other device is Windows.
+
+**preflight's exit-code contract is unchanged.** It still exits non-zero only
+for a malformed decision register — a disagreement is reported, and it is the
+test suite that fails. The enforcement gate is `pnpm preflight:test`, not a new
+failure mode in an observability tool.
+
+**Verified.** `node tools/preflight/preflight.test.mjs` **25/25** (was 17/17;
+eight new tests). The gate was mutation-checked: bumping root `package.json` to
+`0.2.0` made the real-repository test fail and named all four files and
+versions; restoring it returned the suite to green. Also re-run at this commit:
+nexus-core **390/390**, desktop **228/228**, nexus-sync **60/60**,
+`pnpm -r typecheck` clean, `pnpm -r build` clean.
+
+**Not verified, and not claimed.** `cargo test` and `tauri build` were not run:
+DEVICE-02 is a Linux container where `cargo test` fails at `gdk-sys`
+(`gdk-3.0` absent) and WiX/NSIS cannot run. No Windows runtime, installer or
+packaging behaviour was executed or validated on this device. The change is
+zero-dependency Node that the application does not import, so it cannot affect
+the Rust build.
+
+**Deliberately not implemented, because each is gated on an open decision:**
+
+- **P9-C (auto-update)** — wiring `tauri-plugin-updater` requires a feed
+  endpoint and an update-signing keypair, which is exactly what **D14** asks and
+  D14 is entangled with the still-open **D10**. Adding the dependency without
+  configuration would change the Rust dependency graph for no validated benefit,
+  on a device that cannot compile it.
+- **P9-D, policy half** — the tagging convention, channel policy, release
+  checklist and changelog-to-release mapping are **D16** itself. Parity is an
+  invariant and does not presume an answer to it; the policy is not authorable
+  without the decision.
+- **P9-E (bundle metadata)** — `publisher` and `copyright` require the owner's
+  legal identity, and `LICENSE.md` records it as the literal placeholder
+  `[OWNER NAME / LEGAL ENTITY — replace with your actual name or company before
+  distributing this repository]`. It appears nowhere else in the repository.
+  Populating those fields would mean fabricating a legal claim inside a
+  distributed installer. Also gated on **D13**.
+
+**P9-A and P9-B are DEVICE-01's lane** and were not touched.
+`apps/desktop/src-tauri/tauri.conf.json` — DEVICE-01's edit target for P9-B
+signing configuration — is deliberately unmodified here; the new check only
+reads it.
+
+---
+
 ## Phase 9 — Release Builds Are Windowed, Not Console (2026-09-25)
 
 **The first Phase 9 item, and the only one that is not owner-gated.** The
@@ -983,6 +1105,9 @@ only; explicitly not a source or truth check), with the expected 12
 
 **Files:** `Claude outputs/nexus-pilot-batch-001.candidates.r3.json` (new).
 The r2 fixture and the r2 authoring copy are unchanged.
+
+---
+
 ## Phase 9 Entry — Packaging & Release Hardening Specification (2026-09-26)
 
 **Documentation only. No application, Rust, or bundler-configuration behaviour

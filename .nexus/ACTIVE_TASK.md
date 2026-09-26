@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-002
 task_name: "Phase 9 DEVICE-01 lane: P9-A and P9-B"
 owner: DEVICE-01
-status: ACTIVE
+status: BLOCKED
 started_at: 2026-09-26T01:13:50.833Z
-last_update: 2026-09-26T01:13:50.833Z
+last_update: 2026-09-26T01:30:20.834Z
 stale_after_hours: 12
 expected_scope: "Classify and validate P9-A (windows_subsystem) and P9-B (installer signing) against the merged Phase 9 specification. Implementation only where no open decision authorizes otherwise. No decision may be resolved by this task."
 affected_areas: "apps/desktop/src-tauri/, docs/, CHANGELOG.md"
 branch: claude/device01-phase9
 claim_commit: 7a78a9d03944ae29e020593e65d93133ef5a7634
-last_commit: 7a78a9d03944ae29e020593e65d93133ef5a7634
+last_commit: b5ec790bae22b3645f66320ddd3996e642732970
 handoff_required: no
 handoff_to: none
-next_action: "Verify the DEVICE-01 toolchain baseline (cargo test, tauri build), classify P9-A and P9-B against D15/D13, and record the evidence. DEVICE-02 works P9-C/P9-D/P9-E concurrently on its own branch."
+next_action: "Owner decisions, in the specification's recommended order: D15 (PR #3 is now MERGEABLE after the owner updated the branch from main, but the decision is still unrecorded), then D16, then D13, then D14 - and D14 needs D10 first. Record each in docs/DECISION_REGISTER.md before the work it gates starts. Do not begin Phase 10; Architecture Package section 22 is unstarted by design."
 ```
 
 ## Ownership history
@@ -80,3 +80,4 @@ Timestamps are UTC.
 | 2026-09-26T01:12:07.319Z | CLAIM | DEVICE-01 | P9-001 | accepted handoff from DEVICE-02 |
 | 2026-09-26T01:12:18.314Z | RELEASE COMPLETE | DEVICE-01 | P9-001 | Specification authored by DEVICE-02 and merged to main in PR #13 (merge commit 39dbd06); the task's recorded scope is finished. No Phase 9 implementation was in its scope. |
 | 2026-09-26T01:13:50.833Z | CLAIM | DEVICE-01 | P9-002 | claimed |
+| 2026-09-26T01:30:20.834Z | RELEASE BLOCKED | DEVICE-01 | P9-002 | Both DEVICE-01 lane items are gated on open owner decisions: P9-A on D15 (merge feat/training-question-bank, whose tip fixes it, or reimplement on main) and P9-B on D13 (a purchased code-signing credential). Neither may be implemented without converting an open decision into implementation authority. The lane delivered measured evidence instead; see docs/PHASE_9_DEVICE01_VALIDATION.md. Phase 9 as a whole cannot close: P9-C is gated on D14 (itself entangled with the open D10), the policy half of P9-D on D16, and P9-E on D13 plus an unrecorded legal identity. |
