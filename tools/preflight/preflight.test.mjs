@@ -4,7 +4,7 @@
 // anywhere Node is: `node tools/preflight/preflight.test.mjs`. The package
 // suites (`pnpm -r test`) cover the application; this covers the tool.
 import assert from "node:assert/strict";
-import { parseRegister, providerReadiness, collect } from "./preflight.mjs";
+import { parseRegister, providerReadiness, collect, parseVersionParity, parseCargoPackageVersion } from "./preflight.mjs";
 
 let passed = 0;
 const failures = [];
@@ -105,13 +105,81 @@ test("reports an unrecognised key shape as unknown rather than guessing", () => 
   assert.equal(providerReadiness({ PAYMONGO_SECRET_KEY: "something-else" }).paymongo.mode, "unknown");
 });
 
+console.log("\nversion parity (P9-D)");
+
+test("agrees when every source declares the same version", () => {
+  const r = parseVersionParity([
+    { label: "a", file: "package.json", version: "0.1.0" },
+    { label: "b", file: "apps/desktop/src-tauri/Cargo.toml", version: "0.1.0" }
+  ]);
+  assert.equal(r.agree, true);
+  assert.deepEqual(r.problems, []);
+  assert.deepEqual(r.distinct, ["0.1.0"]);
+});
+
+test("reports which files disagree, and with what, rather than just failing", () => {
+  const r = parseVersionParity([
+    { label: "a", file: "package.json", version: "0.1.0" },
+    { label: "b", file: "apps/desktop/src-tauri/tauri.conf.json", version: "0.2.0" }
+  ]);
+  assert.equal(r.agree, false);
+  assert.equal(r.problems.length, 1);
+  assert.match(r.problems[0], /package\.json=0\.1\.0/);
+  assert.match(r.problems[0], /tauri\.conf\.json=0\.2\.0/);
+});
+
+test("treats a missing version as a problem rather than as agreement", () => {
+  const r = parseVersionParity([
+    { label: "a", file: "package.json", version: "0.1.0" },
+    { label: "b", file: "apps/desktop/src-tauri/Cargo.toml", version: null }
+  ]);
+  assert.equal(r.agree, false);
+  assert.ok(r.problems.some((p) => /Cargo\.toml: no version declared/.test(p)));
+});
+
+test("reads the [package] version and not a dependency's version", () => {
+  const toml = [
+    "[package]",
+    'name = "haa-nexus-desktop"',
+    'version = "0.1.0"',
+    "",
+    "[dependencies]",
+    'rusqlite = { version = "0.31", features = ["bundled"] }',
+    'tauri = { version = "2" }'
+  ].join("\n");
+  assert.equal(parseCargoPackageVersion(toml), "0.1.0");
+});
+
+test("reads the [package] version when it is declared after other tables", () => {
+  const toml = ['[dependencies]', 'tauri = { version = "2" }', "", "[package]", 'version = "9.9.9"'].join("\n");
+  assert.equal(parseCargoPackageVersion(toml), "9.9.9");
+});
+
+test("handles CRLF line endings, which the Windows device produces", () => {
+  assert.equal(parseCargoPackageVersion('[package]\r\nversion = "1.2.3"\r\n'), "1.2.3");
+});
+
+test("returns null rather than guessing when there is no [package] table", () => {
+  assert.equal(parseCargoPackageVersion('[dependencies]\nserde = { version = "1" }\n'), null);
+});
+
 console.log("\nagainst the real repository");
 
 test("collects a report whose sections are all present", () => {
   const r = collect();
-  for (const key of ["repository", "decisions", "scenarios", "competency", "schemaVersion", "providers"]) {
+  for (const key of ["repository", "decisions", "scenarios", "competency", "schemaVersion", "versionParity", "providers"]) {
     assert.ok(key in r, `missing section: ${key}`);
   }
+});
+
+// This is the P9-D enforcement itself, not a description of it. A version bump
+// that updates some of the four files and not the rest fails here, before it
+// can ship an installer whose advertised version disagrees with its binary.
+test("every version the shipped product declares agrees", () => {
+  const v = collect().versionParity;
+  assert.equal(v.sources.length, 4, "expected all four version sources to be read");
+  assert.deepEqual(v.problems, [], "version parity: " + v.problems.join("; "));
+  assert.equal(v.distinct.length, 1, `expected one version across all sources, saw ${v.distinct.join(", ")}`);
 });
 
 test("the shipped decision register parses without problems", () => {
