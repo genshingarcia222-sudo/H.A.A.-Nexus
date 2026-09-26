@@ -6,12 +6,13 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-001
+control_version: P9-2026-09-26-002
 phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
 lane: C-01 - primary implementation and integration coordination
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
 current_checkpoint: f4de3dcd20d6fa34cdbdc75ddf4b1e4bea1d55cf  # PR #3 conflict resolved on the branch
-nexus_task: P9-002 (owner DEVICE-01, status BLOCKED - leave it that way)
+nexus_task: NEXUS-SYNC-002 (owner DEVICE-01; P9-002 released COMPLETE on its recorded scope)
+session: S-phases-building (register/attach it at every session start)
 ```
 
 ## Assigned work
@@ -29,7 +30,13 @@ nexus_task: P9-002 (owner DEVICE-01, status BLOCKED - leave it that way)
    `5bcf9f9`. The measured state is 41 commits ahead of the merge base with tip
    `f4de3dc`, and PR #3 is `CLEAN`. Correct it through the normal
    `nexus-sync`-governed flow.
-4. **Hold P9-002 BLOCKED** until an owner decision lands.
+4. **Hold the Phase 9 items** until an owner decision lands. P9-A and P9-B are
+   not implementable, and that is recorded as D15 and D13 rather than as a held
+   task.
+5. **Keep the session registry current.** `nexus-sync session register --name
+   "PHASES BUILDING"` attaches this device (it never duplicates), and
+   `session update --id S-phases-building --next "..."` records where the work
+   stands so DEVICE-02 can continue it from Git alone.
 
 ## Prohibited work
 

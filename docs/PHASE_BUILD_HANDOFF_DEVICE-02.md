@@ -6,12 +6,13 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-001
+control_version: P9-2026-09-26-002
 phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
 lane: C-02 - independent audit, documentation and validation tooling
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
 current_checkpoint: 045b1e1e0fa3eb5a70ed196da16a604be903d01c  # PR #16 integrated
 nexus_task: none held by DEVICE-02; claim one before mutating (nexus-sync claim)
+session: attach to S-phases-building, then register your own lane session
 ```
 
 ## Why this lane is documentation work right now
@@ -90,7 +91,10 @@ that means every entry from both sides, newest first, no text edited.
 
 ## Exact next action
 
-`node tools/nexus-sync/nexus-sync.mjs start`, confirm this control version, claim
+`node tools/nexus-sync/nexus-sync.mjs start` - which now prints the session
+registry, so the PHASES BUILDING session is visible here without anyone sending
+it to you. Attach to it with `nexus-sync session register --name "PHASES
+BUILDING"` (attaching, not duplicating), confirm this control version, claim
 a task (`nexus-sync claim --task-id P9-003 --name "C-02 documentation-accuracy
 sweep"`), then do item 1 and item 2 in one PR, measuring the counts on this
 device. Do not begin any Phase 9 implementation item, and do not wait on
