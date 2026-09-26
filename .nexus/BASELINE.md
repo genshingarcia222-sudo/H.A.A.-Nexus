@@ -14,19 +14,54 @@ Earlier checkpoints, from before this file existed, are recorded in
 preserved there, not copied here.
 
 ```yaml nexus-state
-commit: 1d7b209307e7f2a2490cd113116e65052aada980
-branch: nexus/sync-bootstrap
-timestamp: 2026-09-23T12:13:44Z
+commit: 796c5e0ac698319df704b4ba47feb53a7d1f90e0
+branch: main
+timestamp: 2026-09-26T15:40:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync 60/60"
+tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81"
 build: "PASS - pnpm -r build"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
 rust: "PASS - cargo test 55/55; rustc 1.98.1, cargo 1.98.1"
-audit_status: "Phase 7 closed PASS WITH CONDITIONS; Phase 8.3 Assessment decisions D1-D7 resolved; sync protocol established and mutation-checked"
-known_conditions: "D8, D9, D10, D12 open; feat/training-question-bank unmerged; an external GUI (GitHub Desktop) also commits this repository"
+audit_status: "Phase 7 closed PASS WITH CONDITIONS (packaging and CSP conditions since cleared); Phase 8.3 Assessment decisions D1-D7 resolved; lane C-02 documentation sweep integrated; canonical session registry in place (N-008)"
+known_conditions: "D8, D9, D10, D13, D14, D15, D16 open; A2, A6, A7, A9, A12 open; Phase 9 fully decision-blocked and Phase 8 not closed; feat/training-question-bank unmerged (D15) but MERGEABLE at 082fa95; an external GUI (GitHub Desktop) also commits this repository"
 ```
 
 ## History
+
+### B-003 — C-02 integrated; session registry in place — `796c5e0` — 2026-09-26 — DEVICE-01
+
+The tree at `796c5e0ac698319df704b4ba47feb53a7d1f90e0`, on `main`, verified in full on DEVICE-01. It is the first
+baseline that includes `.nexus/SESSION_REGISTRY.md` and the `nexus-sync session`
+commands, and the first after the lane C-02 documentation sweep (PR #18
+`b1ef49d`, PR #19 `2556d1e`).
+
+| Check | Command | Result |
+|---|---|---|
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **390/390** (44 files), desktop **228/228** (25 files) |
+| Preflight tool | `node tools/preflight/preflight.test.mjs` | **25/25** |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; 13 decisions recorded, **10 blocked** |
+| Sync tool | `node tools/nexus-sync/nexus-sync.test.mjs` | **81/81** |
+| Typecheck | `npx --yes pnpm@9 -r typecheck` | clean |
+| Build | `npx --yes pnpm@9 -r build` | clean |
+| Rust | `cargo test --offline` in `apps/desktop/src-tauri` | **55/55**, rustc 1.98.1, cargo 1.98.1 |
+
+**No count regressed from B-002.** The application suites are identical (390 +
+228): everything since B-002 has been tooling, governance and documentation. The
+two tool suites grew - preflight 17 → 25 with the P9-D version-parity checks, and
+nexus-sync 60 → 81 with the session-registry tests, including the A-G
+bidirectional-discovery scenarios.
+
+**Measured on this device only.** `cargo test`, `pnpm -r build` and the Rust
+toolchain versions are Windows-workstation measurements. DEVICE-02 cannot produce
+them - its Linux container fails at `gdk-sys` (`gdk-3.0` absent) and cannot run
+the WiX/NSIS bundlers - so for that device they remain `NOT VERIFIED ON
+DEVICE-02`.
+
+**What is not covered.** `tauri build` was not re-run for this baseline; the last
+recorded run produced a 9.78 MB executable, a 3.61 MB MSI and a 2.54 MB NSIS
+setup at `894a425`, and nothing since has touched Rust, `tauri.conf.json` or the
+bundler configuration. No installer was run on a clean machine, and no Phase 9
+item was implemented: all five remain gated on open owner decisions.
 
 ### B-002 — sync protocol established — `1d7b209` — 2026-09-23 — DEVICE-01
 

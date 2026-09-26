@@ -25,12 +25,12 @@ repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
 current_phase: "Phase 9 - Packaging & Release Hardening (ENTRY: specification authored only; Phase 8 is NOT closed)"
 current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; control plane at P9-2026-09-26-003 in docs/PHASES_BUILDING_CONTROL.md; lane C-02 documentation sweep integrated (PR #18, #19); PR #3 kept CLEAN without merging (D15); Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
-baseline_commit: 1d7b209307e7f2a2490cd113116e65052aada980
-last_verified_commit: 1d7b209307e7f2a2490cd113116e65052aada980
-last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81 (2026-09-26, DEVICE-01)"
-last_verified_build: "PASS - pnpm -r build (2026-09-23, DEVICE-01)"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-23, DEVICE-01)"
-last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-23, DEVICE-01)"
+baseline_commit: 796c5e0ac698319df704b4ba47feb53a7d1f90e0
+last_verified_commit: 796c5e0ac698319df704b4ba47feb53a7d1f90e0
+last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81 (2026-09-26, DEVICE-01, baseline B-003)"
+last_verified_build: "PASS - pnpm -r build (2026-09-26, DEVICE-01, baseline B-003)"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-26, DEVICE-01, baseline B-003)"
+last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-26, DEVICE-01, baseline B-003)"
 active_task: P9-003
 task_owner: DEVICE-01
 task_status: ACTIVE
