@@ -587,6 +587,24 @@ release checklist, and no mapping from `CHANGELOG.md` to a release —
 no provider, so it is the cheapest Phase 9 decision to resolve and is authorable
 on either device.
 
+**Constraint this decision now carries** (recorded by DEVICE-01's integration
+review of PR #14, which delivered the enforcement half of P9-D): `preflight`
+asserts that all four declared versions agree, and one of the four is the
+**Cargo crate version** of `apps/desktop/src-tauri`. That invariant therefore
+pins the crate version to the product version.
+
+If D16 is answered by **decoupling crate versioning from product releases** —
+for example letting the crate follow its own semver while the installer carries
+a marketing version — then `versionParity` in `tools/preflight/preflight.mjs`
+and its real-repository test in `tools/preflight/preflight.test.mjs` must be
+updated in the same change. They are test-only, additive and reversible, so this
+does not constrain which answer D16 may take; it only means the answer must say
+what the crate version is allowed to do.
+
+The enforcement was not held back pending this decision because P9-D's own
+evidence frames non-agreement as a release defect — an installer advertising a
+version its binary does not carry — rather than as a stylistic preference.
+
 ---
 
 ## Roadmap steps 4 and 5

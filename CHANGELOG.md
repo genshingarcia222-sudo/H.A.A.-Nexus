@@ -11,6 +11,57 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 9 — Orchestration Control Plane, and the PR #3 Conflict Resolved (2026-09-26)
+
+**Governance and conflict resolution. No application, Rust, or bundler
+configuration changed.** Two devices had begun working the same phase in
+parallel, and their instructions lived only in conversations. This checkpoint
+puts the execution contract in the repository and clears the one real merge
+conflict that had accumulated.
+
+**`docs/PHASES_BUILDING_CONTROL.md` is new** — control version
+`P9-2026-09-26-001`. It records the authoritative phase, the verified baseline,
+each device's assignment and prohibited work, the blocked decisions, the
+dependency graph, the integration gate, the uniform conflict-resolution policy
+and the next-phase transition rule. `docs/PHASE_BUILD_HANDOFF_DEVICE-01.md` and
+`docs/PHASE_BUILD_HANDOFF_DEVICE-02.md` carry the per-device execution
+instructions, and `CLAUDE.md` now points every session at them. The control
+document holds phase assignments only: `.nexus/ACTIVE_TASK.md` still owns task
+claims, and only `nexus-sync` changes them.
+
+**The honest finding it records: Phase 9 is fully decision-blocked.** All five
+items are gated — P9-A on D15, P9-B and P9-E on D13, P9-C on D14 (which needs
+D10), P9-D's policy half on D16 — and the decision register already states that
+no substantive engineering work remains that does not depend on an open
+decision. So both lanes are assigned evidence, integration and
+documentation-accuracy work, and neither is given manufactured implementation
+work.
+
+**PR #3 was `CONFLICTING`; it is now `CLEAN` at `f4de3dc`.** `main` had advanced
+eight commits past the owner's web merge, and the only conflict was
+`CHANGELOG.md`, where both sides insert at the top. Resolved by preserving every
+entry from both devices, newest first, editing no entry's text, and checking it
+mechanically: 61 headings on one side, 43 on the other, union 63, merged 63, none
+lost, duplicated or invented. That resolution is now the repository-wide rule for
+this file.
+
+**This does not merge the branch.** D15 — merge `feat/training-question-bank` or
+reimplement its `windows_subsystem` fix on `main` — is still open, and `de2c2d1`
+is still not an ancestor of `main`. What changed is that the decision now has
+complete measured inputs: the merged tree passes nexus-core **784/784**, desktop
+**282/282**, preflight **25/25**, nexus-sync **60/60**, `pnpm -r typecheck` clean
+and `cargo test` **70/70** on DEVICE-01, and version parity — the invariant PR #14
+added on `main` — holds on it, all four declared versions `0.1.0`.
+
+**PR #16 integrated** (`045b1e1`), after verifying it resolves nothing: preflight
+still reports 13 decisions recorded, 10 blocked, **D16 among them**.
+
+**Unchanged.** No decision resolved, no test weakened, no history rewritten, no
+`.nexus` state hand-merged. Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+
+---
+
 ## Phase 9 — DEVICE-01 lane validated; P9-A and P9-B blocked (2026-09-26)
 
 **Validation only. No application, Rust, or bundler-configuration behaviour
