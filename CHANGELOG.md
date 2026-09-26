@@ -56,8 +56,8 @@ history. `--expect-revision N` refuses a stale write and names the device that
 moved it. A late push is rejected by Git rather than forced, so the losing device
 synchronizes and re-issues.
 
-**Validation.** `nexus-sync` tests: **80 passed, 0 failed** (was 60; 20 new).
-Ten are pure-logic tests of derived identity, grouping, and every refusal path.
+**Validation.** `nexus-sync` tests: **81 passed, 0 failed** (was 60; 21 new).
+Eleven are pure-logic tests of derived identity, grouping, and every refusal path.
 Seven are the end-to-end scenarios A-G, run against a real bare "GitHub" remote
 with two **fresh** clones, so nothing a device knows came from local state:
 **A** DEVICE-01 registers and DEVICE-02 discovers it without being told the id or
@@ -69,8 +69,18 @@ version; **F** near-simultaneous changes are refused twice - once as "behind",
 once as a disagreement - the superseded value and the reason survive in the
 history, and both devices then converge on one value; **G** one logical session,
 identical from both devices, with no replacement copy and no uuid in shared
-state. Also preflight 25/25, `pnpm -r test` unchanged, and the real registry was
-registered with the tool and then read back from a separate clone.
+state. Also preflight 25/25 and exit 0, nexus-core 390/390 and desktop 228/228
+unchanged.
+
+**Then the same verification found a defect of its own, in a separate clone.**
+`session list` announced that a freshly cloned checkout differed from the
+canonical copy. Two checkout details, not differences: Git stores LF and checks
+CRLF out on Windows, and the `git show` helper trims its output. The comparison
+now normalizes both, with a test in each direction - a CRLF-only difference stays
+quiet, a real content difference still reports. The real registration was then
+read back from a fresh clone identified as DEVICE-02, with nothing copied: it
+shows the session, its control version, both attachment states and the next
+action.
 
 **Remaining limitation, stated plainly.** This makes the *session* discoverable -
 its identity, purpose, status, control version, attachments and next action -
