@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-003
 task_name: "C-02 integration and governance reconciliation"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-09-26T15:14:19.418Z
-last_update: 2026-09-26T15:14:19.418Z
+last_update: 2026-09-26T15:26:15.833Z
 stale_after_hours: 12
 expected_scope: "Integrate the DEVICE-02 C-02 documentation PRs, keep PR #3 mergeable, and reconcile .nexus and the control plane with what the sweep actually changed. Governance and documentation only; no decision may be resolved."
 affected_areas: ".nexus/, docs/PHASES_BUILDING_CONTROL.md, docs/PHASE_BUILD_HANDOFF_*, CHANGELOG.md"
 branch: main
 claim_commit: 2556d1efa6000a5c0bb2a3a83be8864587b51126
-last_commit: 2556d1efa6000a5c0bb2a3a83be8864587b51126
+last_commit: f297db3b5faddba172b21003aee95e103777831d
 handoff_required: no
 handoff_to: none
-next_action: "Integrate PR #18 and #19, re-reconcile PR #3 if main advanced past it, then update .nexus and the control plane."
+next_action: "All remaining work is owner-gated. Decisions, in the specification's order: D15, D16, D13, then D14 (which needs D10); Phase 8 closure needs D8, D9, D10. DEVICE-02 may record its own state through nexus-sync and independently audit B-003."
 ```
 
 ## Ownership history
@@ -85,3 +85,4 @@ Timestamps are UTC.
 | 2026-09-26T12:10:18.742Z | CLAIM | DEVICE-01 | NEXUS-SYNC-002 | claimed |
 | 2026-09-26T13:11:31.676Z | RELEASE COMPLETE | DEVICE-01 | NEXUS-SYNC-002 | Canonical session registry delivered: .nexus/SESSION_REGISTRY.md, nexus-sync session register\|attach\|update\|list, N-008, protocol step 14, and the A-G scenarios. nexus-sync 81/81, preflight 25/25, nexus-core 390/390, desktop 228/228. |
 | 2026-09-26T15:14:19.418Z | CLAIM | DEVICE-01 | P9-003 | claimed |
+| 2026-09-26T15:26:15.833Z | RELEASE COMPLETE | DEVICE-01 | P9-003 | PR #18 and #19 integrated against the control-plane gate; PR #3 re-reconciled at 082fa95 and left unmerged (D15); governance reconciled at P9-2026-09-26-003; baseline B-003 recorded at 796c5e0. Measured: nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81, build and typecheck clean, cargo test 55/55. |
