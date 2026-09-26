@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: NEXUS-SYNC-001
-task_name: Establish the distributed workstation sync and recovery protocol
-owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-09-21T03:35:47Z
-last_update: 2026-09-23T13:58:21.629Z
+task_id: P9-001
+task_name: "Phase 9 entry: author the packaging and release-hardening specification"
+owner: DEVICE-02
+status: ACTIVE
+started_at: 2026-09-26T00:42:04.345Z
+last_update: 2026-09-26T00:42:04.345Z
 stale_after_hours: 12
-expected_scope: "Add .nexus/ state, tools/nexus-sync, protocol docs; integrate CLAUDE.md, README, CHANGELOG, .gitignore. No application behaviour change."
-affected_areas: ".nexus/, tools/nexus-sync/, CLAUDE.md, README.md, CHANGELOG.md, .gitignore, package.json"
-branch: main
-claim_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-last_commit: 16c9a2f5e7f3746e8604a4fd726ea0850f1c9d46
+expected_scope: "Author docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md from repository evidence; CHANGELOG + .nexus state. No application, Rust, or bundler-config behaviour change."
+affected_areas: "docs/, CHANGELOG.md, .nexus/"
+branch: claude/busy-edison-atzxdd
+claim_commit: 7e304a1f0759cae3a07e96182da84dc477690c7d
+last_commit: 7e304a1f0759cae3a07e96182da84dc477690c7d
 handoff_required: no
 handoff_to: none
-next_action: "DEVICE-02: git pull --ff-only, then nexus-sync init-device DEVICE-02 and nexus-sync start"
+next_action: "Owner decisions D-P9-1..D-P9-4; implementation requires DEVICE-01 (Windows)"
 ```
 
 ## Ownership history
@@ -75,3 +75,4 @@ Timestamps are UTC.
 |---|---|---|---|---|
 | 2026-09-21T03:35:47Z | CLAIM | DEVICE-01 | NEXUS-SYNC-001 | bootstrap of the sync protocol, recorded by hand because the tooling did not exist yet |
 | 2026-09-23T13:58:21.629Z | RELEASE COMPLETE | DEVICE-01 | NEXUS-SYNC-001 | complete |
+| 2026-09-26T00:42:04.345Z | CLAIM | DEVICE-02 | P9-001 | claimed |
