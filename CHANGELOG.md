@@ -96,6 +96,58 @@ implementation remains blocked.
 
 ---
 
+## Phase 9 (DEVICE-02 lane C-02) — Phase-Document Accuracy Corrections (2026-09-26)
+
+**Documentation only. No application, Rust, bundler-configuration, test or
+`.nexus` change.** Lane C-02 sweep items 3 and 4
+(`docs/PHASES_BUILDING_CONTROL.md` §8). Both are recorded in
+`.nexus/CURRENT_STATE.md` "Known issues", so neither is invented work.
+
+**Corrections are additive, in each document's own convention.** The Phase 7
+audit already carries two `> **Update — cleared...**` blockquotes that end "The
+evidence above describes the state at the Phase 7 gate". The two new notes follow
+that form exactly, so the original gate text survives and the record shows both
+what was believed then and what is true now. Nothing was rewritten or deleted.
+
+**Item 3a — packaging.** The audit said `pnpm tauri dev` and `tauri build` "have
+not been run. Compilation is verified; packaging is not." Both have since run on
+the Windows workstation, producing a 9.78 MB executable, a 3.61 MB MSI and a
+2.54 MB NSIS setup. The note records that packaging is verified and that what
+remains Phase 9 work is packaging that is *signed, updatable and
+release-disciplined* — P9-B, P9-C, P9-E.
+
+**Item 3b — Content Security Policy.** The audit carried `"csp": null` as a
+condition. `tauri.conf.json` now sets a real policy (`default-src 'self'`,
+`script-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'none'`,
+`frame-ancestors 'none'`, IPC and asset origins allowed) with a separate `devCsp`
+for Vite/HMR; `style-src` keeps `'unsafe-inline'` for React `style` props. The
+same clearance was already recorded as **A5** in the audit's own accepted-debt
+table, so the §7 condition was the only stale copy.
+
+**Item 4 — D7.** `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 listed **D7** among what
+remains open while the same document records D7 as **RESOLVED** (2026-09-20) and
+the paragraph directly above it already relies on D7's contradiction grading as
+implemented and confirmed in a live Assessment. D7 is removed from the open list
+and a correction note records that the listing was stale text contradicting the
+rest of the document, not a change of policy. No other entry in that list changed.
+
+**No claim was strengthened, and no figure was invented.** The packaging figures
+were measured on the Windows workstation and are marked `NOT VERIFIED ON
+DEVICE-02`, whose Linux container cannot run `cargo test` (`gdk-3.0` absent) or
+the WiX/NSIS bundlers. DEVICE-01's figures stand.
+
+**Verified on DEVICE-02 at `2933082`.** nexus-core **390/390**, desktop
+**228/228**, preflight **25/25**, nexus-sync **60/60**, `pnpm -r typecheck` clean,
+`pnpm -r build` clean. Decision register unchanged: **13 recorded, 10 blocked**,
+D13/D14/D15/D16 still among the blocked — re-checked because the register is a
+parsed document.
+
+**Not verified, and not claimed.** `cargo test` and `tauri build` were not run
+here. No Phase 9 item was implemented; all five remain gated on open owner
+decisions. Phase 8 is not closed, and no decision was resolved or narrowed.
+
+---
+
 ## Phase 9 (DEVICE-02 lane C-02) — README Accuracy Corrections (2026-09-26)
 
 **Documentation only. No application, Rust, bundler-configuration, test or

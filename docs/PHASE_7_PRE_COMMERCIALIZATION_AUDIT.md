@@ -181,6 +181,8 @@ The limitation carried since Phase 1 (apt Rust 1.75 below Tauri v2's MSRV) is re
 
 **Still unverified, deferred to Phase 9 (Tauri packaging/release hardening):** `pnpm tauri dev` (launching the real webview) and `tauri build` (MSI/NSIS bundling) have not been run. Compilation is verified; packaging is not.
 
+> **Update — cleared.** Both have since been run on the Windows workstation. `pnpm tauri dev` launches the real webview and performs live IPC against SQLite, and `tauri build` completes end to end, producing a 9.78 MB executable, a 3.61 MB MSI and a 2.54 MB NSIS setup. Packaging is therefore verified; what remains Phase 9 work is packaging that is *signed, updatable and release-disciplined* — see `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`, items P9-B, P9-C and P9-E. Those figures were measured on the Windows workstation and are `NOT VERIFIED ON DEVICE-02`, whose Linux container cannot run `cargo test` (`gdk-3.0` absent) or the WiX/NSIS bundlers. The evidence above describes the state at the Phase 7 gate.
+
 **Minor, unfixed:** `main.rs` lacks `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so a console window will appear behind release builds on Windows. Phase 9 item.
 
 ## 6. Analytics readiness audit — PASS (capability restored, not built)
@@ -216,6 +218,8 @@ Restoring analytics also restores MVP acceptance criterion §34(13) ("view compe
 - **Preventative fix applied:** `.gitignore` had no secrets patterns at all. Added `.env`, `.env.*`, `!.env.example`, `*.pem`, `*.key`, `secrets.json` — verified that no currently-tracked file matches them.
 
 **Condition (carried to Phase 8):** `tauri.conf.json` sets `"csp": null`. Acceptable for an offline desktop MVP; **not** acceptable once a web build and a payment redirect exist.
+
+> **Update — cleared.** `tauri.conf.json` no longer sets `"csp": null`. It carries a real policy — `default-src 'self'`, `script-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'none'`, `frame-ancestors 'none'`, with the IPC and asset origins allowed — plus a separate `devCsp` for Vite/HMR. `style-src` retains `'unsafe-inline'` because the UI styles elements through React `style` props, which is a known and documented residue rather than an open condition. The accepted-debt table below records the same clearance as **A5**. The evidence above describes the state at the Phase 7 gate.
 
 **Standing constraint for Phase 8:** privacy posture inverts the moment learner documentation leaves the device. Architecture Package §27 ("no data leaves the device") will stop describing the product at web deployment and must be rewritten *before* launch, not after.
 
