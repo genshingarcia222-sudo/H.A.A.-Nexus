@@ -11,6 +11,91 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Cross-Device Session Visibility: a Canonical Session Registry (2026-09-26)
+
+**Reported defect.** DEVICE-01 could see the PHASES BUILDING session; DEVICE-02
+could not, while DEVICE-02 could see DEVICE-01's work. Synchronization was
+therefore not bidirectional from the point of view of session discovery.
+
+**Root cause, and it is not a propagation failure.** Nothing in the repository
+had ever modelled a session. `.nexus/` covered devices, one active task,
+handoffs, baselines and decisions; `REQUIRED_NEXUS_FILES` listed no session
+file; the only `session_id` in the whole repository was a learner-simulation
+database column. A Claude Code session is per-machine application state -
+`%USERPROFILE%/.claude/projects/<repo>/<uuid>.jsonl`, 44 MB for this repository -
+named by a device-local uuid. DEVICE-01 "saw" the session because the session was
+running on DEVICE-01. There was no registry to be asymmetric: the feature was
+absent, not broken. Fixing an index or an ignore rule would have found nothing.
+
+**The correction, inside the existing `.nexus` architecture.**
+`.nexus/SESSION_REGISTRY.md` is now the canonical registry, and
+`nexus-sync session register | attach | update | list` is how it changes -
+committed and pushed immediately, like every other `.nexus` write.
+
+**Identity is derived, never assigned.** `session_id = "S-" + slug(name)`, so
+`PHASES BUILDING`, `Phases Building` and `phases  building!` all resolve to
+`S-phases-building`. Two devices that have never spoken derive the same id, which
+is why **registering an existing session attaches to it instead of creating a
+second one** - the command is safe to re-run at every session start. A
+device-local identifier (conversation uuid, window, process) is never identity
+and is not stored at all; a test asserts no uuid ever reaches shared state.
+
+**Bidirectional by construction, not by mirroring.** Each line has exactly one
+writer: `<id>.<field>` is shared and changes only through `session update`, while
+`<id>.<DEVICE-0X>.<field>` belongs to that device. Two devices working at once
+touch different lines, so Git merges them. Reading is canonical and writing is
+careful: `session list` reads `origin/main`'s copy, so a device sees the other's
+registration **before** it has merged anything, while a write still requires this
+checkout to be in sync. `nexus-sync start` prints the registry, so discovery
+needs no extra command and nothing is copied between machines.
+
+**Conflicts are refused, never resolved by last-write-wins.** Overwriting a
+shared value the *other* device set requires `--supersede --reason "..."`, and
+the replaced value is written into the registry's append-only registration
+history. `--expect-revision N` refuses a stale write and names the device that
+moved it. A late push is rejected by Git rather than forced, so the losing device
+synchronizes and re-issues.
+
+**Validation.** `nexus-sync` tests: **81 passed, 0 failed** (was 60; 21 new).
+Eleven are pure-logic tests of derived identity, grouping, and every refusal path.
+Seven are the end-to-end scenarios A-G, run against a real bare "GitHub" remote
+with two **fresh** clones, so nothing a device knows came from local state:
+**A** DEVICE-01 registers and DEVICE-02 discovers it without being told the id or
+name; **B** the reverse; **C** DEVICE-01's metadata change reaches DEVICE-02
+*before* DEVICE-02 merges (asserted while its branch is still behind); **D** the
+reverse; **E** re-registration after a restart, from both devices and from a
+third fresh clone, attaches rather than duplicating and does not bump the registry
+version; **F** near-simultaneous changes are refused twice - once as "behind",
+once as a disagreement - the superseded value and the reason survive in the
+history, and both devices then converge on one value; **G** one logical session,
+identical from both devices, with no replacement copy and no uuid in shared
+state. Also preflight 25/25 and exit 0, nexus-core 390/390 and desktop 228/228
+unchanged.
+
+**Then the same verification found a defect of its own, in a separate clone.**
+`session list` announced that a freshly cloned checkout differed from the
+canonical copy. Two checkout details, not differences: Git stores LF and checks
+CRLF out on Windows, and the `git show` helper trims its output. The comparison
+now normalizes both, with a test in each direction - a CRLF-only difference stays
+quiet, a real content difference still reports. The real registration was then
+read back from a fresh clone identified as DEVICE-02, with nothing copied: it
+shows the session, its control version, both attachment states and the next
+action.
+
+**Remaining limitation, stated plainly.** This makes the *session* discoverable -
+its identity, purpose, status, control version, attachments and next action -
+so either device can continue the work from the repository alone. It does **not**
+let one device open the other's conversation. Nothing in a repository can:
+transcripts are application state on another computer, tens of megabytes, holding
+pasted material, and `CLAUDE.md` forbids committing that class of file. Recorded
+in `.nexus/DECISIONS.md` N-008.
+
+**Unchanged.** No application, Rust or content behaviour. No decision resolved:
+D8, D9, D10, D13-D16 and A2/A6/A7/A9/A12 are all still open, and Phase 9
+implementation remains blocked.
+
+---
+
 ## Phase 9 (DEVICE-02 lane C-02) — README Accuracy Corrections (2026-09-26)
 
 **Documentation only. No application, Rust, bundler-configuration, test or

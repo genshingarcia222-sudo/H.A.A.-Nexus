@@ -10,7 +10,10 @@
 //   3. end-to-end scenarios against real temporary Git repositories with a
 //      bare "GitHub" remote and two device clones: claim, takeover of a stale
 //      owner, divergence refusal, local-work preservation, handoff, finalize
-//      with remote verification, fresh-clone recovery and network failure.
+//      with remote verification, fresh-clone recovery and network failure;
+//   4. bidirectional session discovery (A-G): either device registers, the
+//      other discovers it from Git alone, no duplicates, and a real
+//      disagreement is refused rather than silently merged.
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
@@ -20,7 +23,8 @@ import {
   REPO_ROOT, REQUIRED_NEXUS_FILES, REQUIRED_KEYS, STATE_FILES, PLACEHOLDER, DEVICE_IDS,
   parseStateBlock, updateStateBlock, missingKeys, findPlaceholders, appendHistory, classifyDivergence,
   evaluateOwnership, planClaim, validateStateValues, redactUrl, parseArgs, readLocalDevice,
-  latestHandoff, buildHandoffEntry, insertHandoffEntry, startVerdict, recoveryCases, activityEvidence, onStateBranch, pushTarget, main
+  latestHandoff, buildHandoffEntry, insertHandoffEntry, startVerdict, recoveryCases, activityEvidence, onStateBranch, pushTarget, main,
+  sessionId, parseSessions, planSessionRegister, planSessionUpdate, SESSION_HISTORY_SECTION, SESSION_STATUSES
 } from "./nexus-sync.mjs";
 
 let passed = 0;
@@ -338,6 +342,147 @@ test("no secret-shaped values in .nexus/ or tools/nexus-sync/", () => {
   }
 });
 
+console.log("\nsessions: derived identity and conflict rules");
+
+const SNOW = new Date("2026-09-26T12:00:00.000Z");
+const SHEAD = "a".repeat(40);
+
+test("a session id is derived from its name, so both devices derive the same one", () => {
+  assert.equal(sessionId("PHASES BUILDING"), "S-phases-building");
+  // Case, spacing and punctuation are exactly the variations two devices differ on.
+  assert.equal(sessionId("Phases Building"), sessionId("PHASES BUILDING"));
+  assert.equal(sessionId("  phases   building!  "), sessionId("PHASES BUILDING"));
+  assert.equal(sessionId("Phase 9 / packaging"), "S-phase-9-packaging");
+  assert.equal(sessionId("   "), null);
+  assert.equal(sessionId(""), null);
+  assert.ok(!sessionId("x".repeat(80)).endsWith("-"), "a truncated slug must not end in a separator");
+});
+
+test("the registry groups shared fields and per-device attachments", () => {
+  const s = parseSessions({
+    registry_version: "2",
+    "S-a.name": "A",
+    "S-a.status": "ACTIVE",
+    "S-a.DEVICE-01.last_seen": "t1",
+    "S-a.DEVICE-02.last_seen": "t2",
+    "S-b.name": "B",
+    unrelated: "x"
+  });
+  assert.deepEqual(Object.keys(s).sort(), ["S-a", "S-b"]);
+  assert.deepEqual(s["S-a"].shared, { name: "A", status: "ACTIVE" });
+  assert.deepEqual(Object.keys(s["S-a"].devices).sort(), ["DEVICE-01", "DEVICE-02"]);
+  assert.equal(s["S-a"].devices["DEVICE-02"].last_seen, "t2");
+});
+
+const REGISTERED = parseSessions({
+  "S-phases-building.name": "PHASES BUILDING",
+  "S-phases-building.role": "orchestrator",
+  "S-phases-building.status": "ACTIVE",
+  "S-phases-building.next_action": "hold",
+  "S-phases-building.created_by": "DEVICE-01",
+  "S-phases-building.updated_by": "DEVICE-01",
+  "S-phases-building.updated_at": "2026-09-26T11:00:00.000Z",
+  "S-phases-building.revision": "3",
+  "S-phases-building.DEVICE-01.attached_at": "2026-09-26T10:00:00.000Z"
+});
+
+test("registering a session that exists attaches this device instead of duplicating it", () => {
+  const plan = planSessionRegister({ sessions: REGISTERED, registry: { registry_version: "1" }, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { name: "Phases Building" } });
+  assert.ok(plan.ok, plan.reason);
+  assert.equal(plan.event, "ATTACH");
+  // Only DEVICE-02's own lines are written: no shared field, no registry_version.
+  assert.deepEqual(Object.keys(plan.updates).sort(), [
+    "S-phases-building.DEVICE-02.attached_at",
+    "S-phases-building.DEVICE-02.last_seen",
+    "S-phases-building.DEVICE-02.last_seen_commit"
+  ]);
+});
+
+test("re-registering keeps the first attachment time, so a restart does not rewrite history", () => {
+  const plan = planSessionRegister({ sessions: REGISTERED, registry: {}, id: "S-phases-building", device: "DEVICE-01", now: SNOW, head: SHEAD, args: {} });
+  assert.equal(plan.updates["S-phases-building.DEVICE-01.attached_at"], "2026-09-26T10:00:00.000Z");
+  assert.equal(plan.updates["S-phases-building.DEVICE-01.last_seen"], SNOW.toISOString());
+});
+
+test("register refuses to change a shared field, and attach refuses an unknown session", () => {
+  const shared = planSessionRegister({ sessions: REGISTERED, registry: {}, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { status: "IDLE" } });
+  assert.equal(shared.ok, false);
+  assert.match(shared.reason, /session update/);
+  const unknown = planSessionRegister({ sessions: {}, registry: {}, id: "S-nope", device: "DEVICE-02", now: SNOW, head: SHEAD, attachOnly: true, args: {} });
+  assert.equal(unknown.ok, false);
+  assert.match(unknown.reason, /not registered yet/);
+  const unnamed = planSessionRegister({ sessions: {}, registry: {}, id: null, device: "DEVICE-02", now: SNOW, head: SHEAD, args: {} });
+  assert.equal(unnamed.ok, false);
+  assert.match(unnamed.reason, /name the session/);
+});
+
+test("a new session bumps the registry version and records its creator", () => {
+  const plan = planSessionRegister({ sessions: {}, registry: { registry_version: "4" }, id: "S-new-work", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { name: "New work", role: "audit" } });
+  assert.ok(plan.ok, plan.reason);
+  assert.equal(plan.event, "REGISTER");
+  assert.equal(plan.updates.registry_version, "5");
+  assert.equal(plan.updates["S-new-work.created_by"], "DEVICE-02");
+  assert.equal(plan.updates["S-new-work.revision"], "1");
+  assert.equal(plan.updates["S-new-work.status"], "ACTIVE");
+});
+
+test("an update bumps the revision and records who changed it", () => {
+  const plan = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-01", now: SNOW, head: SHEAD, args: { next: "resolve D15" } });
+  assert.ok(plan.ok, plan.reason);
+  assert.equal(plan.event, "UPDATE");
+  assert.equal(plan.updates["S-phases-building.revision"], "4");
+  assert.equal(plan.updates["S-phases-building.next_action"], "resolve D15");
+  assert.equal(plan.updates["S-phases-building.updated_by"], "DEVICE-01");
+});
+
+test("--expect-revision refuses a stale write and names the device that moved it", () => {
+  const plan = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { status: "IDLE", "expect-revision": "2" } });
+  assert.equal(plan.ok, false);
+  assert.match(plan.reason, /revision 3, not 2/);
+  assert.match(plan.reason, /DEVICE-01/);
+});
+
+test("overwriting the other device's shared value is refused, never last-write-wins", () => {
+  const blocked = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { status: "IDLE" } });
+  assert.equal(blocked.ok, false);
+  assert.match(blocked.reason, /--supersede/);
+  const unreasoned = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { status: "IDLE", supersede: true } });
+  assert.equal(unreasoned.ok, false);
+  assert.match(unreasoned.reason, /--reason/);
+  const done = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { status: "IDLE", supersede: true, reason: "DEVICE-01 is off" } });
+  assert.ok(done.ok, done.reason);
+  assert.equal(done.event, "SUPERSEDE");
+  // The replaced value survives in the audit row rather than only in a diff.
+  assert.match(done.history.detail, /ACTIVE/);
+  assert.match(done.history.detail, /DEVICE-01 is off/);
+});
+
+test("a device may set a shared field the other device never recorded, with no ceremony", () => {
+  const plan = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-02", now: SNOW, head: SHEAD, args: { "control-version": "P9-2026-09-26-001" } });
+  assert.ok(plan.ok, plan.reason);
+  assert.equal(plan.event, "UPDATE");
+});
+
+test("renaming is refused because identity is derived from the name", () => {
+  const plan = planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-01", now: SNOW, head: SHEAD, args: { name: "Something else", status: "IDLE" } });
+  assert.equal(plan.ok, false);
+  assert.match(plan.reason, /renaming would change identity/);
+});
+
+test("an invalid status and a non-derivable id are reported as state problems", () => {
+  assert.equal(planSessionUpdate({ sessions: REGISTERED, id: "S-phases-building", device: "DEVICE-01", now: SNOW, head: SHEAD, args: { status: "BUSY" } }).ok, false);
+  const problems = validateStateValues({ sessions: { registry_version: "1", "S-a.name": "Totally different", "S-a.status": "RUNNING", "S-a.DEVICE-09.last_seen": "t" } });
+  assert.equal(problems.filter((p) => /SESSION_REGISTRY/.test(p)).length, 3, problems.join(" | "));
+  assert.ok(SESSION_STATUSES.includes("ACTIVE"));
+});
+
+test("the registration history is append-only and lands in its own section", () => {
+  const md = "x\n\n" + SESSION_HISTORY_SECTION + "\n\n| h |\n|---|\n| r1 |\n";
+  const out = appendHistory(md, { when: "t", event: "REGISTER", device: "DEVICE-01", task: "S-a", detail: "d" }, SESSION_HISTORY_SECTION);
+  assert.ok(out.includes("| r1 |"), "an existing row was lost");
+  assert.ok(out.endsWith("| t | REGISTER | DEVICE-01 | S-a | d |\n"));
+});
+
 // --- 3. end-to-end against real repositories ------------------------------------
 
 console.log("\nend-to-end: two devices, one bare remote");
@@ -403,6 +548,14 @@ try {
   writeFileSync(taskFile, updateStateBlock(readFileSync(taskFile, "utf8"), { task_id: "SEED-0", status: "COMPLETE", owner: "DEVICE-01", stale_after_hours: "0.0003" }));
   const curFile = path.join(seed, STATE_FILES.current);
   writeFileSync(curFile, updateStateBlock(readFileSync(curFile, "utf8"), { active_task: "SEED-0", task_owner: "DEVICE-01", task_status: "COMPLETE", sync_status: "REMOTE_SYNC_PENDING" }));
+  // The real registry carries real sessions and real history rows; the
+  // scenarios below must start from an empty one.
+  const regFile = path.join(seed, STATE_FILES.sessions);
+  const regMd = readFileSync(regFile, "utf8")
+    .split(/\r?\n/)
+    .filter((l) => !/^S-[a-z0-9-]+\./.test(l.trim()) && !/^\| 20\d\d-/.test(l.trim()))
+    .join("\n");
+  writeFileSync(regFile, updateStateBlock(regMd, { registry_version: "0" }));
   writeFileSync(path.join(seed, ".gitignore"), ".nexus/local-device.yaml\n");
   writeFileSync(path.join(seed, "app.txt"), "v1\n");
   g(seed, "add", "-A");
@@ -622,6 +775,164 @@ if (setupOk) {
     assert.equal(c.sync_status, "REMOTE_SYNCED");
     assert.equal(c.last_sync_commit, work);
     assert.equal(g(bare, "branch", "--list", "session-1"), "");
+  });
+
+  // --- 4. bidirectional session discovery: Tests A-G ----------------------
+  //
+  // Two fresh clones, so neither device has any local state from the scenarios
+  // above: whatever they see about a session, they got from the remote.
+  const s1 = cloneAs("session-device1");
+  const s2 = cloneAs("session-device2");
+
+  //
+  // The defect these prove absent: a session registered on one device that the
+  // other device cannot see. Each test asserts discovery through the canonical
+  // mechanism only - the remote repository - never a copied file.
+
+  test("A: DEVICE-01 registers a session and DEVICE-02 discovers it without being told", () => {
+    const r = run(s1, "DEVICE-01", "session", "register", "--name", "PHASES BUILDING", "--role", "orchestrator", "--control-version", "P9-2026-09-26-001", "--next", "hold for owner decisions");
+    assert.equal(r.code, 0, r.out);
+    assert.match(r.out, /REGISTER S-phases-building/);
+    assert.match(r.out, /REMOTE SYNC VERIFIED/);
+    const remote = parseSessions(remoteBlock(STATE_FILES.sessions));
+    assert.equal(remote["S-phases-building"].shared.name, "PHASES BUILDING");
+    assert.equal(remote["S-phases-building"].shared.created_by, "DEVICE-01");
+
+    // DEVICE-02 is told nothing: no id, no name. Its ordinary session start
+    // fetches and prints the session, which is what "discovery" has to mean.
+    const seen = run(s2, "DEVICE-02", "start", "--pull");
+    assert.match(seen.out, /SESSIONS/);
+    assert.match(seen.out, /S-phases-building/);
+    assert.match(seen.out, /this device NOT attached/);
+    assert.match(seen.out, /P9-2026-09-26-001/);
+  });
+
+  test("B: DEVICE-02 registers a session and DEVICE-01 discovers it", () => {
+    const r = run(s2, "DEVICE-02", "session", "register", "--name", "Docs accuracy sweep", "--role", "audit", "--next", "README counts");
+    assert.equal(r.code, 0, r.out);
+    assert.match(r.out, /REGISTER S-docs-accuracy-sweep/);
+    const seen = run(s1, "DEVICE-01", "start", "--pull");
+    assert.match(seen.out, /S-docs-accuracy-sweep/);
+    // Both sessions are visible from both devices: the registry is one list.
+    assert.match(seen.out, /S-phases-building/);
+    const remote = parseSessions(remoteBlock(STATE_FILES.sessions));
+    assert.deepEqual(Object.keys(remote).sort(), ["S-docs-accuracy-sweep", "S-phases-building"]);
+    assert.equal(remote["S-docs-accuracy-sweep"].shared.created_by, "DEVICE-02");
+  });
+
+  test("C: DEVICE-01 changes shared metadata and DEVICE-02 receives it without merging first", () => {
+    const r = run(s1, "DEVICE-01", "session", "update", "--name", "PHASES BUILDING", "--next", "integrate PR 16", "--expect-revision", "1");
+    assert.equal(r.code, 0, r.out);
+    assert.equal(parseSessions(remoteBlock(STATE_FILES.sessions))["S-phases-building"].shared.revision, "2");
+    // DEVICE-02's own branch is still behind: discovery reads the canonical
+    // copy on the remote, which is the whole point - state written on one
+    // device must never wait for the other device to import it.
+    const seen = run(s2, "DEVICE-02", "session", "list");
+    assert.notEqual(g(s2, "rev-parse", "HEAD"), remoteHead(), "DEVICE-02 had already merged; the test proves nothing");
+    assert.match(seen.out, /integrate PR 16/);
+    assert.match(seen.out, /last changed by DEVICE-01/);
+    assert.match(seen.out, /canonical/);
+    assert.match(seen.out, /differs from the canonical one/);
+  });
+
+  test("D: DEVICE-02 changes shared metadata and DEVICE-01 receives it", () => {
+    // Writing still requires being in sync: reading is canonical, writing is careful.
+    assert.equal(run(s2, "DEVICE-02", "start", "--pull").code, 0);
+    const r = run(s2, "DEVICE-02", "session", "update", "--id", "S-docs-accuracy-sweep", "--status", "IDLE", "--next", "waiting on integration");
+    assert.equal(r.code, 0, r.out);
+    const seen = run(s1, "DEVICE-01", "session", "list");
+    assert.match(seen.out, /waiting on integration/);
+    const remote = parseSessions(remoteBlock(STATE_FILES.sessions))["S-docs-accuracy-sweep"];
+    assert.equal(remote.shared.status, "IDLE");
+    assert.equal(remote.shared.updated_by, "DEVICE-02");
+  });
+
+  test("E: re-registering after a restart attaches both devices and creates no duplicate", () => {
+    const before = remoteBlock(STATE_FILES.sessions).registry_version;
+    run(s1, "DEVICE-01", "start", "--pull");
+    run(s2, "DEVICE-02", "start", "--pull");
+    // DEVICE-02 types the name differently, as a second device naturally would.
+    const again = run(s2, "DEVICE-02", "session", "register", "--name", "Phases Building");
+    assert.equal(again.code, 0, again.out);
+    assert.match(again.out, /ATTACH S-phases-building/);
+    run(s1, "DEVICE-01", "start", "--pull");
+    const re = run(s1, "DEVICE-01", "session", "register", "--name", "PHASES BUILDING");
+    assert.equal(re.code, 0, re.out);
+    assert.match(re.out, /ATTACH S-phases-building/);
+    const remote = parseSessions(remoteBlock(STATE_FILES.sessions));
+    assert.deepEqual(Object.keys(remote).sort(), ["S-docs-accuracy-sweep", "S-phases-building"], "a duplicate logical session appeared");
+    assert.equal(remoteBlock(STATE_FILES.sessions).registry_version, before, "an attach must not bump the registry version");
+    assert.deepEqual(Object.keys(remote["S-phases-building"].devices).sort(), ["DEVICE-01", "DEVICE-02"]);
+    // A device that has never run before, on a machine with no local state,
+    // still sees the same session: nothing is stored outside the repository.
+    const fresh = cloneAs("device-fresh");
+    const r = run(fresh, "DEVICE-02", "session", "list");
+    assert.match(r.out, /S-phases-building/);
+    assert.match(r.out, /PHASES BUILDING/);
+  });
+
+  test("F: near-simultaneous changes are detected, never silently lost, and converge", () => {
+    // Both devices start from the same revision. DEVICE-01 lands first.
+    run(s1, "DEVICE-01", "start", "--pull");
+    const base = parseSessions(remoteBlock(STATE_FILES.sessions))["S-phases-building"].shared.revision;
+    assert.equal(run(s1, "DEVICE-01", "session", "update", "--name", "PHASES BUILDING", "--status", "ACTIVE", "--next", "DEVICE-01 continues integration", "--expect-revision", base).code, 0);
+
+    // DEVICE-02 still holds the old base. Its write is refused twice, for two
+    // different reasons, and neither refusal loses DEVICE-01's change.
+    const stale = run(s2, "DEVICE-02", "session", "update", "--name", "PHASES BUILDING", "--next", "DEVICE-02 takes over", "--expect-revision", base);
+    assert.equal(stale.code, 1, stale.out);
+    assert.match(stale.out, /(is behind|revision)/);
+
+    run(s2, "DEVICE-02", "start", "--pull");
+    const refused = run(s2, "DEVICE-02", "session", "update", "--name", "PHASES BUILDING", "--next", "DEVICE-02 takes over");
+    assert.equal(refused.code, 1, refused.out);
+    assert.match(refused.out, /--supersede/);
+    assert.equal(parseSessions(remoteBlock(STATE_FILES.sessions))["S-phases-building"].shared.next_action, "DEVICE-01 continues integration", "a refused write still changed the remote");
+
+    // With the conflict acknowledged, the resolution is recorded, not implied.
+    const resolved = run(s2, "DEVICE-02", "session", "update", "--name", "PHASES BUILDING", "--next", "DEVICE-02 takes over", "--supersede", "--reason", "DEVICE-01 handed integration over");
+    assert.equal(resolved.code, 0, resolved.out);
+    const md = remoteFile(STATE_FILES.sessions);
+    assert.match(md, /SUPERSEDE/);
+    assert.ok(md.includes("DEVICE-01 continues integration"), "the superseded value was not preserved in the history");
+    assert.ok(md.includes("DEVICE-01 handed integration over"), "the reason was not recorded");
+
+    // Convergence: after an ordinary synchronization both devices read one value.
+    run(s1, "DEVICE-01", "start", "--pull");
+    const one = run(s1, "DEVICE-01", "session", "list", "--json");
+    const two = run(s2, "DEVICE-02", "session", "list", "--json");
+    const pick = (out) => JSON.parse(out).sessions["S-phases-building"].shared;
+    assert.equal(pick(one.out).next_action, "DEVICE-02 takes over");
+    assert.deepEqual(pick(one.out), pick(two.out), "the devices did not converge");
+  });
+
+  test("G: one logical session, discoverable from either device, with no replacement copy", () => {
+    const fromOne = JSON.parse(run(s1, "DEVICE-01", "session", "list", "--json").out);
+    const fromTwo = JSON.parse(run(s2, "DEVICE-02", "session", "list", "--json").out);
+    assert.deepEqual(Object.keys(fromOne.sessions).sort(), Object.keys(fromTwo.sessions).sort());
+    assert.equal(fromOne.registry_version, fromTwo.registry_version);
+    const s = fromOne.sessions["S-phases-building"];
+    assert.equal(s.shared.name, "PHASES BUILDING");
+    assert.equal(s.shared.created_by, "DEVICE-01");
+    assert.deepEqual(Object.keys(s.devices).sort(), ["DEVICE-01", "DEVICE-02"]);
+    // No conversation uuid, window or process id was ever written into shared state.
+    assert.doesNotMatch(remoteFile(STATE_FILES.sessions), /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+  });
+
+  test("a CRLF working copy is not reported as differing from the canonical one", () => {
+    // Git stores LF and checks CRLF out on Windows, so a byte comparison would
+    // tell every Windows checkout that its registry is stale.
+    const crlf = cloneAs("session-crlf");
+    const rel = STATE_FILES.sessions;
+    const file = path.join(crlf, rel);
+    const lf = readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+    writeFileSync(file, lf.replace(/\n/g, "\r\n"));
+    const quiet = run(crlf, "DEVICE-02", "session", "list");
+    assert.match(quiet.out, /S-phases-building/);
+    assert.doesNotMatch(quiet.out, /differs from the canonical one/);
+    // A real content difference still reports.
+    writeFileSync(file, lf.replace("registry_version:", "registry_version:  "));
+    assert.match(run(crlf, "DEVICE-02", "session", "list").out, /differs from the canonical one/);
   });
 
   test("the tool never rewrote published history", () => {

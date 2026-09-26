@@ -27,16 +27,16 @@ current_phase: "Phase 9 - Packaging & Release Hardening (ENTRY: specification au
 current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; control plane P9-2026-09-26-001 established in docs/PHASES_BUILDING_CONTROL.md; PR #3 kept CLEAN without merging (D15); Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
 baseline_commit: 1d7b209307e7f2a2490cd113116e65052aada980
 last_verified_commit: 1d7b209307e7f2a2490cd113116e65052aada980
-last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync 60/60 (2026-09-23, DEVICE-01)"
+last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81 (2026-09-26, DEVICE-01)"
 last_verified_build: "PASS - pnpm -r build (2026-09-23, DEVICE-01)"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-23, DEVICE-01)"
 last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-23, DEVICE-01)"
-active_task: P9-002
+active_task: NEXUS-SYNC-002
 task_owner: DEVICE-01
-task_status: BLOCKED
-last_successful_sync: 2026-09-26T02:31:34.223Z
+task_status: COMPLETE
+last_successful_sync: 2026-09-26T13:12:13.697Z
 last_sync_device: DEVICE-01
-last_sync_commit: 086d5478fdce76e98e90122b32efd4f3ccbf7ceb
+last_sync_commit: 41c538a1481be7adae0c4446bbeb8f56b578a4f8
 sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```
@@ -75,6 +75,12 @@ Product and engineering work, with the canonical record for each:
   authorization: do not merge it without the owner. DEVICE-01 keeps it
   conflict-free as `main` advances, under
   `docs/PHASES_BUILDING_CONTROL.md` §10(G).
+- **DEVICE-02 has not attached to the session registry yet.**
+  `.nexus/SESSION_REGISTRY.md` records `S-phases-building` with DEVICE-01
+  attached. DEVICE-02 attaches by running `nexus-sync session register --name
+  "PHASES BUILDING"` on its own device, which attaches rather than duplicating.
+  Until it does, `DEVICE-02  not attached` is the honest reading: the session is
+  discoverable there, but no DEVICE-02 session has recorded itself.
 - **Human gate on Pilot Batch 001.** No person has verified the source
   locators, so production eligibility stays 0 of 12. This is a human action;
   no code can advance it.

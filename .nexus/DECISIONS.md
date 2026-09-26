@@ -103,3 +103,15 @@ Entries are appended and never rewritten. A superseded decision gets
 | **Impact** | When the branch is merged or retired, its bus becomes plain history. |
 | **Affected Components** | `.nexus/HANDOFF.md`, `.nexus/DEVICE_REGISTRY.md` |
 | **Superseded By** | — |
+
+## N-008 — A session's identity is derived from its name; conversations stay local
+
+| | |
+|---|---|
+| **Date** | 2026-09-26 |
+| **Context** | DEVICE-01 could see the PHASES BUILDING session and DEVICE-02 could not. Investigation found no propagation failure to repair: nothing in `.nexus/` or the tooling had ever modelled a session. `REQUIRED_NEXUS_FILES` covered devices, one active task, handoffs, baselines and decisions; the only `session_id` in the repository was a learner-simulation database column. A Claude Code conversation is stored per machine (`%USERPROFILE%\\.claude\\projects\\<repo>\\<uuid>.jsonl`, 44 MB for this repository) with a device-local uuid for a name. |
+| **Decision** | Add `.nexus/SESSION_REGISTRY.md` as the canonical registry of development sessions, with identity **derived** from the logical name (`S-` + slug) rather than assigned; per-device attachment lines that only that device writes; shared fields changed only through `session update`; and a refusal - never a merge - when two devices set the same shared field differently. Conversation transcripts are never committed. |
+| **Reason** | A derived id is the only identifier two devices that have never spoken can agree on, so it cannot produce duplicate records for one piece of work. Splitting shared from per-device lines makes simultaneous work a normal Git merge instead of a conflict. Committing transcripts would put another machine's application state, and pasted material, into source control, which `CLAUDE.md` forbids. |
+| **Impact** | Either device discovers every session from `origin/main` at `nexus-sync start`, and can continue the work from the repository alone. It does **not** give one device the other's chat history; that limitation is stated in the registry and in `SYNC_PROTOCOL.md`. |
+| **Affected Components** | `.nexus/SESSION_REGISTRY.md`, `.nexus/SYNC_PROTOCOL.md`, `tools/nexus-sync/nexus-sync.mjs`, `tools/nexus-sync/nexus-sync.test.mjs` |
+| **Superseded By** | — |

@@ -12,15 +12,15 @@ two disagree about who holds a task, `.nexus/` is right; when they disagree abou
 what the work *is*, this document is right.
 
 ```yaml control
-control_version: P9-2026-09-26-001
+control_version: P9-2026-09-26-002
 issued: 2026-09-26
 issued_by: DEVICE-01 (orchestration session; integration coordinator)
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c   # origin/main after PR #16
 authoritative_phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
 phase_8_state: "OPEN - not closed by Phase 9; roadmap steps 3-8 unstarted; D8, D9, D10 open"
 phase_10_state: "NOT STARTED by design (Architecture Package section 22)"
-device_01_assignment: "C-01 - integration coordination, PR #3 mergeability, .nexus accuracy"
-device_02_assignment: "C-02 - documentation-accuracy audit in its own file set"
+device_01_assignment: "C-01 - integration coordination, PR #3 mergeability, .nexus accuracy; NEXUS-SYNC-002 session registry (delivered)"
+device_02_assignment: "C-02 - documentation-accuracy audit in its own file set; attach to the session registry"
 ```
 
 ## 1. Authority order
@@ -161,7 +161,13 @@ Owned files: `apps/desktop/**`, `packages/**`, `CHANGELOG.md`,
 3. **Keep `.nexus` accurate.** `CURRENT_STATE.md` "Pending work" still describes
    the branch as 18 commits ahead of `865d31e` with tip `5bcf9f9`; the measured
    state is 41 commits ahead with tip `f4de3dc`.
-4. **Hold P9-002 BLOCKED.** P9-A and P9-B stay unimplemented on `main`.
+4. **Hold the Phase 9 items.** P9-A and P9-B stay unimplemented on `main`.
+   P9-002 was released COMPLETE once its recorded scope - classification and
+   validation - was delivered; the blockage now lives in D13 and D15, which is
+   where a decision belongs, not in a held task.
+5. **Session registry (NEXUS-SYNC-002, delivered).** Keep `S-phases-building`
+   current with `nexus-sync session update`, and keep its `control_version`
+   equal to this document's.
 
 ### DEVICE-02 — C-02 (independent audit lane)
 
@@ -180,7 +186,12 @@ Owned files: `README.md`, `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`,
      both installers were produced on DEVICE-01 at `894a425` — and the CSP line.
    - `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 still reads as though **D7** were
      open. D7 was answered on 2026-09-20.
-2. Every correction cites its evidence and turns no claim into a stronger one.
+2. **Attach to the session registry** on this device:
+   `nexus-sync session register --name "Docs accuracy sweep" --role audit`, then
+   `nexus-sync session register --name "PHASES BUILDING"` to attach to the shared
+   session. Registering an existing session attaches rather than duplicating, so
+   this is safe to re-run.
+3. Every correction cites its evidence and turns no claim into a stronger one.
    Where DEVICE-02 cannot measure a figure — anything Rust, Windows or installer
    — it records `NOT VERIFIED ON DEVICE-02` and leaves DEVICE-01's figure
    standing.
@@ -261,4 +272,5 @@ specifications are authoritative.
 
 | Control version | Date | Reason |
 |---|---|---|
+| `P9-2026-09-26-002` | 2026-09-26 | Owner-directed infrastructure task NEXUS-SYNC-002: the canonical cross-device session registry (`.nexus/SESSION_REGISTRY.md`, `nexus-sync session`, N-008). Assignments otherwise unchanged; Phase 9 is still fully decision-blocked. P9-002 released COMPLETE on its recorded scope. |
 | `P9-2026-09-26-001` | 2026-09-26 | First control plane. Issued after verifying that `de2c2d1` is not in `main`, resolving the PR #3 CHANGELOG conflict at `f4de3dc`, and integrating PR #16 at `045b1e1`. Records Phase 9 as fully decision-blocked and assigns only evidence, integration and documentation-accuracy work. |

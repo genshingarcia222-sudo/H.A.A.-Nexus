@@ -33,7 +33,47 @@ code **1 = STOP**.
 | 11 | VERIFY BASELINE | `baseline_commit` / `last_verified_commit` are shown; the recorded sync commit is checked against `origin/main` |
 | 12 | DETECT LOCAL CHANGES | uncommitted entries are listed; they are **never** discarded (RECOVERY_PROTOCOL Case F) |
 | 13 | DETERMINE TASK OWNERSHIP | `FREE`, `OWNED_BY_YOU`, `HANDOFF_TO_YOU`, `HANDOFF_OPEN`, `OWNED_BY_OTHER` (live — do not touch its scope) or `STALE` (recovery permitted) |
-| 14 | Continue only when state is understood | a Claude session states what it found before editing anything |
+| 14 | READ THE SESSION REGISTRY | `.nexus/SESSION_REGISTRY.md` is printed: every session both devices share, its control version, who last changed it, and which devices are attached |
+| 15 | Continue only when state is understood | a Claude session states what it found before editing anything |
+
+## Session discovery: both devices see the same sessions
+
+A **session** here is a unit of work that outlives one conversation — "PHASES
+BUILDING" — not a Claude Code conversation. Conversations are per-machine
+application state (`%USERPROFILE%/.claude/projects/...`, tens of megabytes,
+with a device-local uuid for a name) and the repository never carries them.
+
+`nexus-sync start` prints the registry, so discovery needs no extra command and
+nothing is copied between machines. To take part:
+
+```
+nexus-sync session register --name "PHASES BUILDING" --role orchestrator \
+    --control-version P9-2026-09-26-001 --next "..."
+nexus-sync session list
+nexus-sync session update --id S-phases-building --next "..." [--expect-revision N]
+```
+
+Three rules make this safe for two devices at once:
+
+1. **Identity is derived from the name** (`S-` + slug), so both devices derive
+   the same id and `register` on an existing session *attaches* rather than
+   duplicating. Re-running it on every session start is correct.
+2. **Each line has one writer.** Shared fields change only through
+   `session update`; `<id>.<DEVICE-0X>.<field>` lines belong to that device. Two
+   devices working at once therefore merge cleanly.
+3. **A disagreement is refused, not merged.** Overwriting a shared value the
+   *other* device set needs `--supersede --reason "..."`, and the replaced value
+   is written into the registry's append-only registration history.
+   `--expect-revision N` refuses a stale write outright.
+
+Reading is canonical and writing is careful: `session list` reads
+`origin/main`'s copy, so a device sees the other's registration before it has
+merged anything, while a *write* still requires this checkout to be in sync.
+
+**What this does not do.** It does not make one device able to open the other's
+conversation. Nothing in the repository can: that is application state on another
+computer. What crosses is the session's identity, purpose, status, control
+version and next action — enough to continue the work from the repository alone.
 
 **Memory rule.** A session never treats what it remembers from an earlier
 conversation as authoritative. If memory and the repository disagree, the
