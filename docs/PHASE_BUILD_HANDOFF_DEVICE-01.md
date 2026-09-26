@@ -6,12 +6,12 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-002
+control_version: P9-2026-09-26-003
 phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
 lane: C-01 - primary implementation and integration coordination
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: f4de3dcd20d6fa34cdbdc75ddf4b1e4bea1d55cf  # PR #3 conflict resolved on the branch
-nexus_task: NEXUS-SYNC-002 (owner DEVICE-01; P9-002 released COMPLETE on its recorded scope)
+current_checkpoint: 082fa95  # PR #3 re-reconciled after the C-02 sweep on the branch
+nexus_task: P9-003 - C-02 integration and governance reconciliation (NEXUS-SYNC-002 COMPLETE)
 session: S-phases-building (register/attach it at every session start)
 ```
 

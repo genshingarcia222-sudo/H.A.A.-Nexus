@@ -6,11 +6,11 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-002
+control_version: P9-2026-09-26-003
 phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
 lane: C-02 - independent audit, documentation and validation tooling
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: 045b1e1e0fa3eb5a70ed196da16a604be903d01c  # PR #16 integrated
+current_checkpoint: 2556d1e  # PR #19 integrated; lane C-02 COMPLETE
 nexus_task: none held by DEVICE-02; claim one before mutating (nexus-sync claim)
 session: attach to S-phases-building, then register your own lane session
 ```

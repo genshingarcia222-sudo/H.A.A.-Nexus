@@ -11,6 +11,74 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 9 — C-02 Integrated, and the Governance Reconciled to It (2026-09-26)
+
+**Integration and governance. No application, Rust or bundler-configuration
+behaviour changed.** DEVICE-02's documentation-accuracy lane is complete and
+integrated, the records that described the old state are corrected, and the
+integrated `main` now has a measured baseline.
+
+**Both C-02 pull requests integrated against the control plane's §9 gate**, with
+every factual claim checked against the repository rather than the pull-request
+text: **PR #18** (`b1ef49d`) corrected `README.md`'s test counts to the measured
+390 + 228 and replaced its "`pnpm tauri dev` … has not been launched end-to-end
+yet" with what its own Rust/Tauri sections already record; **PR #19**
+(`2556d1e`) cleared two Phase 7 audit conditions - packaging, and `"csp": null`,
+which the audit's own A5 row had already cleared - and removed **D7** from a stale
+"still open" list in `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 that its own D7 record
+contradicts. Both corrections are additive: each document's original gate text
+survives in its own update convention, so what was believed then is still
+readable.
+
+**Two conflicts, one mechanism, and a useful coincidence.** Integrating PR #18
+first put a second lane entry at the top of `CHANGELOG.md`, so PR #19 turned
+`CONFLICTING`. Both devices resolved it independently under §10(G) - keep every
+entry from both sides, newest first, edit no text - and produced **byte-identical
+trees**: `git diff` between the two resolutions is empty. That is the first
+evidence that the rule is deterministic rather than merely written down.
+DEVICE-02's resolution is the published one; DEVICE-01's local merge was
+redundant and was never pushed.
+
+The sweep also touched `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md` immediately
+above a line `feat/training-question-bank` had already rewritten, so **PR #3
+conflicted again and was re-reconciled** at `082fa95`. Resolved under §10(F) by
+keeping both statements that are true of the merged tree - `main`'s
+packaging-cleared note and the branch's "Minor, **fixed** 2026-09-25" line,
+because that branch does carry the `windows_subsystem` attribute. `main`'s
+"Minor, unfixed" sentence is the one statement that is not true there. PR #3 is
+`MERGEABLE`/`CLEAN` again and **was not merged**: that is **D15**, still open.
+
+**Governance reconciled, including one record about the other device.**
+`.nexus/CURRENT_STATE.md` now closes the four stale statements the sweep fixed
+rather than listing them as open, and carries the measured branch facts (44
+commits ahead, tip `082fa95`). `.nexus/DEVICE_REGISTRY.md` said DEVICE-02 was
+`HANDOFF_PENDING` at a commit from before it had done any of this work; its two
+evidence fields are reconciled **from the remote** (`78318ca`, its newest commit
+carrying `Nexus-Device: DEVICE-02`, and its session attachment at 14:17Z), while
+`status` is set to `UNKNOWN` rather than `ACTIVE` - that column is what a device
+records about *itself*, and DEVICE-01 will not assert a self-report on another
+device's behalf. Its next `claim`, `heartbeat` or `release` replaces it.
+
+**Control version `P9-2026-09-26-003`.** Lane C-02 is recorded COMPLETE with no
+ungated work left, and the two device handoffs say so rather than repeating
+instructions for work already delivered.
+
+**Baseline B-003, measured on DEVICE-01 at this commit.** nexus-core **390/390**
+(44 files), desktop **228/228** (25 files), preflight **25/25**, nexus-sync
+**81/81**, `pnpm -r build` clean, `pnpm -r typecheck` clean, `cargo test`
+**55/55** (rustc 1.98.1). No count regressed from B-002, and preflight still
+reports **13 decisions recorded, 10 blocked** with D13, D14, D15 and D16 among
+them - re-checked because a documentation pass must be shown not to flip a
+blocked decision to resolved.
+
+**Phase state, unchanged by any of this.** Phase 8 is **not** closed: roadmap
+steps 3-8 are unstarted and D8, D9, D10 are open. Phase 9 is **fully
+decision-blocked**: P9-A on D15, P9-B and P9-E on D13, P9-C on D14 (which needs
+D10), P9-D's policy half on D16. Phase 10 is unstarted by design. Nothing in this
+checkpoint resolved, narrowed or implied a decision.
+
+---
+
 ## Cross-Device Session Visibility: a Canonical Session Registry (2026-09-26)
 
 **Reported defect.** DEVICE-01 could see the PHASES BUILDING session; DEVICE-02

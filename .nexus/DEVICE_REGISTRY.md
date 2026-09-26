@@ -41,12 +41,31 @@ DEVICE-01.latest_known_commit: 2556d1efa6000a5c0bb2a3a83be8864587b51126
 DEVICE-01.latest_activity: 2026-09-26T15:14:19.418Z
 DEVICE-01.last_successful_sync: 2026-09-26T13:12:13.697Z
 DEVICE-02.role: secondary-verification-audit
-DEVICE-02.status: HANDOFF_PENDING
+DEVICE-02.status: UNKNOWN
 DEVICE-02.ownership: none
-DEVICE-02.latest_known_commit: 1f694f8e512d399a261da3a1e7fdecf25dbb1b6a
-DEVICE-02.latest_activity: 2026-09-26T00:47:54.651Z
+DEVICE-02.latest_known_commit: 78318ca6a4a976cd0e0057c4c6dc33eeb39c5029
+DEVICE-02.latest_activity: 2026-09-26T15:09:01Z
 DEVICE-02.last_successful_sync: NOT VERIFIED
 ```
+
+## Reconciliation, 2026-09-26 (DEVICE-01)
+
+DEVICE-02's record said `HANDOFF_PENDING` at `1f694f8`, which the repository had
+outgrown: the P9-001 handoff was accepted by DEVICE-01 hours earlier, and
+DEVICE-02 has since delivered the whole C-02 sweep.
+
+The two evidence fields are now reconciled **from the remote**, not from a
+report: `78318ca` is its newest commit on `origin/main` carrying
+`Nexus-Device: DEVICE-02` (2026-09-26T15:09:01Z), and
+`.nexus/SESSION_REGISTRY.md` records it attached to `S-phases-building` at
+2026-09-26T14:17:11Z.
+
+`status` is set to `UNKNOWN` rather than `ACTIVE` deliberately. This column is
+what a device last recorded *about itself*, and DEVICE-02 has run no
+state-writing `nexus-sync` command since 2026-09-26T00:47 - it delivered the
+sweep through pull requests instead of a `claim`. DEVICE-01 will not assert a
+self-report on another device's behalf. Its next `claim`, `heartbeat` or
+`release` replaces this with its own.
 
 ## History before this registry
 

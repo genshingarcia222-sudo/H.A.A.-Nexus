@@ -12,15 +12,15 @@ two disagree about who holds a task, `.nexus/` is right; when they disagree abou
 what the work *is*, this document is right.
 
 ```yaml control
-control_version: P9-2026-09-26-002
+control_version: P9-2026-09-26-003
 issued: 2026-09-26
 issued_by: DEVICE-01 (orchestration session; integration coordinator)
-baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c   # origin/main after PR #16
+baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c   # origin/main when this plan was first issued
 authoritative_phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
 phase_8_state: "OPEN - not closed by Phase 9; roadmap steps 3-8 unstarted; D8, D9, D10 open"
 phase_10_state: "NOT STARTED by design (Architecture Package section 22)"
-device_01_assignment: "C-01 - integration coordination, PR #3 mergeability, .nexus accuracy; NEXUS-SYNC-002 session registry (delivered)"
-device_02_assignment: "C-02 - documentation-accuracy audit in its own file set; attach to the session registry"
+device_01_assignment: "C-01 - integration coordination (PR #18, #19 integrated), PR #3 mergeability, governance reconciliation, baseline recording"
+device_02_assignment: "C-02 - COMPLETE (all four sweep items integrated); no ungated work remains in this lane"
 ```
 
 ## 1. Authority order
@@ -158,9 +158,11 @@ Owned files: `apps/desktop/**`, `packages/**`, `CHANGELOG.md`,
 1. **Integration coordination.** Review and integrate DEVICE-02 PRs against §9.
 2. **Keep PR #3 mergeable without merging it.** Whenever `main` advances, merge
    `main` into the branch and reconcile `CHANGELOG.md` by §10(G).
-3. **Keep `.nexus` accurate.** `CURRENT_STATE.md` "Pending work" still describes
-   the branch as 18 commits ahead of `865d31e` with tip `5bcf9f9`; the measured
-   state is 41 commits ahead with tip `f4de3dc`.
+3. **Keep `.nexus` accurate**, which at this control version means: the branch
+   facts (now 44 commits ahead, tip `082fa95`, PR #3 `CLEAN`), the corrected
+   "Known issues" entries the C-02 sweep closed, DEVICE-02's registry record
+   reconciled from commit evidence, and a recorded baseline for the integrated
+   `main`.
 4. **Hold the Phase 9 items.** P9-A and P9-B stay unimplemented on `main`.
    P9-002 was released COMPLETE once its recorded scope - classification and
    validation - was delivered; the blockage now lives in D13 and D15, which is
@@ -176,8 +178,9 @@ Owned files: `README.md`, `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`,
 `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`, `tools/preflight/**`,
 `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md`.
 
-1. **Documentation-accuracy sweep.** Each item is a measured correction, and each
-   is recorded in `.nexus/CURRENT_STATE.md` "Known issues" already:
+**Lane status at this control version: COMPLETE.** All four sweep items were
+authored on DEVICE-02, integrated by DEVICE-01 as PR #18 (`b1ef49d`) and PR #19
+(`2556d1e`), and verified on the merged `main`. The items were:
    - `README.md` quotes 279 nexus-core + 144 desktop tests; re-measure and correct.
    - `README.md` says `pnpm tauri dev` "has not been launched end-to-end yet"
      while its own Rust/Tauri section records verified runtime IPC.
@@ -186,12 +189,20 @@ Owned files: `README.md`, `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`,
      both installers were produced on DEVICE-01 at `894a425` — and the CSP line.
    - `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 still reads as though **D7** were
      open. D7 was answered on 2026-09-20.
-2. **Attach to the session registry** on this device:
-   `nexus-sync session register --name "Docs accuracy sweep" --role audit`, then
-   `nexus-sync session register --name "PHASES BUILDING"` to attach to the shared
-   session. Registering an existing session attaches rather than duplicating, so
-   this is safe to re-run.
-3. Every correction cites its evidence and turns no claim into a stronger one.
+**What this lane does next.** Nothing in it is ungated any more, so it does not
+invent work. Two things are open to it, both inside its audit role:
+
+1. **Record its own state through `nexus-sync`.** The sweep was delivered without
+   a `claim`, so `.nexus/DEVICE_REGISTRY.md` still held a superseded record for
+   DEVICE-02 until DEVICE-01 reconciled it from commit evidence. Any state-writing
+   command (`claim`, `heartbeat`, `release`) puts that record back in the device's
+   own hands.
+2. **Independently re-verify the integrated `main`** and audit DEVICE-01's
+   recorded baseline B-003 against its own run - its stated role in
+   `.nexus/DEVICE_REGISTRY.md`. Anything it cannot measure (Rust, Windows,
+   installers) stays `NOT VERIFIED ON DEVICE-02`.
+
+Every correction cites its evidence and turns no claim into a stronger one.
    Where DEVICE-02 cannot measure a figure — anything Rust, Windows or installer
    — it records `NOT VERIFIED ON DEVICE-02` and leaves DEVICE-01's figure
    standing.
@@ -272,5 +283,6 @@ specifications are authoritative.
 
 | Control version | Date | Reason |
 |---|---|---|
+| `P9-2026-09-26-003` | 2026-09-26 | C-02 integrated: PR #18 (`b1ef49d`) and PR #19 (`2556d1e`). Lane C-02 is COMPLETE and has no ungated work left. PR #3 re-reconciled at `082fa95` after the sweep touched the Phase 7 audit. Governance reconciled and baseline B-003 recorded. Phase 9 is still fully decision-blocked; Phase 8 is still open. |
 | `P9-2026-09-26-002` | 2026-09-26 | Owner-directed infrastructure task NEXUS-SYNC-002: the canonical cross-device session registry (`.nexus/SESSION_REGISTRY.md`, `nexus-sync session`, N-008). Assignments otherwise unchanged; Phase 9 is still fully decision-blocked. P9-002 released COMPLETE on its recorded scope. |
 | `P9-2026-09-26-001` | 2026-09-26 | First control plane. Issued after verifying that `de2c2d1` is not in `main`, resolving the PR #3 CHANGELOG conflict at `f4de3dc`, and integrating PR #16 at `045b1e1`. Records Phase 9 as fully decision-blocked and assigns only evidence, integration and documentation-accuracy work. |

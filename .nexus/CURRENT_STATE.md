@@ -24,7 +24,7 @@ project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
 current_phase: "Phase 9 - Packaging & Release Hardening (ENTRY: specification authored only; Phase 8 is NOT closed)"
-current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; control plane P9-2026-09-26-001 established in docs/PHASES_BUILDING_CONTROL.md; PR #3 kept CLEAN without merging (D15); Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
+current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; control plane at P9-2026-09-26-003 in docs/PHASES_BUILDING_CONTROL.md; lane C-02 documentation sweep integrated (PR #18, #19); PR #3 kept CLEAN without merging (D15); Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
 baseline_commit: 1d7b209307e7f2a2490cd113116e65052aada980
 last_verified_commit: 1d7b209307e7f2a2490cd113116e65052aada980
 last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81 (2026-09-26, DEVICE-01)"
@@ -63,7 +63,7 @@ Product and engineering work, with the canonical record for each:
 - **A2, A7, A9, A12.** These are accepted Phase 7 debt awaiting decisions or content. See
   `docs/DECISION_REGISTER.md`.
 - **Unmerged branch `origin/feat/training-question-bank`** — measured 2026-09-26:
-  **43 commits** ahead of `main`, **85 files** differing, tip `cdb048d`, and
+  **44 commits** ahead of `main`, **85 files** differing, tip `082fa95`, and
   **PR #3 is `MERGEABLE` / `CLEAN`**. (The earlier figures here — 18 commits
   ahead of `865d31e`, tip `5bcf9f9`, conflicting — were left behind by the
   branch's own progress and by `main` advancing.) It carries the Training
@@ -75,12 +75,6 @@ Product and engineering work, with the canonical record for each:
   authorization: do not merge it without the owner. DEVICE-01 keeps it
   conflict-free as `main` advances, under
   `docs/PHASES_BUILDING_CONTROL.md` §10(G).
-- **DEVICE-02 has not attached to the session registry yet.**
-  `.nexus/SESSION_REGISTRY.md` records `S-phases-building` with DEVICE-01
-  attached. DEVICE-02 attaches by running `nexus-sync session register --name
-  "PHASES BUILDING"` on its own device, which attaches rather than duplicating.
-  Until it does, `DEVICE-02  not attached` is the honest reading: the session is
-  discoverable there, but no DEVICE-02 session has recorded itself.
 - **Human gate on Pilot Batch 001.** No person has verified the source
   locators, so production eligibility stays 0 of 12. This is a human action;
   no code can advance it.
@@ -104,14 +98,13 @@ Product and engineering work, with the canonical record for each:
   `.claude/worktrees/youthful-aryabhata-10eb31` took over `main`. One session
   per working tree (DECISIONS N-004).
 
-- `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 still lists D7 as open, but D7 was
-  resolved in `9872e11`. This is a stale sentence and was not changed by the
-  sync bootstrap.
-- `README.md` quotes 279 nexus-core + 144 desktop tests; the measured counts at
-  `865d31e` are 390 + 228. This is a stale figure and was not changed by the
-  sync bootstrap.
-- `README.md` says "`pnpm tauri dev` ... has not been launched end-to-end yet"
-  while its own Rust/Tauri section says runtime IPC was verified. The later
-  statement is the verified one.
+- **Four stale statements CLOSED by the C-02 sweep (2026-09-26).** The D7
+  listing in `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5, `README.md`'s 279 + 144 test
+  counts, `README.md`'s "`pnpm tauri dev` has not been launched end-to-end yet",
+  and the Phase 7 audit's packaging-unverified and `"csp": null` conditions were
+  all corrected by DEVICE-02 and integrated as PR #18 (`b1ef49d`) and PR #19
+  (`2556d1e`). Each correction is additive - the original text survives in each
+  document's own update convention - so what was believed at the gate is still
+  readable.
 - `pnpm` is not on PATH on DEVICE-01. `npx --yes pnpm@9 <cmd>` is the working
   form there.
