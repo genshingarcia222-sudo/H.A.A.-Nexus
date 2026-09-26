@@ -504,4 +504,6 @@ closed a limitation reported at every checkpoint from D1 onward: D4's
 closed-book boundary, D5's separate assessment population and D7's contradiction
 grading have each now been confirmed in a live Assessment, not only by tests.
 
-D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D7 (contradictory documentation), D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).
+D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).
+
+> **Correction.** This sentence previously listed **D7** among what remains open. D7 was resolved on 2026-09-20 — the decision is recorded as **RESOLVED** earlier in this document, and the paragraph immediately above already relies on its contradiction grading as implemented and confirmed in a live Assessment. Listing it as open was stale text contradicting the rest of the document, not a change of policy. No other entry in this list changed.
