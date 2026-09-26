@@ -11,6 +11,60 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 9 Entry — Packaging & Release Hardening Specification (2026-09-26)
+
+**Documentation only. No application, Rust, or bundler-configuration behaviour
+changed.** Phase 9 previously had no specification: it existed only as four
+scattered sentences in `README.md`, `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`
+and `docs/HAA_Nexus_Architecture_Package.md`. Nothing defined its entry criteria,
+scope or exit criteria. `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` now does,
+derived only from repository evidence — no requirement was invented.
+
+**Scope recorded.** Five items, each with its evidence: **P9-A** `main.rs` lacks
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so Windows
+release builds open a console window (verified absent on `main` at `7e304a1`);
+**P9-B** `tauri.conf.json` `bundle` carries no signing configuration at all;
+**P9-C** `tauri-plugin-updater` is absent from `Cargo.toml` `[dependencies]` and
+there is no `plugins.updater` block — the updater is unwired, not merely
+unconfigured; **P9-D** no release process, tagging convention or channel policy
+exists, and the `tauri.conf.json` / `package.json` versions are not enforced to
+agree; **P9-E** bundle metadata (`publisher`, `copyright`, `licenseFile`,
+descriptions) is empty while `LICENSE.md` says `UNLICENSED`.
+
+**Two stale statements superseded.** The Phase 7 audit is a gate snapshot and was
+not revised when two of its Phase 9 deferrals closed. `tauri build` *does* now
+complete, producing a 3.6 MB MSI and a 2.5 MB NSIS setup, and the webview runs
+under a real Content Security Policy rather than `"csp": null`. The audit prose is
+left as written — it is a historical record — and the Phase 9 document carries the
+pointer. Phase 9 therefore owns packaging that is *signed, updatable and
+release-disciplined*, not packaging that works.
+
+**Four open decisions, none resolved.** **D13** code-signing identity;
+**D14** update-feed location, which is entangled with the still-open **D10** and
+so prevents Phase 9 closing before D10 is decided; **D15** whether
+`origin/feat/training-question-bank` is merged — its tip `de2c2d1` already
+addresses P9-A, so P9-A was deliberately **not** implemented here to avoid a
+conflicting change in `main.rs`, and that merge remains an escalated owner
+decision; **D16** release/version policy.
+
+**Device constraint recorded.** Phase 9 is Windows packaging work. DEVICE-02 is a
+Linux container where `cargo test` fails at `gdk-sys` (missing `gdk-3.0`, rustc
+1.94.1 vs. the recorded 1.98.1) and where WiX/NSIS cannot run. Every Phase 9 item
+whose acceptance criterion is a built or installed Windows artifact must be
+implemented and verified on DEVICE-01. DEVICE-02 can author specification and
+release documentation and audit DEVICE-01's results.
+
+**Verified.** nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync
+60/60, `pnpm -r typecheck` clean, `pnpm -r build` clean — all re-run on DEVICE-02
+at `7e304a1`, matching baseline B-002 exactly.
+
+**Not verified.** The Rust suite (recorded 55/55 on DEVICE-01) — not reproducible
+on DEVICE-02, per the device constraint above. No Phase 9 implementation was
+performed, so there is no packaging result to verify. Phase 8 is **not** closed:
+commercialization roadmap steps 3–8 are unstarted and D8, D9, D10 remain open.
+
+---
+
 ## Distributed Workstation Sync and Recovery Protocol (2026-09-22)
 
 **Infrastructure only. No application behaviour changed.** Nexus no longer
