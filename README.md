@@ -154,7 +154,7 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (279 nexus-core + 144 desktop = 423).
+# Every package's tests (390 nexus-core + 228 desktop = 618).
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,
@@ -197,8 +197,12 @@ pnpm dev:desktop
 every workspace package (`pnpm -r`), so a newly added package cannot be
 silently omitted from the aggregate command.
 
-The Tauri desktop shell (`pnpm tauri dev`) compiles but has not been launched
-end-to-end yet.
+The Tauri desktop shell has been launched end-to-end: `pnpm tauri dev` brings up
+the real webview and performs live IPC against SQLite, and `tauri build` produces
+the optimized binary and both installers. See "Runtime IPC verified" and "Release
+build verified" above for what each run actually exercised. Both were measured on
+the Windows workstation; they are `NOT VERIFIED ON DEVICE-02`, whose Linux
+container cannot run `cargo test` (`gdk-3.0` is absent) or the WiX/NSIS bundlers.
 
 ## Phase 7 outcome
 

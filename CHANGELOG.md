@@ -96,6 +96,45 @@ implementation remains blocked.
 
 ---
 
+## Phase 9 (DEVICE-02 lane C-02) — README Accuracy Corrections (2026-09-26)
+
+**Documentation only. No application, Rust, bundler-configuration, test or
+`.nexus` change.** Two `README.md` statements the repository had outgrown, both
+already recorded in `.nexus/CURRENT_STATE.md` "Known issues" and both assigned to
+lane C-02 by `docs/PHASES_BUILDING_CONTROL.md` §8.
+
+**Test counts corrected.** `README.md` quoted "279 nexus-core + 144 desktop =
+423". Re-measured on DEVICE-02 at `2933082` with `npx --yes pnpm@9 -r test`:
+**nexus-core 390/390 (44 files), desktop 228/228 (25 files) = 618**. The figure
+was measured on this device rather than copied from DEVICE-01's earlier run, as
+the lane requires.
+
+**`tauri dev` contradiction resolved.** `README.md` said the desktop shell
+"compiles but has not been launched end-to-end yet", while its own Rust/Tauri
+section two pages earlier records verified runtime IPC through `pnpm tauri dev`
+and a verified `tauri build` producing both installers. The stale negative claim
+is replaced by the verified one, pointing at the two sections that hold the
+evidence rather than restating it.
+
+**No claim was strengthened.** The replacement asserts only what those sections
+already record, and it adds the platform caveat that was missing: both runs were
+measured on the Windows workstation and are marked `NOT VERIFIED ON DEVICE-02`,
+whose Linux container cannot run `cargo test` (`gdk-3.0` absent) or the WiX/NSIS
+bundlers. DEVICE-01's figures are left standing.
+
+**Verified on DEVICE-02 at `2933082`.** nexus-core **390/390**, desktop
+**228/228**, preflight **25/25**, nexus-sync **60/60**, `pnpm -r typecheck` clean,
+`pnpm -r build` clean. Decision register unchanged: **13 recorded, 10 blocked**,
+with D13, D14, D15 and D16 still among the blocked — checked because the register
+is a parsed document and a documentation pass must be shown not to flip a blocked
+decision to resolved.
+
+**Not verified, and not claimed.** `cargo test` and `tauri build` were not run
+here, per the device constraint above. No Phase 9 item was implemented: all five
+remain gated on open owner decisions. Phase 8 is not closed.
+
+---
+
 ## Phase 9 — Orchestration Control Plane, and the PR #3 Conflict Resolved (2026-09-26)
 
 **Governance and conflict resolution. No application, Rust, or bundler
