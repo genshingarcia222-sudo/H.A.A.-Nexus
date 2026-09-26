@@ -11,6 +11,61 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Phase 9 — DEVICE-01 lane validated; P9-A and P9-B blocked (2026-09-26)
+
+**Validation only. No application, Rust, or bundler-configuration behaviour
+changed.** DEVICE-01 took the P9-001 handoff from DEVICE-02 (PR #13, merged as
+`39dbd06`), closed it, and opened its Phase 9 lane — **P9-A** (release builds
+show a console window) and **P9-B** (installer signing) — as P9-002. Both turn
+out to be blocked by open owner decisions, so this checkpoint records measured
+evidence instead of an implementation. `docs/PHASE_9_DEVICE01_VALIDATION.md` is
+the record.
+
+**P9-A: BLOCKED BY D15 — not implemented.** The specification forbids fixing it
+on `main` before D15, and D15 is open. What this adds is measurement rather than
+source reading: the release binary built from `main` has PE `Subsystem` **3**
+(`IMAGE_SUBSYSTEM_WINDOWS_CUI`) — the field the Windows loader reads to decide
+whether to allocate a console, so the defect is confirmed in the artifact, not
+just in the absence of an attribute. The NSIS installer that delivers it is
+already `Subsystem` 2 (GUI), which is why the console has only ever been visible
+once the app itself runs.
+
+**D15 now has measured inputs, and is still open.** A release build of
+`feat/training-question-bank` at `de2c2d1` produces `Subsystem` **2** (GUI), so
+that branch really does fix P9-A — verified by building it in a throwaway
+worktree, not inferred from its commit subject. But the branch is 41 commits
+ahead of `main` across 85 files, adding a delivery-events subsystem, a migration
+and **+29 lines in `main.rs`**; merging it and reimplementing one attribute line
+are not comparable options. Separately, while this ran, the repository owner
+merged `main` into that branch through GitHub's web UI (`28fa2d1`), so **PR #3
+is now `MERGEABLE`**. That makes the merge *possible*; it does not *record* the
+decision, D15 is still blocked in `docs/DECISION_REGISTER.md`, and PR #3 was not
+merged.
+
+**P9-B: BLOCKED BY D13 — not implemented.** A repository-wide search for
+`certificateThumbprint`, `digestAlgorithm`, `timestampUrl` and `signCommand`
+returns no match, and `Get-AuthenticodeSignature` reports **`NotSigned`, no
+signer** for all three artifacts. P9-B is blocked on a purchased credential D13
+has not selected; configuring a thumbprint for a certificate that does not exist
+would break the build rather than sign it.
+
+**Verified on DEVICE-01 at `894a425`.** nexus-core 390/390, desktop 228/228,
+preflight 17/17, nexus-sync 60/60, `pnpm -r typecheck` clean, `cargo test`
+**55/55** (rustc 1.98.1) — every count identical to baseline B-002, none
+regressed. `tauri build` completed end to end and reproduced README's recorded
+figures exactly: 9.78 MB exe, 3.61 MB MSI, 2.54 MB NSIS setup. This closes the
+Phase 9 specification's §2 note that the Phase 7 audit's "packaging unverified"
+text was stale.
+
+**Not verified.** No installer was run on a clean Windows machine and no
+SmartScreen behaviour was observed (Phase 9 exit criterion 2 still requires
+both). The console defect is established from the PE header, not by launching
+the application. Nothing about P9-C, P9-D or P9-E — DEVICE-02's lane. No
+decision was resolved: **D13, D14, D15, D16** all remain open, and **Phase 9
+cannot close**. Phase 8 is unaffected and still open.
+
+---
+
 ## Phase 9 Entry — Packaging & Release Hardening Specification (2026-09-26)
 
 **Documentation only. No application, Rust, or bundler-configuration behaviour
