@@ -22,6 +22,12 @@ Before editing anything:
 
 Before calling meaningful work complete: run the relevant checks, update `CHANGELOG.md` and `.nexus/`, commit, then run `nexus-sync release` (or `handoff`) and `nexus-sync finalize`. Report the final commit SHA. Say "synchronized" only when `finalize` printed `REMOTE SYNC VERIFIED`. Otherwise report `LOCAL COMMIT COMPLETE / REMOTE SYNC NOT VERIFIED`.
 
+## Phase build control plane — read before substantive work
+
+`docs/PHASES_BUILDING_CONTROL.md` is the durable execution contract for DEVICE-01 and DEVICE-02: the authoritative phase, each device's assignment, the blocked decisions, the integration gate and the uniform conflict-resolution policy. Read it, and then the handoff for this device — `docs/PHASE_BUILD_HANDOFF_DEVICE-01.md` or `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md` — before editing anything substantive.
+
+It carries phase assignments, not ownership: `.nexus/ACTIVE_TASK.md` still owns claims and status, and only `nexus-sync` changes them. If a session was told to work under a different `control_version` than the one in that file, stop substantive mutation, diagnose read-only, and reconcile before editing.
+
 ## Required context files
 
 Read these before major implementation work:
