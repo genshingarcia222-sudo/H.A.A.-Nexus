@@ -1,0 +1,28 @@
+{
+  "deliveryId": "5f8c2c1e-2a4f-4d0e-9c2b-7a1d3e6b9c40",
+  "sessionId": "run-2026-09-25-01",
+  "learnerRef": "learner-7f3a",
+  "population": "practice",
+  "itemId": "NEXUS-L1-PRIV-000001",
+  "itemRevision": 1,
+  "conceptId": "PRIV-PHI-DEFINITION",
+  "corpusReleaseId": "8d845560e94cb3ab275fb48daa7ce1623a584731c8a064a4707766fb03038791",
+  "policyVersion": "training.default@1",
+  "envelopeId": "training.free@1",
+  "tierAtDelivery": "free",
+  "modality": "DIRECT_KNOWLEDGE",
+  "difficultyLevel": 1,
+  "jurisdictions": ["US"],
+  "deliveredAt": "2026-09-25T09:00:00Z",
+  "deliveredOn": "2026-09-25",
+  "slotIndex": 0,
+  "trace": {
+    "novelty": "UNSEEN",
+    "bestNoveltyAvailable": "UNSEEN",
+    "crossUserOverExposed": false,
+    "diversityCost": 0.0,
+    "poolSize": 12,
+    "stratumKey": "practice|training.free@1|DIRECT_KNOWLEDGE|1|US",
+    "reasons": ["UNSEEN", "CROSS_USER_NOT_MEASURABLE"]
+  }
+}

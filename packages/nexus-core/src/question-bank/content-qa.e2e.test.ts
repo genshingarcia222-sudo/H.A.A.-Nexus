@@ -19,8 +19,11 @@ import { validateQuestionBank } from "./validate.js";
  * tests pass and say nothing. They exist now so the first file dropped there is
  * checked on arrival rather than after a reviewer notices.
  *
- * Nothing here loads bank content into the application. There is no loader yet,
- * by design — a selector is a separate, still-undecided piece of work.
+ * This suite checks the directory's contents directly. The loader that reads it
+ * for a consumer lives in `loader-node.ts` and is covered by its own suite;
+ * nothing here loads bank content into the application, and no selector exists
+ * — choosing which questions a learner sees is a separate, still-undecided
+ * piece of work.
  */
 
 const BANK_DIR = fileURLToPath(new URL("../../../../content/question-bank", import.meta.url));

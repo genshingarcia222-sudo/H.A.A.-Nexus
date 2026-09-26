@@ -149,6 +149,100 @@ correct-answer reference to resolve. The lesson schema itself was not changed.
 
 ---
 
+## D12 — Where does non-terminology reference knowledge live? — **RESOLVED**
+
+**Resolved** by the owner-commissioned specification
+`NEXUS_D12_KNOWLEDGE_BASE_ARCHITECTURE_AND_IMPLEMENTATION_HANDOFF` **v1.0.0**
+(2026-09-21), derived from this branch at `5bcf9f9`.
+
+| | |
+|---|---|
+| **Decision** | D12 — canonical reference-knowledge architecture |
+| **Selected value** | **A Nexus Knowledge Corpus**: a new `KnowledgeRecord` type for sourced reference statements, the D11 Question Bank **extended** for questions, and one shared source registry behind both |
+| **Rejected alternatives** | extending the terminology lookup; keeping regulatory material as Question Bank items only |
+| **Owner-authorized** | YES (2026-09-21, via the commissioned specification) |
+| **Status** | RESOLVED; implementation proceeds by the specification's ordered work packages on `feat/training-question-bank` |
+
+**Delivery, decided with it:** tiers define an eligibility *envelope* — allowed
+difficulties, modalities, domains, collections and session sizes — and never
+own a fixed inventory of questions. A selection engine draws each session from
+the eligible pool at runtime, preferring what a learner has not seen and
+steering cross-learner exposure toward a configurable target (default 1-in-7).
+Delivery history lives in a separate exposure ledger; **no corpus record may
+name a learner, a tier, a pool or a delivery.**
+
+**Unchanged by this decision, and not silently decided by it:** the human
+verification gate (Pilot 001 stands at 0 of 12, 0 production-eligible), D10
+(web persistence), A2 (competency-domain alignment), A7, the Training tier
+values, whether adaptive difficulty is switched on, and whether a future
+question-based Assessment shares Training's pool. Each has a shipped default
+that changes nothing about today's behaviour.
+
+**Implementation state (2026-09-25):** all nine work packages are implemented,
+tested and pushed on `feat/training-question-bank`. The corpus record families,
+the assessment item with its seven modalities, the review log and its
+anti-fabrication cross-check, deliverability with computed time and conflicts,
+the deterministic build with source invalidation, the Pilot 001 conversion, the
+dynamic delivery engine, and the exposure ledger (contract, in-memory adapter,
+SQLite migration 004 and IPC) all exist. Training selects through the delivery
+engine. `docs/KNOWLEDGE_CORPUS.md` carries the per-package table.
+
+**What that does not mean.** No learner-facing content changed. Pilot Batch 001
+is still **0 of 12 human-verified with 0 production-eligible**, and Training
+still runs on the synthetic preview bank. Deliberately outstanding, each for a
+reason rather than an oversight: knowledge records for the pilot (drafting a
+proposition from a rationale is authoring, not conversion); writing to the
+exposure ledger from Training and the web ledger binding (both need a learner
+identity and a persistence decision, which is **D10**); the per-tier envelope
+values (a commercial decision, so every tier ships open); adaptive difficulty
+(off by default); and whether a question-based Assessment shares Training's
+pool.
+
+### Evidence considered while this decision was open
+
+**What it was blocking:** turning Pilot Batch 001 (and any future regulatory or
+reference material) into canonical Knowledge records.
+
+**Current behaviour, verified 2026-09-20:** the only Knowledge Base in the
+product is the terminology lookup. Its schema is
+`{id, layTerm, clinicalTerm, acceptedAlternatives, category, context, explanation, commonMistakes}`
+and a search of `terminology-engine/schema.ts` for
+`jurisdiction|effectiveFrom|humanVerified|locator|provenance` returns **zero**
+matches. It carries no provenance, jurisdiction, effective-date, verification
+state or source-question relationship.
+
+**Why it cannot simply be reused:** the schema maps a *lay term to a clinical
+term* for scribe documentation. "Protected health information (PHI)" has no
+lay/clinical pair, and "October 1 2026 to September 30 2027" is not a
+terminology entry. Putting regulatory statements there would change the
+meaning of the surface learners reach during Practice (and which D4 closes
+during an Assessment), not just its contents.
+
+**Why it was not decided autonomously:** the Pilot Batch integration gate
+(§C2) records the carrying schema as *"an owner-level product shape decision;
+do not resolve it silently."* Adding a Knowledge record type is that decision.
+
+**The options that were open:**
+
+| Option | Consequence |
+|---|---|
+| Extend the terminology schema | One lookup surface; dilutes a focused lay-to-clinical mapping with regulatory material that has different lifecycle and expiry needs |
+| A distinct Knowledge record type | Clean provenance, jurisdiction and effective dates; a second content system to load, validate, QA and gate |
+| Keep regulatory material as Question Bank items only | No new system; the material is only ever reachable as questions, never as reference |
+
+**Independent of this decision:** no Pilot 001 item may become learner-facing
+until a person completes the verification worksheet. All 12 carry
+`HUMAN-VERIFY-REQUIRED` with `humanVerifiedBy`/`humanVerifiedOn` null, and
+`question-bank/schema.ts` states that only a person who opened the cited
+document may fill them. **Both gates are separate**: deciding where knowledge
+lives does not verify it, and verifying it does not decide where it lives.
+
+**Unblocked:** nothing is waiting on engineering. The Question Bank schema,
+validator, repository, loader, selector and run lifecycle are all implemented
+and tested.
+
+---
+
 ## D10 — What persists a web learner's progress?
 
 **Blocked work:** roadmap step 4 (web-deployed build). Step 5 (PayMongo)

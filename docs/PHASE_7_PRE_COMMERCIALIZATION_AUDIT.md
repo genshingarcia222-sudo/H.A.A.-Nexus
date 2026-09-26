@@ -183,7 +183,7 @@ The limitation carried since Phase 1 (apt Rust 1.75 below Tauri v2's MSRV) is re
 
 > **Update — cleared.** Both have since been run on the Windows workstation. `pnpm tauri dev` launches the real webview and performs live IPC against SQLite, and `tauri build` completes end to end, producing a 9.78 MB executable, a 3.61 MB MSI and a 2.54 MB NSIS setup. Packaging is therefore verified; what remains Phase 9 work is packaging that is *signed, updatable and release-disciplined* — see `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`, items P9-B, P9-C and P9-E. Those figures were measured on the Windows workstation and are `NOT VERIFIED ON DEVICE-02`, whose Linux container cannot run `cargo test` (`gdk-3.0` absent) or the WiX/NSIS bundlers. The evidence above describes the state at the Phase 7 gate.
 
-**Minor, unfixed:** `main.rs` lacks `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so a console window will appear behind release builds on Windows. Phase 9 item.
+**Minor, fixed 2026-09-25 (Phase 9):** `main.rs` now carries `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so release builds no longer open a console window behind the application. `tauri dev` keeps its console. Guarded by a source-scanning test, since `debug_assertions` is always on under `cargo test`.
 
 ## 6. Analytics readiness audit — PASS (capability restored, not built)
 

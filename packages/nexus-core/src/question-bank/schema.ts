@@ -163,7 +163,16 @@ export const VerificationRecordSchema = z
   })
   .strict();
 
-export const TrainingQuestionSchema = z
+/**
+ * The question's fields, without its cross-field rules.
+ *
+ * Split out for one reason: `.superRefine()` returns a `ZodEffects`, which
+ * cannot be `.extend()`ed. D12 extends this record rather than replacing it
+ * (D12-05), so the object and its refinements are separate values and the
+ * refinements are reused by name. Nothing about `TrainingQuestionSchema`'s
+ * behaviour changes — it is still the object plus exactly these rules.
+ */
+export const TrainingQuestionObjectSchema = z
   .object({
     /** Stable across revisions and globally unique within a bank. */
     questionId: z.string().min(1),
@@ -201,8 +210,25 @@ export const TrainingQuestionSchema = z
     flags: z.array(z.string().min(1)).default([]),
     verification: VerificationRecordSchema.optional()
   })
-  .strict()
-  .superRefine((question, ctx) => {
+  .strict();
+
+/**
+ * The cross-field rules every question record obeys, whatever else it carries.
+ *
+ * Exported so the D12 assessment item applies the *same* rules rather than a
+ * second copy of them: a divergent copy is how two records that look alike stop
+ * meaning the same thing.
+ */
+export function refineTrainingQuestion(
+  question: {
+    choices: { id: string }[];
+    correctChoiceId: string;
+    contentStatus: ContentStatus;
+    verification?: { humanVerifiedBy: string | null; humanVerifiedOn: string | null } | undefined;
+  },
+  ctx: z.RefinementCtx
+): void {
+  {
     // Duplicate choice ids would make `correctChoiceId` ambiguous and would
     // make per-choice feedback attach to the wrong option.
     const seen = new Set<string>();
@@ -241,7 +267,10 @@ export const TrainingQuestionSchema = z
         });
       }
     }
-  });
+  }
+}
+
+export const TrainingQuestionSchema = TrainingQuestionObjectSchema.superRefine(refineTrainingQuestion);
 
 export const QuestionBankSchema = z
   .object({

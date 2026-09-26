@@ -360,6 +360,981 @@ reads it.
 
 ---
 
+## Phase 9 — Release Builds Are Windowed, Not Console (2026-09-25)
+
+**The first Phase 9 item, and the only one that is not owner-gated.** The
+Phase 7 audit recorded it as "minor, unfixed": `main.rs` lacked
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so every
+Windows release build opened a console window behind the application. Signing,
+auto-update and packaging hardening - the rest of Phase 9 - need certificates
+and a release feed, which are the owner's to supply.
+
+The attribute is conditional on `not(debug_assertions)`, so `tauri dev` keeps
+its console, where `println!` and panic output are how a developer sees what
+the Rust side is doing.
+
+**Guarded by a test.** The attribute is easy to delete by accident and its
+absence is invisible until someone installs a release build. `debug_assertions`
+is always on under `cargo test`, so the test scans the source instead - the
+same approach the selector's boundary test uses.
+
+**Verification.** 70 Rust tests (1 new), and `cargo check --release` compiles
+clean, which is the check that matters because the attribute only applies under
+`not(debug_assertions)`. `tauri build` was not re-run: bundling is unchanged by
+this and remains Phase 9 work.
+
+**Unchanged.** No TypeScript, no application behaviour in development, and no
+content. Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
+## D12 Decision Register Brought Up to Date (2026-09-25)
+
+The D12 entry still read "work package 1 ... is implemented", written when
+that was true. All nine are now implemented, tested and pushed, so the
+register said something the repository had outgrown - and the register is the
+first place another device looks.
+
+Corrected to state what exists, and, more importantly, what still does not:
+Pilot Batch 001 remains **0 of 12 human-verified with 0 production-eligible**,
+Training still runs on the synthetic preview bank, and the outstanding items
+(pilot knowledge records, ledger writing, the web binding, per-tier envelope
+values, adaptive difficulty, the Assessment pool question) are each listed
+with the reason they are outstanding rather than left to look like oversights.
+
+Documentation only: no code, tests, content or gates changed.
+---
+
+## D12 — The 1-in-7 Target, Measured (2026-09-25)
+
+**Why.** The D12 contract's acceptance list (Section 38) asks for a simulated
+run proving the delivery engine actually holds the cross-user exposure target,
+not merely that `assessCrossUserExposure` classifies a share correctly. That
+simulation was the one specified test still missing after WP9.
+
+**New: `training-engine/selection-crossuser.test.ts`** - 2,000 deterministic
+sessions of ten (20,000 deliveries) over twenty concepts in one stratum, with
+every delivery folded back into the rolling window the next session reads.
+Compliance holds: every measured window stays at or under 1/7 plus tolerance.
+
+**What the simulation revealed, and it is worth recording.** Written the
+obvious way, that test passes **whether or not the cross-user key is wired**
+in - verified by deleting the key and watching it stay green. The reason is
+structural: a session never serves one concept twice, so with K eligible
+concepts a concept's share is already bounded near 1/K, and once K reaches
+seven - the point where a 1/7 ceiling becomes reachable at all - that bound is
+tighter than the target. **The ceiling is a backstop, not the mechanism**, and
+a steady-state run cannot tell the difference.
+
+So the suite now contains a discriminating case instead: one pick per session,
+eight concepts, no learner history, nothing chosen yet - novelty ties and
+diversity cost is zero, so the over-exposed concept is the only thing the
+engine can be deciding on. It is served **0 times in 200 sessions** while its
+share stays above target; with the key removed it is served **32**. That
+mutation is what makes the test worth having.
+
+Also covered: an infeasible stratum (five concepts) records
+`TARGET_INFEASIBLE_POOL_TOO_SMALL` and forces nothing, and a single-device
+install records `CROSS_USER_NOT_MEASURABLE` with no share at all.
+
+**No production code changed.** This checkpoint is test and documentation
+only.
+
+**Verification.** 784 nexus-core tests (4 new), typecheck clean. The desktop
+suite and build were not re-run: nothing outside `nexus-core` test sources
+changed.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**; no eligibility, review or delivery gate was altered.
+---
+
+## D12 Work Package 9 — Training Runs on the Delivery Layer (2026-09-25)
+
+**Scope.** Rows 49-53: Training selects through the D12 delivery engine. This
+is integration, not a Training redesign - the run state machine, the
+presentation, the feedback and the rationale are untouched.
+
+**The seam is one function.** `QuestionRun`'s `beginRun` now calls
+`selectDelivery` instead of `selectTrainingQuestions`. The pool is still
+`repository.getProductionEligible()`, so there remains exactly one definition
+of what a learner may see and candidate content cannot reach a run. What
+changed is *which* eligible questions a run receives: the tier's envelope, the
+repetition policy and the inherited diversity weights now apply, and the run
+carries the delivery traces.
+
+The tier comes from the entitlement store; the date is fixed once per run, so
+a session that began before midnight does not change what it may deliver
+because the day rolled over. With no exposure history, delivery reduces to
+exactly the previous selection - which is why all 39 existing Training tests
+pass unchanged.
+
+**Corrected: the envelope was stricter than today's behaviour.** Session size
+shipped as 10/10/10, which refused the smaller runs the Training surface has
+always accepted through its `count` prop. It is now 1-10 with a default of
+ten. Pinning the minimum at ten would have been a new restriction wearing the
+clothes of the status quo; the delivery test now checks a run above the
+ceiling is refused while a smaller one succeeds.
+
+**Tests.** 6 new integration tests: the rendered run matches what
+`selectDelivery` produces for the same seed (so a second selection path would
+diverge), reproducibility for a seed, a candidate-only bank serving nothing, an
+insufficient pool reported rather than padded, an over-size session refused
+without rendering a question, and no trace, stratum, policy or exposure
+vocabulary reaching the screen.
+
+**Browser (localhost:1420/#/training).** Training opened, a run started at
+1 of 10, an answer submitted showed feedback, the correct answer and its
+rationale, Next advanced to question 2 (`data-question-index` 1,
+`data-answered` 1, `data-total` 10), and a scan of the rendered text found no
+internal delivery vocabulary. No console errors.
+
+**Verification.** 1,062 tests (780 nexus-core + 282 desktop), typecheck clean,
+build clean, preflight exit 0, self-test 17/17.
+
+**Not done, and deliberately.** Nothing writes to the exposure ledger yet:
+that needs a learner identity and a persistence decision, which is D10's
+territory, so novelty is inert rather than invented. Pilot Batch 001 remains
+**0 of 12 human-verified, 0 production-eligible**, and the run still draws on
+the synthetic preview bank.
+---
+
+## D12 Work Package 8 Complete — The Ledger Across IPC (2026-09-25)
+
+**Scope.** The remaining half of row 40: the boundary between the delivery
+ledger and the desktop shell. WP8 is now complete.
+
+**Rust.** `DeliveryEventDto` and `SelectionTraceDto` mirror the nexus-core
+types through hand-written serde renames; `db/delivery.rs` holds the storage
+layer; four commands are registered - `append_delivery_event`,
+`record_delivery_answer`, `list_deliveries_for_learner`,
+`list_deliveries_for_session`. There is no command that edits or deletes a
+delivery, because the ledger is append-only and the API is the enforcement.
+
+`record_delivery_answer` updates only where `answered_choice_id IS NULL`, so a
+second attempt matches no row and returns **false** rather than overwriting
+what the learner actually did. Reads are scoped to one learner or one session:
+a single install has no view of anyone else's history and the interface offers
+no way to ask for one.
+
+**TypeScript.** `TauriDeliveryEventRepository` implements a new
+`AsyncDeliveryEventRepository` - a separate interface rather than making the
+in-memory one async, since that adapter is used where awaiting a Map lookup
+buys nothing. Both refuse the same things, so a caller cannot tell them apart
+by behaviour.
+
+**Contract.** `ipc-contract/delivery-event.json` is the shared fixture. The
+Rust side round-trips it exactly; the TypeScript side parses it with the real
+schema and asserts the client sends the parameter names the commands declare -
+the kind of mistake that otherwise surfaces only at runtime as an `undefined`
+field.
+
+**Tests.** 8 new Rust (69 total in the db suite) and 9 new TypeScript, covering
+a valid round trip, an empty result, a duplicate delivery, an answer recorded
+once, an answer to a delivery that is not there, learner scoping, the `since`
+bound, a refused unscoped read, and a failing command propagating.
+
+**Fixed in passing: a hash-pinned fixture unprotected from line-ending
+conversion.** `nexus-scribe-batch-002.candidates.json` is pinned by SHA-256 in
+its own test, but had no `-text` attribute, so Windows CRLF conversion changed
+its bytes on checkout and the integrity test failed for a reason unrelated to
+its content. Added the attribute alongside the pilot fixtures' and
+re-normalised the working copy; the file's contents and its test are
+untouched, and it hashes to `c1701420…` again.
+
+**Verification.** 1,056 TypeScript tests (780 nexus-core + 276 desktop), 69
+Rust db tests, typecheck clean, build clean, preflight exit 0, self-test 17/17.
+
+**Unchanged.** Nothing writes to the ledger yet - that is WP9. Pilot Batch 001
+remains **0 of 12 human-verified, 0 production-eligible**.
+---
+
+## D12 Work Package 8, second half — Migration 004, the Delivery Ledger Table (2026-09-25)
+
+**New: `apps/desktop/src-tauri/migrations/004_delivery_events.sql`**,
+registered in the migration list, taking the desktop schema to version 4.
+The migration is **additive**: one new table and three indexes, no existing
+table touched, so a rollback is a DROP and nothing else.
+
+The table enforces in SQL what the TypeScript contract enforces in code:
+`delivery_id` is the primary key, so a duplicate is refused rather than
+counted twice; correctness cannot be stored without the choice that produced
+it; an answer cannot precede its delivery; and `population` is CHECKed against
+the D5 split, so Practice and Assessment stay distinguishable by constraint
+rather than by convention. `learner_ref` is pseudonymous.
+
+Indexes match the two questions the selector actually asks - what has this
+learner seen and how recently, and how often has a concept been served under
+comparable conditions - plus one session's deliveries in order.
+
+**Tests.** 6 new Rust tests. Three existing tests asserted schema version 3
+and were updated to 4; the three synthetic-migration assertions were left at 3
+because they run their own fixture lists, not the real registry. Rust: 61
+passed, 0 failed.
+
+**Verification.** 1,047 TypeScript tests (780 nexus-core + 267 desktop),
+typecheck clean, build clean, preflight exit 0, and the Rust db suite green.
+
+**Still outstanding for WP8:** the IPC commands and contract fixtures that
+would let the frontend write to this table. Nothing writes to it yet, and the
+web binding still waits on D10.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
+## D12 Work Package 8, first half — The Exposure Ledger Contract (2026-09-25)
+
+**Scope.** Row 39, and the storage-independent half of row 40. The durable
+adapters are **not** done: the desktop SQLite table, its IPC commands and
+fixtures are the next step, and the web binding still waits on D10.
+
+**New: `persistence/delivery-event-repository.ts`,
+`persistence/exposure-service.ts`.** A `DeliveryEvent` records one item
+delivered to one learner in one session, with its selection trace, the corpus
+release, the policy and envelope versions, and the D5 population so Practice
+and Assessment can never merge. `learnerRef` is pseudonymous; a name or an
+email in that field is a privacy defect.
+
+**Append-only by contract.** There is no update and no delete. A duplicate
+delivery id is refused rather than accepted, because a silently accepted copy
+inflates every exposure count. An answer may be recorded once and never
+overwritten. Correctness without the choice that produced it, and an answer
+timestamped before its delivery, are both rejected.
+
+**The ledger is outside the corpus.** An event may name a record; no record
+may name an event. Exposure history therefore cannot change what a question's
+correct answer is.
+
+**`buildExposureSnapshot`** is the seam that keeps selection pure: it reads
+the ledger and hands the selector a snapshot. It defaults to
+`LEARNER_ONLY` — a single-device install cannot see other learners, and
+stratum counts are built only when a ledger is declared shared. When they
+are, only counts cross over: a test asserts no other learner's reference
+appears in the snapshot.
+
+**Tests.** 15 new. **Verification.** 1,047 tests (780 nexus-core + 267
+desktop), typecheck clean, build clean, preflight exit 0. Rust untouched and
+not run.
+
+**Unchanged.** Nothing writes to this ledger yet, Training still runs on the
+existing selector, and Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
+## D12 Work Package 7 — Dynamic Delivery (2026-09-25)
+
+**Scope.** Rows 35-38, 41-48 and 57: choose what a session receives, without
+giving any tier an inventory.
+
+**New: `training-engine/delivery.ts`, `training-engine/exposure.ts`,
+`entitlement-engine/training-envelopes.ts`.** Delivery **composes** the
+existing selector: the injected RandomSource, Fisher-Yates and the diversity
+weights are imported and used unchanged, and the new module sits beside
+`question-selection.ts` so that file keeps its boundary test intact. The only
+change to the selector is that three internals are now exported.
+
+**Compatibility is the load-bearing claim.** With an empty snapshot, adaptive
+off and an open envelope, delivery reproduces the existing selector's run
+exactly for the same seed - asserted over 200 seeds.
+
+**Envelopes, not inventories.** Frozen data beside CAPABILITY_MATRIX gives
+each tier allowed difficulties, modalities, domains, collections and session
+size. Every tier ships **open**, matching today's ungated Training, because
+inventing gating would answer a commercial question nobody has asked. A
+request outside its envelope is refused rather than narrowed.
+
+**Preference order:** no concept twice in a session; the learner's own
+novelty; cross-learner over-exposure; adaptive distance; the inherited
+diversity cost; the seeded shuffle.
+
+**1-in-7 is a ceiling on a share, not a ban.** It applies only with a shared
+ledger, a sample of at least 50, and at least seven concepts in the stratum;
+otherwise CROSS_USER_NOT_MEASURABLE, INSUFFICIENT_SAMPLE or
+TARGET_INFEASIBLE_POOL_TOO_SMALL is recorded. On a single-device install it
+is never measurable, and the traces say so rather than implying a
+distribution nobody can see. An over-exposed concept is ranked last of its
+class, never removed, and repetition never causes insufficiency.
+
+**Every delivery carries a trace** with reason codes, including the best
+novelty that was available - so a pick that was not the freshest must justify
+itself. No field claims global uniqueness.
+
+**Adaptive difficulty ships off**, cannot leave the envelope, and is inert
+without history.
+
+**Tests.** 23 new. **Mutation checks:** five guards - learner novelty,
+diversity, cross-user ranking, the shared-ledger requirement and the envelope
+difficulty filter - each failed a test when removed. Files restored
+byte-identical.
+
+**Verification.** 1,032 tests (765 nexus-core + 267 desktop), typecheck clean,
+build clean, preflight exit 0, self-test 17/17.
+
+**Unchanged.** No ledger is written yet (WP8) and Training still runs on the
+existing selector (WP9). Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**.
+---
+
+## D12 Work Package 6 — Pilot Batch 001 Conversion (2026-09-25)
+
+**Scope.** Row 56 (with 04): turn revision 3 into candidate corpus records
+without touching r3 or moving anyone through the human gate.
+
+**New: `knowledge-corpus/pilot-conversion.ts`.** Conversion reads the frozen
+r3 fixture and writes new records. Modality and authority class are **plan
+inputs, not inferences** - both are judgements, and the D12 rule is that
+modality is authored rather than guessed from wording. An item the plan does
+not name is not converted, and the omission is reported.
+
+**Text moves verbatim.** A situational stem splits at its final question
+sentence; the case becomes a CaseContext and `caseSummary + " " + question`
+reproduces r3's original exactly, asserted for all three situational items -
+including the one whose case contains a quoted full stop.
+
+Produces 8 sources, 12 items, 3 scenario contexts and one concept per variant
+group stating the batch's own learning objective. r3's prose retrieval note
+becomes a structured machine entry whose verifier must begin `machine:`.
+
+**Q9 stays DIRECT_KNOWLEDGE** despite its workflow-sequencing questionType:
+WORKFLOW needs discrete steps and a canonical order, r3 has neither, and
+conversion must not invent them.
+
+**Tests.** 19 new. **Mutation checks:** four guards - the verbatim split (2
+tests failed), the modality-assignment flag (1), a machine entry naming a
+person (3), and re-adding a missing HUMAN-VERIFY-REQUIRED flag. That last
+mutation initially **survived**, because every r3 item already carries the
+flag so the branch never ran; a test with a stripped batch was added and the
+mutation then failed. All files restored byte-identical.
+
+**Not done here.** No KnowledgeRecords were drafted: turning a rationale into
+a proposition is authoring, not conversion, and production eligibility
+requires them - so the conversion reports the gap instead of filling it. The
+records are also not written into `content/` yet, because no loader reads
+corpus files and committing unread clinical content would add unreviewed
+material for no gain.
+
+**Verification.** 1,009 tests (742 nexus-core + 267 desktop), typecheck clean
+(one error in a new test was found and fixed), build clean, preflight exit 0,
+self-test 17/17. Both frozen fixture hashes unchanged.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**, and `deliverableItems` returns nothing at any date.
+---
+
+## D12 Work Package 5 — The Deterministic Corpus Build (2026-09-25)
+
+**Scope.** Rows 30-34 and 55: turn authoring files into a release that can be
+pointed at, and report what has moved underneath it.
+
+**New: `knowledge-corpus/build.ts`.** `buildCorpus` is a pure function of the
+files (sorted by path) and an injected hash function. No clock, no network, no
+randomness, no environment: the same inputs produce a byte-identical bundle and
+the same `releaseId`, asserted across rebuilds, across file order and across
+build dates. Canonical JSON sorts keys and leaves arrays alone, because the
+order of a SOAP note's segments or a workflow's canonical steps is content.
+
+**A failed build emits nothing.** No partial bundle, because a partial bundle
+looks like a release. Files merge rather than overlay, so two files defining
+one id is a duplicate-id error, not last-one-wins.
+
+**Incremental support.** Each partition carries its own hash and the ids it
+contributes; `diffPartitions` names added, changed, removed and unchanged
+files. Cross-reference validation still runs over the whole index, since a
+reference can break because something else moved.
+
+**`detectUnbumpedRevisions`** catches a record edited at the same revision -
+how an approval quietly comes to cover words nobody approved.
+
+**`invalidationReport`** lists records whose sources changed, were withdrawn or
+were superseded since review. It derives and never mutates: nothing is
+downgraded, the record simply stops being deliverable until a person reads the
+new bytes. A candidate nobody had verified is not invalidated by a source
+change.
+
+**Tests.** 23 new. **Mutation checks:** five guards removed one at a time -
+hidden validation errors (2 tests failed), the unbumped-revision check (1), the
+source-changed invalidation (1), the canonical key sort (1), and the path sort.
+The path-sort mutation initially **survived**, because the determinism test used
+two files feeding different families; the test was rewritten so both feed the
+same family, after which the mutation failed as it should. All files were
+restored byte-identical.
+
+**Verification.** 990 tests (723 nexus-core + 267 desktop), typecheck clean,
+build clean, preflight exit 0, preflight self-test 17/17. Rust untouched and
+not run.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**; frozen fixture hashes intact; no delivery, tier or
+exposure behaviour added.
+---
+
+## D12 Work Package 4 — Deliverability, Time, Jurisdiction and Conflicts (2026-09-25)
+
+**Scope.** Rows 20, 23–26, 28: separate "is this record finished and verified"
+from "may it be delivered today".
+
+**New: `temporal.ts`, `conflict.ts`, `eligibility.ts`.**
+
+**Temporal state is computed, never stored.** A record carries dates; whether
+it is future, current, expired or impossible is derived at the date asked
+about, and `asOf` is always an input — nothing here reads the clock. The window
+is the **intersection** of the record's own dates, its pinned context's and
+every cited source's, so an item resting on next year's guidelines is not this
+year's content whatever its own dates say. `CURRENT_ONLY` is the default;
+`INCLUDE_FUTURE` is opt-in; an empty window is `IMPOSSIBLE`, never current.
+`upcomingTransitions` reports changes due within 60 days so re-verification can
+be scheduled before a pool quietly empties.
+
+**`isDeliverable` reports every reason a record is held back**, not the first:
+the static gate (review chain, knowledge grounding, a concept, an
+applicability, quality errors, a source whose authority class may stand alone);
+jurisdiction match, with `UNIVERSAL` answering any request; sources still
+active and still the bytes that were reviewed; pinned context and cited
+knowledge themselves eligible and unexpired; no open conflict; not superseded.
+
+**Conflicts are recorded, never adjudicated.** An open conflict stops every
+record it names, on both sides. Structural overlaps can be *suggested*
+mechanically; contradictions are declared by a person, because choosing between
+two authoritative-looking claims about HIPAA or coding is a judgement about
+truth. A resolution must say how and by whom.
+
+**A source change stops delivery without rewriting anything.** When a
+`snapshotHash` moves, the record is derived as undeliverable rather than
+edited, so nothing is lost and no status is silently downgraded.
+
+**Tests.** 25 new: temporal arithmetic at both inclusive boundaries, the
+complete delivering corpus, and one case per held-back condition.
+
+**Mutation checks.** Four guards removed one at a time — the temporal gate (2
+tests failed), the source-changed check (1), the open-conflict block (1) and
+the window intersection (4). All files restored byte-identical.
+
+**Not yet enforced:** release-manifest membership, which is work package 5.
+Until then this answers "may this be delivered"; the release gate is the other
+half of "will it be".
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**. Frozen fixture hashes intact. No delivery engine,
+exposure ledger or tier behaviour was added.
+
+---
+
+## D12 Work Package 3 — The Review Log, and Anti-Fabrication (2026-09-25)
+
+**Scope.** Rows 17–19, 21, 22: make a claimed human verification checkable
+against an actual review record, rather than trusted because it is written
+down.
+
+**New: `knowledge-corpus/review.ts`.** `Reviewer` is a registered person; a
+machine identity can neither be registered as one nor record a review, since an
+agent able to do either could approve its own work. `ReviewRecord` is one
+append-only review event with a reviewer, date, stage (SOURCE, CONTENT, FINAL),
+decision (APPROVE, REQUEST_CHANGES, REJECT), the source snapshots the reviewer
+opened, and a `target` pinned as `id@revision`.
+
+**Enforced by the corpus validator, for knowledge, contexts, concepts and
+items alike:** a human-verification claim must have an approved SOURCE review
+of that exact revision behind it; the claimed verifier and date must be the
+approver and the approval date; the reviewer must be registered and active; a
+review of another record or an earlier revision does not count; the claimed
+status must have every stage it requires, each stage's latest review being an
+approval; `production-eligible` also needs `reviewStatus: approved`; a record
+may not claim a source snapshot the review does not record; and a record still
+flagged `HUMAN-VERIFY-REQUIRED` may not simultaneously claim verification.
+
+**Not decided here:** reviewer qualifications, how many reviewers a record
+needs, and any approval threshold. Multiple reviews per stage are allowed and
+the latest decides, which supports request-changes-then-approve without
+inventing a quorum.
+
+**Honest limit.** Whether a claim or flag was *removed* cannot be detected from
+a single snapshot — that needs history, which Git holds. What is enforced is
+that a claim which is present must be backed.
+
+**Tests.** 27 new, covering the valid chain, both a rejected-then-approved
+history and a candidate that claims nothing, and every fabrication route:
+no review behind the claim, unregistered reviewer, inactive reviewer, wrong
+reviewer, wrong date, half a verification, invented snapshot, review of another
+record, review of an earlier revision, review of a record not in the corpus,
+duplicate ids, status ahead of its evidence, and flag/claim contradiction.
+
+**Mutation checks.** Four guards were removed one at a time — the
+claim-needs-an-approval rule (5 tests failed), the reviewer-identity match (1),
+the required-stage loop (3), and the whole cross-check (12). Every file was
+restored byte-identical afterwards.
+
+**Verification.** 942 tests (675 nexus-core + 267 desktop; 27 new), typecheck
+clean, build clean, preflight exit 0, preflight self-test 17/17. Rust was not
+touched and was not run.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible** — WP3 hardens the gate, it does not move anyone through
+it. Both frozen fixture hashes intact. No WP4–WP9 work was performed.
+
+---
+
+## D12 Work Package 2 — Assessment Items and Quality Rules (2026-09-24)
+
+**The question record is extended, not replaced** (rows 04–08, 12, 45, 54).
+`AssessmentItem` is the D11 `TrainingQuestion` plus D12's fields: `modality`,
+`responseFormat`, `contextRef`, `targetSegmentIds`, `knowledgeRefs`,
+`additionalEvidence`, `competencyRefs`, `collections`, `modalityDetail`,
+`applicability`, `provenance`, `revision` and `supersedes`.
+
+**The inherited rules are applied, not copied.** `question-bank/schema.ts` now
+exports `TrainingQuestionObjectSchema` and `refineTrainingQuestion`; the item
+calls the latter. This is a pure refactor — `TrainingQuestionSchema` is still
+the same object plus exactly the same rules, and every existing bank test
+passes unchanged. Commenting out that one call fails three item tests by name,
+so the two records cannot drift apart.
+
+**Seven modalities**, closed and required, orthogonal to `questionType`
+(process versus task shape). v1 stays single-best-answer: writing a SOAP note
+belongs to the documentation evaluator that already grades drafts. Each
+modality's structure is enforced — a case context where the task is about a
+case and none for direct knowledge; a SOAP task; an error domain; comparison
+criteria; both ends of a transformation; and for workflow, three or more steps
+with a `canonicalOrder` that must be a permutation of them, so a reordered
+variant never re-derives the truth.
+
+**References must resolve, and pins must hold.** A `contextRef` is
+`id@revision`; the corpus rejects a pin to a revision it does not hold, a
+segment target that is not in that context, a situational item citing a SOAP
+note, a `variantGroup` with no concept behind it, and a jurisdiction no cited
+source speaks for (a federal source covers a state claim; never the reverse).
+
+**Dates may not disagree**: `validUntil`, `applicability` and
+`codingReference` must state one window or the item is rejected.
+
+**Quality rules ported** from `validate_pilot_batch.py` into three tiers.
+STRUCTURAL and POLICY are errors; HEURISTIC are warnings and are never
+verification. Production-only rules do not block an author drafting a
+candidate. Includes the answer-length bias that revision 2 of the pilot
+existed to remove.
+
+**Unchanged.** Every existing Question Bank field and behaviour, the loader,
+repository, selector, M22/M23, the frozen fixtures, and Pilot Batch 001 at
+**0 of 12 human-verified, 0 production-eligible**. No tier, learner or
+delivery field entered a corpus record.
+
+**Verification.** 915 tests (648 nexus-core + 267 desktop; 54 new), typecheck
+clean, build clean, preflight exit 0. Two mutations were run — removing the
+inherited-rule call, and disabling the context requirement — and each failed
+its tests by name before the file was restored byte-identical.
+
+---
+
+## D12 Resolved — Knowledge Corpus, Work Package 1 (2026-09-23)
+
+**Decision.** D12 is **RESOLVED**: reference knowledge gets a canonical
+`KnowledgeRecord`, the D11 Question Bank is **extended rather than replaced**,
+and both cite one shared source registry. The terminology lookup is untouched.
+The authority is the owner-commissioned specification
+`NEXUS_D12_KNOWLEDGE_BASE_ARCHITECTURE_AND_IMPLEMENTATION_HANDOFF` v1.0.0
+(decision rows D12-01 … D12-57); `docs/DECISION_REGISTER.md` and
+`docs/KNOWLEDGE_CORPUS.md` record it.
+
+**Branch isolation.** All Question Bank and D12 work stays on
+`feat/training-question-bank`. Nothing in this entry touches `main`.
+
+**New: `packages/nexus-core/src/knowledge-corpus/`** (rows 01–03, 09–11,
+13–16, 27, 29) — `SourceRecord`, `KnowledgeRecord`, `CaseContext` (SCENARIO
+and SOAP_NOTE), `AssessmentConcept`, `CompetencyNode`, plus corpus-level
+reference resolution and id conventions.
+
+What the schemas enforce: strict objects with named errors for unknown keys;
+every citation resolving to a source in the corpus; machine verification that
+cannot impersonate a person (`verifier` must begin `machine:`) and never moves
+a record up the ladder; provenance that makes machine-drafted content name a
+machine author; `synthetic: true` required on case material (Architecture §27);
+effective dates stored but temporal state never stored; contexts cited as
+`id@revision` so an edit cannot silently change an approved item; exceptions as
+their own linked records; ids opaque after minting.
+
+**Reused, not restated.** The lifecycle ladder, review statuses and the human
+verification record are imported from `question-bank/schema.ts`. One definition
+of "production-eligible", one of "a person verified this".
+
+**Unchanged.** Every existing Question Bank field, the loader, repository,
+selector, M22/M23 run behaviour, the frozen r2 (`05fa24d0…aaf3d`) and r3
+(`8d845560…038791`) fixtures, and the terminology lookup. Pilot Batch 001 is
+still **0 of 12 human-verified, 0 production-eligible** — D12 builds the gate,
+it does not cross it. D10, A2, A7, the Training tier values, adaptive
+difficulty and the Assessment pool question all remain open, each with a
+default that changes nothing today.
+
+**Verification.** 839 tests (572 nexus-core + 267 desktop; 51 new), typecheck
+clean, build clean, `preflight` exit 0. The existing 788 passed unchanged.
+
+**Still to come**, in the specification's order: the item extension with
+modality and context (WP2), the review-record cross-check (WP3), deliverability
+(WP4), the deterministic build (WP5), pilot conversion (WP6), the delivery
+engine (WP7), the exposure ledger (WP8) and Training integration (WP9).
+
+---
+
+## Pilot Batch 001 r3 Pinned Under Test; Q4 Review Flag Restored (2026-09-21)
+
+**Why.** Revision 3 lived only in `Claude outputs/`, so no repository test
+checked it. Its safeguards were enforced by one script run and nothing else.
+The owner supplied `nexus-pilot-001-package.zip`, the r2 handoff package, to
+use for this work. Every file in it is identical to the repository copies,
+ignoring line endings. Its r2 hashes to `05fa24d0…aaf3d`, which independently
+confirms that the frozen fixture matches the r2 that was handed off.
+
+**Found and fixed: r3 had silently dropped a review flag.** Q4
+(`NEXUS-L2-PRIV-000004`) lost `SECONDARY-SOURCE-OLD` in r3's first pass,
+and no revision note recorded it. The page's age was not re-established on
+2026-09-20, so the warning is restored for the human reviewer and recorded in
+`revisionNotes`. No answer, stem or choice changed.
+
+**New: `question-bank/pilot-r3.e2e.test.ts`** (10 tests). r3 is pinned as
+`__fixtures__/nexus-pilot-batch-001.candidates.r3.json` (SHA-256
+`8d845560…038791`) and marked `-text` in `.gitattributes`, like r2. The tests
+assert:
+- the same 12 ids and unchanged answer keys versus r2;
+- the same batch and item fields as r2;
+- no review-flag kind that r2 raised is dropped;
+- no correct choice is the uniquely longest option;
+- Q10 carries U.S. ICD-10-CM FY2027, 2026-10-01 → 2027-09-30;
+- r3 validates strictly and loads through the real loader;
+- every item is candidate/pending with `HUMAN-VERIFY-REQUIRED` and null
+  human-verifier fields;
+- nothing is production-eligible;
+- promoting an item without a human verifier is rejected.
+
+Two mutations were run: the pre-fix r3, and a lengthened Q12 correct choice.
+Each failed its guard by name, and the fixture was restored byte-identical.
+
+**Unchanged:** the r2 fixture and its manifest hash, the schema, the validator,
+production eligibility (0 of 12), D12 (open) and the human gate (0 of 12).
+
+**Verification.** 788/788 tests (521 nexus-core + 267 desktop), typecheck
+clean, build clean, `preflight` exit 0, `preflight:test` 17/17.
+`validate_pilot_batch.py` passes on both the zip's r2 and r3: 12 items,
+positions 3/3/3/3, `correct_is_longest=0`.
+
+---
+
+## Knowledge Base Integration Audit — Blocked, and Why (2026-09-20)
+
+**An audit, not an integration. No content was consumed and nothing was
+injected.** A Knowledge Base content integration was prepared; the audit that
+precedes it found there is nothing canonical to integrate into.
+
+**What the Knowledge Base actually is.** `KnowledgeBase.tsx` is a search box
+over `InMemoryTerminologyRepository`, backed by four entries in
+`content/terminology/terminology.json`. `TerminologyEntrySchema` is
+`{ id, layTerm, clinicalTerm, acceptedAlternatives[], category, context?,
+explanation, commonMistakes[] }` — **no article type, no provenance, no
+jurisdiction, no effective period, no release or version metadata, no lifecycle,
+no verification record and no supersession rule.** Architecture Package §17
+records this as deliberate: knowledge articles were folded into
+`training_lessons.category = 'reference'` for MVP, to revisit *"if reference
+content outgrows the lesson schema"*. That condition has arrived.
+
+**And the schema is not `.strict()`**, so sourced records pushed through it
+would be **silently stripped of their provenance** — exactly the hazard the
+Question Bank was built to prevent.
+
+**Two blockers, recorded rather than worked around.** No Device 1 handoff SHA
+exists (no content commit on any ref), and no canonical Knowledge Base content
+model exists. Creating one is a D11-shaped owner decision about a canonical
+content type, so it was not invented. No placeholder records were created.
+
+**What the audit confirmed as already correct.** *Assessment access needs no new
+policy*: `mayAccessReferenceMaterial` returns false for an assessment that is
+not completed, and `ReferenceGate` blocks direct navigation to
+`/knowledge-base` and `/training`, so any future Knowledge Base content is
+automatically closed-book during an attempt and reopens on submission — D4,
+already implemented and tested. **Knowledge Base content cannot become an
+Assessment answer key.** *Question Bank eligibility is untouched*:
+`getProductionEligible()` remains the single gate and Pilot 001 stays
+candidate-only.
+
+**FY2027 cannot currently be mislabelled as the active release** — for the
+strongest possible reason. `effectiveFrom`/`effectiveTo` exist only on the
+Question Bank's optional `codingReference`, and **nothing reads them**; the
+application has no "active coding release" concept, so it makes no claim to be
+wrong about. That is a fact about absence: the first surface that presents a
+release as current must compare the real date against the stored effective
+period rather than assuming the newest record wins.
+
+**Documentation.** `docs/KNOWLEDGE_BASE_INTEGRATION_AUDIT.md` (new) records the
+field-by-field gap and the seven ordered steps a real integration would need,
+none of which should begin before the owner decision.
+`.claude/sync/DEVICE2_TO_DEVICE1.md` carries the blockers and what to supply.
+
+**Not claimed:** no integration event, no injected record count, no merge, no
+production readiness. Tests, typecheck, build and preflight were unchanged by
+this audit because no source file was modified.
+
+---
+
+## Training Run Lifecycle — Ten Questions, Completion and Restart (2026-09-20)
+
+**Mostly proof, deliberately little code.** M22 built the run; this checkpoint
+establishes that the *lifecycle* around it holds — that the sequence is chosen
+once and then left alone, that question ten ends the run rather than wrapping to
+an eleventh, and that a new run is a deliberate act inheriting nothing. Most of
+that was already correct by construction, so the honest work here was measuring
+it rather than rewriting it.
+
+**Added:** `answeredCount(state)` — progress through the run, **never a score**;
+an explicit "N of N questions answered" on completion; inspectable runtime state
+(`data-run-state`, `data-question-index`, `data-question-id`, `data-answered`,
+`data-total`) so the browser can be checked against actual state rather than
+appearance; and a clearer "Start a new run". No parallel run implementation, and
+no selector, diversity or eligibility logic added to or duplicated in the UI.
+
+**The selector runs once per run, never per question** — measured, not asserted.
+A counting repository tallies `getProductionEligible()`: **one call at creation,
+zero more** across ten answers and nine advances. A new run costs exactly one
+further call. Completion performs none, so the run cannot restart itself.
+
+**Question ten is terminal.** Advancing past it completes the run: ten of ten
+answered, no eleventh question, the index does not wrap to zero, and
+`selectChoice` / `submitAnswer` / `advanceToNextQuestion` all refuse with
+`run-complete` and the state object unchanged by identity.
+
+**Submission is still not progression**, and one Next means one question: four
+rapid activations advance exactly one, because only the first finds a submission
+to advance past.
+
+**A new run inherits nothing** — no selection, submission, correctness,
+rationale, explanation, lock or completion state — and **no learner history is
+created**: across three consecutive full runs the bank still reports twelve
+questions and twelve production-eligible, with nothing marked seen, used or
+spent.
+
+**Diversity untouched.** The selector's existing soft preference and its weights
+were not altered, and a uniform pool still fills a run of ten rather than
+failing. Determinism unchanged: same bank, filters, count and a **fresh** seeded
+source reproduce a sequence exactly.
+
+**One dev-only wrinkle, recorded rather than papered over.** `main.tsx` wraps the
+app in `<React.StrictMode>`, which deliberately double-invokes `useState`
+initialisers in development, so the dev browser selects twice at mount and
+advances an injected `RandomSource` twice. Development-only, not a correctness
+defect — the run is still exactly ten valid eligible questions, stable
+thereafter — and the invariant that matters still holds. Documented so a doubled
+dev-mode call is not later mistaken for a lifecycle bug.
+
+**Device 1 ↔ Device 2 synchronisation.** No live Device 1 session existed
+(`ListAgents` reported none) and no channel existed, so `.claude/sync/` was
+created as an explicit, inspectable bus. **No Device 1 knowledge payload was
+received, and none was invented**; the canonical archive and verified code were
+used instead. Verified M23 facts were written to
+`.claude/sync/DEVICE2_TO_DEVICE1.md` for reconciliation. These files are a bus,
+not a second knowledge base.
+
+**M22's push had already landed:** `origin/feat/training-question-bank` was
+already at `604017f`, verified by `ls-remote` rather than assumed. The branch is
+still **not merged into `main`** — `origin/main` is an ancestor, so it is a clean
+fast-forward, but merging five checkpoints past the repository's pull-request
+workflow is an owner decision and was left alone.
+
+**Documentation.** `docs/TRAINING_QUESTION_RUN.md` gained the lifecycle section.
+
+**Verification.** 778/778 tests (511 nexus-core across 51 files, 267 desktop
+across 26; 39 new), typecheck clean, build clean, preflight exit 0 with 17/17
+self-tests. Three typecheck errors in the new tests were caught and fixed before
+closing — vitest transpiles without typechecking, so a green test run is not a
+green build. **Browser-verified** in the dark theme: all ten questions walked
+with zero stale feedback at each, rapid ×4 Next advancing exactly one,
+completion with no eleventh question and no wrap, post-completion keyboard
+ignored, restart returning a clean 1/10 with a different opening question, and a
+20-question request against a 12-question pool rendering the explicit shortfall.
+Rust untouched and not re-run.
+
+---
+
+## Training Answer Submission, Feedback and Reveal (2026-09-20)
+
+**The run a learner can actually use.** Selection could produce ten questions;
+nothing could answer one. This closes the loop — select, submit, see correct or
+incorrect, see the correct answer, read why, move on — and stops there.
+**Nothing is scored, nothing is stored, nothing is remembered.** No number, no
+percentage, no pass/fail, no mastery, no history, no tier.
+
+**The rules are in `nexus-core`, not in React.**
+`training-engine/question-run.ts` is a pure state machine and the single owner
+of what may happen next; `apps/desktop/src/training/QuestionRun.tsx` renders it
+and decides nothing. A rule enforced in a component is reachable only by
+rendering, and tends to be enforced twice — slightly differently — as soon as a
+second surface appears. *Implementation decision — autonomous.*
+
+**State is derived, not accumulated.** There is no `isSubmitted` flag beside an
+`isCorrect` flag beside a `showRationale` flag — independent booleans can express
+"submitted but still editable" or "correct and incorrect at once", and
+eventually do. There is one `submission`, absent or complete, and every question
+the UI asks is answered from it, so the revealed answer cannot disagree with the
+grade. Every transition returns either `ok` or `rejected` **with the unchanged
+state**, so a refused click cannot leave the run half-transitioned.
+
+**Correctness is canonical identity.** Grading resolves through
+`correctChoiceId` — never position, display order or answer text. Reordering
+choices cannot change which answer is right, and two choices with identical text
+stay distinguishable. `evaluateAnswer` returns null rather than a grade when the
+submitted id is not one of the question's choices, or when the question's own
+answer key does not resolve: **an ungradable answer is never treated as
+correct.**
+
+**Feedback is never colour alone.** Each choice carries a text marker, an
+`aria-label` containing it, a `data-state` attribute and a ✓/✗ glyph as well as
+border and fill, so the correct answer is identifiable with no colour perception
+at all.
+
+**Rationale is never fabricated.** It is required by the bank schema, so a valid
+question always has one and no "unavailable" state is reachable — nothing is
+generated when content is thin. Per-choice explanations are supplemental: their
+absence changes neither evaluation, feedback nor the reveal.
+
+**A real defect the tests found, fixed in the component rather than the test.**
+Submit was being *replaced* by Next in the same position. React reuses the DOM
+node when one button swaps for another in the same slot, so the second half of a
+double-click landed on Next and advanced the run — skipping the feedback the
+learner had just earned. Submit now stays put and goes inert; Next appears
+beside it. Locking is likewise a state rule and not merely a `disabled`
+attribute, so a keyboard activation or a synthetic event cannot change a
+submitted answer.
+
+**Progression leaves nothing behind.** Advancing rebuilds state from the
+questions and the new index alone, so no selection, correctness, rationale,
+per-choice explanation or lock survives. Tested per transition and across a full
+ten-question run, including that a choice id from the previous question is
+refused as unknown on the next.
+
+**Content safety at the boundary.** Questions arrive only through the selector,
+whose pool is `getProductionEligible()`; the component re-derives no
+eligibility, difficulty or diversity rule. When a run cannot be filled the
+surface says so with the requested and available counts and renders no question
+— **nothing fabricated, no filter widened, no difficulty lowered, no candidate
+content pulled in to make up the number.** That is the ordinary state of the
+real bank today: it is empty, because no authored question has passed human
+source verification, and Pilot Batch 001 remains candidate-only.
+
+**The preview fixture is synthetic and cannot leak.** Twelve non-medical
+questions *about the Nexus runtime itself* live in `src/preview/`, not under
+`content/`, so no loader, content-QA suite or preflight scan discovers them.
+Each carries the `SYNTHETIC-DEV-FIXTURE` flag, cites that file rather than an
+authority, and records plainly that no person verified it. They pass through the
+real validator and the real eligibility gate, because a preview that bypasses
+the production path proves nothing. **No medical content was authored**, and no
+pilot content was touched.
+
+**Assessment untouched.** Still scenario-based — a `scenarioId`/`scenarioVersion`
+and a documentation draft, with no question model. No question-based Assessment
+consumer was created, and the **shared-versus-reserved question pool remains a
+blocked product decision**.
+
+**Documentation.** `docs/TRAINING_QUESTION_RUN.md` (new).
+
+**Verification.** 739/739 tests (488 nexus-core across 50 files, 251 desktop
+across 26; 50 new), typecheck clean, build clean, preflight exit 0 with 17/17
+self-tests. **Browser-verified** at `http://localhost:1420/#/training` in the
+dark development theme: a ten-question run starts; Submit is inert until a
+choice is picked; a wrong answer shows the pick in red, reveals the correct
+answer in green and prints the rationale; a real double-click produces one
+feedback block and does **not** advance; keyboard and synthetic-event bypasses
+of the lock are refused; Next opens a completely clean question 2; a correct
+answer shows correct; and requesting more questions than exist renders the
+explicit shortfall with no question and no Submit. Rust untouched and not
+re-run.
+
+**One self-inflicted defect, found and repaired.** A PowerShell edit read
+`Training.tsx` as ANSI and corrupted its two `←` glyphs. Detected by scanning
+the touched files, repaired, and re-verified — the committed diff contains only
+intended additions.
+
+---
+
+## Pilot Batch 001 Revision 3 — Source-Verified Against Retrieved Authority (2026-09-20)
+
+**External-source gate: PASS.** Every authoritative source was actually
+retrieved and read in this environment, not recalled. `WebFetch` returned HTTP
+403 for `hhs.gov`, so HHS pages were rendered in a real browser instead; the
+FY2027 ICD-10-CM Official Guidelines PDF was downloaded from `cms.gov`
+(121 pages) and text-extracted after installing `pypdf`.
+
+| Source | Authority | Retrieved | Readable |
+|---|---|---|---|
+| Summary of the HIPAA Privacy Rule | HHS/OCR | yes (browser) | yes |
+| Business Associates guidance | HHS/OCR | yes (browser) | yes |
+| Minimum-necessary exception list | HHS/OCR | yes (browser) | yes |
+| Treatment / payment / operations | HHS/OCR | yes (browser) | yes |
+| FY2027 ICD-10-CM Official Guidelines | CMS / NCHS | yes (PDF, 121pp) | yes |
+| ICD-10 code-set effective dates | CMS | yes | yes |
+
+**All 12 answer keys confirmed unchanged:** 1a 2b 3c 4d 5a 6b 7c 8d 9a 10b 11c
+12d, distribution 3/3/3/3. No key moved, and the position balance was treated
+as incidental rather than as evidence.
+
+**What the sources actually said**, quoted into each rationale: PHI naming and
+its FERPA/employment-record exclusions; the three covered-entity categories;
+treatment disclosures permitted without authorization; the **six** minimum-
+necessary exceptions; the treatment definition including consultation and
+referral; business-associate status turning on "creating, receiving,
+maintaining, or transmitting PHI" plus written satisfactory assurances;
+ICD-10-CM as the U.S. modification of WHO ICD-10; the Tabular List as "a
+structured list of codes divided into chapters based on body system or
+condition"; Index-then-Tabular with "it is essential to use both"; the FY2027
+period "(October 1, 2026 - September 30, 2027)"; "unspecified" codes for when
+the record "is insufficient to assign a more specific code"; and I.B.14's
+provider-documentation rule **with** its defined non-provider exceptions.
+
+**Corrections applied in revision 3.** Q1's stem softened to "generally used
+for", because the Rule excludes employment and FERPA records from PHI. Q12's
+stem now says "non-provider nurse" and "based on this note alone", and its
+rationale quotes I.B.14 including the exception list, so it no longer teaches
+the absolute rule that non-provider documentation can never support a code.
+Q10 carries `effectiveFrom: 2026-10-01` / `effectiveTo: 2027-09-30` using
+fields `CodingReferenceSchema` already had - no schema change - and records
+FY2027 as **FUTURE-EFFECTIVE** as of 2026-09-20, with FY2026 still in force.
+Q4, Q6 and Q3 rationales were corrected for over-absolute wording.
+
+**A frozen baseline stopped a mistake, and the guard was respected.** The first
+attempt edited
+`question-bank/__fixtures__/nexus-pilot-batch-001.candidates.r2.json`. That
+file is a **hash-pinned compatibility fixture**, not an authoring copy: its
+SHA-256 is asserted against the handoff manifest precisely so a silent edit
+fails loudly. It did. The fixture was reverted byte-for-byte
+(`05fa24d0…aaf3d` restored), and revision 3 was written as a **new artifact**
+instead - the convention this batch already uses, since r1 and r2 already
+coexist. The frozen baseline and the manifest hash are untouched.
+
+**The repository's own validator caught a regression I introduced.** The
+reworded Q12 choice (d) became the longest option, reintroducing the
+answer-length bias revision 2 removed. `validate_pilot_batch.py` failed it;
+the choice was shortened to 73 characters with its meaning intact, and the
+batch now reports `correct_is_longest=0`.
+
+**Verification state — machine, not human.** This is MACHINE source
+verification: the cited wording was located and read in the primary document.
+It is **not** the human gate. `question-bank/schema.ts` states that only a
+person who opened the cited document may fill
+`humanVerifiedBy`/`humanVerifiedOn`, so those stay `null`, every item stays
+`candidate`/`pending`, all 12 keep `HUMAN-VERIFY-REQUIRED`, and
+`productionEligible` remains **0**. Nothing was promoted and no reviewer
+identity, timestamp or approval was fabricated.
+
+**Knowledge Base: NOT GENERATED.** There is still no canonical Knowledge Base
+content model to generate into - the only "Knowledge Base" is the terminology
+lookup, whose schema carries no provenance, jurisdiction, effective period or
+verification state. That is **D12**, an open owner decision, and it is
+unchanged by source verification. Creating a Knowledge record type to receive
+this content would be deciding D12 silently.
+
+**Verification.** 778/778 tests (511 nexus-core + 267 desktop), typecheck
+clean, build clean. `validate_pilot_batch.py` on r3: PASS (structure and bias
+only; explicitly not a source or truth check), with the expected 12
+"no human verification recorded yet" warnings.
+
+**Files:** `Claude outputs/nexus-pilot-batch-001.candidates.r3.json` (new).
+The r2 fixture and the r2 authoring copy are unchanged.
+
+---
+
 ## Phase 9 Entry — Packaging & Release Hardening Specification (2026-09-26)
 
 **Documentation only. No application, Rust, or bundler-configuration behaviour
@@ -696,6 +1671,60 @@ A production build was not loaded - the dev build was used throughout.
 
 **No product policy changed:** D1-D7 behave exactly as decided; the preview
 only chooses which tier the browser resolves as.
+
+---
+
+## Training Question Selection — the 10-Question Run (2026-09-20)
+
+**The bank's first consumer.** The Question Bank could say what valid questions
+exist; nothing could say which ones a Training run should receive. This adds
+that, and only that. **No Training UI, nothing records an answer, nothing
+scores, nothing remembers what a learner has seen, and no tier governs access.**
+
+**Selection lives in `training-engine`, not in `question-bank`.** The bank is a
+reusable content source; selection is Training's runtime policy. A future
+Learning Assessment will want different rules and should not inherit Training's.
+*Implementation decision — autonomous.*
+
+**The 10-question contract.** `DEFAULT_TRAINING_RUN_SIZE` is 10. Exactly the
+requested count, never more. It **never repeats a question to fill a run**
+(seven eligible against a request for ten is `insufficient-eligible-content`,
+reported with `requested` and `available`) and **never silently widens a
+filter** — six level-2 questions against a request for ten is insufficiency, not
+four level-5 questions quietly mixed in. A learner told they practised level 2
+must have practised level 2.
+
+**Eligibility is not re-derived.** The pool is `getProductionEligible()`, the
+bank's own gate. Consequence, and it is tested: **a bank of candidates is an
+empty pool** — Pilot 001, all 12 items `CANDIDATE`, yields `available: 0`.
+
+**Randomness is injected, never reached for.** `RandomSource` plus
+`createSeededRandom` (mulberry32): same request, same pool, same source ⇒ the
+same run every time, so "why did the learner get these ten?" is answerable.
+Deterministic, not cryptographic.
+
+**Diversity is a preference, not a constraint.** A greedy least-concentration
+pass weighted `variantGroup` 8 · `learningObjective` 4 · `skillArea` 2 ·
+`questionType` 1 · `domain` 1, ties broken by the deterministic shuffle. It
+never fails a run and never overrides a filter; making `variantGroup` hard would
+turn a content-shape problem into a learner-visible error, which is a product
+question left open.
+
+**Boundaries checked, not trusted.** `question-selection.boundary.test.ts` scans
+the source so the selector imports only from `question-bank/`, names no
+subscription tier, does not re-derive eligibility and holds no module state.
+
+**Assessment readiness re-inspected.** D5 and D6 resolved, so every Phase 8.3
+Assessment decision is settled. Assessment remains a session mode over
+*scenarios*: its input is a `scenarioId`/`scenarioVersion` and a documentation
+draft, it has no question model, and no Assessment code references the Question
+Bank. **PRODUCT DECISION — BLOCKED:** whether a future question-based Assessment
+draws from the pool Training practises on or a reserved one. No Assessment
+semantics implemented; no medical content generated.
+
+**Verification.** 665/665 tests (450 nexus-core across 48 files, 33 new; 215
+desktop across 24), typecheck clean, build clean, preflight 17/17. No UI was
+added, so no browser verification is claimed. Rust untouched.
 
 ---
 

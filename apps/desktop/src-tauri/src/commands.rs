@@ -1,5 +1,5 @@
-use crate::db::models::{CompetencyRecordDto, SessionRecordDto, UserProfileDto};
-use crate::db::{competency, profile, sessions, DbState};
+use crate::db::models::{CompetencyRecordDto, DeliveryEventDto, SessionRecordDto, UserProfileDto};
+use crate::db::{competency, delivery, profile, sessions, DbState};
 use tauri::State;
 
 fn map_err(e: rusqlite::Error) -> String {
@@ -112,4 +112,59 @@ pub fn upsert_competency_record(
 #[tauri::command]
 pub fn get_app_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
+}
+
+// --- exposure ledger (D12 work package 8) --------------------------------
+
+#[tauri::command]
+pub fn append_delivery_event(state: State<DbState>, event: DeliveryEventDto) -> Result<(), String> {
+    let conn = state
+        .0
+        .lock()
+        .map_err(|_| "Database lock poisoned".to_string())?;
+    delivery::append_delivery_event(&conn, &event).map_err(map_err)
+}
+
+/// Records an answer once. `false` means the delivery was unknown or already
+/// answered - the caller is told rather than silently succeeding, because an
+/// overwritten answer is a learner's history quietly rewritten.
+#[tauri::command]
+pub fn record_delivery_answer(
+    state: State<DbState>,
+    delivery_id: String,
+    answered_choice_id: String,
+    correct: bool,
+    answered_at: String,
+) -> Result<bool, String> {
+    let conn = state
+        .0
+        .lock()
+        .map_err(|_| "Database lock poisoned".to_string())?;
+    delivery::record_delivery_answer(&conn, &delivery_id, &answered_choice_id, correct, &answered_at)
+        .map_err(map_err)
+}
+
+#[tauri::command]
+pub fn list_deliveries_for_learner(
+    state: State<DbState>,
+    learner_ref: String,
+    since: Option<String>,
+) -> Result<Vec<DeliveryEventDto>, String> {
+    let conn = state
+        .0
+        .lock()
+        .map_err(|_| "Database lock poisoned".to_string())?;
+    delivery::list_deliveries_for_learner(&conn, &learner_ref, since.as_deref()).map_err(map_err)
+}
+
+#[tauri::command]
+pub fn list_deliveries_for_session(
+    state: State<DbState>,
+    session_id: String,
+) -> Result<Vec<DeliveryEventDto>, String> {
+    let conn = state
+        .0
+        .lock()
+        .map_err(|_| "Database lock poisoned".to_string())?;
+    delivery::list_deliveries_for_session(&conn, &session_id).map_err(map_err)
 }
