@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-001
 task_name: "Phase 9 entry: author the packaging and release-hardening specification"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-09-26T00:42:04.345Z
-last_update: 2026-09-26T01:12:07.319Z
+last_update: 2026-09-26T01:12:18.314Z
 stale_after_hours: 12
 expected_scope: "Author docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md from repository evidence; CHANGELOG + .nexus state. No application, Rust, or bundler-config behaviour change."
 affected_areas: "docs/, CHANGELOG.md, .nexus/"
 branch: claude/busy-edison-atzxdd
 claim_commit: 7e304a1f0759cae3a07e96182da84dc477690c7d
-last_commit: 39dbd06543ec6fb4b1c895ca48e4df36cd4a550b
+last_commit: dbe615a89040c339767937f40040ff9f018aba1c
 handoff_required: no
 handoff_to: none
-next_action: "Accept the DEVICE-02 handoff, close P9-001 as COMPLETE now that the specification is merged on main, then open the DEVICE-01 implementation lane."
+next_action: "DEVICE-01 opens the Phase 9 implementation lane (P9-A, P9-B) on claude/device01-phase9; DEVICE-02 takes P9-C, P9-D, P9-E on its own branch."
 ```
 
 ## Ownership history
@@ -78,3 +78,4 @@ Timestamps are UTC.
 | 2026-09-26T00:42:04.345Z | CLAIM | DEVICE-02 | P9-001 | claimed |
 | 2026-09-26T00:47:54.651Z | HANDOFF | DEVICE-02 | P9-001 | to DEVICE-01: Resolve D15 first (it decides whether P9-A is a merge or a code change), then D16 and P9-D which need no credential. D13 then P9-B/P9-E. D14 then P9-C last, because D14 is entangled with the open D10. |
 | 2026-09-26T01:12:07.319Z | CLAIM | DEVICE-01 | P9-001 | accepted handoff from DEVICE-02 |
+| 2026-09-26T01:12:18.314Z | RELEASE COMPLETE | DEVICE-01 | P9-001 | Specification authored by DEVICE-02 and merged to main in PR #13 (merge commit 39dbd06); the task's recorded scope is finished. No Phase 9 implementation was in its scope. |
