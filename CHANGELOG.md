@@ -66,6 +66,73 @@ cannot close**. Phase 8 is unaffected and still open.
 
 ---
 
+## Phase 9 (DEVICE-02 lane) — Version Parity Enforcement (2026-09-26)
+
+**Tooling and tests only. No application, Rust, or bundler-configuration
+behaviour changed.** DEVICE-02's Phase 9 lane is P9-C, P9-D and P9-E. Of those,
+exactly one piece was implementable without pre-empting an open decision, and it
+is the piece delivered here.
+
+**P9-D, enforcement half — implemented.** `tools/preflight/preflight.mjs` now
+reads the four places this product declares its version — root `package.json`,
+`apps/desktop/package.json`, `apps/desktop/src-tauri/tauri.conf.json` and the
+`[package]` table of `apps/desktop/src-tauri/Cargo.toml` — and reports whether
+they agree, in a new `VERSION PARITY (P9-D)` section. P9-D recorded that
+"nothing enforces that they agree"; now something does. A version bump that
+updates some of the four and not the rest fails
+`node tools/preflight/preflight.test.mjs` with a message naming every file and
+its version, before it can ship an installer whose advertised version disagrees
+with the binary inside it.
+
+The `[package]` version is read by walking TOML tables rather than with a
+file-wide regex, because dependency tables carry their own `version` keys
+(`rusqlite = { version = "0.31" }`) and a file-wide match would sometimes return
+one of those instead. CRLF input is handled, since the other device is Windows.
+
+**preflight's exit-code contract is unchanged.** It still exits non-zero only
+for a malformed decision register — a disagreement is reported, and it is the
+test suite that fails. The enforcement gate is `pnpm preflight:test`, not a new
+failure mode in an observability tool.
+
+**Verified.** `node tools/preflight/preflight.test.mjs` **25/25** (was 17/17;
+eight new tests). The gate was mutation-checked: bumping root `package.json` to
+`0.2.0` made the real-repository test fail and named all four files and
+versions; restoring it returned the suite to green. Also re-run at this commit:
+nexus-core **390/390**, desktop **228/228**, nexus-sync **60/60**,
+`pnpm -r typecheck` clean, `pnpm -r build` clean.
+
+**Not verified, and not claimed.** `cargo test` and `tauri build` were not run:
+DEVICE-02 is a Linux container where `cargo test` fails at `gdk-sys`
+(`gdk-3.0` absent) and WiX/NSIS cannot run. No Windows runtime, installer or
+packaging behaviour was executed or validated on this device. The change is
+zero-dependency Node that the application does not import, so it cannot affect
+the Rust build.
+
+**Deliberately not implemented, because each is gated on an open decision:**
+
+- **P9-C (auto-update)** — wiring `tauri-plugin-updater` requires a feed
+  endpoint and an update-signing keypair, which is exactly what **D14** asks and
+  D14 is entangled with the still-open **D10**. Adding the dependency without
+  configuration would change the Rust dependency graph for no validated benefit,
+  on a device that cannot compile it.
+- **P9-D, policy half** — the tagging convention, channel policy, release
+  checklist and changelog-to-release mapping are **D16** itself. Parity is an
+  invariant and does not presume an answer to it; the policy is not authorable
+  without the decision.
+- **P9-E (bundle metadata)** — `publisher` and `copyright` require the owner's
+  legal identity, and `LICENSE.md` records it as the literal placeholder
+  `[OWNER NAME / LEGAL ENTITY — replace with your actual name or company before
+  distributing this repository]`. It appears nowhere else in the repository.
+  Populating those fields would mean fabricating a legal claim inside a
+  distributed installer. Also gated on **D13**.
+
+**P9-A and P9-B are DEVICE-01's lane** and were not touched.
+`apps/desktop/src-tauri/tauri.conf.json` — DEVICE-01's edit target for P9-B
+signing configuration — is deliberately unmodified here; the new check only
+reads it.
+
+---
+
 ## Phase 9 Entry — Packaging & Release Hardening Specification (2026-09-26)
 
 **Documentation only. No application, Rust, or bundler-configuration behaviour

@@ -224,6 +224,88 @@ export function providerReadiness(env = process.env) {
   };
 }
 
+// --- version parity (P9-D) -------------------------------------------------
+
+function jsonVersion(rel) {
+  const file = path.join(REPO_ROOT, rel);
+  if (!existsSync(file)) return null;
+  try {
+    return JSON.parse(readFileSync(file, "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The `version` of a Cargo.toml's `[package]` table.
+ *
+ * Read by walking tables rather than with one regex, because dependency
+ * tables carry their own `version` keys (`rusqlite = { version = "0.31" }`)
+ * and a file-wide match would sometimes return one of those instead.
+ */
+export function parseCargoPackageVersion(text) {
+  let table = "";
+  for (const line of text.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    const header = /^\[([^\]]+)\]$/.exec(trimmed);
+    if (header) {
+      table = header[1];
+      continue;
+    }
+    if (table !== "package") continue;
+    const match = /^version\s*=\s*"([^"]+)"/.exec(trimmed);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function cargoPackageVersion(rel) {
+  const file = path.join(REPO_ROOT, rel);
+  if (!existsSync(file)) return null;
+  return parseCargoPackageVersion(readFileSync(file, "utf8"));
+}
+
+/**
+ * Whether a set of declared versions agrees. Pure, so the disagreement and
+ * missing-version paths are testable without a repository that has them.
+ */
+export function parseVersionParity(sources) {
+  const problems = [];
+  for (const source of sources) {
+    if (source.version === null || source.version === undefined) problems.push(`${source.file}: no version declared`);
+  }
+
+  const declared = sources.filter((s) => s.version !== null && s.version !== undefined);
+  const distinct = [...new Set(declared.map((s) => s.version))];
+  if (distinct.length > 1) {
+    problems.push(`versions disagree: ${declared.map((s) => `${s.file}=${s.version}`).join(", ")}`);
+  }
+
+  return { sources, distinct, agree: problems.length === 0, problems };
+}
+
+/**
+ * The four places this product declares its version, and whether they agree.
+ *
+ * Phase 9 item P9-D records that nothing enforced agreement between them
+ * (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md §4). A disagreement ships an
+ * installer whose advertised version does not match the binary inside it,
+ * which is a release defect rather than a style preference — so it is measured
+ * here instead of being left to a checklist someone has to remember.
+ *
+ * This reports parity; it does not choose a versioning scheme. Which scheme
+ * the project adopts, how releases are cut and what channels exist is decision
+ * **D16**, which is open. Nothing here presumes an answer to it.
+ */
+export function versionParity() {
+  return parseVersionParity([
+    { label: "root package.json", file: "package.json", version: jsonVersion("package.json") },
+    { label: "desktop package.json", file: "apps/desktop/package.json", version: jsonVersion("apps/desktop/package.json") },
+    { label: "tauri.conf.json", file: "apps/desktop/src-tauri/tauri.conf.json", version: jsonVersion("apps/desktop/src-tauri/tauri.conf.json") },
+    { label: "Cargo.toml [package]", file: "apps/desktop/src-tauri/Cargo.toml", version: cargoPackageVersion("apps/desktop/src-tauri/Cargo.toml") }
+  ]);
+}
+
 // --- report ----------------------------------------------------------------
 
 export function collect() {
@@ -233,6 +315,7 @@ export function collect() {
     scenarios: scenarioReadiness(),
     competency: competencyReadiness(),
     schemaVersion: schemaVersionReadiness(),
+    versionParity: versionParity(),
     providers: providerReadiness()
   };
 }
@@ -277,6 +360,14 @@ function render(r) {
   lines.push("SCENARIO SCHEMA VERSION (A9)");
   lines.push(`  declared              ${r.schemaVersion.declared ?? "none"}`);
   lines.push(`  placeholder           ${yn(r.schemaVersion.placeholder)}`);
+
+  lines.push("");
+  lines.push("VERSION PARITY (P9-D)");
+  for (const source of r.versionParity.sources) {
+    lines.push(`  ${source.label.padEnd(20)}  ${source.version ?? "none"}`);
+  }
+  lines.push(`  agree                 ${yn(r.versionParity.agree)}`);
+  for (const p of r.versionParity.problems) lines.push(`  PROBLEM               ${p}`);
 
   lines.push("");
   lines.push("PROVIDERS");
