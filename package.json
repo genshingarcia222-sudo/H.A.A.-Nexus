@@ -15,7 +15,13 @@
     "preflight": "node tools/preflight/preflight.mjs",
     "preflight:test": "node tools/preflight/preflight.test.mjs",
     "nexus-sync": "node tools/nexus-sync/nexus-sync.mjs",
-    "nexus-sync:test": "node tools/nexus-sync/nexus-sync.test.mjs"
+    "nexus-sync:test": "node tools/nexus-sync/nexus-sync.test.mjs",
+    "kb:generate": "node tools/knowledge-corpus/kb-generate.mjs",
+    "kb:validate": "node tools/knowledge-corpus/kb-validate.mjs",
+    "kb:scorecard": "node tools/knowledge-corpus/kb-scorecard.mjs",
+    "kb:manifest": "node tools/knowledge-corpus/kb-manifest.mjs",
+    "kb:manifest:check": "node tools/knowledge-corpus/kb-manifest.mjs --check",
+    "kb:test": "node tools/knowledge-corpus/kb-validate.test.mjs"
   },
   "engines": {
     "node": ">=20"

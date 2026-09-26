@@ -1,0 +1,223 @@
+{
+  "registryId": "KB-REG-SOURCES",
+  "registryVersion": "1.0.0",
+  "retrievalDisclosure": "No source was retrieved, fetched or read in the session that created this registry. Every entry below is transcribed from a source table that already exists in this repository (the batch artifacts named in carriedFrom), together with the verification status that artifact itself records. Transcribing a citation is not verifying it. authorityClass values are the publisher's standing, not a statement that the locator was confirmed.",
+  "verificationLedger": {
+    "retrievedInThisWorkstream": 0,
+    "humanVerified": 0,
+    "note": "Charter section XLII: nothing here may be described as verified.",
+    "totalSources": 13
+  },
+  "sources": [
+    {
+      "ref": "HHS-PR-SUMMARY",
+      "title": "Summary of the HIPAA Privacy Rule",
+      "authority": "U.S. HHS Office for Civil Rights",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_GUIDANCE",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html",
+      "dateOrVersion": "page dated 2025-03-14 per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "HHS-MIN-NECESSARY",
+      "title": "Minimum Necessary Requirement",
+      "authority": "U.S. HHS Office for Civil Rights",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_GUIDANCE",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/minimum-necessary-requirement/index.html",
+      "dateOrVersion": "last reviewed 2013-07-26 per fetch (older page; re-check against 45 CFR 164.502(b) before approval)",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "HHS-BA",
+      "title": "Business Associates",
+      "authority": "U.S. HHS Office for Civil Rights",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_GUIDANCE",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/business-associates/index.html",
+      "dateOrVersion": "page dated 2026-07-30 per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "HHS-FAQ-TREATMENT",
+      "title": "FAQ: sharing patient information for treatment without authorization",
+      "authority": "U.S. HHS Office for Civil Rights",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_GUIDANCE",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/faq/does-hipaa-permit-doctors-to-share-patient-information-for-treatment-without-authorization/index.html",
+      "dateOrVersion": "content last reviewed 2022-12-28 per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "CDC-ICD10CM",
+      "title": "ICD-10-CM",
+      "authority": "CDC / National Center for Health Statistics",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_CODE_SET",
+      "url": "https://www.cdc.gov/nchs/icd/icd-10-cm/index.html",
+      "dateOrVersion": "page dated 2026-07-02 per fetch; the extract mentioned FY2024 resources, so the page may contain stale references \u2014 re-check",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "CDC-ICD10CM-GL-FY27",
+      "title": "ICD-10-CM Official Guidelines for Coding and Reporting FY 2027 \u2014 Updated October 1, 2026",
+      "authority": "CDC / NCHS (with CMS)",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_CODE_SET",
+      "url": "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/ICD10CM/2027/ICD-10-CM-October-1-2026-FY27-Guidelines.pdf",
+      "dateOrVersion": "effective 2026-10-01 to 2027-09-30",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "CFR-164-502",
+      "title": "45 CFR 164.502(b) Minimum necessary",
+      "authority": "U.S. eCFR (HHS regulation)",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_GUIDANCE",
+      "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-E/section-164.502",
+      "dateOrVersion": "eCFR 'current' as retrieved 2026-09-19; record the eCFR as-of date when a human verifies",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "Claude outputs/nexus-pilot-batch-001.candidates.r2.json"
+      ]
+    },
+    {
+      "ref": "AHDI-SCRIBE-JOBDESC",
+      "title": "Medical Scribe (job description / KSAs)",
+      "authority": "Association for Healthcare Documentation Integrity (AHDI)",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "PROFESSIONAL_BODY",
+      "url": "https://ahdionline.org/medial-scribe/",
+      "dateOrVersion": "page last modified 2024-04-02, per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "origin/feat/training-question-bank:packages/nexus-core/src/question-bank/__fixtures__/nexus-scribe-batch-002.candidates.json"
+      ]
+    },
+    {
+      "ref": "AHDI-MODEL-CURRICULUM",
+      "title": "Medical Scribe Model Curriculum",
+      "authority": "Association for Healthcare Documentation Integrity (AHDI)",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "PROFESSIONAL_BODY",
+      "url": "https://ahdionline.org/wp-content/uploads/2024/04/MEDICAL_SCRIBE_MODEL_CURRICU.pdf",
+      "dateOrVersion": "PDF as indexed 2024, per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "origin/feat/training-question-bank:packages/nexus-core/src/question-bank/__fixtures__/nexus-scribe-batch-002.candidates.json"
+      ]
+    },
+    {
+      "ref": "AHDI-QA-TOOLKIT-2025",
+      "title": "Healthcare Documentation Quality Assessment and Management Best Practices Toolkit",
+      "authority": "Association for Healthcare Documentation Integrity (AHDI)",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "PROFESSIONAL_BODY",
+      "url": "https://ahdionline.org/wp-content/uploads/2025/06/QABP25-Toolkit-FINAL.pdf",
+      "dateOrVersion": "updated June 2025, per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "origin/feat/training-question-bank:packages/nexus-core/src/question-bank/__fixtures__/nexus-scribe-batch-002.candidates.json"
+      ]
+    },
+    {
+      "ref": "TJC-SCRIBE-FAQ",
+      "title": "Documentation Assistance Provided By Scribes (Standards FAQ, RC chapter)",
+      "authority": "The Joint Commission, Standards Interpretation Group",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "PROFESSIONAL_BODY",
+      "url": "https://www.jointcommission.org/standards/standard-faqs/hospital-and-hospital-clinics/record-of-care-treatment-and-services-rc/000002210/",
+      "dateOrVersion": "first published 2018-07-26; last reviewed by Standards Interpretation 2022-11-17, per direct fetch of live page",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "origin/feat/training-question-bank:packages/nexus-core/src/question-bank/__fixtures__/nexus-scribe-batch-002.candidates.json"
+      ],
+      "classificationNote": "The Joint Commission is an accrediting body; its standards are not federal regulation."
+    },
+    {
+      "ref": "TJC-NPSG-01",
+      "title": "National Patient Safety Goals - NPSG.01.01.01 (patient identification)",
+      "authority": "The Joint Commission",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "PROFESSIONAL_BODY",
+      "url": "https://digitalassets.jointcommission.org/api/public/content/9be383450fc941df806b76c5fbdd9ae6",
+      "dateOrVersion": "Hospital Program, effective January 2025, per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "origin/feat/training-question-bank:packages/nexus-core/src/question-bank/__fixtures__/nexus-scribe-batch-002.candidates.json"
+      ],
+      "classificationNote": "The Joint Commission is an accrediting body; its standards are not federal regulation."
+    },
+    {
+      "ref": "HHS-PRIVACY-RULE-SUMMARY",
+      "title": "Summary of the HIPAA Privacy Rule",
+      "authority": "U.S. HHS Office for Civil Rights",
+      "sourceType": "OFFICIAL_PUBLICATION",
+      "authorityClass": "OFFICIAL_GUIDANCE",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html",
+      "dateOrVersion": "content last reviewed 2025-03-14, per fetch",
+      "status": "active",
+      "snapshotHash": null,
+      "retrievedOn": null,
+      "verificationStatus": "UNVERIFIED_CARRIED_FORWARD",
+      "carriedFrom": [
+        "origin/feat/training-question-bank:packages/nexus-core/src/question-bank/__fixtures__/nexus-scribe-batch-002.candidates.json"
+      ]
+    }
+  ]
+}

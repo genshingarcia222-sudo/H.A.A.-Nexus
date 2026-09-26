@@ -1,0 +1,2410 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000019",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB001-000217",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "An imaging order for Gideon Marchetti-Oyelaran is ready to transmit. What does the coordinator do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the order and return it to PA Yolanda Trevisani for a specific indication and an encounter link.",
+          "why": "Correct: the protocol depends on the indication, and the encounter it refers to is ambiguous."
+        },
+        {
+          "id": "b",
+          "text": "Transmit it: identifiers and modality are correct, and the imaging service will call if the indication is insufficient.",
+          "why": "The requirement is stated and the protocol depends on it. Relying on the receiver to catch it is not a check.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "c",
+          "text": "Fill the indication from the more recent of the two encounters and transmit.",
+          "why": "That is inventing a clinical indication, and recency does not identify which discussion was meant.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Link the order to both encounters so the imaging service can see the full context.",
+          "why": "Two encounters linked is not one encounter identified, and it leaves the indication still absent.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not transmit. \"As discussed\" is not a clinical indication, the protocol depends on the indication, and the order is not linked to an encounter — so the reader cannot even establish which discussion is meant. Return the order to PA Yolanda Trevisani for a specific indication and an encounter link. Do not infer the indication from either candidate encounter, and do not let the order go on the assumption the imaging service will call if it matters.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission on the indication, not on the identifiers.",
+          "credit": 0.25,
+          "evidenceRef": "U2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the unlinked encounter as a second defect.",
+          "credit": 0.25,
+          "evidenceRef": "U3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Returns it to the ordering clinician rather than inferring the indication.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Notes that the protocol selection depends on the indication.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "2415c62db89e8a59",
+        "scenarioFingerprint": "958519fc1ef811c0",
+        "competencyFingerprint": "30f9235761496133",
+        "evidenceLayoutFingerprint": "c9faf2128ca8c758",
+        "answerPatternFingerprint": "9a827b6348285265"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000218",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "An imaging order for Halina Berkovits is ready to transmit. What does the coordinator do? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Hold the order and return it to Dr. Imani Farrokhzad for a specific indication and an encounter link.",
+          "why": "Correct: the protocol depends on the indication, and the encounter it refers to is ambiguous."
+        },
+        {
+          "id": "c",
+          "text": "Transmit it: identifiers and modality are correct, and the imaging service will call if the indication is insufficient.",
+          "why": "The requirement is stated and the protocol depends on it. Relying on the receiver to catch it is not a check.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Fill the indication from the more recent of the two encounters and transmit.",
+          "why": "That is inventing a clinical indication, and recency does not identify which discussion was meant.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not transmit. \"As discussed\" is not a clinical indication, the protocol depends on the indication, and the order is not linked to an encounter — so the reader cannot even establish which discussion is meant. Return the order to Dr. Imani Farrokhzad for a specific indication and an encounter link. Do not infer the indication from either candidate encounter, and do not let the order go on the assumption the imaging service will call if it matters.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission on the indication, not on the identifiers.",
+          "credit": 0.25,
+          "evidenceRef": "U2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the unlinked encounter as a second defect.",
+          "credit": 0.25,
+          "evidenceRef": "U3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Returns it to the ordering clinician rather than inferring the indication.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Notes that the protocol selection depends on the indication.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "7b3eaa9b61f9bfe9",
+        "scenarioFingerprint": "44bdbb38ce30d000",
+        "competencyFingerprint": "30f9235761496133",
+        "evidenceLayoutFingerprint": "8291511f22acce31",
+        "answerPatternFingerprint": "e9cdfde913e311d2"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000219",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "An imaging order for Ignatius Nwachukwu is ready to transmit. What does the coordinator do? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Transmit it: identifiers and modality are correct, and the imaging service will call if the indication is insufficient.",
+          "why": "The requirement is stated and the protocol depends on it. Relying on the receiver to catch it is not a check.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Hold the order and return it to Dr. Teodoro Haakonsen for a specific indication and an encounter link.",
+          "why": "Correct: the protocol depends on the indication, and the encounter it refers to is ambiguous."
+        },
+        {
+          "id": "d",
+          "text": "Fill the indication from the more recent of the two encounters and transmit.",
+          "why": "That is inventing a clinical indication, and recency does not identify which discussion was meant.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not transmit. \"As discussed\" is not a clinical indication, the protocol depends on the indication, and the order is not linked to an encounter — so the reader cannot even establish which discussion is meant. Return the order to Dr. Teodoro Haakonsen for a specific indication and an encounter link. Do not infer the indication from either candidate encounter, and do not let the order go on the assumption the imaging service will call if it matters.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission on the indication, not on the identifiers.",
+          "credit": 0.25,
+          "evidenceRef": "U2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the unlinked encounter as a second defect.",
+          "credit": 0.25,
+          "evidenceRef": "U3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Returns it to the ordering clinician rather than inferring the indication.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Notes that the protocol selection depends on the indication.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "72e90ad499c5dbe1",
+        "scenarioFingerprint": "3b38c5d326f182bc",
+        "competencyFingerprint": "30f9235761496133",
+        "evidenceLayoutFingerprint": "607d8d1c927b5398",
+        "answerPatternFingerprint": "286458692c74ca12"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000220",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "An imaging order for Jovana Petrakis-Hume is ready to transmit. What does the coordinator do? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Fill the indication from the more recent of the two encounters and transmit.",
+          "why": "That is inventing a clinical indication, and recency does not identify which discussion was meant.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Transmit it: identifiers and modality are correct, and the imaging service will call if the indication is insufficient.",
+          "why": "The requirement is stated and the protocol depends on it. Relying on the receiver to catch it is not a check.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that the specific clinical indication, and which encounter the order belongs to is not in the record, request it from Dr. Ngozi Brandtsen, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (the specific clinical indication, and which encounter the order belongs to), name Dr. Ngozi Brandtsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"the specific clinical indication, and which encounter the order belongs to\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "U1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "15c3e9933f0c1ba8",
+        "scenarioFingerprint": "0bd4c7e7c07cd4d1",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "80236b363770f9c6",
+        "answerPatternFingerprint": "d61fc1cf55cf5674"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000221",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__CONTRADICTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#CONTRADICTION"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2026-02-09: states the opposite of the entry at U2 — \"the indication field was completed in full at the time of ordering\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "An imaging order for Kwabena Lindqvist is ready to transmit. What does the coordinator do? Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Surface both entries, state that neither is marked as an amendment, and route the resolution to Dr. Rurik Vandeveer.",
+          "why": "Correct: an unexplained contradiction is escalated with both sides named, never resolved by whoever noticed it."
+        },
+        {
+          "id": "b",
+          "text": "Take the later entry, since the most recent documentation reflects the current state of the chart.",
+          "why": "Recency is not authority. Without an amendment or a stated reason, a later entry may be the error rather than the correction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "c",
+          "text": "Reconcile the two entries into one consistent summary so downstream readers are not confused.",
+          "why": "That deletes the conflict instead of resolving it, and the reader who most needs to see it never will.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Hold the order and return it to Dr. Rurik Vandeveer for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: a second entry contradicts the decisive one and neither is plainly authoritative, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (U2 and OP-X1), state that neither is marked as an amendment of the other, name Dr. Rurik Vandeveer as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "U2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to Dr. Rurik Vandeveer instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "5b7b5fcabadfe773",
+        "scenarioFingerprint": "19569beb9e5c288b",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "4b343875bfc3963f",
+        "answerPatternFingerprint": "28a0cd6b11565d53"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000222",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__SAFETY_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#SAFETY_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"The headaches are much worse and now my vision goes blurry with them.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "An imaging order for Lorelai Abubakar-Stern is ready to transmit. What does the coordinator do? Something the patient said while this was being handled has not been written down anywhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Finish the administrative task first so the record is complete, then add a note about what the patient said.",
+          "why": "Ordering the routine task ahead of a volunteered red flag is the failure this case exists to teach. The note may sit unread.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Hand the volunteered statement to a clinician now, confirm acceptance, then resume the administrative task.",
+          "why": "Correct: recognition, documentation, routing and closing the loop come before routine completion."
+        },
+        {
+          "id": "c",
+          "text": "Reassure the patient that the symptom is common and unlikely to be serious, and offer the next routine appointment.",
+          "why": "That is a clinical judgment, and it is outside a support role's authorised scope however reasonable it sounds.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Hold the order and return it to Dr. Saoirse Mbeki-Lantz for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: a red flag appears alongside the administrative task, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Saoirse Mbeki-Lantz or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right.",
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "Dr. Saoirse Mbeki-Lantz",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "7a30e216eab5c7dc",
+        "scenarioFingerprint": "7e2da41232db5bc6",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "305e0ac9887cb929",
+        "answerPatternFingerprint": "e268eb941adc6a15"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000223",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__WRONG_RECIPIENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#WRONG_RECIPIENT"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "An imaging order for Arden Kowalczyk is ready to transmit. What does the coordinator do? The destination on the request and the destination in the chart are not the same.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send to both destinations so the material certainly reaches the right one.",
+          "why": "Sending twice doubles the disclosure and guarantees one of them is unauthorised.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Send to the destination on the cover sheet, since the requester knows where the material should go.",
+          "why": "The requester's cover sheet is not the authorised destination, and material sent to the wrong recipient cannot be unsent.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "c",
+          "text": "Hold the transmission, confirm the authorised destination against the chart, then send only the minimum necessary.",
+          "why": "Correct: an unconfirmed destination is a disclosure risk, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "d",
+          "text": "Hold the order and return it to NP Caius Ostrowski for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: the destination on the request does not match the destination in the chart, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with NP Caius Ostrowski or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right.",
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "NP Caius Ostrowski",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "3f1b7ded44eb9a4b",
+        "scenarioFingerprint": "323a1babcc49042c",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "21a69e3fee716fa7",
+        "answerPatternFingerprint": "514f5ed8d90bbcb8"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000224",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#IDENTITY_NEAR_MATCH"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Bassey Oduya, MRN SYN-7291, DOB 1961-11-20; and Bassey Oduya, MRN SYN-7292, DOB 1961-11-28. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "An imaging order for Bassey Oduya is ready to transmit. What does the coordinator do? The name on the request matches two different patients.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the order and return it to PA Yolanda Trevisani for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: two records match on name and differ on identifier, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Use the record whose demographics are the closest fit to the request.",
+          "why": "Closeness is exactly what produces wrong-patient events. A near match is the hazard, not the resolution.",
+          "trapType": "TRAP_NEAREST_NAME_MATCH"
+        },
+        {
+          "id": "c",
+          "text": "Use the more recently active record, since that is the one the request most likely concerns.",
+          "why": "Recent activity is not identification, and a wrong-patient filing is a hard failure however likely the guess was.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Hold the task and confirm MRN and date of birth against the request before anything attaches to a patient.",
+          "why": "Correct: two independent identifiers precede any action, and a near match is not a match."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right.",
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "PA Yolanda Trevisani",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "c3fc93b225013251",
+        "scenarioFingerprint": "8f1b1ad328e7aab6",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "2de715e7978ba1c9",
+        "answerPatternFingerprint": "00c121fab68a6b50"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000225",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#OWNERSHIP_AMBIGUOUS"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "An imaging order for Arden Kowalczyk-Reyes is ready to transmit. What does the coordinator do? Two handoff notes each assume the other person did it, and nobody has.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Name a single owner, get explicit acknowledgement, and record the acceptance with a deadline.",
+          "why": "Correct: a handoff closes on acknowledgement by a named owner, not on a note being written."
+        },
+        {
+          "id": "b",
+          "text": "Re-send the item to the shared queue so whoever picks it up next can action it.",
+          "why": "A shared queue has no owner, which is the condition that produced the four-day gap.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Note in the chart that the handoff was documented by both parties and move on.",
+          "why": "Both notes exist and the work is still undone. Documentation of a handoff is not completion of one.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "Hold the order and return it to Dr. Imani Farrokhzad for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: two people each recorded that the other would take it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "487c1037ea58f67c",
+        "scenarioFingerprint": "5a89fb35353e1d82",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "db7d05e963564cba",
+        "answerPatternFingerprint": "3ac4334d88a6aebc"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000226",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__STALE_PREREQUISITE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#STALE_PREREQUISITE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The ordering clinician's statement of the clinical indication is recorded as valid through 2026-09-22. The action this task sets up is scheduled for 2026-09-29, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "An imaging order for Bassey Oduya is ready to transmit. What does the coordinator do? The system shows this as ready to proceed.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Proceed, since the system shows the item as ready and the prerequisite was valid when it was obtained.",
+          "why": "It was valid when obtained and is not valid on the date that matters. A ready flag is a display, not a date comparison.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Hold the action, state that the prerequisite expires before the scheduled date, and get it renewed first.",
+          "why": "Correct: a ready indicator is not a check that the prerequisite still covers the date."
+        },
+        {
+          "id": "c",
+          "text": "Proceed and renew the prerequisite retroactively afterwards if anyone asks.",
+          "why": "Retroactive cover is not cover, and it puts the patient at the front of a cancellation.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Hold the order and return it to Dr. Teodoro Haakonsen for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: a prerequisite the task depends on expired before the scheduled date, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The ordering clinician's statement of the clinical indication expires on 2026-09-22 and the action falls on 2026-09-29, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "Dr. Teodoro Haakonsen",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "264465972c7fb791",
+        "scenarioFingerprint": "73a9aa611b38186f",
+        "competencyFingerprint": "c238cf06056657c3",
+        "evidenceLayoutFingerprint": "98e9021c5c3518b6",
+        "answerPatternFingerprint": "6264ded7f84a85b7"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000227",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "HARD",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__PROVENANCE_STRIPPED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#PROVENANCE_STRIPPED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Modality, region, patient identifiers and ordering clinician are all present and consistent with the chart.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "U3",
+            "text": "Two encounters this month could be the one referred to. The order is not linked to either.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "An imaging order for Corrin Vasquez-Lund is ready to transmit. What does the coordinator do? The fact you need is in the record three times and attributed nowhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the order and return it to Dr. Ngozi Brandtsen for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: the deciding fact is present but nobody is recorded as having said it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Rely on it: it appears consistently in three separate notes, which is stronger than a single entry.",
+          "why": "The three notes are copies of each other, not three observations. Consistency between copies says nothing.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "c",
+          "text": "Trace the fact to its originating author and note before relying on it, and mark it unverified until then.",
+          "why": "Correct: provenance is what makes a carried-forward fact usable, and repetition is not provenance."
+        },
+        {
+          "id": "d",
+          "text": "Transmit it: identifiers and modality are correct, and the imaging service will call if the indication is insufficient.",
+          "why": "The requirement is stated and the protocol depends on it. Relying on the receiver to catch it is not a check.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "U2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "3e781d41d104cb27",
+        "scenarioFingerprint": "842771e108d5e919",
+        "competencyFingerprint": "39c08bf68b49e705",
+        "evidenceLayoutFingerprint": "c02e662ea6c891bc",
+        "answerPatternFingerprint": "b7dd9d98647ba91d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000228",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D01"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_COMPLETENESS__MULTI_STAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000019#MULTI_STAGE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2026-12-08, walk-in at the front desk: the task opens as described — An imaging order for Delphine Achterberg is ready to transmit. What does the coordinator do? P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: The clinical indication field reads \"as discussed\". The imaging service's stated requirement for this scenario is a specific clinical indication, and the protocol chosen depends on it. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2027-01-05",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "The order was transmitted with no indication and the wrong protocol was performed. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2027-01-05",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "An imaging order for Delphine Achterberg is ready to transmit. What does the coordinator do? Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the order and return it to Dr. Rurik Vandeveer for a specific indication and an encounter link.",
+          "why": "Correct in this family's unmutated case and wrong here: a multi-stage encounter where the deciding clue arrives after ownership has moved, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Apply the new fact and update the record to the correct end state, without reciting the intermediate stages.",
+          "why": "The end state is right and the history is gone. Audit reconstruction is the point: the routing failure becomes invisible and repeats.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "c",
+          "text": "Return the item to the original opener's inbox, since the deciding message went to them.",
+          "why": "They are off rota for the week. Routing to an unattended inbox is what already delayed this by two days.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Reconstruct the stages, apply the late fact, name the current owner, and correct the patient's expectation.",
+          "why": "Correct: a late fact delivered to a former owner is a routing failure, and the audit trail has to show it."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "U2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000217",
+      "variantOf": "KB-QUES-KB001-000217",
+      "templateId": "KB-VART-KB001-000019",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000217"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "imaging coordinator",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "e2194f1ab8574913",
+        "scenarioFingerprint": "f083263573fe458b",
+        "competencyFingerprint": "2551d6bc4b147c7b",
+        "evidenceLayoutFingerprint": "51196e9cee784693",
+        "answerPatternFingerprint": "241d45552303e963"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

@@ -11,6 +11,93 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Knowledgebase Workstream — Corpus Infrastructure and Pilot Batch KB-001 (2026-09-26)
+
+**Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
+`main` at `6c92a30`. Not merged. No application, Rust, bundler or `.nexus`
+behaviour changed.** The only file touched outside the two new directories is
+`package.json`, which gains five `kb:*` scripts. No loader reads the new corpus,
+nothing under `content/` changed, no entitlement or Assessment logic was altered,
+and no other device's branch was modified.
+
+**The declared source archive is absent, and that is recorded rather than worked
+around.** Neither `nexus_knowledgebase_materials_v1.md` nor
+`Nexus_Knowledgebase_Archive_v1.0.pdf` exists in the repository or in the
+session's filesystem; both were searched for by name and by pattern. The 400 seed
+records they describe are therefore **not** in this corpus, and no part of them
+was reconstructed from conversational memory — which the repository's own
+authority order ranks last and does not treat as project state.
+`knowledge-corpus/source/SOURCE_RECONCILIATION_v1.md` states what could not be
+reconciled and what would unblock it.
+
+**The repository already had a Knowledgebase architecture, and it was left
+alone.** `origin/feat/training-question-bank` carries ~2,700 lines of
+`packages/nexus-core/src/knowledge-corpus/` under owner decision **D12** —
+schema, validation, quality tiers, a review log, deliverability and a
+deterministic build. It is not on `main`, so this branch could not import it, and
+it belongs to another lane, so it was not modified. What was built instead is
+deliberately shaped to reconcile with it: the same lifecycle vocabulary, the same
+`machine:<agent-id>` provenance rule, the same authority classes, the same
+`synthetic: true` literal, the same 50-word excerpt cap, and the same computed
+(never stored) temporal state. **Which of the two schemas survives is an owner
+decision**, recorded as the first item in
+`knowledge-corpus/INTEGRATION_BLOCKERS.md`.
+
+**The existing corpus was measured, not assumed:** 42 candidate items across
+three artifacts (Pilot Batch 001 r2 and r3, Scribe Batch 002), **0 approved, 0
+source-verified**, and every one of the 42 a four-option single-best-answer
+question with no partial credit. That last finding set the batch's direction,
+because the workstream's stated objective is that the Knowledgebase must not
+become a question bank.
+
+**Batch KB-001: 324 records, QA PASS, 0 approved.** 27 template families × 12
+operators — one base case and eleven counterfactual mutations. Each operator
+rewrites the evidence so the *defensible behaviour changes*, and the option that
+was correct in the base case is carried into the mutation as an explained
+distractor. All 27 task types, all 20 modules and all 12 KB-D competency axes are
+represented; `taskType: MCQ` is 12 of 324 (3.7%) against a 30% enforced ceiling;
+297 records are variants with resolving lineage; 0 exact duplicates and 0
+superficial variants. Generation is deterministic — no clock, no randomness — so a
+failed batch is rerunnable without duplicating an accepted record.
+
+**Nothing claims more than it has.** 300 records are `SELF_CONTAINED`, at
+`candidate`, their gold behaviour settled by the synthetic packet inside the
+record. 24 are `EXTERNAL_AUTHORITY`, held at
+`candidate_needs_source_verification` with `locatorConfidence: NONE`, because **no
+source was retrieved or opened in this workstream**. All 13 source-registry refs
+were transcribed from batch artifacts already in the repository, each naming the
+artifact it came from; two Joint Commission entries were reclassified from
+`SECONDARY` to `PROFESSIONAL_BODY`, with the note that an accrediting body's
+standards are not federal regulation. `ASSESSMENT_CLOSED_BOOK` is on **zero**
+records, and the generator cannot assign it.
+
+**The validator is the trust anchor, so it is tested by rule name** — 45 tests in
+`tools/knowledge-corpus/kb-validate.test.mjs`, covering 24 named policy rules plus
+four contract assertions over the generator: determinism, the machine ceiling, the
+Assessment boundary, and that every packet declares itself synthetic. Removing a
+rule fails a test that names it.
+
+**Four defects were found and fixed during the batch; three by the validator and
+one by reading a record.** Colliding packet-line refs (15 records); `CLUE_REMOVED`
+leaving no decisive line and no packet-grounded criterion (27 records); two
+operators overstating their difficulty band, corrected so 54 records moved down one
+band; and two records whose distractor restated the correct answer — for which a
+**new rule `CHOICE-COLLISION` was added** so it cannot recur silently.
+
+**The residual imbalance is reported, not relabelled.** Difficulty is 59.3% HARD
+against 2.8% EASY, because six of the eleven mutations genuinely add a
+contradiction or a competing priority. Competency spread runs 12 to 96, and the two
+thinnest axes — KB-D10 privacy and KB-D07 coding — are exactly the two that cannot
+be expanded without a human opening a source. Corpus layer 2 (reusable knowledge
+rules and terminology objects) does not exist yet for the same reason.
+`knowledge-corpus/GAP_ANALYSIS.md` measures all of it and sequences KB-002 to KB-005.
+
+**Generation is not this corpus's constraint; review is.** 324 records written, 0
+approved, and no machine-reachable path to an approved state. Reaching 10,000
+records does not change that ratio — only registered reviewers do.
+
+---
+
 ## Phase 9 — C-02 Integrated, and the Governance Reconciled to It (2026-09-26)
 
 **Integration and governance. No application, Rust or bundler-configuration

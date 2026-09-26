@@ -1,0 +1,2420 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000017",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB001-000193",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Rurik Vandeveer, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A refill request for Kwabena Lindqvist (MRN SYN-7134) is in the queue. Work the request.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Rurik Vandeveer, then close the loop with the pharmacy.",
+          "why": "Correct: a stale list is not authority to dispense, and reconciliation is the prescriber's."
+        },
+        {
+          "id": "b",
+          "text": "Refill it: the medication is on the active list and the request is routine.",
+          "why": "The active list is contradicted by a signed note. Refilling a stopped medication is the failure here.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "c",
+          "text": "Decline the refill and remove the medication from the active list so this cannot recur.",
+          "why": "Declining is right; editing the medication list is a clinical action outside this role.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Decline the refill and tell the patient the medication was stopped and not to take it.",
+          "why": "Relaying a stop instruction to a patient is clinical communication, and it has not been confirmed by the prescriber.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not refill from the active list. The signed note says the medication was stopped and the list is stale, so the list and the note disagree about what the patient is taking. Hold the refill, surface both entries to Dr. Rurik Vandeveer, and flag the second issue too: a medication was started that the pharmacy does not appear to know about. Do not remove the drug from the list yourself and do not tell the patient to stop taking it — both are clinical actions. Close the loop with the pharmacy once the clinician has decided.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to refill on the active list where a signed note contradicts it.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Routes the discrepancy to the prescriber rather than editing the list.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Raises the newly started medication the pharmacy has not referenced.",
+          "credit": 0.25,
+          "evidenceRef": "S3"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the pharmacy after the clinical decision, not before.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "be7bc7b7ed9d13b9",
+        "scenarioFingerprint": "1aed203cdf742dc7",
+        "competencyFingerprint": "f9470e3265de9907",
+        "evidenceLayoutFingerprint": "b788f20302066a0b",
+        "answerPatternFingerprint": "495482795888aaa4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000194",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Saoirse Mbeki-Lantz, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A refill request for Lorelai Abubakar-Stern (MRN SYN-4592) is in the queue. Work the request. Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Saoirse Mbeki-Lantz, then close the loop with the pharmacy.",
+          "why": "Correct: a stale list is not authority to dispense, and reconciliation is the prescriber's."
+        },
+        {
+          "id": "c",
+          "text": "Refill it: the medication is on the active list and the request is routine.",
+          "why": "The active list is contradicted by a signed note. Refilling a stopped medication is the failure here.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Decline the refill and remove the medication from the active list so this cannot recur.",
+          "why": "Declining is right; editing the medication list is a clinical action outside this role.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not refill from the active list. The signed note says the medication was stopped and the list is stale, so the list and the note disagree about what the patient is taking. Hold the refill, surface both entries to Dr. Saoirse Mbeki-Lantz, and flag the second issue too: a medication was started that the pharmacy does not appear to know about. Do not remove the drug from the list yourself and do not tell the patient to stop taking it — both are clinical actions. Close the loop with the pharmacy once the clinician has decided.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to refill on the active list where a signed note contradicts it.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Routes the discrepancy to the prescriber rather than editing the list.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Raises the newly started medication the pharmacy has not referenced.",
+          "credit": 0.25,
+          "evidenceRef": "S3"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the pharmacy after the clinical decision, not before.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "e6730f8020be0852",
+        "scenarioFingerprint": "e2bb3b6485a29964",
+        "competencyFingerprint": "f9470e3265de9907",
+        "evidenceLayoutFingerprint": "612d6a50eb2342c8",
+        "answerPatternFingerprint": "ff838851549a76df"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000195",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the most recent clinic note, signed by NP Caius Ostrowski, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "A refill request for Arden Kowalczyk (MRN SYN-4419) is in the queue. Work the request. Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Refill it: the medication is on the active list and the request is routine.",
+          "why": "The active list is contradicted by a signed note. Refilling a stopped medication is the failure here.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to NP Caius Ostrowski, then close the loop with the pharmacy.",
+          "why": "Correct: a stale list is not authority to dispense, and reconciliation is the prescriber's."
+        },
+        {
+          "id": "d",
+          "text": "Decline the refill and remove the medication from the active list so this cannot recur.",
+          "why": "Declining is right; editing the medication list is a clinical action outside this role.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not refill from the active list. The signed note says the medication was stopped and the list is stale, so the list and the note disagree about what the patient is taking. Hold the refill, surface both entries to NP Caius Ostrowski, and flag the second issue too: a medication was started that the pharmacy does not appear to know about. Do not remove the drug from the list yourself and do not tell the patient to stop taking it — both are clinical actions. Close the loop with the pharmacy once the clinician has decided.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to refill on the active list where a signed note contradicts it.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Routes the discrepancy to the prescriber rather than editing the list.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Raises the newly started medication the pharmacy has not referenced.",
+          "credit": 0.25,
+          "evidenceRef": "S3"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the pharmacy after the clinical decision, not before.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "bbf07d2da9941a96",
+        "scenarioFingerprint": "61d2ca980143d97e",
+        "competencyFingerprint": "f9470e3265de9907",
+        "evidenceLayoutFingerprint": "4ce5cabb1c14c385",
+        "answerPatternFingerprint": "f661c392e453e314"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000196",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "A refill request for Bassey Oduya (MRN SYN-7291) is in the queue. Work the request. If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Refill it: the medication is on the active list and the request is routine.",
+          "why": "The active list is contradicted by a signed note. Refilling a stopped medication is the failure here.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to PA Yolanda Trevisani, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that whether the prescriber intends the medication to be stopped or continued is not in the record, request it from PA Yolanda Trevisani, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether the prescriber intends the medication to be stopped or continued), name PA Yolanda Trevisani as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether the prescriber intends the medication to be stopped or continued\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "4c088c0ce127d2d4",
+        "scenarioFingerprint": "5d70eca16cb01e2d",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "a556db9018f11745",
+        "answerPatternFingerprint": "83b6c50077d7d70d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000197",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__CONTRADICTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#CONTRADICTION"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Imani Farrokhzad, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2026-11-05: states the opposite of the entry at S2 — \"the clinic note records the medication as continued at the last visit\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "A refill request for Arden Kowalczyk-Reyes (MRN SYN-4418) is in the queue. Work the request. Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Surface both entries, state that neither is marked as an amendment, and route the resolution to Dr. Imani Farrokhzad.",
+          "why": "Correct: an unexplained contradiction is escalated with both sides named, never resolved by whoever noticed it."
+        },
+        {
+          "id": "b",
+          "text": "Take the later entry, since the most recent documentation reflects the current state of the chart.",
+          "why": "Recency is not authority. Without an amendment or a stated reason, a later entry may be the error rather than the correction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "c",
+          "text": "Reconcile the two entries into one consistent summary so downstream readers are not confused.",
+          "why": "That deletes the conflict instead of resolving it, and the reader who most needs to see it never will.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Imani Farrokhzad, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: a second entry contradicts the decisive one and neither is plainly authoritative, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (S2 and OP-X1), state that neither is marked as an amendment of the other, name Dr. Imani Farrokhzad as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to Dr. Imani Farrokhzad instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "Dr. Imani Farrokhzad",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "0c6a82fb5176ab10",
+        "scenarioFingerprint": "a5c0e25a27f78fbd",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "bbcc7dcfb8755c68",
+        "answerPatternFingerprint": "109e0418980bed2f"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000198",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__SAFETY_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#SAFETY_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Teodoro Haakonsen, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"I stopped the old one and started the new one and now my heart's racing all the time.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "A refill request for Bassey Oduya (MRN SYN-7290) is in the queue. Work the request. Something the patient said while this was being handled has not been written down anywhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Finish the administrative task first so the record is complete, then add a note about what the patient said.",
+          "why": "Ordering the routine task ahead of a volunteered red flag is the failure this case exists to teach. The note may sit unread.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Hand the volunteered statement to a clinician now, confirm acceptance, then resume the administrative task.",
+          "why": "Correct: recognition, documentation, routing and closing the loop come before routine completion."
+        },
+        {
+          "id": "c",
+          "text": "Reassure the patient that the symptom is common and unlikely to be serious, and offer the next routine appointment.",
+          "why": "That is a clinical judgment, and it is outside a support role's authorised scope however reasonable it sounds.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Teodoro Haakonsen, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: a red flag appears alongside the administrative task, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Teodoro Haakonsen or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-INCORRECT-ESCALATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-ESCALATION-LADDER"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "Dr. Teodoro Haakonsen",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "cece2f7e48506756",
+        "scenarioFingerprint": "bbc4fc734adb19b7",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "12d239fe7b95beb6",
+        "answerPatternFingerprint": "8b411e6545db3cc4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000199",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__WRONG_RECIPIENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#WRONG_RECIPIENT"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Ngozi Brandtsen, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "A refill request for Corrin Vasquez-Lund (MRN SYN-3355) is in the queue. Work the request. The destination on the request and the destination in the chart are not the same.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send to both destinations so the material certainly reaches the right one.",
+          "why": "Sending twice doubles the disclosure and guarantees one of them is unauthorised.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Send to the destination on the cover sheet, since the requester knows where the material should go.",
+          "why": "The requester's cover sheet is not the authorised destination, and material sent to the wrong recipient cannot be unsent.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "c",
+          "text": "Hold the transmission, confirm the authorised destination against the chart, then send only the minimum necessary.",
+          "why": "Correct: an unconfirmed destination is a disclosure risk, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "d",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Ngozi Brandtsen, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: the destination on the request does not match the destination in the chart, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with Dr. Ngozi Brandtsen or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "f49acb5af922c548",
+        "scenarioFingerprint": "992ed970d5dfa7ec",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "128d5eaeb84d22e7",
+        "answerPatternFingerprint": "fed34455bcc0e85b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000200",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#IDENTITY_NEAR_MATCH"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Delphine Achterberg, MRN SYN-8102, DOB 1955-01-19; and Delphine Achterberg, MRN SYN-8103, DOB 1955-01-27. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Rurik Vandeveer, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A refill request for Delphine Achterberg (MRN SYN-8102) is in the queue. Work the request. The name on the request matches two different patients.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Rurik Vandeveer, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: two records match on name and differ on identifier, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Use the record whose demographics are the closest fit to the request.",
+          "why": "Closeness is exactly what produces wrong-patient events. A near match is the hazard, not the resolution.",
+          "trapType": "TRAP_NEAREST_NAME_MATCH"
+        },
+        {
+          "id": "c",
+          "text": "Use the more recently active record, since that is the one the request most likely concerns.",
+          "why": "Recent activity is not identification, and a wrong-patient filing is a hard failure however likely the guess was.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Hold the task and confirm MRN and date of birth against the request before anything attaches to a patient.",
+          "why": "Correct: two independent identifiers precede any action, and a near match is not a match."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "c97af13862c46e67",
+        "scenarioFingerprint": "8a4861143dbbc8f9",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "aa6cd49348c94e29",
+        "answerPatternFingerprint": "00c121fab68a6b50"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000201",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#OWNERSHIP_AMBIGUOUS"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by Dr. Saoirse Mbeki-Lantz, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A refill request for Emeka Solberg (MRN SYN-5647) is in the queue. Work the request. Two handoff notes each assume the other person did it, and nobody has.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Name a single owner, get explicit acknowledgement, and record the acceptance with a deadline.",
+          "why": "Correct: a handoff closes on acknowledgement by a named owner, not on a note being written."
+        },
+        {
+          "id": "b",
+          "text": "Re-send the item to the shared queue so whoever picks it up next can action it.",
+          "why": "A shared queue has no owner, which is the condition that produced the four-day gap.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Note in the chart that the handoff was documented by both parties and move on.",
+          "why": "Both notes exist and the work is still undone. Documentation of a handoff is not completion of one.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Saoirse Mbeki-Lantz, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: two people each recorded that the other would take it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "54bde1cedb3895e9",
+        "scenarioFingerprint": "b48bb808e0c9cf12",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "f22ffdcdbb365a30",
+        "answerPatternFingerprint": "3ac4334d88a6aebc"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000202",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__STALE_PREREQUISITE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#STALE_PREREQUISITE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-03-17",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by NP Caius Ostrowski, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it.",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The prescriber's medication reconciliation is recorded as valid through 2026-04-07. The action this task sets up is scheduled for 2026-04-14, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A refill request for Fenella Quintanilla (MRN SYN-2914) is in the queue. Work the request. The system shows this as ready to proceed.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Proceed, since the system shows the item as ready and the prerequisite was valid when it was obtained.",
+          "why": "It was valid when obtained and is not valid on the date that matters. A ready flag is a display, not a date comparison.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Hold the action, state that the prerequisite expires before the scheduled date, and get it renewed first.",
+          "why": "Correct: a ready indicator is not a check that the prerequisite still covers the date."
+        },
+        {
+          "id": "c",
+          "text": "Proceed and renew the prerequisite retroactively afterwards if anyone asks.",
+          "why": "Retroactive cover is not cover, and it puts the patient at the front of a cancellation.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to NP Caius Ostrowski, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: a prerequisite the task depends on expired before the scheduled date, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The prescriber's medication reconciliation expires on 2026-04-07 and the action falls on 2026-04-14, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "NP Caius Ostrowski",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "f26117c13aba061d",
+        "scenarioFingerprint": "f2b3ecc4444b6198",
+        "competencyFingerprint": "e42003edd637a20d",
+        "evidenceLayoutFingerprint": "e5ca385f1cf4147d",
+        "answerPatternFingerprint": "a1c9c9c22d6b16db"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000203",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "HARD",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__PROVENANCE_STRIPPED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#PROVENANCE_STRIPPED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Pharmacy fax requests a routine refill, quantity as before, for a medication on the patient's active list.",
+            "section": "Request",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "S3",
+            "text": "A different medication was started at the same visit. The pharmacy's request does not mention it.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "The most recent clinic note, signed by PA Yolanda Trevisani, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A refill request for Gideon Marchetti-Oyelaran (MRN SYN-6073) is in the queue. Work the request. The fact you need is in the record three times and attributed nowhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to PA Yolanda Trevisani, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: the deciding fact is present but nobody is recorded as having said it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Rely on it: it appears consistently in three separate notes, which is stronger than a single entry.",
+          "why": "The three notes are copies of each other, not three observations. Consistency between copies says nothing.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "c",
+          "text": "Trace the fact to its originating author and note before relying on it, and mark it unverified until then.",
+          "why": "Correct: provenance is what makes a carried-forward fact usable, and repetition is not provenance."
+        },
+        {
+          "id": "d",
+          "text": "Refill it: the medication is on the active list and the request is routine.",
+          "why": "The active list is contradicted by a signed note. Refilling a stopped medication is the failure here.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "52e1ae001f68e6a0",
+        "scenarioFingerprint": "1217ad859b21ce5d",
+        "competencyFingerprint": "bacdd33547eb1478",
+        "evidenceLayoutFingerprint": "bf5e63297f4b0232",
+        "answerPatternFingerprint": "b7dd9d98647ba91d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB001-000204",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_AGAINST_STOPPED_DRUG__MULTI_STAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000017#MULTI_STAGE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2026-06-22, walk-in at the front desk: the task opens as described — A refill request for Halina Berkovits (MRN SYN-1528) is in the queue. Work the request. P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: The most recent clinic note, signed by Dr. Imani Farrokhzad, records that this medication was stopped at the last visit. The active medication list still shows it, and nobody removed it. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2026-07-20",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "The refill was dispensed and the patient took both the stopped and the new medication. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2026-07-20",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A refill request for Halina Berkovits (MRN SYN-1528) is in the queue. Work the request. Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the refill, surface the stopped-versus-active conflict and the new medication to Dr. Imani Farrokhzad, then close the loop with the pharmacy.",
+          "why": "Correct in this family's unmutated case and wrong here: a multi-stage encounter where the deciding clue arrives after ownership has moved, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Apply the new fact and update the record to the correct end state, without reciting the intermediate stages.",
+          "why": "The end state is right and the history is gone. Audit reconstruction is the point: the routing failure becomes invisible and repeats.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "c",
+          "text": "Return the item to the original opener's inbox, since the deciding message went to them.",
+          "why": "They are off rota for the week. Routing to an unattended inbox is what already delayed this by two days.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Reconstruct the stages, apply the late fact, name the current owner, and correct the patient's expectation.",
+          "why": "Correct: a late fact delivered to a former owner is a routing failure, and the audit trail has to show it."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB001-000193",
+      "variantOf": "KB-WFLW-KB001-000193",
+      "templateId": "KB-VART-KB001-000017",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB001-000193"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "medication-refill coordinator",
+      "nextActionOwner": "Dr. Imani Farrokhzad",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "d0dc871c00f9f8e0",
+        "scenarioFingerprint": "369984c20924d5fc",
+        "competencyFingerprint": "31d7d05f36278c27",
+        "evidenceLayoutFingerprint": "eaa3096b04d278d3",
+        "answerPatternFingerprint": "241d45552303e963"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}
