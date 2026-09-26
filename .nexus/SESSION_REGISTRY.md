@@ -84,6 +84,9 @@ S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
 S-phases-building.updated_at: 2026-09-26T13:11:25.551Z
 S-phases-building.revision: 2
+S-phases-building.DEVICE-02.attached_at: 2026-09-26T14:17:11.329Z
+S-phases-building.DEVICE-02.last_seen: 2026-09-26T14:17:11.329Z
+S-phases-building.DEVICE-02.last_seen_commit: d162b6d36f1b11873b6d60359d281fcac55b426d
 ```
 
 ## Registration history
@@ -96,3 +99,4 @@ it replaced. Timestamps are UTC.
 |---|---|---|---|---|
 | 2026-09-26T13:00:46.532Z | REGISTER | DEVICE-01 | S-phases-building | registered as PHASES BUILDING, role orchestrator: authoritative phase plan, task partition, integration and conflict policy, status ACTIVE |
 | 2026-09-26T13:11:25.551Z | UPDATE | DEVICE-01 | S-phases-building | set next_action at revision 2 |
+| 2026-09-26T14:17:11.329Z | ATTACH | DEVICE-02 | S-phases-building | attached DEVICE-02 to the session created by DEVICE-01 at revision 2; no shared field changed |
