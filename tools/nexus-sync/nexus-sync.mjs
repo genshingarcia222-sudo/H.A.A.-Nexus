@@ -17,7 +17,7 @@
 //   pwsh tools/nexus-sync/nexus-sync.ps1 <command> [options]
 //
 // Commands: status | start | recover | init-device | claim | heartbeat |
-//           handoff | release | finalize | help
+//           handoff | release | session | finalize | help
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -35,6 +35,13 @@ export const DEVICE_IDS = ["DEVICE-01", "DEVICE-02"];
 export const TASK_STATUSES = ["UNASSIGNED", "RESERVED", "ACTIVE", "BLOCKED", "HANDOFF_PENDING", "COMPLETE", "ABANDONED", "RECOVERING"];
 export const DEVICE_STATUSES = ["ACTIVE", "OFFLINE", "UNKNOWN", "HANDOFF_PENDING", "RECOVERY"];
 export const SYNC_STATUSES = ["REMOTE_SYNCED", "REMOTE_SYNC_PENDING"];
+/**
+ * A development session's lifecycle in the shared registry. A session is a unit
+ * of work that outlives any one Claude conversation, machine or checkout: the
+ * registry records the session, never the conversation, because a conversation
+ * transcript is per-machine application state the repository must not carry.
+ */
+export const SESSION_STATUSES = ["ACTIVE", "IDLE", "CLOSED", "LOST"];
 /** Statuses in which a task is held by its owner and claiming it is a takeover. */
 export const HELD_STATUSES = ["RESERVED", "ACTIVE", "BLOCKED", "RECOVERING"];
 export const FREE_STATUSES = ["UNASSIGNED", "COMPLETE", "ABANDONED"];
@@ -47,7 +54,8 @@ export const STATE_FILES = {
   task: ".nexus/ACTIVE_TASK.md",
   registry: ".nexus/DEVICE_REGISTRY.md",
   handoff: ".nexus/HANDOFF.md",
-  baseline: ".nexus/BASELINE.md"
+  baseline: ".nexus/BASELINE.md",
+  sessions: ".nexus/SESSION_REGISTRY.md"
 };
 export const REQUIRED_NEXUS_FILES = [
   ".nexus/README.md",
@@ -58,7 +66,8 @@ export const REQUIRED_NEXUS_FILES = [
   ".nexus/DECISIONS.md",
   ".nexus/BASELINE.md",
   ".nexus/SYNC_PROTOCOL.md",
-  ".nexus/RECOVERY_PROTOCOL.md"
+  ".nexus/RECOVERY_PROTOCOL.md",
+  ".nexus/SESSION_REGISTRY.md"
 ];
 export const LOCAL_DEVICE_FILE = ".nexus/local-device.yaml";
 
@@ -77,7 +86,8 @@ export const REQUIRED_KEYS = {
   registry: DEVICE_IDS.flatMap((d) =>
     ["role", "status", "ownership", "latest_known_commit", "latest_activity", "last_successful_sync"].map((f) => `${d}.${f}`)
   ),
-  baseline: ["commit", "branch", "timestamp", "tests", "build", "typecheck", "rust", "audit_status"]
+  baseline: ["commit", "branch", "timestamp", "tests", "build", "typecheck", "rust", "audit_status"],
+  sessions: ["registry_version"]
 };
 
 // --- state blocks ----------------------------------------------------------
@@ -149,12 +159,161 @@ function tableCell(value) {
   return String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
 }
 
-/** Appends a row to the ownership history table, which is always the last section of ACTIVE_TASK.md. */
-export function appendHistory(markdown, { when, event, device, task, detail }) {
-  if (!/^## Ownership history/m.test(markdown)) throw new Error("ACTIVE_TASK.md has no '## Ownership history' section");
+export const TASK_HISTORY_SECTION = "## Ownership history";
+export const SESSION_HISTORY_SECTION = "## Registration history";
+
+/**
+ * Appends a row to an append-only history table, which is always the last
+ * section of the file that owns it: ownership history in ACTIVE_TASK.md,
+ * registration history in SESSION_REGISTRY.md.
+ */
+export function appendHistory(markdown, { when, event, device, task, detail }, section = TASK_HISTORY_SECTION) {
+  if (!new RegExp("^" + section, "m").test(markdown)) throw new Error("the file has no " + section + " section");
   const eol = markdown.includes("\r\n") ? "\r\n" : "\n";
   const body = markdown.replace(/\s*$/, "");
   return `${body}${eol}| ${[when, event, device, task, detail].map(tableCell).join(" | ")} |${eol}`;
+}
+
+// --- sessions --------------------------------------------------------------
+//
+// A session's identity is DERIVED from its logical name, so two devices that
+// have never spoken derive the same id for the same session and cannot create
+// two records for one piece of work. Device-local identifiers - a Claude Code
+// conversation uuid, a window, a process id - are never identity; they are at
+// most an attachment, and the registry does not store them at all.
+//
+// Keys are flat and dotted so that one line belongs to exactly one writer:
+//   <id>.<field>              shared, changed only through `session update`
+//   <id>.<DEVICE-0X>.<field>  that device's attachment, written only by it
+// Two devices working at once therefore touch different lines, and Git merges
+// them with no conflict. A genuine disagreement - two devices setting the same
+// shared field differently - is refused rather than merged, and superseding
+// another device's value records the value it replaced.
+
+/** The canonical id for a logical session name. Case, spacing and punctuation collapse. */
+export function sessionId(name) {
+  const slug = String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48)
+    .replace(/-+$/, "");
+  return slug ? "S-" + slug : null;
+}
+
+export const SESSION_ID_RE = /^S-[a-z0-9][a-z0-9-]*$/;
+
+/** Groups the registry's flat dotted keys into { id: { shared, devices } }. */
+export function parseSessions(block) {
+  const out = {};
+  for (const [key, value] of Object.entries(block || {})) {
+    const m = /^(S-[a-z0-9-]+)\.(.+)$/.exec(key);
+    if (!m) continue;
+    const [, id, rest] = m;
+    const s = (out[id] = out[id] || { id, shared: {}, devices: {} });
+    const d = /^(DEVICE-\d{2})\.(.+)$/.exec(rest);
+    if (d) {
+      s.devices[d[1]] = s.devices[d[1]] || {};
+      s.devices[d[1]][d[2]] = value;
+    } else s.shared[rest] = value;
+  }
+  return out;
+}
+
+const SESSION_SHARED_ARGS = { status: "status", next: "next_action", role: "role", "control-version": "control_version" };
+
+/**
+ * Registering an already-registered session ATTACHES this device to it. That is
+ * the anti-duplication rule: a second device never creates its own copy, and
+ * the command is safe to re-run at the start of every session.
+ */
+export function planSessionRegister({ sessions, registry, id, device, now, head, attachOnly, args }) {
+  if (!validateDeviceId(device)) return { ok: false, reason: "local device identity is not configured" };
+  if (!id) return { ok: false, reason: 'name the session: --name "PHASES BUILDING". The id is derived from the name, so every device derives the same one.' };
+  if (!SESSION_ID_RE.test(id)) return { ok: false, reason: id + " is not a canonical session id (S-<slug>)" };
+  const existing = sessions[id];
+  if (attachOnly && !existing) return { ok: false, reason: id + ' is not registered yet; register it with --name "..." (register attaches when it already exists, and never duplicates)' };
+  const shared = Object.keys(SESSION_SHARED_ARGS).filter((a) => args[a] !== undefined);
+  if (existing && shared.length) {
+    return { ok: false, reason: id + " is already registered (created by " + existing.shared.created_by + "); change " + shared.join(", ") + " with `session update` so the conflict rules apply" };
+  }
+  const status = args.status || "ACTIVE";
+  if (!SESSION_STATUSES.includes(status)) return { ok: false, reason: "status " + status + " is not one of " + SESSION_STATUSES.join(", ") };
+  const iso = now.toISOString();
+  const mine = (existing && existing.devices[device]) || {};
+  const updates = {
+    [id + "." + device + ".attached_at"]: mine.attached_at || iso,
+    [id + "." + device + ".last_seen"]: iso,
+    [id + "." + device + ".last_seen_commit"]: head
+  };
+  if (!existing) {
+    updates.registry_version = String(Number(registry.registry_version || 0) + 1);
+    Object.assign(updates, {
+      [id + ".name"]: args.name || id,
+      [id + ".role"]: args.role || "not recorded",
+      [id + ".status"]: status,
+      [id + ".control_version"]: args["control-version"] || "not recorded",
+      [id + ".branch"]: args.branch || STATE_BRANCH,
+      [id + ".next_action"]: args.next || "not recorded",
+      [id + ".created_by"]: device,
+      [id + ".created_at"]: iso,
+      [id + ".updated_by"]: device,
+      [id + ".updated_at"]: iso,
+      [id + ".revision"]: "1"
+    });
+  }
+  const event = existing ? "ATTACH" : "REGISTER";
+  const detail = existing
+    ? "attached " + device + " to the session created by " + existing.shared.created_by + " at revision " + existing.shared.revision + "; no shared field changed"
+    : "registered as " + (args.name || id) + (args.role ? ", role " + args.role : "") + ", status " + status;
+  return { ok: true, event, id, updates, history: { when: iso, event, device, task: id, detail } };
+}
+
+/**
+ * Shared fields change here, and only here. Overwriting a value another device
+ * set is never automatic: it needs --supersede --reason, and the value it
+ * replaced is written into the registration history, so neither side is lost.
+ */
+export function planSessionUpdate({ sessions, id, device, now, head, args }) {
+  if (!validateDeviceId(device)) return { ok: false, reason: "local device identity is not configured" };
+  if (!id) return { ok: false, reason: 'name the session: --id S-<slug> or --name "..."' };
+  const s = sessions[id];
+  if (!s) return { ok: false, reason: id + ' is not registered; `session register --name "..."` first' };
+  if (args.name !== undefined && sessionId(args.name) !== id) {
+    return { ok: false, reason: "a session id is derived from its name, so renaming would change identity; register the new session instead" };
+  }
+  const wanted = {};
+  for (const [flag, field] of Object.entries(SESSION_SHARED_ARGS)) if (args[flag] !== undefined) wanted[field] = String(args[flag]);
+  if (!Object.keys(wanted).length) return { ok: false, reason: "nothing to update: pass --status, --next, --role or --control-version" };
+  if (wanted.status && !SESSION_STATUSES.includes(wanted.status)) return { ok: false, reason: "status " + wanted.status + " is not one of " + SESSION_STATUSES.join(", ") };
+  const revision = Number(s.shared.revision || 0);
+  if (args["expect-revision"] !== undefined && Number(args["expect-revision"]) !== revision) {
+    return { ok: false, reason: id + " is at revision " + revision + ", not " + args["expect-revision"] + ": " + s.shared.updated_by + " changed it at " + s.shared.updated_at + ". Re-read the registry, then re-issue." };
+  }
+  const collisions = Object.entries(wanted).filter(([field, value]) => {
+    const old = s.shared[field];
+    return old !== undefined && old !== "not recorded" && old !== value && s.shared.updated_by && s.shared.updated_by !== device;
+  });
+  if (collisions.length && !args.supersede) {
+    const detail = collisions.map(([f, v]) => f + ' is "' + s.shared[f] + '" (set by ' + s.shared.updated_by + '), you are setting "' + v + '"').join("; ");
+    return { ok: false, reason: detail + '. That is a disagreement, not a race, so it is never merged automatically: pass --supersede --reason "..." and the replaced value is kept in the registration history.' };
+  }
+  if (collisions.length && !args.reason) return { ok: false, reason: 'a supersede must record why: pass --reason "..."' };
+  const iso = now.toISOString();
+  const updates = {
+    [id + ".revision"]: String(revision + 1),
+    [id + ".updated_by"]: device,
+    [id + ".updated_at"]: iso,
+    [id + "." + device + ".last_seen"]: iso,
+    [id + "." + device + ".last_seen_commit"]: head
+  };
+  if (!(s.devices[device] || {}).attached_at) updates[id + "." + device + ".attached_at"] = iso;
+  for (const [field, value] of Object.entries(wanted)) updates[id + "." + field] = value;
+  const event = collisions.length ? "SUPERSEDE" : "UPDATE";
+  const detail = collisions.length
+    ? "superseded " + collisions.map(([f, v]) => f + '="' + s.shared[f] + '" (' + s.shared.updated_by + ') -> "' + v + '"').join("; ") + ": " + args.reason
+    : "set " + Object.keys(wanted).join(", ") + " at revision " + (revision + 1) + (args.reason ? ": " + args.reason : "");
+  return { ok: true, event, id, updates, history: { when: iso, event, device, task: id, detail } };
 }
 
 // --- device identity -------------------------------------------------------
@@ -301,6 +460,15 @@ export function validateStateValues(blocks) {
     if (t && (c.active_task !== t.task_id || c.task_owner !== t.owner || c.task_status !== t.status)) {
       problems.push(`CURRENT_STATE task fields (${c.active_task}/${c.task_owner}/${c.task_status}) disagree with ACTIVE_TASK (${t.task_id}/${t.owner}/${t.status}); ACTIVE_TASK.md wins`);
     }
+  }
+  for (const s of Object.values(parseSessions(blocks.sessions))) {
+    if (s.shared.status && !SESSION_STATUSES.includes(s.shared.status)) {
+      problems.push(`SESSION_REGISTRY ${s.id}.status ${s.shared.status} is not one of ${SESSION_STATUSES.join(", ")}`);
+    }
+    if (s.shared.name && sessionId(s.shared.name) !== s.id) {
+      problems.push(`SESSION_REGISTRY ${s.id} is not the id derived from its name (${sessionId(s.shared.name)}); session identity must stay derivable`);
+    }
+    for (const d of Object.keys(s.devices)) if (!validateDeviceId(d)) problems.push(`SESSION_REGISTRY ${s.id} has an attachment for unknown device ${d}`);
   }
   const r = blocks.registry;
   if (r) {
@@ -562,6 +730,39 @@ function context(repo, args) {
   return { snapshot, device, state, task, ownership, evidence };
 }
 
+function ageHours(iso, now) {
+  const t = Date.parse(iso || "");
+  return Number.isFinite(t) ? (now - t) / 3600000 : null;
+}
+
+/**
+ * Discovery is a side effect of every `status` and `start`: a device that has
+ * never heard of a session still sees it here, because the registry travels in
+ * Git and nothing needs to be copied between machines by hand.
+ */
+export function renderSessions(sessions, { registryVersion, device, now = Date.now(), verbose = false } = {}) {
+  const L = [];
+  L.push("SESSIONS  (canonical registry; a Claude conversation is never the identity)");
+  L.push("  registry version      " + (registryVersion || "?"));
+  const ids = Object.keys(sessions).sort();
+  if (!ids.length) L.push("  none registered");
+  for (const id of ids) {
+    const s = sessions[id];
+    const mine = device && s.devices[device];
+    L.push("  " + id + "   " + (s.shared.status || "?") + (s.shared.role && s.shared.role !== "not recorded" ? "  role " + s.shared.role : "") + (mine ? "  [this device attached]" : "  [this device NOT attached]"));
+    L.push("      name              " + (s.shared.name || "?"));
+    L.push("      control version   " + (s.shared.control_version || "?") + "   branch " + (s.shared.branch || "?"));
+    L.push("      revision          " + (s.shared.revision || "?") + ", last changed by " + (s.shared.updated_by || "?") + " at " + (s.shared.updated_at || "?"));
+    for (const d of DEVICE_IDS) {
+      const a = s.devices[d];
+      const age = a && ageHours(a.last_seen, now);
+      L.push("      " + d + "         " + (a ? "attached " + a.attached_at + ", last seen " + a.last_seen + (Number.isFinite(age) ? " (" + age.toFixed(1) + "h ago)" : "") : "not attached"));
+    }
+    if (verbose) L.push("      next action       " + (s.shared.next_action || "?"));
+  }
+  return L;
+}
+
 function renderStatus(ctx) {
   const { snapshot: s, device, state, task, ownership, evidence } = ctx;
   const c = state.blocks.current || {};
@@ -595,6 +796,11 @@ function renderStatus(ctx) {
     const onRemote = git(s.repo, ["merge-base", "--is-ancestor", c.last_sync_commit, `${REMOTE}/${STATE_BRANCH}`], { allowFail: true }) !== null;
     L.push(`  recorded sync commit on ${REMOTE}/${STATE_BRANCH}: ${onRemote ? "yes (verified against fetched ref)" : "NO - the record is not backed by the remote"}`);
   }
+  L.push("");
+  L.push(...renderSessions(parseSessions(state.blocks.sessions), {
+    registryVersion: (state.blocks.sessions || {}).registry_version,
+    device: device.id
+  }));
   L.push("");
   L.push("ACTIVE TASK");
   if (task) {
@@ -822,6 +1028,77 @@ function onlyStateSince(repo, base) {
   return changed.every((f) => f.startsWith(".nexus/"));
 }
 
+const SESSION_SUBCOMMANDS = ["register", "attach", "update", "list"];
+const SESSION_VERBS = { REGISTER: "registers", ATTACH: "attaches to", UPDATE: "updates", SUPERSEDE: "supersedes a shared field of" };
+
+/**
+ * Discovery must not depend on this checkout having merged yet. That is the
+ * failure mode the registry exists to remove: state written on one device and
+ * never imported by the other. So `session list` reads the canonical copy on
+ * the remote state branch, and only falls back to the working tree when the
+ * remote cannot be read at all (a fresh repository, or --offline).
+ */
+function readCanonicalRegistry(repo, ctx) {
+  const rel = STATE_FILES.sessions;
+  const remote = git(repo, ["show", `${REMOTE}/${STATE_BRANCH}:${rel}`], { allowFail: true });
+  const localPath = path.join(repo, rel);
+  const local = existsSync(localPath) ? readFileSync(localPath, "utf8") : null;
+  const text = remote !== null ? remote : local;
+  if (text === null) return { source: `${rel} is missing from ${REMOTE}/${STATE_BRANCH} and from this checkout`, registry: {}, sessions: {}, localDiffers: false };
+  let registry = {};
+  try {
+    registry = parseStateBlock(text) || {};
+  } catch (e) {
+    return { source: `${rel}: ${e.message}`, registry: {}, sessions: {}, localDiffers: false };
+  }
+  return {
+    source: remote !== null ? `${REMOTE}/${STATE_BRANCH}:${rel} (canonical)` : `${rel} in this checkout (remote unreadable)`,
+    registry,
+    sessions: parseSessions(registry),
+    localDiffers: remote !== null && local !== null && local !== remote
+  };
+}
+
+function cmdSession(repo, args) {
+  const sub = args._[1] || "list";
+  if (!SESSION_SUBCOMMANDS.includes(sub)) {
+    console.error("usage: nexus-sync session " + SESSION_SUBCOMMANDS.join("|") + " [--name \"...\"] [--id S-<slug>] [--role ..] [--status ..] [--next ..] [--control-version ..] [--expect-revision N] [--supersede --reason \"..\"]");
+    return 2;
+  }
+  const ctx = context(repo, args);
+  const registry = ctx.state.blocks.sessions || {};
+  const sessions = parseSessions(registry);
+  if (sub === "list") {
+    const canonical = readCanonicalRegistry(repo, ctx);
+    if (args.json) {
+      console.log(JSON.stringify({ source: canonical.source, registry_version: canonical.registry.registry_version || null, local_differs: canonical.localDiffers, sessions: canonical.sessions }, null, 2));
+      return 0;
+    }
+    console.log("read from " + canonical.source + "\n");
+    console.log(renderSessions(canonical.sessions, { registryVersion: canonical.registry.registry_version, device: ctx.device.id, verbose: true }).join("\n"));
+    if (canonical.localDiffers) console.log("\n  NOTE  this checkout's copy differs from the canonical one; `nexus-sync start --pull` before writing");
+    if (ctx.state.problems.length) for (const problem of ctx.state.problems) console.log("  PROBLEM  " + problem);
+    return 0;
+  }
+  const files = [STATE_FILES.sessions];
+  const blocked = requireWritableState(repo, ctx.snapshot, files, args);
+  if (blocked) return fail(blocked);
+  if (!ctx.device.id) return fail(ctx.device.problem);
+  if (!ctx.state.blocks.sessions) return fail(STATE_FILES.sessions + " has no ```yaml nexus-state block to write into");
+  const id = args.id ? String(args.id) : sessionId(args.name);
+  const input = { sessions, registry, id, device: ctx.device.id, now: new Date(), head: ctx.snapshot.head, args };
+  const plan = sub === "update" ? planSessionUpdate(input) : planSessionRegister({ ...input, attachOnly: sub === "attach" });
+  if (!plan.ok) return fail(plan.reason);
+  let md = updateStateBlock(readRel(repo, STATE_FILES.sessions), plan.updates);
+  md = appendHistory(md, plan.history, SESSION_HISTORY_SECTION);
+  writeRel(repo, STATE_FILES.sessions, md);
+  const subject = "nexus(session): " + ctx.device.id + " " + SESSION_VERBS[plan.event] + " " + plan.id;
+  const result = commitAndPublish(repo, files, subject, ctx.device.id, plan.history.detail, args);
+  console.log(plan.event + " " + plan.id + " by " + ctx.device.id);
+  result.lines.forEach((l) => console.log(l));
+  return result.committed && !result.verified && !args.offline ? 2 : 0;
+}
+
 function cmdFinalize(repo, args) {
   const ctx = context(repo, args);
   const s = ctx.snapshot;
@@ -900,7 +1177,7 @@ function fail(message) {
   return 1;
 }
 
-const BOOLEAN_FLAGS = new Set(["json", "no-fetch", "offline", "pull", "takeover", "owner-confirmed", "reserve", "replace", "shutdown"]);
+const BOOLEAN_FLAGS = new Set(["json", "no-fetch", "offline", "pull", "takeover", "owner-confirmed", "reserve", "replace", "shutdown", "supersede"]);
 
 export function parseArgs(argv) {
   const args = { _: [] };
@@ -932,6 +1209,13 @@ export const HELP = `nexus-sync - repository-backed two-device synchronization f
   handoff     --to DEVICE-0X|ANY --next "..." [--tests ..] [--build ..]
               [--typecheck ..] [--rust ..] [--decisions ..] [--issues ..] [--remaining ..]
   release     --status COMPLETE|ABANDONED|BLOCKED [--reason "..."] [--next "..."]
+  session     register --name "..." [--role ..] [--status ..] [--next ..]
+                                       [--control-version ..] [--branch ..]
+              attach   --id S-<slug>|--name "..."
+              update   --id S-<slug>|--name "..." [--status ..] [--next ..]
+                       [--role ..] [--control-version ..] [--expect-revision N]
+                       [--supersede --reason "..."]
+              list     [--json]         every session both devices share
   finalize    [--shutdown]             push, verify on the remote, record the sync
 
   Writing commands also accept --offline (commit locally, REMOTE_SYNC_PENDING).
@@ -946,7 +1230,8 @@ export function main(argv, repo = REPO_ROOT) {
   }
   const commands = {
     status: cmdStatus, start: cmdStart, recover: cmdRecover, "init-device": cmdInitDevice,
-    claim: cmdClaim, heartbeat: cmdHeartbeat, handoff: cmdHandoff, release: cmdRelease, finalize: cmdFinalize
+    claim: cmdClaim, heartbeat: cmdHeartbeat, handoff: cmdHandoff, release: cmdRelease,
+    session: cmdSession, finalize: cmdFinalize
   };
   const name = args._[0] || "help";
   if (!commands[name]) {
