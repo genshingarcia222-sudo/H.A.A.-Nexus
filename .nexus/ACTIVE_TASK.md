@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: NEXUS-SYNC-002
-task_name: "Canonical cross-device session registry"
+task_id: P9-003
+task_name: "C-02 integration and governance reconciliation"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-09-26T12:10:18.742Z
-last_update: 2026-09-26T13:11:31.676Z
+status: ACTIVE
+started_at: 2026-09-26T15:14:19.418Z
+last_update: 2026-09-26T15:14:19.418Z
 stale_after_hours: 12
-expected_scope: "Establish a Git-backed canonical registry of development sessions in .nexus, with deterministic global session identity, per-device attachment, bidirectional discovery and explicit conflict detection. Tooling and .nexus only; no application code, no decision resolved."
-affected_areas: ".nexus/, tools/nexus-sync/, docs/, CHANGELOG.md"
+expected_scope: "Integrate the DEVICE-02 C-02 documentation PRs, keep PR #3 mergeable, and reconcile .nexus and the control plane with what the sweep actually changed. Governance and documentation only; no decision may be resolved."
+affected_areas: ".nexus/, docs/PHASES_BUILDING_CONTROL.md, docs/PHASE_BUILD_HANDOFF_*, CHANGELOG.md"
 branch: main
-claim_commit: 42f1856fef2bb580a254bfae55fd2c538919008e
-last_commit: 3d85c93f4a768005bf75579e236bb98c68c77c8f
+claim_commit: 2556d1efa6000a5c0bb2a3a83be8864587b51126
+last_commit: 2556d1efa6000a5c0bb2a3a83be8864587b51126
 handoff_required: no
 handoff_to: none
-next_action: "DEVICE-02 attaches to S-phases-building and runs the C-02 sweep; DEVICE-01 waits on owner decisions D15, D16, D13, D14."
+next_action: "Integrate PR #18 and #19, re-reconcile PR #3 if main advanced past it, then update .nexus and the control plane."
 ```
 
 ## Ownership history
@@ -84,3 +84,4 @@ Timestamps are UTC.
 | 2026-09-26T12:09:31.679Z | RELEASE COMPLETE | DEVICE-01 | P9-002 | Recorded scope was classification and validation of P9-A and P9-B, delivered in docs/PHASE_9_DEVICE01_VALIDATION.md. Both items remain unimplemented and blocked by D15 and D13; that blockage is tracked as decisions in docs/DECISION_REGISTER.md and in docs/PHASES_BUILDING_CONTROL.md, not as a held task. |
 | 2026-09-26T12:10:18.742Z | CLAIM | DEVICE-01 | NEXUS-SYNC-002 | claimed |
 | 2026-09-26T13:11:31.676Z | RELEASE COMPLETE | DEVICE-01 | NEXUS-SYNC-002 | Canonical session registry delivered: .nexus/SESSION_REGISTRY.md, nexus-sync session register\|attach\|update\|list, N-008, protocol step 14, and the A-G scenarios. nexus-sync 81/81, preflight 25/25, nexus-core 390/390, desktop 228/228. |
+| 2026-09-26T15:14:19.418Z | CLAIM | DEVICE-01 | P9-003 | claimed |
