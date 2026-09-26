@@ -17,22 +17,22 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
 ```yaml nexus-state
 project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
-active_branch: main
-current_phase: "Phase 8 - Commercialization (8.3 Assessment Mode)"
-current_milestone: "All Phase 8.3 Assessment decisions resolved (D1-D7); D8, D9, D10 open"
-baseline_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-last_verified_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17 (2026-09-21, DEVICE-01)"
-last_verified_build: "PASS - pnpm -r build (2026-09-21, DEVICE-01)"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-21, DEVICE-01)"
-last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-21, DEVICE-01)"
-active_task: NEXUS-SYNC-001
+active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
+current_phase: "Phase 9 - Packaging & Release Hardening (ENTRY: specification authored only; Phase 8 is NOT closed)"
+current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
+baseline_commit: 1d7b209307e7f2a2490cd113116e65052aada980
+last_verified_commit: 1d7b209307e7f2a2490cd113116e65052aada980
+last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync 60/60 (2026-09-23, DEVICE-01)"
+last_verified_build: "PASS - pnpm -r build (2026-09-23, DEVICE-01)"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-23, DEVICE-01)"
+last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-23, DEVICE-01)"
+active_task: P9-002
 task_owner: DEVICE-01
 task_status: ACTIVE
-last_successful_sync: NOT VERIFIED
-last_sync_device: NOT VERIFIED
-last_sync_commit: NOT VERIFIED
-sync_status: REMOTE_SYNC_PENDING
+last_successful_sync: 2026-09-26T01:12:27.519Z
+last_sync_device: DEVICE-01
+last_sync_commit: fd4577d33dc6db23f553ba57874ca0e7538fc0bf
+sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```
 
@@ -40,6 +40,16 @@ recovery_status: "none - no recovery in progress"
 
 Product and engineering work, with the canonical record for each:
 
+- **Phase 9 decisions D13 to D16.** All four are open owner decisions and
+  all Phase 9 implementation is blocked on them. See
+  `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` §5. D13 (code-signing
+  identity) needs a credential; D14 (update-feed location) is entangled with
+  D10 and prevents Phase 9 closing before D10 is decided; D15 (merge
+  `feat/training-question-bank`, whose tip `de2c2d1` already addresses P9-A) is
+  the previously escalated branch decision; D16 (release/version policy) has
+  no external dependency. Phase 9 items requiring a built or installed Windows
+  artifact must be implemented on DEVICE-01 — DEVICE-02 cannot run WiX/NSIS or
+  `cargo test` (§6 of that document).
 - **D8** (practice/simulation resume, with A6 as its engineering half) and
   **D9** (evaluation-failure behaviour). Both are open owner decisions. See
   `docs/PHASE_8_3_ASSESSMENT_MODE.md` §3.
@@ -64,11 +74,17 @@ Product and engineering work, with the canonical record for each:
   the bootstrap session. `a1ee456` is the same kind of snapshot. Never restore
   the tool from either commit. Later commits on `main` supersede both, and
   history was not rewritten (CHANGELOG, 2026-09-22 entry).
+- **An external GUI commits and pushes this repository.** Five commits —
+  `d23e867`, `a1ee456`, `da10dc9`, `75f3746`, `492beb9` — were made outside any
+  Claude session, with generic "update" / "Update" messages. Identified on
+  2026-09-23 from its own log as **GitHub Desktop**, which committed and ran
+  `git push origin nexus/sync-bootstrap:main`. It can capture a working tree
+  mid-edit. Close it, or leave it unpushed, during a verification window.
 - **Shared working tree observed (2026-09-21).** While the bootstrap ran,
   another session moved the primary checkout `D:\HAA_Nexus\H.A.A.-Nexus`
   between `main` and `feat/training-question-bank`, and the worktree
-  `.claude/worktrees/youthful-aryabhata-10eb31` took over `main`. That session
-  was never identified. One session per working tree (DECISIONS N-004).
+  `.claude/worktrees/youthful-aryabhata-10eb31` took over `main`. One session
+  per working tree (DECISIONS N-004).
 
 - `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5 still lists D7 as open, but D7 was
   resolved in `9872e11`. This is a stale sentence and was not changed by the

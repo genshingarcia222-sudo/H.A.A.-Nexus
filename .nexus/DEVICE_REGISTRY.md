@@ -36,15 +36,15 @@ particular physical device.
 ```yaml nexus-state
 DEVICE-01.role: primary-implementation
 DEVICE-01.status: ACTIVE
-DEVICE-01.ownership: NEXUS-SYNC-001
-DEVICE-01.latest_known_commit: 865d31e8c6883898e4dab272b71b9ddb3a0a5e9b
-DEVICE-01.latest_activity: 2026-09-21T03:35:47Z
-DEVICE-01.last_successful_sync: NOT VERIFIED
+DEVICE-01.ownership: P9-002
+DEVICE-01.latest_known_commit: 7a78a9d03944ae29e020593e65d93133ef5a7634
+DEVICE-01.latest_activity: 2026-09-26T01:13:50.833Z
+DEVICE-01.last_successful_sync: 2026-09-26T01:12:27.519Z
 DEVICE-02.role: secondary-verification-audit
-DEVICE-02.status: UNKNOWN
+DEVICE-02.status: HANDOFF_PENDING
 DEVICE-02.ownership: none
-DEVICE-02.latest_known_commit: NOT VERIFIED
-DEVICE-02.latest_activity: NOT VERIFIED
+DEVICE-02.latest_known_commit: 1f694f8e512d399a261da3a1e7fdecf25dbb1b6a
+DEVICE-02.latest_activity: 2026-09-26T00:47:54.651Z
 DEVICE-02.last_successful_sync: NOT VERIFIED
 ```
 

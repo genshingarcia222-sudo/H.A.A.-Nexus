@@ -983,6 +983,60 @@ only; explicitly not a source or truth check), with the expected 12
 
 **Files:** `Claude outputs/nexus-pilot-batch-001.candidates.r3.json` (new).
 The r2 fixture and the r2 authoring copy are unchanged.
+## Phase 9 Entry — Packaging & Release Hardening Specification (2026-09-26)
+
+**Documentation only. No application, Rust, or bundler-configuration behaviour
+changed.** Phase 9 previously had no specification: it existed only as four
+scattered sentences in `README.md`, `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`
+and `docs/HAA_Nexus_Architecture_Package.md`. Nothing defined its entry criteria,
+scope or exit criteria. `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` now does,
+derived only from repository evidence — no requirement was invented.
+
+**Scope recorded.** Five items, each with its evidence: **P9-A** `main.rs` lacks
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, so Windows
+release builds open a console window (verified absent on `main` at `7e304a1`);
+**P9-B** `tauri.conf.json` `bundle` carries no signing configuration at all;
+**P9-C** `tauri-plugin-updater` is absent from `Cargo.toml` `[dependencies]` and
+there is no `plugins.updater` block — the updater is unwired, not merely
+unconfigured; **P9-D** no release process, tagging convention or channel policy
+exists, and the `tauri.conf.json` / `package.json` versions are not enforced to
+agree; **P9-E** bundle metadata (`publisher`, `copyright`, `licenseFile`,
+descriptions) is empty while `LICENSE.md` says `UNLICENSED`.
+
+**Two stale statements superseded.** The Phase 7 audit is a gate snapshot and was
+not revised when two of its Phase 9 deferrals closed. `tauri build` *does* now
+complete, producing a 3.6 MB MSI and a 2.5 MB NSIS setup, and the webview runs
+under a real Content Security Policy rather than `"csp": null`. The audit prose is
+left as written — it is a historical record — and the Phase 9 document carries the
+pointer. Phase 9 therefore owns packaging that is *signed, updatable and
+release-disciplined*, not packaging that works.
+
+**Four open decisions, none resolved.** **D13** code-signing identity;
+**D14** update-feed location, which is entangled with the still-open **D10** and
+so prevents Phase 9 closing before D10 is decided; **D15** whether
+`origin/feat/training-question-bank` is merged — its tip `de2c2d1` already
+addresses P9-A, so P9-A was deliberately **not** implemented here to avoid a
+conflicting change in `main.rs`, and that merge remains an escalated owner
+decision; **D16** release/version policy.
+
+**Device constraint recorded.** Phase 9 is Windows packaging work. DEVICE-02 is a
+Linux container where `cargo test` fails at `gdk-sys` (missing `gdk-3.0`, rustc
+1.94.1 vs. the recorded 1.98.1) and where WiX/NSIS cannot run. Every Phase 9 item
+whose acceptance criterion is a built or installed Windows artifact must be
+implemented and verified on DEVICE-01. DEVICE-02 can author specification and
+release documentation and audit DEVICE-01's results.
+
+**Verified.** nexus-core 390/390, desktop 228/228, preflight 17/17, nexus-sync
+60/60, `pnpm -r typecheck` clean, `pnpm -r build` clean — all re-run on DEVICE-02
+at `7e304a1`, matching baseline B-002 exactly.
+
+**Not verified.** The Rust suite (recorded 55/55 on DEVICE-01) — not reproducible
+on DEVICE-02, per the device constraint above. No Phase 9 implementation was
+performed, so there is no packaging result to verify. Phase 8 is **not** closed:
+commercialization roadmap steps 3–8 are unstarted and D8, D9, D10 remain open.
+
+---
+
 ## Distributed Workstation Sync and Recovery Protocol (2026-09-22)
 
 **Infrastructure only. No application behaviour changed.** Nexus no longer
@@ -1026,7 +1080,7 @@ and continue without the previous conversation.
   Divergence, a dirty tree, a behind branch and unfinished handoff fields each
   stop it.
 
-**Verification.** 58 nexus-sync tests: pure logic, validation of the real
+**Verification.** 60 nexus-sync tests: pure logic, validation of the real
 `.nexus/` files (complete, consistent, placeholder-free, secret-free, identity
 gitignored), and end-to-end scenarios against real temporary repositories with
 a bare remote. The scenarios cover claim, stale takeover, divergence refusal,
@@ -1034,31 +1088,46 @@ local-work preservation, a behind checkout, handoff, idempotent finalize,
 fresh-clone recovery with both devices gone, network failure and restoration,
 and a push the remote silently drops.
 
-**Mutation-checked.** Ten mutations were killed: no staleness, finalize
-ignoring divergence, finalize ignoring a dirty tree, no owner confirmation,
-history overwritten, push never verified, a broken trailer lookup, placeholders
-ignored, writes allowed while behind, and the offline refusal removed. Three of
-them initially **survived**, and each exposed a real test gap:
+**Mutation-checked.** Eleven mutations, all killed, none surviving: no
+staleness, `finalize` ignoring divergence, `start` ignoring divergence,
+`finalize` ignoring a dirty tree, no owner confirmation, history overwritten,
+push never verified, a broken trailer lookup, placeholders ignored, writes
+allowed while behind, and the offline refusal removed. Three of them initially
+**survived**, and each exposed a real test gap:
 - Divergence and a dirty tree were tested together, so each guard masked the
   other. They are now separate scenarios.
 - No test challenged push verification. A remote whose post-receive hook moves
   the branch back now does.
 - No owner ever tried to write from a clean but behind checkout.
 
-The mutations ran on a scratch copy of the tool.
+The mutations ran on a scratch copy of the tool, never the repository file. One
+mutation reported itself **NOT APPLIED** on the final re-run, because an edit
+had moved the code it targeted and its pattern silently stopped matching; an
+unapplied mutation proves nothing, so it was corrected and re-run until it
+killed. A second pattern failed to match because the working tree is CRLF.
 
 Application suites re-run on the final tree: nexus-core 390/390, desktop
 228/228, preflight 17/17, typecheck and build clean, `cargo test` 55/55. These
 counts are identical to the pre-bootstrap baseline `865d31e` (BASELINE.md B-001).
 
-**Incident recorded, not rewritten.** During implementation, a process outside
-this session committed and pushed the in-progress working tree to `main` as
-`d23e867`, `a1ee456`, `da10dc9` and `75f3746` (GUI-style messages "update" /
-"Update"). `a1ee456` and `da10dc9` captured `nexus-sync.mjs` while an in-place
-mutation test had it temporarily altered, so **`da10dc9` contains a deliberately
-broken tool**. Do not check out its `tools/nexus-sync`. `75f3746` restored the
-correct file, and this entry's commit supersedes all four. Pushed history was
-**not** rewritten or force-pushed.
+**Incident recorded, not rewritten.** During implementation, **five** commits
+made outside this session captured its in-progress working tree and pushed it
+to `main`: `d23e867`, `a1ee456`, `da10dc9`, `75f3746` and `492beb9`, all with
+GUI-style messages ("update" / "Update"). `a1ee456` and `da10dc9` captured
+`nexus-sync.mjs` while an in-place mutation test had it temporarily altered, so
+**`da10dc9` contains a deliberately broken tool**. Never restore
+`tools/nexus-sync` from it. `75f3746` restored the correct file, `492beb9`
+carries the worktree-branch support, and this entry's commit supersedes all
+five. Pushed history was **not** rewritten or force-pushed.
+
+**The writer was identified** on 2026-09-23, before finalization: GitHub
+Desktop, driven by a person, not a daemon. Its own log records
+`create commit` for this repository at 10:56:18Z followed by
+`git push origin nexus/sync-bootstrap:main` — i.e. it published this session's
+worktree branch onto `main`. No Git hook, `core.hooksPath`, scheduled task or
+Claude hook is involved; there is no repository-level automation. Both other
+Claude sessions on the machine confirmed they were holding all writes and had
+made none of the five commits.
 
 At the same time, another session moved the primary checkout between `main`
 and `feat/training-question-bank`. That is exactly the shared-working-tree
@@ -1067,6 +1136,12 @@ and landed with a plain fast-forward push. The test sandbox guard (no
 end-to-end git call may run outside the temp directory) was added after a
 review of this incident: an undefined directory could otherwise have reached
 the real checkout. There is no evidence that it ever did.
+
+**Operational consequence.** A GUI committing a working tree on a timer or a
+click is indistinguishable, in Git, from the device's own work, and it can
+capture a tree mid-edit. While a verification window is open, close GitHub
+Desktop or leave it unpushed. This is the practical case for `finalize`: the
+remote is asked what it actually holds, rather than assumed.
 
 **Not done, deliberately.** `origin/feat/training-question-bank` and its legacy
 `.claude/sync/` bus were left untouched, because merging them is an escalated
