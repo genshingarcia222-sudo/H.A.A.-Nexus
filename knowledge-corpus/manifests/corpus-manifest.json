@@ -160,7 +160,7 @@
     "Reusable packet components do not exist. Every record embeds its own packet, and the record schema cannot represent a standalone CHART_PACKET: a component schema, an optional packetRef and a schema version bump are required first. See GAP_ANALYSIS.md section 3.4.",
     "The knowledge-corpus engine on feat/training-question-bank (owner decision D12) is not merged to main and is not imported by these tools. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
   ],
-  "lastVerifiedCommit": "73f3fd544a8dce2f830cd01c6aaffce46e027eff",
+  "lastVerifiedCommit": "f34ebb441d1c6125ec097c8a0aaecfd7a8050ed4",
   "branch": "feat/knowledgebase-expansion",
   "checksums": {
     "registries/access-classes.json": "e5ad2a35dab255d27136d639b966c79811981cdc926d30a0fe3d6ae4253fdbb3",
