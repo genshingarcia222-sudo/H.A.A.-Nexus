@@ -11,6 +11,57 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Route Audit — An Unknown URL Rendered Nothing At All (2026-09-27)
+
+**Found by walking the routes in a real browser**, not by reading code:
+`#/does-not-exist` rendered an entirely empty document. The router had no
+`path="*"`, so an unmatched path matched no layout either — and the navigation
+rail lives in that layout. A learner who mistyped a URL, or followed a link to a
+route that had moved, lost every way back except editing the address bar.
+
+**The fix is a catch-all inside the shell**, so the rail survives: a card that
+says what happened, states that nothing was lost and that any attempt in progress
+is untouched, and offers a link back. It renders **no** reference content, which
+is deliberate — an ungated route showing terminology, lessons or question content
+would be a hole in D4, and the enforcement scan would catch it.
+
+**Five tests**, covering what the fix must keep true at once: that something is
+rendered; that the rail is still there (the regression being the catch-all moved
+outside `AppShell`); that nested and deep unknown paths are caught too, not only
+single segments; that the real routes still match, so the catch-all is not
+swallowing them; and that during an assessment the page shows no reference
+content and no reference links, with the attempt still `in_progress` afterwards.
+
+**Verified in the running application**, before and after: `#/does-not-exist`
+now renders the card with all six navigation links present and no console errors.
+The rest of the walk was clean — `/`, `/live-scribing`, `/training`,
+`/knowledge-base`, `/analytics` and `/settings` all render, their empty states
+say what is missing rather than showing a blank panel, the dark theme is
+consistent, and no route logged an error.
+
+**The closed-book boundary was exercised live, not only in jsdom.** With an
+assessment started from the scenario library: `/knowledge-base` and
+`/training?tab=lessons` both showed the closed-book notice, the two reference
+links were gone from the navigation, and going back through browser history
+landed on the notice rather than on the content.
+
+**And the D17 window was reproduced in the browser.** Reloading the page during
+an active assessment reopened the Knowledge Base in full. In that run the attempt
+did not survive the reload either — the dashboard's history was empty, because
+autosave had not yet fired — so what a reload costs depends on timing as well as
+on runtime. The desktop build persists attempts to SQLite, which is the case
+D17's register entry describes.
+
+**Also fixed:** `.claude/launch.json` invoked `pnpm` directly, which is not on
+PATH on the DEVICE-01 workstation (`.nexus/CURRENT_STATE.md` "Known issues"), so
+the preview could not start at all. It now uses the `npx --yes pnpm@9` form the
+rest of the repository uses.
+
+**Validation.** nexus-core **784/784**, desktop **296/296** (29 files),
+`pnpm -r typecheck` clean, `pnpm -r build` clean.
+
+---
+
 ## Assessment Integrity — Closed-Book Hardening Around the Incoming Knowledgebase (2026-09-27)
 
 **Tests and records only. No application behaviour changed**, and no decision was

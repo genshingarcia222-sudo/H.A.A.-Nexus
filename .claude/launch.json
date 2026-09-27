@@ -3,8 +3,14 @@
   "configurations": [
     {
       "name": "nexus-desktop-web",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@haa-nexus/desktop", "dev"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "pnpm@9",
+        "--filter",
+        "@haa-nexus/desktop",
+        "dev"
+      ],
       "port": 1420
     }
   ]
