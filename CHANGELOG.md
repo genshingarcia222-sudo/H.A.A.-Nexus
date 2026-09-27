@@ -11,6 +11,73 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Assessment Integrity — Closed-Book Hardening Around the Incoming Knowledgebase (2026-09-27)
+
+**Tests and records only. No application behaviour changed**, and no decision was
+resolved: two were *opened*, which is the honest outcome of finding questions the
+repository had not asked.
+
+**The hole the D15 merge opened, and why the existing guard did not see it.** The
+D4 enforcement scan asserted that no surface outside the gated routes reads
+reference content, and it did that by searching for two symbols:
+`terminologyRepository` and `lessonRepository`. The merge brought the Training
+question run and the D12 corpus module onto `main`, so a component reading
+`previewQuestionRepository` or `getProductionEligible` — question content a
+learner sees — would have passed that scan cleanly. The scan now covers eight
+symbols, including two (`buildKnowledgeCorpus`, `knowledgeRecords`) that no
+surface renders yet, so the **first** surface to render corpus content is caught
+rather than the second. A companion test asserts the list is not dead weight:
+every symbol must appear in the application, except exactly those two, which are
+named as deliberately ahead of it.
+
+**Three vectors that were not tested, now tested.** `ReferenceGate` is correct,
+and these prove it rather than assume it:
+
+- **Already reading when the attempt starts.** A gate that decided once at mount
+  would leave the terminology search on screen, fully usable, for as long as the
+  learner did not navigate. The test starts an assessment while sitting on
+  `/knowledge-base` and asserts the search is *gone*, and the reverse on submit.
+- **Back through history.** Reaching a reference route by going back is an entry
+  point like any other; the route element is re-rendered and still gated.
+- **Deep-link variants.** `/knowledge-base?from=nav`, `/knowledge-base/` and
+  `/training?tab=lessons` are all blocked, so a future route refactor cannot
+  introduce an unguarded alias of a gated path.
+
+**Each new test was verified to fail when the thing it protects is broken.** Three
+mutations, all killed by the intended test and no other: making the gate decide
+once at mount, removing the gate from the `/knowledge-base` route, and giving an
+ungated route a question-bank reference. Every mutated file was restored and
+checked byte-identical by checksum.
+
+**Two decisions opened, neither answered.**
+
+**D17 — after an interrupted Assessment, may the learner study before retaking the
+same scenario?** Measured on `main`: the session store does not restore an
+in-flight attempt at boot, so after a restart reference material opens while the
+attempt is still recorded `in_progress` in SQLite. D4 closes the book *during* an
+attempt; D6 permits a retake and reasons from D2 that there is no performance
+information to score-shop against — which is true, and says nothing about
+*content* information. A learner who has read the transcript can restart, look up
+its terminology, and retake the same scenario. Every way of closing that window
+changes D4's scope or D6's retake rule, so the behaviour was **pinned by a
+characterization test rather than changed**: the test says plainly that it records
+today's behaviour and does not endorse it, so whoever decides sees it fail and
+reads why.
+
+**D18 — which content contract does the runtime ingest?** D15 put D12's Zod model
+on `main` and retired nothing: DEVICE-02's `kb-record.schema.json` with 324 KB-001
+records is still on `feat/knowledgebase-expansion`. DEVICE-02 recorded this as the
+blocker before all its others; it is now in the canonical register, because that
+is where both devices look. **No bridge or adapter was written** — a bridge would
+be a third contract and would make the decision harder, not easier.
+
+**Validation.** Targeted: `closedBookBoundary.test.tsx` **26/26** (was 17). Full:
+nexus-core **784/784**, desktop **291/291**, `pnpm -r typecheck` clean, preflight
+**25/25** with the run exiting 0 and the register now reporting 16 decisions, 11
+blocked, 4 resolved. No test was deleted, weakened or skipped.
+
+---
+
 ## D15 Resolved — `feat/training-question-bank` Merged (2026-09-27)
 
 **Owner decision D15, 2026-09-27: merge.** The escalation had been outstanding
