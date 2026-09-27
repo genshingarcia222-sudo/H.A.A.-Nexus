@@ -2,6 +2,69 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-09-27 — `main` merged in after D15; records unchanged
+
+**Branch:** `feat/knowledgebase-expansion`. `main` advanced 47 commits from
+`6c92a30` to `6cb3b6c`, including D15's merge of `feat/training-question-bank`
+(`c384ac5`). Merged into this branch at `9b08a0c`. No force-push, no rebase, no
+history rewritten.
+
+### What changed on the base
+
+`packages/nexus-core/src/knowledge-corpus/` — the D12 Zod model — is now on
+`main`. Verified before merging that neither `knowledge-corpus/` nor
+`tools/knowledge-corpus/` exists on `main`, so the other lane touched nothing here.
+Also verified that nothing newly on `main` scans `knowledge-corpus/`: `preflight`
+reads only `content/scenarios`, so the merged engine and this corpus do not
+interact.
+
+### Conflicts
+
+Two, both predicted, both mechanical.
+
+- `CHANGELOG.md` under `docs/PHASES_BUILDING_CONTROL.md` §10(G): every entry from
+  both sides preserved, newest first, no text edited. Checked mechanically — ours
+  49 headings, theirs 69, union 70, merged 70; none lost, duplicated or invented,
+  and both sides' text byte-identical afterwards.
+- `.gitattributes` under §10(H): both sides add `-text` rules for different
+  hash-pinned files; all five rules preserved unedited.
+
+### Records
+
+**Unchanged. No record was regenerated, renumbered or re-reviewed.** Still 324, QA
+PASS, 0 approved. The 40 file checksums are identical to before the merge.
+
+### Corrections to this workstream's own documents
+
+The merge falsified a statement several of these documents made — that the D12
+engine was on another branch and unreachable. Corrected under §10(F), current
+authoritative state wins:
+
+- `EXISTING_CORPUS_AUDIT.md` — the dated finding is kept, because it is the reason
+  this branch is shaped as it is, and a dated update note records what changed.
+- `INTEGRATION_BLOCKERS.md`, `KB_BUILD_STATE.md`, `review/OPEN_REVIEW_ITEMS.md` —
+  live documents, corrected in place to name `main` rather than the merged branch.
+- `manifests/corpus-manifest.json` — regenerated from its source rather than
+  hand-edited (§10(B)). Its `generatedOn` now comes from the clock instead of a
+  pinned constant, so a rebuilt manifest cannot claim a stale build date; record
+  provenance stays pinned in the generator for determinism.
+
+`sources/source-registry.json` was **not** edited. Its `carriedFrom` entries
+record the refs the source tables were read from at the time, which is provenance,
+not a live pointer.
+
+### What D15 did not decide
+
+Which content contract the runtime ingests. The merge put one of the two
+implementations on `main` and chose neither; the decision register was updated to
+say so explicitly. Blocker B3 stands, and being able to import the engine is not a
+reason to: 324 records built against the wrong contract would multiply the rework
+rather than remove it.
+
+### Approved content
+
+**None.** Still 0 of 324.
+
 ## 2026-09-26 — workstream established, batch KB-001 generated
 
 **Branch:** `feat/knowledgebase-expansion`, created from `origin/main` at

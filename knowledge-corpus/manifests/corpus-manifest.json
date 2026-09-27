@@ -1,7 +1,7 @@
 {
   "manifestId": "KB-CORPUS-MANIFEST",
   "manifestVersion": "1.0.0",
-  "generatedOn": "2026-09-26",
+  "generatedOn": "2026-09-27",
   "sourceArchiveVersion": {
     "declared": "Nexus Knowledgebase Archive v1.0",
     "presentInRepository": false,
@@ -148,9 +148,9 @@
     "Zero records are approved for training or generation. Every record requires human review, and the 24 EXTERNAL_AUTHORITY records additionally require a registered reviewer to open the cited source.",
     "The difficulty distribution is weighted toward HARD because counterfactual mutation adds dependencies and competing priorities. This is a measured imbalance to redress in KB-002, not a labelling artefact.",
     "Competency coverage is uneven: KB-D07 and KB-D10 carry 12 records each against KB-D12's 96. Both under-covered axes are source-dependent, which is why they were not expanded here.",
-    "The knowledge-corpus engine on feat/training-question-bank (owner decision D12) is not merged to main and is not imported by these tools. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
+    "A second implementation of this content contract exists at packages/nexus-core/src/knowledge-corpus/ (owner decision D12), which D15's merge c384ac5 put on main on 2026-09-27. These tools do not import it, and the merge did not decide which contract the runtime ingests. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
   ],
-  "lastVerifiedCommit": "989e717d248792528d1e9aee2ae625c07fa6b842",
+  "lastVerifiedCommit": "9b08a0c578127ae1e97e73df13bdc49425e21be4",
   "branch": "feat/knowledgebase-expansion",
   "checksums": {
     "registries/access-classes.json": "e5ad2a35dab255d27136d639b966c79811981cdc926d30a0fe3d6ae4253fdbb3",

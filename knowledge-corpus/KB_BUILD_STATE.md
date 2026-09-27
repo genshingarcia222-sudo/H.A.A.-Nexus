@@ -20,7 +20,7 @@ verifies every number below against the repository rather than trusting this fil
 | DUPLICATE STATUS | 0 exact duplicates, 0 superficial variants, 0 near-duplicate warnings |
 | QA STATUS | **PASS** — 0 errors, 0 warnings across 324 records. `qa/KB-001.qa-report.json` |
 | CURRENT CHECKSUM | `manifests/corpus-manifest.json`, 40 checksummed files; verify with `kb-manifest.mjs --check` |
-| BRANCH | `feat/knowledgebase-expansion`, based directly on `main` at `6c92a30` |
+| BRANCH | `feat/knowledgebase-expansion`, created from `main` at `6c92a30`; `main` merged in at `9b08a0c` after D15 advanced it to `6cb3b6c` |
 | CURRENT COMMIT | recorded in `manifests/corpus-manifest.json` under `lastVerifiedCommit` |
 
 ## COVERAGE GAPS
@@ -50,7 +50,7 @@ difficulty skew, refactor packets into shared `CHART_PACKET` records pinned by
 | --- | --- | --- |
 | B1 | The source archive v1.0 is absent from the repository | Corpus layer 1; the 400 seed records; any real source reconciliation |
 | B2 | Zero registered reviewers exist on this branch | Any record rising above `candidate`. This is the binding constraint on the whole corpus |
-| B3 | Two schemas for one contract — this branch's JSON Schema and the D12 Zod schema on `origin/feat/training-question-bank` | Ingestion, and the eventual migration of all 324 records |
+| B3 | Two schemas for one contract — this branch's JSON Schema and the D12 Zod schema at `packages/nexus-core/src/knowledge-corpus/`, which D15's merge `c384ac5` put on `main` on 2026-09-27. The merge did **not** decide which the runtime ingests | Ingestion, and the eventual migration of all 324 records |
 | B4 | `registries/coding-versions.json` is transcribed and unverified, and it is load-bearing | Every coding record, now and future |
 | B5 | No integration contract | Any merge toward `main`. `INTEGRATION_BLOCKERS.md` |
 

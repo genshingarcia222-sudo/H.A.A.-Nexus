@@ -10,23 +10,30 @@ code, no Assessment logic, nothing under `content/`, nothing in `.nexus/`.
 
 ## The blocker that comes before all the others
 
-**Two implementations of one content contract exist on two branches that have not
-met.**
+**Two implementations of one content contract exist, and the merge of one of them
+to `main` did not choose between them.**
 
 - This branch: `knowledge-corpus/schema/kb-record.schema.json` (JSON Schema) plus
   `tools/knowledge-corpus/kb-validate.mjs` (24 policy rules), holding 324 records.
-- `origin/feat/training-question-bank`: `packages/nexus-core/src/knowledge-corpus/`
-  (Zod, ~2,700 lines across schema, validate, quality, review, eligibility,
-  temporal, conflict, build), holding 42 candidate items as fixtures.
+- `main`, as of D15's merge `c384ac5` (2026-09-27):
+  `packages/nexus-core/src/knowledge-corpus/` (Zod, ~2,700 lines across schema,
+  validate, quality, review, eligibility, temporal, conflict, build), holding 42
+  candidate items as fixtures. Until that merge it was on
+  `feat/training-question-bank` only.
 
 They were deliberately aligned — same lifecycle vocabulary, same provenance
 rules, same machine ceiling, same authority classes, same `synthetic: true`
 literal, same pinned-reference and computed-temporal principles — but alignment is
 not the same as being one system. **Which one survives is an owner decision, and
 until it is taken every record in this corpus is written against a schema that may
-not be the one ingested.** That is the single largest piece of rework risk here,
-and it is recorded rather than resolved because resolving it would mean editing
-another device's live branch.
+not be the one ingested.** That is the single largest piece of rework risk here.
+
+D15's merge did not answer it. It put the Zod model on `main`, which makes the
+question easier to act on and no closer to decided; DEVICE-01's integration note
+on this branch's pull request says the same, and the decision register was updated
+to say so explicitly so that a later session cannot read the merge as an answer.
+Being able to import the engine is not a reason to: building 324 records against
+the wrong contract would multiply the rework rather than remove it.
 
 ## The contract questions, and their current state
 
@@ -48,7 +55,7 @@ another device's live branch.
 | Analytics linkage | **Open** | Nothing links a record to an outcome. Correctly so: linkage belongs to the runtime, not the corpus |
 | Deprecation | **States exist, unused** | `deprecated` and `superseded` are registered; `supersedes` is a field. No record uses them |
 | Rollback | **Partly** | Regeneration is deterministic and the manifest checksums 40 files, so a bad batch can be detected and rebuilt. There is no corpus-level rollback |
-| Migration strategy | **Open, and blocked on the schema decision above** | |
+| Migration strategy | **Open, and blocked on the schema decision above** | Now a same-branch migration rather than a cross-branch one, which lowers the mechanical cost and changes nothing about the decision |
 
 ## Other standing blockers
 
@@ -58,9 +65,10 @@ another device's live branch.
    reviewer to open a source. `review/OPEN_REVIEW_ITEMS.md`.
 3. **The coding-version registry is unverified** and it is load-bearing for every
    coding record the corpus will ever hold.
-4. **No reviewer registry exists** on this branch. The D12 branch has `Reviewer`
-   and `ReviewRecord`; this one has no registered people, so no review can be
-   recorded even if someone performed one.
+4. **No reviewer registry exists.** The D12 model on `main` defines `Reviewer` and
+   `ReviewRecord` as types; no registered people exist in either lane, so no review
+   can be recorded even if someone performed one. Since D15, this is a shared gap
+   rather than a per-branch one.
 
 ## What would make merging safe
 
