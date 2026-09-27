@@ -12,15 +12,15 @@ two disagree about who holds a task, `.nexus/` is right; when they disagree abou
 what the work *is*, this document is right.
 
 ```yaml control
-control_version: P9-2026-09-26-003
+control_version: P9-2026-09-27-001
 issued: 2026-09-26
 issued_by: DEVICE-01 (orchestration session; integration coordinator)
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c   # origin/main when this plan was first issued
-authoritative_phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
+authoritative_phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A SATISFIED by the D15 merge; P9-B/C/D-policy/E still decision-blocked)"
 phase_8_state: "OPEN - not closed by Phase 9; roadmap steps 3-8 unstarted; D8, D9, D10 open"
 phase_10_state: "NOT STARTED by design (Architecture Package section 22)"
-device_01_assignment: "C-01 - integration coordination (PR #18, #19 integrated), PR #3 mergeability, governance reconciliation, baseline recording"
-device_02_assignment: "C-02 - COMPLETE (all four sweep items integrated); no ungated work remains in this lane"
+device_01_assignment: "C-01 - integration, QA and system integrity: D15 merge executed, Assessment closed-book hardening, regression barriers around the incoming Knowledgebase"
+device_02_assignment: "KB-01 - Knowledgebase feature lane (feat/knowledgebase-expansion, PR #21); C-02 documentation sweep COMPLETE"
 ```
 
 ## 1. Authority order
@@ -57,7 +57,7 @@ gated:
 
 | Item | State | Gate |
 |---|---|---|
-| **P9-A** — release builds open a console window | not implemented on `main`; **already fixed on `feat/training-question-bank`** | **D15** |
+| **P9-A** — release builds open a console window | **SATISFIED** — the attribute is on `main` (`main.rs:8`) with a guard test in the 70-test Rust suite, arrived with the D15 merge `c384ac5` | D15, **resolved 2026-09-27** |
 | **P9-B** — installers unsigned | not implemented | **D13** (a purchased credential) |
 | **P9-C** — auto-update not wired | not implemented | **D14**, itself entangled with **D10** |
 | **P9-D** — no release discipline | **enforcement half DONE** (version parity in `tools/preflight`, PR #14); policy half not authored | **D16** for the policy |
@@ -114,19 +114,28 @@ product decision into `main`. That is the owner's call, not a device's.
 |---|---|---|
 | **D13** | Which code-signing identity signs the installers | P9-B, P9-E |
 | **D14** | Where the update feed lives | P9-C (needs **D10** first) |
-| **D15** | Merge `feat/training-question-bank`, or reimplement its fix on `main` | P9-A |
 | **D16** | The release and version policy | P9-D's policy half |
 | **D10** | What persists a web learner's progress | roadmap steps 4 and 5; D14 |
 | **D8**, **D9** | Practice/simulation resume; evaluation-failure behaviour | the Phase 8 remainder (A6 is D8's engineering half) |
 | **A2, A7, A9, A12** | Accepted Phase 7 debt awaiting decisions or content | see the register |
 | **D12** | Where non-terminology reference knowledge lives | recorded **resolved on the branch only**; it reaches `main` with PR #3 |
 
-Recommended resolution order (specification §9): **D15 → D16 → D13 → D14**, and
-D14 needs D10 first.
+**D15 is resolved (2026-09-27, merge).** The remaining order is **D16 → D13 →
+D14**, and D14 needs D10 first.
+
+**One decision is now open that this document did not previously carry:** which
+content contract the runtime ingests, D12's Zod model in
+`packages/nexus-core/src/knowledge-corpus/` (on `main` since `c384ac5`) or
+`knowledge-corpus/schema/kb-record.schema.json` with its 324 records (on
+`origin/feat/knowledgebase-expansion`). DEVICE-02 recorded it in
+`knowledge-corpus/INTEGRATION_BLOCKERS.md` as the blocker that comes before all
+its others. Neither device may answer it, and neither may make it moot by
+deleting the other's contract.
 
 ## 6. Dependencies
 
-- P9-A depends on D15 **only**; the implementation itself already exists.
+- P9-A is **done**: D15 was resolved as a merge, and the attribute and its guard
+  test are on `main`.
 - P9-B and P9-E share the D13 identity. P9-E additionally needs a legal entity,
   which the repository records nowhere but `LICENSE.md`'s placeholder.
 - P9-C depends on D14 → D10, and must not become a route into Phase 10.
@@ -283,6 +292,7 @@ specifications are authoritative.
 
 | Control version | Date | Reason |
 |---|---|---|
+| `P9-2026-09-27-001` | 2026-09-27 | **D15 resolved as a merge and executed** (`c384ac5`), so P9-A is satisfied and `main` now carries the Training question run, the D12 corpus module and the delivery layer. DEVICE-02's lane becomes the Knowledgebase feature lane (PR #21); DEVICE-01's becomes integration, QA and Assessment-integrity hardening. The schema-reconciliation question DEVICE-02 escalated is recorded, not resolved. |
 | `P9-2026-09-26-003` | 2026-09-26 | C-02 integrated: PR #18 (`b1ef49d`) and PR #19 (`2556d1e`). Lane C-02 is COMPLETE and has no ungated work left. PR #3 re-reconciled at `082fa95` after the sweep touched the Phase 7 audit. Governance reconciled and baseline B-003 recorded. Phase 9 is still fully decision-blocked; Phase 8 is still open. |
 | `P9-2026-09-26-002` | 2026-09-26 | Owner-directed infrastructure task NEXUS-SYNC-002: the canonical cross-device session registry (`.nexus/SESSION_REGISTRY.md`, `nexus-sync session`, N-008). Assignments otherwise unchanged; Phase 9 is still fully decision-blocked. P9-002 released COMPLETE on its recorded scope. |
 | `P9-2026-09-26-001` | 2026-09-26 | First control plane. Issued after verifying that `de2c2d1` is not in `main`, resolving the PR #3 CHANGELOG conflict at `f4de3dc`, and integrating PR #16 at `045b1e1`. Records Phase 9 as fully decision-blocked and assigns only evidence, integration and documentation-accuracy work. |

@@ -11,6 +11,56 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D15 Resolved — `feat/training-question-bank` Merged (2026-09-27)
+
+**Owner decision D15, 2026-09-27: merge.** The escalation had been outstanding
+since 2026-09-21, and Phase 9 item **P9-A** was deliberately left unimplemented so
+that the one-line fix and the branch's own version of it could not collide in
+`main.rs`. `main` now carries the branch.
+
+**Safety was established before the merge, not after.** The branch was
+`MERGEABLE`/`CLEAN`, the merge produced no conflict, and the merged tree was
+validated in full on DEVICE-01 **before** the merge commit was created: nexus-core
+**784/784** (64 files), desktop **282/282** (28 files), `cargo test` **70/70**,
+`pnpm -r typecheck` clean, `pnpm -r build` clean, preflight **25/25** with the run
+exiting 0, `nexus-sync` **81/81**. The application suites grow from 390 + 228 to
+784 + 282 because the branch brings its own tests with it; nothing regressed.
+
+**What arrived.** The Training question run (M23) and its Question Bank; the
+**D12** Knowledge Corpus module in `nexus-core` across its nine work packages —
+schema, ids, validate, item, quality, review, temporal, conflict, eligibility,
+build, pilot conversion; Pilot Batch 001 r3 as fixtures; the delivery layer with
+SQLite migration `004_delivery_events.sql` and its four IPC commands; and the P9-A
+attribute together with the source-scanning test that stops it being deleted by
+accident.
+
+**P9-A is satisfied.** `apps/desktop/src-tauri/src/main.rs` carries
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` on `main`, and
+its guard runs inside the 70-test Rust suite. Phase 9's remaining items — P9-B,
+P9-C, P9-D's policy half and P9-E — are still gated on **D13**, **D14** (which
+needs **D10**) and **D16**.
+
+**What this merge deliberately does not do.** It touches **no** file in DEVICE-02's
+Knowledgebase lane: nothing under `knowledge-corpus/` or `tools/knowledge-corpus/`,
+verified file by file. And it does not resolve the question DEVICE-02 escalated in
+`knowledge-corpus/INTEGRATION_BLOCKERS.md` — that **two implementations of one
+content contract** now exist, D12's Zod model (now on `main`) and their JSON
+Schema with 324 records (still on their branch). Merging made D12's model present;
+it did not declare the other obsolete. Which contract the runtime ingests is the
+owner's decision, and this checkpoint does not pre-empt it.
+
+**Two mechanical conflicts are now waiting for PR #21**, and they are named here so
+that lane does not have to discover them: `CHANGELOG.md` and `.gitattributes` are
+the only two files both branches touch. Both resolve under the control document's
+§10(G) rule — keep every entry from both sides, newest first, edit no text.
+
+**Unchanged.** Pilot Batch 001 remains **0 of 12 human-verified, 0
+production-eligible**; Training still runs on the synthetic preview bank; the
+exposure ledger is still not written to; Phase 8 is not closed; D8, D9, D10,
+D13, D14, D16 and A2/A6/A7/A9/A12 all remain open.
+
+---
+
 ## Phase 9 — C-02 Integrated, and the Governance Reconciled to It (2026-09-26)
 
 **Integration and governance. No application, Rust or bundler-configuration
