@@ -4,11 +4,16 @@ Canonical, reusable Training questions live here — one bank file per `.json`,
 validated by `validateQuestionBank` in
 `packages/nexus-core/src/question-bank/`.
 
-**This directory is empty on purpose.** The schema and validator exist; no
-question content has been promoted into the bank, and no loader reads this
-directory yet. The check that guards it
-(`question-bank/content-qa.e2e.test.ts`) passes silently while the directory is
-empty, and starts checking the moment a file arrives.
+**This directory is empty on purpose.** The schema, validator, loader and
+repository exist; no question content has been promoted into the bank. The
+checks that guard it (`question-bank/content-qa.e2e.test.ts` and
+`loader-node.test.ts`) pass silently while the directory is empty, and start
+checking the moment a file arrives.
+
+`loadQuestionBankDirectory()` reads this directory: `.json` files only,
+`_`-prefixed files skipped, sorted by name. A file that fails validation fails
+the load — every error at once, naming the file — and nothing loads at all
+unless everything validates. Loading a question **never** changes its status.
 
 ## Why this directory and not another
 

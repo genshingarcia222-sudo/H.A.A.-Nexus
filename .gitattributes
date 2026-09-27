@@ -4,3 +4,9 @@
 # nothing to do with the content, so these files are never converted.
 nexus-pilot-batch-001.candidates.json -text
 nexus-pilot-batch-001.candidates.r2.json -text
+nexus-pilot-batch-001.candidates.r3.json -text
+
+# Batch 002 is hash-pinned the same way (question-bank/batch-002.e2e.test.ts).
+# Without this, Windows CRLF conversion changes the bytes on checkout and the
+# integrity test fails for a reason that has nothing to do with the content.
+nexus-scribe-batch-002.candidates.json -text

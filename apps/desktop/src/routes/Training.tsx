@@ -3,11 +3,13 @@ import { useLocation } from "react-router-dom";
 import { Card, Button } from "@haa-nexus/ui-kit";
 import type { TrainingLesson } from "@haa-nexus/nexus-core";
 import { lessonRepository } from "../content/scenarios.js";
+import { QuestionRun } from "../training/QuestionRun.js";
 
 export function Training() {
   const location = useLocation();
   const initialLessonId = (location.state as { lessonId?: string } | null)?.lessonId ?? null;
   const [selectedId, setSelectedId] = useState<string | null>(initialLessonId);
+  const [runActive, setRunActive] = useState(false);
   const lessons = lessonRepository.list();
   const selected = selectedId ? lessonRepository.get(selectedId) : null;
 
@@ -15,9 +17,36 @@ export function Training() {
     return <LessonViewer lesson={selected} onBack={() => setSelectedId(null)} />;
   }
 
+  if (runActive) {
+    return (
+      <div style={{ display: "grid", gap: "var(--nexus-space-3)", maxWidth: 720 }}>
+        <Button variant="secondary" onClick={() => setRunActive(false)}>
+          ← Back to Training
+        </Button>
+        <QuestionRun />
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: "grid", gap: "var(--nexus-space-3)", maxWidth: 720 }}>
       <h1 style={{ fontSize: "var(--nexus-font-size-xl)", margin: 0 }}>Training</h1>
+
+      {/* The Question Bank run. Separate from the lessons below: the bank is
+          the canonical reusable question model, and the lesson knowledge
+          checks are unchanged legacy content that still works as it did. */}
+      <Card title="Question Bank run">
+        <p style={{ margin: "0 0 var(--nexus-space-2) 0", fontSize: "var(--nexus-font-size-sm)" }}>
+          A ten-question run drawn from production-eligible Question Bank content, with feedback, the correct answer
+          and its rationale after each submission.
+        </p>
+        <p style={{ margin: "0 0 var(--nexus-space-2) 0", fontSize: "var(--nexus-font-size-xs)", color: "var(--nexus-color-ink-secondary)" }}>
+          Development preview: the questions are synthetic fixtures about the Nexus runtime itself, not medical
+          content. Nothing is scored or saved.
+        </p>
+        <Button onClick={() => setRunActive(true)}>Start a run</Button>
+      </Card>
+
       {lessons.map((lesson) => (
         <Card key={lesson.id} title={lesson.title}>
           <p style={{ margin: "0 0 var(--nexus-space-2) 0", fontSize: "var(--nexus-font-size-xs)", color: "var(--nexus-color-ink-secondary)" }}>
