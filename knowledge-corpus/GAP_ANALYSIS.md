@@ -172,6 +172,13 @@ section XVII ultimately wants, and it is an honest one.
 - **Persona pool is 14 patients, 7 providers, 6 staff.** Adequate for 324
   records with no repeat inside a family; too small for 3,000.
 
+  **Closed for KB-002 (2026-09-27).** Pools are now registered per batch, because
+  `pick` indexes modulo pool length and appending to a shared pool would have
+  re-cast all 324 records already awaiting review. KB-001's pools are frozen with a
+  test asserting their sizes; KB-002 draws from its own cohort of 28 patients, 16
+  providers, 14 staff, 10 practices and 7 payers. Growing a pool is now a per-batch
+  act rather than a corpus-wide rewrite.
+
 ## 4. Sequenced plan
 
 | Batch | Target | Blocked on | State |
@@ -184,7 +191,8 @@ section XVII ultimately wants, and it is an honest one.
 | KB-007+ | Scale toward 3,000 then 10,000 by widening families and slots, not by adding operators. | Nothing, once KB-003's component schema lands | Planned |
 
 **The honest ceiling.** Generation is not the constraint on this corpus; review
-is. 324 records are written and 0 are approved. Reaching 10,000 records changes
-nothing about that ratio unless reviewer capacity is resourced, and a corpus of
-10,000 unreviewed candidates is worth less than 500 reviewed ones. That is the
-recommendation this analysis ends on.
+is. **432** records are written and 0 are approved — KB-002 moved that ratio in the
+wrong direction by 108, which is the honest cost of expanding a corpus nobody has
+reviewed. Reaching 10,000 records changes nothing about it unless reviewer capacity
+is resourced, and a corpus of 10,000 unreviewed candidates is worth less than 500
+reviewed ones. That is the recommendation this analysis ends on.

@@ -14,7 +14,8 @@ code, no Assessment logic, nothing under `content/`, nothing in `.nexus/`.
 to `main` did not choose between them.**
 
 - This branch: `knowledge-corpus/schema/kb-record.schema.json` (JSON Schema) plus
-  `tools/knowledge-corpus/kb-validate.mjs` (24 policy rules), holding 324 records.
+  `tools/knowledge-corpus/kb-validate.mjs` (24 policy rules), holding **432**
+  records after batch KB-002 (2026-09-27).
 - `main`, as of D15's merge `c384ac5` (2026-09-27):
   `packages/nexus-core/src/knowledge-corpus/` (Zod, ~2,700 lines across schema,
   validate, quality, review, eligibility, temporal, conflict, build), holding 42
@@ -32,8 +33,11 @@ D15's merge did not answer it. It put the Zod model on `main`, which makes the
 question easier to act on and no closer to decided; DEVICE-01's integration note
 on this branch's pull request says the same, and the decision register was updated
 to say so explicitly so that a later session cannot read the merge as an answer.
-Being able to import the engine is not a reason to: building 324 records against
-the wrong contract would multiply the rework rather than remove it.
+Being able to import the engine is not a reason to: building **432** records
+against the wrong contract would multiply the rework rather than remove it. KB-002
+added 108 records while this stayed undecided, so the exposure grew rather than
+held — which is a reason to take the decision, not a reason to stop generating,
+and it is recorded here so the cost is visible.
 
 ## The contract questions, and their current state
 
@@ -47,11 +51,11 @@ the wrong contract would multiply the rework rather than remove it.
 | Provenance | **Specified and enforced** | `MACHINE_DRAFTED` under `machine:<agent-id>`; machine identities cannot review |
 | Source updating | **Open** | `snapshotHash` is in the source registry and is `null` everywhere, because nothing was retrieved. Source-change invalidation cannot run until snapshots exist |
 | Access control | **Metadata only** | Every record carries `accessClasses`. Nothing enforces them, and nothing in this corpus grants an entitlement |
-| Training access | **Metadata present** | 324 records carry `TRAINING` |
-| Practice access | **Metadata present** | 324 records carry `PRACTICE` |
+| Training access | **Metadata present** | All 432 records carry `TRAINING` |
+| Practice access | **Metadata present** | All 432 records carry `PRACTICE` |
 | **Assessment restrictions** | **Deliberately unclaimed** | `ASSESSMENT_CLOSED_BOOK` is on **zero** records and the generator cannot assign it. Whether any of this may appear in closed-book Assessment is an owner decision, not a generator default |
 | Premium separation | **Metadata present** | 27 records carry `PREMIUM_REALISTIC`. Entitlement remains the entitlement engine's |
-| Generated-variant lineage | **Specified and enforced** | 297 variants carry `variantOf`, `parentId`, `templateId`, `mutationTypes`, `variantLineage`. Lineage must resolve and may not be cyclic |
+| Generated-variant lineage | **Specified and enforced** | 375 variants carry `variantOf`, `parentId`, `templateId`, `mutationTypes`, `variantLineage`. Lineage must resolve and may not be cyclic |
 | Analytics linkage | **Open** | Nothing links a record to an outcome. Correctly so: linkage belongs to the runtime, not the corpus |
 | Deprecation | **States exist, unused** | `deprecated` and `superseded` are registered; `supersedes` is a field. No record uses them |
 | Rollback | **Partly** | Regeneration is deterministic and the manifest checksums 40 files, so a bad batch can be detected and rebuilt. There is no corpus-level rollback |
@@ -61,7 +65,7 @@ the wrong contract would multiply the rework rather than remove it.
 
 1. **The declared source archive is absent.** 400 seed records and corpus layer 1
    do not exist here. `source/SOURCE_RECONCILIATION_v1.md`.
-2. **Zero records are reviewed.** 324 need content review; 24 need a registered
+2. **Zero records are reviewed.** 432 need content review; 24 need a registered
    reviewer to open a source. `review/OPEN_REVIEW_ITEMS.md`.
 3. **The coding-version registry is unverified** and it is load-bearing for every
    coding record the corpus will ever hold.
@@ -77,7 +81,7 @@ reviewers (O2); review and source-verify a first cohort; define the ingestion an
 access-enforcement contract; then migrate the reviewed cohort — not the whole
 corpus — behind the access boundaries the contract defines.
 
-Merging earlier would put 324 unreviewed machine-drafted healthcare training
+Merging earlier would put 432 unreviewed machine-drafted healthcare training
 records into the path of an application that has no way to tell them apart from
 approved content. The access classes in the metadata do not prevent that; only the
 ingestion contract can.

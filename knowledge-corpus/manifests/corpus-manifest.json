@@ -160,7 +160,7 @@
     "Reusable packet components do not exist. Every record embeds its own packet, and the record schema cannot represent a standalone CHART_PACKET: a component schema, an optional packetRef and a schema version bump are required first. See GAP_ANALYSIS.md section 3.4.",
     "A second implementation of this content contract exists at packages/nexus-core/src/knowledge-corpus/ (owner decision D12), which D15's merge c384ac5 put on main on 2026-09-27. These tools do not import it, and the merge did not decide which contract the runtime ingests. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
   ],
-  "lastVerifiedCommit": "ff089a5e8271921241410f2b23730fa26e1ac2bc",
+  "lastVerifiedCommit": "c29447e036d67f9ea6727e662a241887770c5ed8",
   "branch": "feat/knowledgebase-expansion",
   "checksums": {
     "registries/access-classes.json": "e5ad2a35dab255d27136d639b966c79811981cdc926d30a0fe3d6ae4253fdbb3",
