@@ -73,6 +73,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "003_competency_population",
         sql: include_str!("../../migrations/003_competency_population.sql"),
     },
+    Migration {
+        version: 4,
+        name: "004_delivery_events",
+        sql: include_str!("../../migrations/004_delivery_events.sql"),
+    },
 ];
 
 const SCHEMA_VERSION_KEY: &str = "schema_version";

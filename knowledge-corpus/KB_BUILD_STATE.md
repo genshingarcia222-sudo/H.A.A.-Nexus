@@ -22,7 +22,7 @@ verifies every number below against the repository rather than trusting this fil
 | PRIVACY SCAN | **CLEAR** — 0 findings across 432 records. `qa/corpus.privacy-scan.json` |
 | TESTS | 52 QA tests + 19 privacy-scan tests, all passing |
 | CURRENT CHECKSUM | `manifests/corpus-manifest.json`, 70 checksummed files; verify with `kb-manifest.mjs --check` |
-| BRANCH | `feat/knowledgebase-expansion`, based directly on `main` at `6c92a30` |
+| BRANCH | `feat/knowledgebase-expansion`, created from `main` at `6c92a30`; `main` merged in at `9b08a0c` after D15 advanced it to `6cb3b6c`, then KB-002 merged on top |
 | CURRENT COMMIT | recorded in `manifests/corpus-manifest.json` under `lastVerifiedCommit` |
 
 ## What KB-002 changed
@@ -92,11 +92,11 @@ Then KB-004 for MODERATE / VERY_HARD / REALISTIC_PREMIUM mass, per §3.1a.
 
 ## KNOWN BLOCKERS
 
-| # | Blocker | Blocks | Changed by KB-002? |
+| # | Blocker | Blocks | Changed since KB-001? |
 | --- | --- | --- | --- |
 | B1 | The source archive v1.0 is absent from the repository | Corpus layer 1; the 400 seed records; any real source reconciliation | No. Re-verified absent across the repository, all branches, and the whole session filesystem |
 | B2 | Zero registered reviewers exist on this branch | Any record rising above `candidate`. **The binding constraint on the whole corpus** | No. Worse in absolute terms: 432 pending, up from 324 |
-| B3 | Two schemas for one contract — this branch's JSON Schema and the D12 Zod schema on `origin/feat/training-question-bank` | Ingestion, and the eventual migration of all 432 records | No |
+| B3 | Two schemas for one contract — this branch's JSON Schema and the D12 Zod schema at `packages/nexus-core/src/knowledge-corpus/`, which D15's merge `c384ac5` put on `main` on 2026-09-27. The merge did **not** decide which the runtime ingests | Ingestion, and the eventual migration of all 432 records | **Yes, by D15** — the second implementation is now on `main` rather than on an unmerged branch, which makes the undecided contract question live rather than hypothetical. Recorded by DEVICE-01 |
 | B4 | `registries/coding-versions.json` is transcribed and unverified, and it is load-bearing | Every coding record, now and future | No. KB-002 added no coding records, deliberately |
 | B5 | No integration contract | Any merge toward `main`. `INTEGRATION_BLOCKERS.md` | No |
 | B6 | No component schema | Reusable packets, retrieval units, and anything citing a shared component by `id@revision` | **New in KB-002**, on correcting a false premise in GAP_ANALYSIS §3.4 |

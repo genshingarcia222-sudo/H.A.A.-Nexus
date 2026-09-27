@@ -68,7 +68,7 @@ registry entry governs every coding record the corpus will ever hold.
 
 | # | Decision | Why it blocks |
 | --- | --- | --- |
-| O1 | Which schema survives — this branch's `knowledge-corpus/schema/kb-record.schema.json` or the D12 Zod schema on `feat/training-question-bank`? | Two implementations of one contract exist on two branches. Records will have to be migrated to whichever wins |
+| O1 | Which schema survives — this branch's `knowledge-corpus/schema/kb-record.schema.json` or the D12 Zod schema at `packages/nexus-core/src/knowledge-corpus/`, on `main` since D15's merge `c384ac5`? | Two implementations of one contract. D15 put one of them on `main` and explicitly did not choose it; records will have to be migrated to whichever wins |
 | O2 | Who is a registered reviewer, and what qualifies someone to verify a privacy or a coding locator? | No review can be recorded until reviewers are registered |
 | O3 | Does the archive v1.0 source set still exist, and can it be supplied? | 400 seed records and the whole of corpus layer 1 are absent. See `source/SOURCE_RECONCILIATION_v1.md` |
 | O4 | Is the advisory mapping from the five archive difficulty bands to the repository's 6-level authoring scale accepted, rejected, or replaced? | `repositoryLevelHint` is currently advisory and unconsumed. Ingestion needs a real answer |

@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { isProductionEligible } from "./schema.js";
+import { createQuestionBankRepository } from "./loader.js";
 import { validateQuestionBank } from "./validate.js";
 
 /**
@@ -201,6 +202,50 @@ describe("pilot 001 r2: the gates stay closed", () => {
 
     const eligible = result.data.questions.filter(isProductionEligible);
     expect(eligible.map((q) => q.questionId)).toEqual([]);
+  });
+
+  it("loads through the real loader into a repository, still candidate-only", async () => {
+    // Development/test data, explicitly: the pilot is adapted in memory and fed
+    // to the loader to prove the repository layer can carry real authored
+    // content. Nothing is written, nothing is placed under `content/`, and the
+    // fixture is not bank content.
+    const { batch } = await loadPilot();
+    const result = createQuestionBankRepository([
+      { file: "nexus-pilot-batch-001.candidates.r2.json", contents: JSON.stringify(toQuestionBank(batch)) }
+    ]);
+    expect(result.success, result.success ? "" : `pilot did not load:\n  ${result.errors.join("\n  ")}`).toBe(true);
+    if (!result.success) return;
+
+    const repo = result.repository;
+    expect(repo.size).toBe(12);
+    expect(repo.getById("NEXUS-L1-PRIV-000001")?.questionId).toBe("NEXUS-L1-PRIV-000001");
+
+    // The gate that matters: a learner-facing consumer asking the repository
+    // for what it may show receives nothing at all.
+    expect(repo.getProductionEligible()).toEqual([]);
+    for (const question of repo.getAll()) {
+      expect(question.contentStatus).toBe("candidate");
+      expect(question.reviewStatus).toBe("pending");
+    }
+  });
+
+  it("keeps every canonical field through load and registration", async () => {
+    const { batch } = await loadPilot();
+    const result = createQuestionBankRepository([
+      { file: "pilot.json", contents: JSON.stringify(toQuestionBank(batch)) }
+    ]);
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    for (const item of batch.items) {
+      const stored = result.repository.getById(item.id) as unknown as Record<string, unknown> | undefined;
+      expect(stored, `item ${item.id} did not survive the load`).toBeDefined();
+      if (!stored) continue;
+      for (const [pilotKey, bankKey] of Object.entries(ITEM_FIELD_MAP)) {
+        if (!(pilotKey in item)) continue;
+        expect(stored[bankKey], `${item.id}.${pilotKey} was lost between load and registration`).toEqual(item[pilotKey]);
+      }
+    }
   });
 
   it("does not live anywhere a loader or a content test would find it", async () => {

@@ -149,6 +149,100 @@ correct-answer reference to resolve. The lesson schema itself was not changed.
 
 ---
 
+## D12 — Where does non-terminology reference knowledge live? — **RESOLVED**
+
+**Resolved** by the owner-commissioned specification
+`NEXUS_D12_KNOWLEDGE_BASE_ARCHITECTURE_AND_IMPLEMENTATION_HANDOFF` **v1.0.0**
+(2026-09-21), derived from this branch at `5bcf9f9`.
+
+| | |
+|---|---|
+| **Decision** | D12 — canonical reference-knowledge architecture |
+| **Selected value** | **A Nexus Knowledge Corpus**: a new `KnowledgeRecord` type for sourced reference statements, the D11 Question Bank **extended** for questions, and one shared source registry behind both |
+| **Rejected alternatives** | extending the terminology lookup; keeping regulatory material as Question Bank items only |
+| **Owner-authorized** | YES (2026-09-21, via the commissioned specification) |
+| **Status** | RESOLVED; implementation proceeds by the specification's ordered work packages on `feat/training-question-bank` |
+
+**Delivery, decided with it:** tiers define an eligibility *envelope* — allowed
+difficulties, modalities, domains, collections and session sizes — and never
+own a fixed inventory of questions. A selection engine draws each session from
+the eligible pool at runtime, preferring what a learner has not seen and
+steering cross-learner exposure toward a configurable target (default 1-in-7).
+Delivery history lives in a separate exposure ledger; **no corpus record may
+name a learner, a tier, a pool or a delivery.**
+
+**Unchanged by this decision, and not silently decided by it:** the human
+verification gate (Pilot 001 stands at 0 of 12, 0 production-eligible), D10
+(web persistence), A2 (competency-domain alignment), A7, the Training tier
+values, whether adaptive difficulty is switched on, and whether a future
+question-based Assessment shares Training's pool. Each has a shipped default
+that changes nothing about today's behaviour.
+
+**Implementation state (2026-09-25):** all nine work packages are implemented,
+tested and pushed on `feat/training-question-bank`. The corpus record families,
+the assessment item with its seven modalities, the review log and its
+anti-fabrication cross-check, deliverability with computed time and conflicts,
+the deterministic build with source invalidation, the Pilot 001 conversion, the
+dynamic delivery engine, and the exposure ledger (contract, in-memory adapter,
+SQLite migration 004 and IPC) all exist. Training selects through the delivery
+engine. `docs/KNOWLEDGE_CORPUS.md` carries the per-package table.
+
+**What that does not mean.** No learner-facing content changed. Pilot Batch 001
+is still **0 of 12 human-verified with 0 production-eligible**, and Training
+still runs on the synthetic preview bank. Deliberately outstanding, each for a
+reason rather than an oversight: knowledge records for the pilot (drafting a
+proposition from a rationale is authoring, not conversion); writing to the
+exposure ledger from Training and the web ledger binding (both need a learner
+identity and a persistence decision, which is **D10**); the per-tier envelope
+values (a commercial decision, so every tier ships open); adaptive difficulty
+(off by default); and whether a question-based Assessment shares Training's
+pool.
+
+### Evidence considered while this decision was open
+
+**What it was blocking:** turning Pilot Batch 001 (and any future regulatory or
+reference material) into canonical Knowledge records.
+
+**Current behaviour, verified 2026-09-20:** the only Knowledge Base in the
+product is the terminology lookup. Its schema is
+`{id, layTerm, clinicalTerm, acceptedAlternatives, category, context, explanation, commonMistakes}`
+and a search of `terminology-engine/schema.ts` for
+`jurisdiction|effectiveFrom|humanVerified|locator|provenance` returns **zero**
+matches. It carries no provenance, jurisdiction, effective-date, verification
+state or source-question relationship.
+
+**Why it cannot simply be reused:** the schema maps a *lay term to a clinical
+term* for scribe documentation. "Protected health information (PHI)" has no
+lay/clinical pair, and "October 1 2026 to September 30 2027" is not a
+terminology entry. Putting regulatory statements there would change the
+meaning of the surface learners reach during Practice (and which D4 closes
+during an Assessment), not just its contents.
+
+**Why it was not decided autonomously:** the Pilot Batch integration gate
+(§C2) records the carrying schema as *"an owner-level product shape decision;
+do not resolve it silently."* Adding a Knowledge record type is that decision.
+
+**The options that were open:**
+
+| Option | Consequence |
+|---|---|
+| Extend the terminology schema | One lookup surface; dilutes a focused lay-to-clinical mapping with regulatory material that has different lifecycle and expiry needs |
+| A distinct Knowledge record type | Clean provenance, jurisdiction and effective dates; a second content system to load, validate, QA and gate |
+| Keep regulatory material as Question Bank items only | No new system; the material is only ever reachable as questions, never as reference |
+
+**Independent of this decision:** no Pilot 001 item may become learner-facing
+until a person completes the verification worksheet. All 12 carry
+`HUMAN-VERIFY-REQUIRED` with `humanVerifiedBy`/`humanVerifiedOn` null, and
+`question-bank/schema.ts` states that only a person who opened the cited
+document may fill them. **Both gates are separate**: deciding where knowledge
+lives does not verify it, and verifying it does not decide where it lives.
+
+**Unblocked:** nothing is waiting on engineering. The Question Bank schema,
+validator, repository, loader, selector and run lifecycle are all implemented
+and tested.
+
+---
+
 ## D10 — What persists a web learner's progress?
 
 **Blocked work:** roadmap step 4 (web-deployed build). Step 5 (PayMongo)
@@ -455,27 +549,64 @@ certificate in D13**. Both are needed; neither substitutes for the other.
 
 ---
 
-## D15 — Is `feat/training-question-bank` merged, or is its fix reimplemented?
+## D15 — Is `feat/training-question-bank` merged, or is its fix reimplemented? — **RESOLVED**
 
-**Blocked work:** Phase 9 item P9-A (Windows release builds open a console
-window).
+**Resolved** by the owner on 2026-09-27: **merge the branch.** The instruction was
+to record D15 as a merge and to execute it only if the repository showed the merge
+to be safe, which it did.
 
-**Current behaviour, verified in the repository:**
-`apps/desktop/src-tauri/src/main.rs` on `main` does **not** carry
-`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` (confirmed
-absent at `7e304a1`). The unmerged branch `origin/feat/training-question-bank`
-has tip commit `de2c2d1` *"fix(desktop): release builds are windowed, not
-console"*, which by its subject addresses exactly this.
-
-| Option | Consequence |
+| | |
 |---|---|
-| Merge the branch | Fix arrives with it; also brings the Training question run (M23), Pilot 001 r3 and open decision **D12** — the escalation this decision restates |
-| Reimplement on `main` | One attribute line now; creates a conflicting change in `main.rs` when the branch is later merged |
-| Retire the branch | Resolves the long-standing escalation; discards whatever else it carries |
+| **Decision** | D15 — the disposition of `feat/training-question-bank` |
+| **Selected value** | **Merge into `main`** |
+| **Rejected alternatives** | reimplementing the one-line fix on `main`; retiring the branch |
+| **Owner-authorized** | YES (2026-09-27) |
+| **Status** | RESOLVED; merged, validated and recorded |
 
-This restates an escalation outstanding since 2026-09-21, recorded in
-`.nexus/CURRENT_STATE.md` "Pending work" and process decision N-007. **P9-A was
-deliberately not implemented** pending this decision, to avoid the conflict.
+**What it was blocking:** Phase 9 item **P9-A** — Windows release builds opened a
+console window because `main.rs` lacked
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`.
+
+**The options that were open** were to merge the branch, to reimplement the
+attribute on `main` and accept a conflicting change in `main.rs` later, or to
+retire the branch and discard what else it carried. The escalation had been
+outstanding since 2026-09-21 (`.nexus/CURRENT_STATE.md` "Pending work", process
+decision N-007), and P9-A was deliberately left unimplemented so that the two
+changes could not collide.
+
+**Safety established before merging, not after.** The branch was `MERGEABLE` /
+`CLEAN`, its merge produced no conflict, and the merged tree was validated in full
+on DEVICE-01: nexus-core **784/784** (64 files), desktop **282/282** (28 files),
+`cargo test` **70/70**, `pnpm -r typecheck` clean, `pnpm -r build` clean,
+preflight **25/25** with the run exiting 0, `nexus-sync` **81/81**. The merge
+touches **no** file in DEVICE-02's Knowledgebase lane: nothing under
+`knowledge-corpus/` or `tools/knowledge-corpus/`.
+
+**What arrived with it:** the Training question run (M23) and its bank; the **D12**
+Knowledge Corpus module in `nexus-core` (nine work packages — schema, ids,
+validate, item, quality, review, temporal, conflict, eligibility, build,
+pilot-conversion); Pilot Batch 001 r3 as fixtures; the delivery layer with its
+SQLite migration and IPC commands; and the P9-A attribute with the source-scanning
+guard test that keeps it from being deleted by accident.
+
+**P9-A is satisfied by this merge.** The attribute is on `main`
+(`apps/desktop/src-tauri/src/main.rs:8`) and its guard test runs in the 70-test
+Rust suite.
+
+**What this decision does NOT decide.** DEVICE-02's Knowledgebase lane
+(`origin/feat/knowledgebase-expansion`, PR #21) records an owner decision of its
+own: **two implementations of one content contract now exist** — D12's Zod model in
+`packages/nexus-core/src/knowledge-corpus/`, now on `main`, and
+`knowledge-corpus/schema/kb-record.schema.json` with its 324 records, still on that
+branch. Which contract the runtime ingests is unresolved, and D15 does not answer
+it. Merging made D12's model present on `main`; it did not declare the other
+obsolete, and no file of DEVICE-02's was altered. That question is recorded in
+`knowledge-corpus/INTEGRATION_BLOCKERS.md` on their branch and remains the
+owner's.
+
+**D12's own outstanding items are unchanged by the merge.** Pilot Batch 001 is
+still **0 of 12 human-verified with 0 production-eligible**, Training still runs on
+the synthetic preview bank, and the exposure ledger is still not written to.
 
 ---
 

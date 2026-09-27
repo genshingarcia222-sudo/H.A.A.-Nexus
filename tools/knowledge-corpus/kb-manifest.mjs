@@ -66,6 +66,8 @@ export function buildManifest() {
   return {
     manifestId: "KB-CORPUS-MANIFEST",
     manifestVersion: "1.0.0",
+    // The report's own build date. Record provenance stays pinned in the
+    // generator; a manifest that claims a stale build date is just wrong.
     generatedOn: new Date().toISOString().slice(0, 10),
     sourceArchiveVersion: {
       declared: "Nexus Knowledgebase Archive v1.0",
@@ -130,7 +132,7 @@ export function buildManifest() {
       `The difficulty distribution remains weighted toward HARD (${card.byDifficulty.HARD ?? 0} of ${card.total}, ${(((card.byDifficulty.HARD ?? 0) / card.total) * 100).toFixed(1)}%) because counterfactual mutation adds dependencies and competing priorities. HARD is a fixed count, so its share falls only as the other bands grow; the arithmetic is in GAP_ANALYSIS.md section 3.1a.`,
       `Competency coverage is uneven: the thinnest axis carries ${Math.min(...Object.values(card.byCompetency))} records against the widest at ${Math.max(...Object.values(card.byCompetency))}. KB-D07 coding is the thinnest and cannot be expanded without source verification.`,
       "Reusable packet components do not exist. Every record embeds its own packet, and the record schema cannot represent a standalone CHART_PACKET: a component schema, an optional packetRef and a schema version bump are required first. See GAP_ANALYSIS.md section 3.4.",
-      "The knowledge-corpus engine on feat/training-question-bank (owner decision D12) is not merged to main and is not imported by these tools. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
+      "A second implementation of this content contract exists at packages/nexus-core/src/knowledge-corpus/ (owner decision D12), which D15's merge c384ac5 put on main on 2026-09-27. These tools do not import it, and the merge did not decide which contract the runtime ingests. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
     ],
     lastVerifiedCommit: git(["rev-parse", "HEAD"]),
     branch: git(["branch", "--show-current"]),

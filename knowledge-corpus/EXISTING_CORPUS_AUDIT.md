@@ -7,12 +7,21 @@ expansion. The archive it expected to audit is absent
 (`source/SOURCE_RECONCILIATION_v1.md`). This is the audit of what the repository
 actually holds, established by reading the files and counting them.
 
-## 1. There is already a Knowledgebase architecture, and it is not on `main`
+## 1. There is already a Knowledgebase architecture
+
+> **Update, 2026-09-27.** When this audit was written the engine below was on
+> `feat/training-question-bank` only. The owner has since resolved **D15** as a
+> merge (`c384ac5`), so `packages/nexus-core/src/knowledge-corpus/` is now on
+> `main`. The finding as recorded stands as the reason this branch was built the
+> way it was, and the consequence has changed: the two implementations are no
+> longer on separate branches, which makes the schema decision sharper rather
+> than settled. See `INTEGRATION_BLOCKERS.md`.
+
 
 Charter section XXVIII: *"If the repository already has a Knowledgebase
 structure: USE THE EXISTING STRUCTURE. Do not create a competing parallel
-system."* It does, and the structure is substantial. It lives on
-`origin/feat/training-question-bank`, not on `main`:
+system."* It does, and the structure is substantial. It was audited on
+`origin/feat/training-question-bank`; as of 2026-09-27 it is on `main`:
 
 | Path (on `feat/training-question-bank`) | Lines | What it is |
 | --- | ---: | --- |
@@ -28,15 +37,20 @@ system."* It does, and the structure is substantial. It lives on
 | `docs/KNOWLEDGE_CORPUS.md` | 373 | The architecture record for owner decision **D12** |
 | `docs/KNOWLEDGE_BASE_INTEGRATION_AUDIT.md` | 156 | Integration audit |
 
-That branch is another workstream's (owner decision D12, resolved 2026-09-21).
+That branch was another workstream's (owner decision D12, resolved 2026-09-21).
 Charter section XXXVI forbids modifying it. Charter section I.8 requires this
-branch to be based directly on canonical `main`. Both were obeyed: this branch is
-based on `main` at `6c92a30` and nothing on that branch was touched.
+branch to be based directly on canonical `main`. Both were obeyed: this branch was
+based on `main` at `6c92a30` and nothing on that branch was touched. It has since
+been merged into `main` by its own lane, and `main` was merged into this branch at
+`9b08a0c`.
 
-**The consequence is a real architectural constraint, not a detail.** The engine
-that will eventually validate and deliver corpus records is not present on this
-branch, so this workstream could not import it. What it did instead is described
-in §4.
+**The consequence is a real architectural constraint, not a detail.** At the time
+of the audit the engine that will eventually validate and deliver corpus records
+was not present on this branch, so this workstream could not import it. What it did
+instead is described in §4. That the engine is now reachable does not retroactively
+make importing it the right move: which contract the runtime ingests is still
+undecided, and building against the wrong one would multiply the rework rather
+than remove it.
 
 ## 2. The machine-readable corpus that exists: 42 candidate items, 0 approved
 
@@ -109,9 +123,9 @@ competes:
   `content/`, and nothing in `.nexus/`.
 
 This is duplication, and it is the honest kind: two implementations of one
-contract on two branches that are not yet allowed to meet. The integration gate
-(`INTEGRATION_BLOCKERS.md`) records what has to be resolved before they do, and
-the first item on it is which of the two schemas survives.
+contract, written to the same invariants, neither yet chosen. The integration gate
+(`INTEGRATION_BLOCKERS.md`) records what has to be resolved, and the first item on
+it is which of the two schemas survives.
 
 ## 5. What was not audited
 

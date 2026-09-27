@@ -158,9 +158,9 @@
     "The difficulty distribution remains weighted toward HARD (192 of 432, 44.4%) because counterfactual mutation adds dependencies and competing priorities. HARD is a fixed count, so its share falls only as the other bands grow; the arithmetic is in GAP_ANALYSIS.md section 3.1a.",
     "Competency coverage is uneven: the thinnest axis carries 12 records against the widest at 109. KB-D07 coding is the thinnest and cannot be expanded without source verification.",
     "Reusable packet components do not exist. Every record embeds its own packet, and the record schema cannot represent a standalone CHART_PACKET: a component schema, an optional packetRef and a schema version bump are required first. See GAP_ANALYSIS.md section 3.4.",
-    "The knowledge-corpus engine on feat/training-question-bank (owner decision D12) is not merged to main and is not imported by these tools. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
+    "A second implementation of this content contract exists at packages/nexus-core/src/knowledge-corpus/ (owner decision D12), which D15's merge c384ac5 put on main on 2026-09-27. These tools do not import it, and the merge did not decide which contract the runtime ingests. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
   ],
-  "lastVerifiedCommit": "f34ebb441d1c6125ec097c8a0aaecfd7a8050ed4",
+  "lastVerifiedCommit": "ff089a5e8271921241410f2b23730fa26e1ac2bc",
   "branch": "feat/knowledgebase-expansion",
   "checksums": {
     "registries/access-classes.json": "e5ad2a35dab255d27136d639b966c79811981cdc926d30a0fe3d6ae4253fdbb3",
