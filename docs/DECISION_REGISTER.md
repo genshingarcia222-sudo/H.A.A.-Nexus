@@ -610,6 +610,81 @@ the synthetic preview bank, and the exposure ledger is still not written to.
 
 ---
 
+## D17 — After an interrupted Assessment, may the learner study before retaking the same scenario?
+
+**Blocked work:** whether the closed-book window (D4) extends past the end of an
+interrupted attempt. Nothing is implemented for it either way, and no behaviour
+was changed while recording this.
+
+**Current behaviour, measured on `main` and pinned by a characterization test**
+(`apps/desktop/src/components/closedBookBoundary.test.tsx`, "D4 and a restart"):
+the session store does **not** restore an in-flight attempt at boot — only the
+profile store hydrates — so after a restart there is no session in memory,
+`mayAccessReferenceMaterial` answers about nothing, and `/knowledge-base` and
+`/training` open normally while the attempt is still recorded `in_progress` in
+SQLite.
+
+**Why this is a decision and not a defect to fix.** Two accepted decisions meet
+here and neither settles it:
+
+- **D4** closes reference material *during* an attempt. Its own wording is
+  "closed until you submit", and after a restart the attempt is not continuing.
+- **D6** permits retaking an interrupted Assessment as a new attempt, and records
+  the interrupted one as abandoned so it contributes nothing. Its rationale is
+  that D2 leaves the learner no performance information to score-shop against.
+
+D6's rationale addresses *performance* information. It does not address *content*
+information: a learner who has read the scenario transcript may, after a restart,
+look up exactly the terminology it contained and then retake that same scenario.
+
+| Option | Consequence |
+|---|---|
+| Leave it open (today's behaviour) | Nothing to build. A learner can abandon, study, and retake the same scenario |
+| Close reference while any interrupted assessment exists in persistence | Requires the session store to read persistence at boot, and locks reference material until the learner explicitly discards the attempt |
+| Restrict the retake instead, not the reference | Keeps reference open; requires the retake to draw a different scenario, which touches D6 and scenario selection |
+
+Choosing any of the last two changes D4's scope or D6's retake rule, so the
+choice is the owner's. The characterization test exists so that whoever makes it
+sees the current expectation fail and reads why.
+
+---
+
+## D18 — Which content contract does the runtime ingest?
+
+**Blocked work:** every consumer of Knowledgebase content — loader, indexing,
+retrieval, the migration path for records already authored, and the corpus half
+of Phase 10 planning.
+
+**Two implementations of one contract now exist**, and D15 put one of them on
+`main` without retiring the other:
+
+| Implementation | Location | Holds |
+|---|---|---|
+| **D12's model** | `packages/nexus-core/src/knowledge-corpus/` (Zod, ~2,700 lines: schema, ids, validate, item, quality, review, temporal, conflict, eligibility, build) — **on `main` since `c384ac5`** | 42 candidate items as fixtures, 0 human-verified |
+| **The KB corpus** | `knowledge-corpus/schema/kb-record.schema.json` plus `tools/knowledge-corpus/` (24 policy rules) — on `origin/feat/knowledgebase-expansion`, PR #21, **not merged** | 324 KB-001 records, 0 approved |
+
+They were deliberately aligned — same lifecycle vocabulary, the same
+`machine:<agent-id>` provenance rule, the same authority classes, the same
+`synthetic: true` literal, the same computed-not-stored temporal state — but
+alignment is not the same as being one system. DEVICE-02 recorded this as the
+blocker that comes before all of its others, in
+`knowledge-corpus/INTEGRATION_BLOCKERS.md`, and it is restated here because the
+canonical register is where both devices look.
+
+**Why neither device may answer it.** DEVICE-02 owns the Knowledgebase feature
+lane; answering it for them would mean editing their architecture. DEVICE-01 owns
+integration; answering it by merging or by deleting would decide the same
+question silently. **Until it is answered, every record in the KB corpus is
+written against a schema that may not be the one ingested** — the largest single
+piece of rework risk currently in the repository.
+
+**What is deliberately not being done meanwhile.** No loader reads either corpus.
+No adapter, translation layer or shim was written to "bridge" them: a bridge
+would be a third contract, and it would make the decision harder rather than
+easier.
+
+---
+
 ## D16 — What is the release and version policy?
 
 **Blocked work:** Phase 9 item P9-D.

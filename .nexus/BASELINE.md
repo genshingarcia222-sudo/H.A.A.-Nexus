@@ -14,19 +14,52 @@ Earlier checkpoints, from before this file existed, are recorded in
 preserved there, not copied here.
 
 ```yaml nexus-state
-commit: 796c5e0ac698319df704b4ba47feb53a7d1f90e0
+commit: 7dcad6b264d2f16ae0e9f49f0fa842ac26033293
 branch: main
-timestamp: 2026-09-26T15:40:00Z
+timestamp: 2026-09-27T09:20:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81"
+tests: "PASS - nexus-core 784/784, desktop 296/296, preflight 25/25, nexus-sync 81/81"
 build: "PASS - pnpm -r build"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
-rust: "PASS - cargo test 55/55; rustc 1.98.1, cargo 1.98.1"
-audit_status: "Phase 7 closed PASS WITH CONDITIONS (packaging and CSP conditions since cleared); Phase 8.3 Assessment decisions D1-D7 resolved; lane C-02 documentation sweep integrated; canonical session registry in place (N-008)"
-known_conditions: "D8, D9, D10, D13, D14, D15, D16 open; A2, A6, A7, A9, A12 open; Phase 9 fully decision-blocked and Phase 8 not closed; feat/training-question-bank unmerged (D15) but MERGEABLE at 082fa95; an external GUI (GitHub Desktop) also commits this repository"
+rust: "PASS - cargo test 70/70; rustc 1.98.1, cargo 1.98.1"
+audit_status: "Phase 7 closed PASS WITH CONDITIONS (packaging and CSP cleared); Phase 8.3 decisions D1-D7 resolved; D15 resolved as a merge and executed; P9-A satisfied; closed-book boundary hardened and exercised live"
+known_conditions: "D8, D9, D10, D13, D14, D16, D17, D18 open; A2, A6, A7, A9, A12 open; Phase 9 P9-B/C/E and P9-D policy blocked; Phase 8 not closed; tauri build not re-run since the D15 merge; no CI exists; feat/knowledgebase-expansion (PR #21) deliberately unmerged pending D18"
 ```
 
 ## History
+
+### B-004 — D15 merged; Assessment integrity hardened — `7dcad6b` — 2026-09-27 — DEVICE-01
+
+The tree at `7dcad6b264d2f16ae0e9f49f0fa842ac26033293`, on `main`, verified in full on DEVICE-01. It is the first
+baseline after the **D15** merge, so it is the first to include the Training
+question run, the D12 corpus module and the delivery layer on `main`.
+
+| Check | Command | Result |
+|---|---|---|
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **784/784** (64 files), desktop **296/296** (29 files) |
+| Preflight tool | `node tools/preflight/preflight.test.mjs` | **25/25** |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; 16 decisions recorded, **11 blocked**, 4 resolved |
+| Sync tool | `node tools/nexus-sync/nexus-sync.test.mjs` | **81/81** |
+| Typecheck | `npx --yes pnpm@9 -r typecheck` | clean |
+| Build | `npx --yes pnpm@9 -r build` | clean |
+| Rust | `cargo test --offline` in `apps/desktop/src-tauri` | **70/70**, rustc 1.98.1, cargo 1.98.1 |
+
+**Why the counts jumped from B-003.** nexus-core 390 → 784 and desktop 228 → 296:
+394 of those arrived with the D15 merge, which brings its own tests, and the Rust
+suite went 55 → 70 for the same reason. The remaining 14 desktop tests are new
+here: nine hardening the closed-book boundary and five covering the catch-all
+route. **No count regressed**, and no test was deleted, weakened or skipped.
+
+**Measured on this device only.** `cargo test`, `pnpm -r build` and the toolchain
+versions are Windows-workstation measurements; DEVICE-02's Linux container cannot
+reproduce them (`gdk-sys` fails, WiX/NSIS will not run), so for that device they
+remain `NOT VERIFIED ON DEVICE-02`.
+
+**What this baseline does not cover.** `tauri build` was **not** re-run: the last
+recorded run was at `894a425` (9.78 MB exe, 3.61 MB MSI, 2.54 MB NSIS). Nothing
+since touches the bundler configuration, but the artifact has not been rebuilt and
+measured, and no installer has been run on a clean machine. Phase 9 items P9-B,
+P9-C, P9-E and P9-D's policy half remain gated on D13, D14 and D16.
 
 ### B-003 — C-02 integrated; session registry in place — `796c5e0` — 2026-09-26 — DEVICE-01
 

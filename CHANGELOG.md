@@ -10,7 +10,6 @@ Progress** (started, not yet verified) · **Not Started** (by design, per the
 phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
-
 ## Knowledgebase Workstream — Batch KB-002, Difficulty Rebalance and QA Hardening (2026-09-27)
 
 **Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
@@ -4123,3 +4122,158 @@ Key decisions recorded:
 - Any future interpretive AI assessment should be explicitly metered because its cost scales directly with unique learner submissions.
 - Commercial capabilities must be represented as testable entitlements rather than scattered UI-only paywalls.
 - Payment, AI, and TTS vendors remain behind adapter boundaries so clinical-training logic is vendor-independent.
+
+## PHASES BUILDING Ledger, and a Windows-Readiness Classification (2026-09-27)
+
+**Records only. No application behaviour changed.** `docs/PHASES_BUILDING_LEDGER.md`
+is new: the evidence behind every phase claim in one place, with one rule — a
+status is only as good as the command or commit in its evidence column. The
+control document says who does what; the ledger says what is true and what proves
+it.
+
+**Phase 9 item by item**, with P9-A now **SATISFIED** (the attribute is on `main`
+with its guard test), P9-D **half done** (parity enforced, policy unwritten), and
+P9-B, P9-C and P9-E blocked on D13, D14 and D13-plus-a-legal-identity — each row
+carrying the measurement that establishes it rather than an assertion.
+
+**Windows readiness is classified rather than claimed.** Six items are *verified*
+— run on this Windows workstation, including `cargo test` 70/70, the packaging
+figures, and the cross-platform path handling (`app_data_dir().join(...)`,
+`std::env::temp_dir()` in tests, no hardcoded POSIX path in shipped code). Six are
+*statically validated*, read from configuration and not executed. Four are
+*awaiting environment-specific validation*, including one worth naming: **`tauri
+build` has not been re-run since the D15 merge**. Nothing in that merge touches
+the bundler configuration, but the artifact has not been rebuilt and measured, and
+the ledger says so instead of implying otherwise.
+
+**One finding recommended rather than executed: there is no CI.**
+`.github/workflows/` does not exist, so every check in this ledger was run by hand
+on a device — which is also how a commit made outside a session can land on `main`
+with no suite running at all. A workflow running the suites, typecheck, build,
+preflight and nexus-sync on every push would close that gap cheaply. It was **not**
+created: standing automation on the owner's account, consuming their Actions
+minutes, is their decision.
+
+**Also deliberately not changed:** `Cargo.toml` has no `[profile.release]`, so
+symbols are not stripped and LTO is off. That is a sizing choice belonging with
+the release policy **D16**, not an unrequested edit to what the product ships.
+
+---
+
+## Route Audit — An Unknown URL Rendered Nothing At All (2026-09-27)
+
+**Found by walking the routes in a real browser**, not by reading code:
+`#/does-not-exist` rendered an entirely empty document. The router had no
+`path="*"`, so an unmatched path matched no layout either — and the navigation
+rail lives in that layout. A learner who mistyped a URL, or followed a link to a
+route that had moved, lost every way back except editing the address bar.
+
+**The fix is a catch-all inside the shell**, so the rail survives: a card that
+says what happened, states that nothing was lost and that any attempt in progress
+is untouched, and offers a link back. It renders **no** reference content, which
+is deliberate — an ungated route showing terminology, lessons or question content
+would be a hole in D4, and the enforcement scan would catch it.
+
+**Five tests**, covering what the fix must keep true at once: that something is
+rendered; that the rail is still there (the regression being the catch-all moved
+outside `AppShell`); that nested and deep unknown paths are caught too, not only
+single segments; that the real routes still match, so the catch-all is not
+swallowing them; and that during an assessment the page shows no reference
+content and no reference links, with the attempt still `in_progress` afterwards.
+
+**Verified in the running application**, before and after: `#/does-not-exist`
+now renders the card with all six navigation links present and no console errors.
+The rest of the walk was clean — `/`, `/live-scribing`, `/training`,
+`/knowledge-base`, `/analytics` and `/settings` all render, their empty states
+say what is missing rather than showing a blank panel, the dark theme is
+consistent, and no route logged an error.
+
+**The closed-book boundary was exercised live, not only in jsdom.** With an
+assessment started from the scenario library: `/knowledge-base` and
+`/training?tab=lessons` both showed the closed-book notice, the two reference
+links were gone from the navigation, and going back through browser history
+landed on the notice rather than on the content.
+
+**And the D17 window was reproduced in the browser.** Reloading the page during
+an active assessment reopened the Knowledge Base in full. In that run the attempt
+did not survive the reload either — the dashboard's history was empty, because
+autosave had not yet fired — so what a reload costs depends on timing as well as
+on runtime. The desktop build persists attempts to SQLite, which is the case
+D17's register entry describes.
+
+**Also fixed:** `.claude/launch.json` invoked `pnpm` directly, which is not on
+PATH on the DEVICE-01 workstation (`.nexus/CURRENT_STATE.md` "Known issues"), so
+the preview could not start at all. It now uses the `npx --yes pnpm@9` form the
+rest of the repository uses.
+
+**Validation.** nexus-core **784/784**, desktop **296/296** (29 files),
+`pnpm -r typecheck` clean, `pnpm -r build` clean.
+
+---
+
+## Assessment Integrity — Closed-Book Hardening Around the Incoming Knowledgebase (2026-09-27)
+
+**Tests and records only. No application behaviour changed**, and no decision was
+resolved: two were *opened*, which is the honest outcome of finding questions the
+repository had not asked.
+
+**The hole the D15 merge opened, and why the existing guard did not see it.** The
+D4 enforcement scan asserted that no surface outside the gated routes reads
+reference content, and it did that by searching for two symbols:
+`terminologyRepository` and `lessonRepository`. The merge brought the Training
+question run and the D12 corpus module onto `main`, so a component reading
+`previewQuestionRepository` or `getProductionEligible` — question content a
+learner sees — would have passed that scan cleanly. The scan now covers eight
+symbols, including two (`buildKnowledgeCorpus`, `knowledgeRecords`) that no
+surface renders yet, so the **first** surface to render corpus content is caught
+rather than the second. A companion test asserts the list is not dead weight:
+every symbol must appear in the application, except exactly those two, which are
+named as deliberately ahead of it.
+
+**Three vectors that were not tested, now tested.** `ReferenceGate` is correct,
+and these prove it rather than assume it:
+
+- **Already reading when the attempt starts.** A gate that decided once at mount
+  would leave the terminology search on screen, fully usable, for as long as the
+  learner did not navigate. The test starts an assessment while sitting on
+  `/knowledge-base` and asserts the search is *gone*, and the reverse on submit.
+- **Back through history.** Reaching a reference route by going back is an entry
+  point like any other; the route element is re-rendered and still gated.
+- **Deep-link variants.** `/knowledge-base?from=nav`, `/knowledge-base/` and
+  `/training?tab=lessons` are all blocked, so a future route refactor cannot
+  introduce an unguarded alias of a gated path.
+
+**Each new test was verified to fail when the thing it protects is broken.** Three
+mutations, all killed by the intended test and no other: making the gate decide
+once at mount, removing the gate from the `/knowledge-base` route, and giving an
+ungated route a question-bank reference. Every mutated file was restored and
+checked byte-identical by checksum.
+
+**Two decisions opened, neither answered.**
+
+**D17 — after an interrupted Assessment, may the learner study before retaking the
+same scenario?** Measured on `main`: the session store does not restore an
+in-flight attempt at boot, so after a restart reference material opens while the
+attempt is still recorded `in_progress` in SQLite. D4 closes the book *during* an
+attempt; D6 permits a retake and reasons from D2 that there is no performance
+information to score-shop against — which is true, and says nothing about
+*content* information. A learner who has read the transcript can restart, look up
+its terminology, and retake the same scenario. Every way of closing that window
+changes D4's scope or D6's retake rule, so the behaviour was **pinned by a
+characterization test rather than changed**: the test says plainly that it records
+today's behaviour and does not endorse it, so whoever decides sees it fail and
+reads why.
+
+**D18 — which content contract does the runtime ingest?** D15 put D12's Zod model
+on `main` and retired nothing: DEVICE-02's `kb-record.schema.json` with 324 KB-001
+records is still on `feat/knowledgebase-expansion`. DEVICE-02 recorded this as the
+blocker before all its others; it is now in the canonical register, because that
+is where both devices look. **No bridge or adapter was written** — a bridge would
+be a third contract and would make the decision harder, not easier.
+
+**Validation.** Targeted: `closedBookBoundary.test.tsx` **26/26** (was 17). Full:
+nexus-core **784/784**, desktop **291/291**, `pnpm -r typecheck` clean, preflight
+**25/25** with the run exiting 0 and the register now reporting 16 decisions, 11
+blocked, 4 resolved. No test was deleted, weakened or skipped.
+
+---

@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-004
 task_name: "D15 integration, then Assessment integrity and regression hardening"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-09-27T00:08:00.965Z
-last_update: 2026-09-27T00:08:00.965Z
+last_update: 2026-09-27T00:39:35.599Z
 stale_after_hours: 12
 expected_scope: "Execute the owner-directed D15 integration of feat/training-question-bank into main with full validation; record D15 in the register; then harden Assessment closed-book integrity and regression coverage around the incoming Knowledgebase work. Must not touch DEVICE-02's Knowledgebase lane (knowledge-corpus/, tools/knowledge-corpus/) or resolve the schema-reconciliation question DEVICE-02 escalated."
 affected_areas: "packages/nexus-core/, apps/desktop/, docs/, .nexus/, CHANGELOG.md"
 branch: main
 claim_commit: 6c92a303590d759e45ce2c906a5938098d654402
-last_commit: 6c92a303590d759e45ce2c906a5938098d654402
+last_commit: c5f880e0e55e285554bd58744775de82a07e5490
 handoff_required: no
 handoff_to: none
-next_action: "Merge PR #3 locally, validate in full, record D15, push; then D4 boundary tests."
+next_action: "Owner decisions: D18 (content contract) blocks the Knowledgebase lane; D13, D14 (needs D10) and D16 block the rest of Phase 9; D8, D9, D10 block Phase 8; D17 sets the scope of the closed-book window. DEVICE-01 has no ungated engineering work left in its lane."
 ```
 
 ## Ownership history
@@ -87,3 +87,4 @@ Timestamps are UTC.
 | 2026-09-26T15:14:19.418Z | CLAIM | DEVICE-01 | P9-003 | claimed |
 | 2026-09-26T15:26:15.833Z | RELEASE COMPLETE | DEVICE-01 | P9-003 | PR #18 and #19 integrated against the control-plane gate; PR #3 re-reconciled at 082fa95 and left unmerged (D15); governance reconciled at P9-2026-09-26-003; baseline B-003 recorded at 796c5e0. Measured: nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81, build and typecheck clean, cargo test 55/55. |
 | 2026-09-27T00:08:00.965Z | CLAIM | DEVICE-01 | P9-004 | claimed |
+| 2026-09-27T00:39:35.599Z | RELEASE COMPLETE | DEVICE-01 | P9-004 | D15 executed with full pre-merge validation and recorded; Assessment closed-book boundary hardened with mutation-verified tests and confirmed live in the running app; catch-all route defect found by the route walk and fixed; ledger, Windows-readiness classification and baseline B-004 recorded; D17 and D18 opened rather than answered. |

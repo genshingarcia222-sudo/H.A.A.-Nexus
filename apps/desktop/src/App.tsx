@@ -9,6 +9,7 @@ import { Training } from "./routes/Training.js";
 import { KnowledgeBase } from "./routes/KnowledgeBase.js";
 import { Analytics } from "./routes/Analytics.js";
 import { Settings } from "./routes/Settings.js";
+import { NotFound } from "./routes/NotFound.js";
 import { useProfileStore } from "./store/profileStore.js";
 import "./modules.js"; // ensures module registration runs once at startup
 
@@ -45,6 +46,9 @@ export function App() {
         />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
+        {/* Catch-all, inside the shell so an unknown path keeps the navigation
+            rail rather than rendering an empty document. */}
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
