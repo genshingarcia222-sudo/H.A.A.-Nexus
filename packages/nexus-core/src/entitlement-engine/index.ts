@@ -9,6 +9,7 @@ import { canAccessDifficulty, resolveEntitlements } from "./resolve.js";
 
 export * from "./capability-matrix.js";
 export * from "./resolve.js";
+export * from "./training-envelopes.js";
 
 export class EntitlementService {
   private readonly entitlements: Entitlements;

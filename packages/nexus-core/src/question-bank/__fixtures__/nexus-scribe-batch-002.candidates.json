@@ -1,0 +1,1622 @@
+{
+  "batchId": "NEXUS-SCRIBE-BATCH-002",
+  "createdOn": "2026-09-15",
+  "primaryDomain": "Medical-Scribe Role & EHR Workflow",
+  "schemaStatus": "PROPOSED \u2014 content-authoring artifact only, not the production repository schema. Claude Code decides final integration schema.",
+  "difficultyModel": "Canonical Nexus 6-level scenario difficulty scale (1 Foundation ... 6 Master/Elite) controls authored difficultyLevel and validation. trainingTier (1-5) is a pedagogical grouping mapped per the owner-approved table: Level 1->Tier1, Level 2->Tier2, Level 3->Tier3, Level 4->Tier4, Level 5->Tier5, Level 6->Tier5(Fast-Track extension). No parallel entitlement system is embedded here; production access mapping remains owner/Nexus-capability-controlled.",
+  "sourceVerificationMethod": "Sources were retrieved via web search/fetch tools that return model-generated extracts of live pages, not raw archived text. No item is marked SOURCE-VERIFIED. A human reviewer must open each locator URL and confirm current wording before any item moves past candidate/pending.",
+  "sources": {
+    "AHDI-SCRIBE-JOBDESC": {
+      "authority": "Association for Healthcare Documentation Integrity (AHDI)",
+      "title": "Medical Scribe (job description / KSAs)",
+      "url": "https://ahdionline.org/medial-scribe/",
+      "dateOrVersion": "page last modified 2024-04-02, per fetch"
+    },
+    "AHDI-MODEL-CURRICULUM": {
+      "authority": "Association for Healthcare Documentation Integrity (AHDI)",
+      "title": "Medical Scribe Model Curriculum",
+      "url": "https://ahdionline.org/wp-content/uploads/2024/04/MEDICAL_SCRIBE_MODEL_CURRICU.pdf",
+      "dateOrVersion": "PDF as indexed 2024, per fetch"
+    },
+    "AHDI-QA-TOOLKIT-2025": {
+      "authority": "Association for Healthcare Documentation Integrity (AHDI)",
+      "title": "Healthcare Documentation Quality Assessment and Management Best Practices Toolkit",
+      "url": "https://ahdionline.org/wp-content/uploads/2025/06/QABP25-Toolkit-FINAL.pdf",
+      "dateOrVersion": "updated June 2025, per fetch"
+    },
+    "TJC-SCRIBE-FAQ": {
+      "authority": "The Joint Commission, Standards Interpretation Group",
+      "title": "Documentation Assistance Provided By Scribes (Standards FAQ, RC chapter)",
+      "url": "https://www.jointcommission.org/standards/standard-faqs/hospital-and-hospital-clinics/record-of-care-treatment-and-services-rc/000002210/",
+      "dateOrVersion": "first published 2018-07-26; last reviewed by Standards Interpretation 2022-11-17, per direct fetch of live page"
+    },
+    "TJC-NPSG-01": {
+      "authority": "The Joint Commission",
+      "title": "National Patient Safety Goals - NPSG.01.01.01 (patient identification)",
+      "url": "https://digitalassets.jointcommission.org/api/public/content/9be383450fc941df806b76c5fbdd9ae6",
+      "dateOrVersion": "Hospital Program, effective January 2025, per fetch"
+    },
+    "HHS-PRIVACY-RULE-SUMMARY": {
+      "authority": "U.S. HHS Office for Civil Rights",
+      "title": "Summary of the HIPAA Privacy Rule",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html",
+      "dateOrVersion": "content last reviewed 2025-03-14, per fetch"
+    }
+  },
+  "excludedCoverage": [
+    {
+      "topic": "HPI / ROS / Physical Exam / Assessment-Plan section-boundary distinctions",
+      "reason": "No CMS/AMA E/M documentation-guideline source was fetched/verified this session. Deliberately not authored from model memory. Candidate for a future batch once that source is retrieved.",
+      "status": "NOT ATTEMPTED THIS BATCH \u2014 not a per-item block, a proactive scope decision"
+    }
+  ],
+  "items": [
+    {
+      "id": "NEXUS-SCRIBE-L1-000001",
+      "domain": "Medical Scribe",
+      "skillArea": "Scribe Role & Responsibilities",
+      "difficultyLevel": 1,
+      "trainingTier": 1,
+      "questionType": "recognition",
+      "learningObjective": "Identify the core function of a medical scribe.",
+      "question": "What is the primary function of a medical scribe during a patient encounter?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Documenting the patient-provider encounter in the electronic health record",
+          "why": "Correct: this is AHDI's stated position summary for the role."
+        },
+        {
+          "id": "b",
+          "text": "Independently determining the diagnosis before the provider examines the patient",
+          "why": "Diagnosis is a clinical judgment outside scribe scope."
+        },
+        {
+          "id": "c",
+          "text": "Prescribing medication refills on the provider's behalf without review",
+          "why": "Prescribing is outside scribe scope and requires provider authority."
+        },
+        {
+          "id": "d",
+          "text": "Scheduling the patient's next appointment only",
+          "why": "Scheduling alone does not describe the documentation-focused scribe role."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "AHDI's position summary for the Medical Scribe role states that the scribe interprets the interaction between the patient and healthcare provider to document patient care within the electronic health record, contributing to efficiency and patient satisfaction.",
+      "source": {
+        "ref": "AHDI-SCRIBE-JOBDESC",
+        "locator": "Position Summary"
+      },
+      "variantGroup": "SCRIBE-ROLE-DEFINITION",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L1-000002",
+      "domain": "Medical Scribe",
+      "skillArea": "Documentation Accuracy",
+      "difficultyLevel": 1,
+      "trainingTier": 1,
+      "questionType": "recognition",
+      "learningObjective": "Recognize that documentation must reflect only what was actually stated or observed.",
+      "question": "Which principle should guide what a scribe enters into the medical record?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add reasonable clinical detail the scribe believes is likely true, even if not stated",
+          "why": "This introduces unsupported inference, undermining authenticity."
+        },
+        {
+          "id": "b",
+          "text": "Document only what the provider states or directs, without adding inferred details",
+          "why": "Correct: matches the authenticity/accuracy principle of quality documentation."
+        },
+        {
+          "id": "c",
+          "text": "Summarize only the parts of the encounter the scribe finds most interesting",
+          "why": "Selective, subjective inclusion undermines completeness and accuracy."
+        },
+        {
+          "id": "d",
+          "text": "Wait until the end of the day and document from memory",
+          "why": "Delayed, memory-based documentation undermines accuracy and timeliness."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "AHDI's documentation quality framework identifies accuracy and authenticity ('the data is what it purports to be') as core elements of quality healthcare documentation, which requires recording what was actually stated or directed rather than inferred additions.",
+      "source": {
+        "ref": "AHDI-QA-TOOLKIT-2025",
+        "locator": "Introduction - quality/accuracy/authenticity discussion"
+      },
+      "variantGroup": "SCRIBE-ACCURACY-PRINCIPLE",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L1-000003",
+      "domain": "Medical Scribe",
+      "skillArea": "Documentation Assistance Competency",
+      "difficultyLevel": 1,
+      "trainingTier": 1,
+      "questionType": "recall",
+      "learningObjective": "Identify a minimum required competency training area for documentation-assistance personnel.",
+      "question": "According to Joint Commission guidance, which of the following is a minimum competency training area for anyone performing documentation assistance?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Advanced pharmacology dosing calculations",
+          "why": "Not listed as a minimum documentation-assistance competency area."
+        },
+        {
+          "id": "b",
+          "text": "Surgical technique certification",
+          "why": "Outside the scope of documentation assistance training."
+        },
+        {
+          "id": "c",
+          "text": "HIPAA (privacy and security law)",
+          "why": "Correct: explicitly listed as a minimum competency area."
+        },
+        {
+          "id": "d",
+          "text": "State medical licensure examination content",
+          "why": "Licensure exams are for independent practitioners, not documentation assistants."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "The Joint Commission's guidance states that, at minimum, all persons performing documentation assistance should have education or training in medical terminology, HIPAA, principles of billing/coding/reimbursement, EMR navigation and functionality, and computerized order entry concepts.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Competency section"
+      },
+      "variantGroup": "SCRIBE-COMPETENCY-AREAS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L1-000004",
+      "domain": "Medical Scribe",
+      "skillArea": "Patient Safety / EHR Workflow",
+      "difficultyLevel": 1,
+      "trainingTier": 1,
+      "questionType": "recall",
+      "learningObjective": "Recall the minimum number of patient identifiers required before documenting or providing care.",
+      "question": "Per the Joint Commission's National Patient Safety Goal on patient identification, how many patient identifiers should be used before providing care, treatment, or services?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The patient's room number alone",
+          "why": "A room number is explicitly excluded as an acceptable identifier."
+        },
+        {
+          "id": "b",
+          "text": "Only a visual recognition of the patient",
+          "why": "Visual recognition alone is not a valid identifier method."
+        },
+        {
+          "id": "c",
+          "text": "One identifier is always sufficient at every encounter",
+          "why": "At least two are required, not one, especially at a first encounter."
+        },
+        {
+          "id": "d",
+          "text": "At least two",
+          "why": "Correct: NPSG.01.01.01 requires at least two identifiers."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "NPSG.01.01.01 requires using at least two patient identifiers (such as name and date of birth) when providing care, treatment, or services, and specifies that a room number or physical location may not be used as an identifier.",
+      "source": {
+        "ref": "TJC-NPSG-01",
+        "locator": "Goal 1 / NPSG.01.01.01"
+      },
+      "variantGroup": "PATIENT-ID-TWO-IDENTIFIERS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L1-000005",
+      "domain": "Medical Scribe",
+      "skillArea": "Scope of Role",
+      "difficultyLevel": 1,
+      "trainingTier": 1,
+      "questionType": "recognition",
+      "learningObjective": "Recognize an action that falls outside the scribe's role boundary.",
+      "question": "Which of the following would fall outside a medical scribe's role boundary?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Documenting a diagnosis the provider has not stated",
+          "why": "Correct: this is independent clinical judgment, which is outside scribe scope."
+        },
+        {
+          "id": "b",
+          "text": "Documenting a diagnosis exactly as the provider dictated it",
+          "why": "This is faithfully documenting the provider's own statement, within scope."
+        },
+        {
+          "id": "c",
+          "text": "Navigating to the correct section of the EHR to enter a note",
+          "why": "EHR navigation is a normal, in-scope documentation task."
+        },
+        {
+          "id": "d",
+          "text": "Asking the provider to clarify an ambiguous statement before documenting it",
+          "why": "Seeking clarification is appropriate, in-scope behavior."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "A scribe documents the provider's encounter and interaction rather than independently generating clinical conclusions; the Joint Commission's framework describes documentation assistants as acting consistent with a defined job description and scope, not as independent clinical decision-makers.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Definition section"
+      },
+      "variantGroup": "SCRIBE-SCOPE-BOUNDARY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L2-000001",
+      "domain": "Medical Scribe",
+      "skillArea": "EHR Navigation & Login Practices",
+      "difficultyLevel": 2,
+      "trainingTier": 2,
+      "questionType": "application",
+      "learningObjective": "Apply correct login practice when beginning EHR documentation.",
+      "question": "A scribe is about to begin documenting a new patient encounter in the EHR. What is the appropriate login practice?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Use the physician's already-open login session to save time",
+          "why": "This is the exact quality/safety issue Joint Commission research identified."
+        },
+        {
+          "id": "b",
+          "text": "Log in independently using the scribe's own credentials",
+          "why": "Correct: independent login is the appropriate practice."
+        },
+        {
+          "id": "c",
+          "text": "Share a single generic login among all scribes on shift",
+          "why": "Shared/generic logins undermine accountability for entries."
+        },
+        {
+          "id": "d",
+          "text": "Ask the patient to log in on the scribe's behalf",
+          "why": "Patients do not have appropriate EHR documentation access for this purpose."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "The Joint Commission identified documentation assistants using the physician's login rather than independently logging into the EMR as one of the specific quality and safety issues found in its research on documentation-assistance practices.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-INDEPENDENT-LOGIN",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L2-000002",
+      "domain": "Medical Scribe",
+      "skillArea": "Patient Identification",
+      "difficultyLevel": 2,
+      "trainingTier": 2,
+      "questionType": "application",
+      "learningObjective": "Apply the two-identifier standard to correct chart selection.",
+      "question": "Before documenting in a chart, a scribe should confirm the patient's identity using which combination of identifiers?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Room number and bed number only",
+          "why": "Room number/location is explicitly not an acceptable identifier."
+        },
+        {
+          "id": "b",
+          "text": "First name only, confirmed once at intake",
+          "why": "A single identifier does not meet the two-identifier standard."
+        },
+        {
+          "id": "c",
+          "text": "Full name and date of birth, not room number",
+          "why": "Correct: matches the two-identifier standard, excluding room/location."
+        },
+        {
+          "id": "d",
+          "text": "Whatever identifier is fastest to confirm in a busy clinic",
+          "why": "Convenience does not override the identification safety standard."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "NPSG.01.01.01 requires at least two identifiers such as name and date of birth (or another person-specific identifier), and explicitly excludes room number or physical location as an acceptable identifier.",
+      "source": {
+        "ref": "TJC-NPSG-01",
+        "locator": "Element(s) of Performance for NPSG.01.01.01"
+      },
+      "variantGroup": "PATIENT-ID-TWO-IDENTIFIERS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L2-000003",
+      "domain": "Medical Scribe",
+      "skillArea": "HIPAA in EHR Workflow",
+      "difficultyLevel": 2,
+      "trainingTier": 2,
+      "questionType": "application",
+      "learningObjective": "Apply the minimum necessary standard to an internal information request.",
+      "question": "A billing colleague asks the scribe to forward the patient's entire chart to answer one billing question. What should the scribe do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Forward the entire chart, since the colleague works at the same organization",
+          "why": "Working at the same organization does not justify disclosing the whole record."
+        },
+        {
+          "id": "b",
+          "text": "Refuse to share any information at all, even relevant billing details",
+          "why": "Minimum necessary permits sharing what's actually needed, not a blanket refusal."
+        },
+        {
+          "id": "c",
+          "text": "Ask the patient for verbal permission before sharing anything internally for payment purposes",
+          "why": "Authorization is not required for payment-related minimum-necessary disclosures within the organization."
+        },
+        {
+          "id": "d",
+          "text": "Share only the specific information reasonably needed to answer the billing question",
+          "why": "Correct: matches the minimum necessary standard."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "The HIPAA Privacy Rule's minimum necessary standard requires reasonable efforts to limit protected health information used or disclosed to the amount reasonably needed for the specific purpose; a covered entity may not use or disclose the entire record unless the whole record is specifically justified as necessary.",
+      "source": {
+        "ref": "HHS-PRIVACY-RULE-SUMMARY",
+        "locator": "Limiting Uses and Disclosures to the Minimum Necessary"
+      },
+      "variantGroup": "HIPAA-MINIMUM-NECESSARY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L2-000004",
+      "domain": "Medical Scribe",
+      "skillArea": "Order-Entry Boundaries",
+      "difficultyLevel": 2,
+      "trainingTier": 2,
+      "questionType": "next-best-action",
+      "learningObjective": "Apply the pending-order rule when the scribe is not authorized to submit orders.",
+      "question": "A provider tells the scribe to enter a medication order during the visit, but the organization has not authorized this scribe to submit orders. What is the correct action?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Enter the order and leave it pending for licensed staff to verify",
+          "why": "Correct: matches the Joint Commission's pending-order guidance."
+        },
+        {
+          "id": "b",
+          "text": "Activate the order immediately since the provider verbally directed it",
+          "why": "Unauthorized personnel should not activate/submit the order themselves."
+        },
+        {
+          "id": "c",
+          "text": "Refuse to enter any information about the order at all",
+          "why": "Entering the order as pending (not activating it) is the appropriate middle path, not refusal."
+        },
+        {
+          "id": "d",
+          "text": "Wait until the end of the day to enter the order from memory",
+          "why": "Delayed, memory-based order entry introduces unnecessary error risk and delay."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "Joint Commission guidance states that documentation assistants who are not authorized to submit orders should leave the order as pending for certified or licensed personnel to activate or submit after verification.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Orders section"
+      },
+      "variantGroup": "SCRIBE-PENDING-ORDERS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L2-000005",
+      "domain": "Medical Scribe",
+      "skillArea": "Documentation Quality",
+      "difficultyLevel": 2,
+      "trainingTier": 2,
+      "questionType": "application",
+      "learningObjective": "Apply the concept of documentation authenticity in a routine entry.",
+      "question": "A scribe finishes an encounter note that includes only what the provider actually stated and observed, entered promptly and clearly. Which quality element does this entry best demonstrate?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Marketing value",
+          "why": "Not a recognized healthcare documentation quality element."
+        },
+        {
+          "id": "b",
+          "text": "Authenticity",
+          "why": "Correct: this directly matches the AHDI QA framework's authenticity element."
+        },
+        {
+          "id": "c",
+          "text": "Billing maximization",
+          "why": "Not a documentation quality element; documentation should reflect care given, not maximize billing."
+        },
+        {
+          "id": "d",
+          "text": "Patient entertainment value",
+          "why": "Not a relevant or recognized documentation quality element."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "AHDI's documentation quality framework identifies accuracy, timeliness, relevance, completeness, understandability, and authenticity as core elements; authenticity specifically means the data is what it purports to be.",
+      "source": {
+        "ref": "AHDI-QA-TOOLKIT-2025",
+        "locator": "Introduction - quality elements discussion"
+      },
+      "variantGroup": "SCRIBE-ACCURACY-PRINCIPLE",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L3-000001",
+      "domain": "Medical Scribe",
+      "skillArea": "Documentation Judgment",
+      "difficultyLevel": 3,
+      "trainingTier": 3,
+      "questionType": "scenario",
+      "learningObjective": "Distinguish documenting a provider's statement from independently adding unconfirmed patient detail.",
+      "question": "While documenting, a scribe overhears the patient quietly mention a symptom to a family member that the provider did not address or ask about during the encounter. What should the scribe do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add the symptom to the History of Present Illness as though the provider elicited it",
+          "why": "This misattributes information the provider did not actually gather or confirm."
+        },
+        {
+          "id": "b",
+          "text": "Ignore it entirely and never mention it to the provider",
+          "why": "Potentially relevant information should be raised for provider review, not silently dropped."
+        },
+        {
+          "id": "c",
+          "text": "Flag it for the provider to confirm rather than adding it independently",
+          "why": "Correct: avoids documenting unconfirmed information as though the provider addressed it."
+        },
+        {
+          "id": "d",
+          "text": "Ask the patient directly to clarify and document the scribe's own interpretation as the assessment",
+          "why": "Independently interviewing and interpreting findings goes beyond documenting the provider's encounter."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "Because documentation must reflect only what was actually stated or directed by the provider to remain accurate and authentic, a scribe should not independently incorporate unconfirmed information into the note; raising it for the provider's attention preserves both accuracy and appropriate role boundaries.",
+      "source": {
+        "ref": "AHDI-QA-TOOLKIT-2025",
+        "locator": "Introduction - accuracy/authenticity discussion"
+      },
+      "variantGroup": "SCRIBE-UNCONFIRMED-INFO",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: judgment scenario, confirm single defensible answer"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L3-000002",
+      "domain": "Medical Scribe",
+      "skillArea": "Provider Review",
+      "difficultyLevel": 3,
+      "trainingTier": 3,
+      "questionType": "next-best-action",
+      "learningObjective": "Apply organizational policy requirements for physician review before finalizing an entry.",
+      "question": "An organization's documentation-assistance policy requires physician review of information before entries are finalized. A scribe has just entered a finding dictated by the provider. What should happen next, per that policy requirement?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The entry is automatically final once the scribe types it",
+          "why": "This bypasses the organization's stated review requirement."
+        },
+        {
+          "id": "b",
+          "text": "Another scribe reviews and finalizes the entry instead of the provider",
+          "why": "The policy requirement specifies provider review, not peer scribe review."
+        },
+        {
+          "id": "c",
+          "text": "The entry is reviewed only if the patient requests it",
+          "why": "Review should occur as a matter of policy, not only on patient request."
+        },
+        {
+          "id": "d",
+          "text": "The provider reviews the entry before it is treated as final",
+          "why": "Correct: matches the described policy requirement for physician review."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "Joint Commission guidance recommends that organizations establish requirements for physician review of information and orders entered by the documentation assistant as part of a clear policy and procedure for the role.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Role/Responsibilities - Policy and procedure section"
+      },
+      "variantGroup": "SCRIBE-PROVIDER-REVIEW",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L3-000003",
+      "domain": "Medical Scribe",
+      "skillArea": "Order-Entry Boundaries",
+      "difficultyLevel": 3,
+      "trainingTier": 3,
+      "questionType": "error-identification",
+      "learningObjective": "Identify a deficiency in how an order was handled.",
+      "question": "Reviewing a chart, a scribe finds that a documentation assistant who was not authorized to submit orders had directly activated a new medication order instead of leaving it pending. What is the deficiency?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It should have been left pending for licensed staff to verify",
+          "why": "Correct: matches the described pending-order requirement."
+        },
+        {
+          "id": "b",
+          "text": "There is no deficiency; any documentation assistant may activate any order",
+          "why": "This contradicts the pending-order requirement for unauthorized personnel."
+        },
+        {
+          "id": "c",
+          "text": "The deficiency is that the order was documented at all",
+          "why": "Documenting the order (as pending) is appropriate; the problem is who activated it."
+        },
+        {
+          "id": "d",
+          "text": "The deficiency is only a formatting issue, not a process issue",
+          "why": "This is a process/authorization issue, not merely formatting."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "Documentation assistants who are not authorized to submit orders should leave the order as pending for certified or licensed personnel to activate or submit after verification; activating it themselves bypasses that safeguard.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Orders section"
+      },
+      "variantGroup": "SCRIBE-PENDING-ORDERS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L3-000004",
+      "domain": "Medical Scribe",
+      "skillArea": "EHR Navigation & Login Practices",
+      "difficultyLevel": 3,
+      "trainingTier": 3,
+      "questionType": "scenario",
+      "learningObjective": "Respond appropriately when asked to bypass independent-login practice.",
+      "question": "A nurse, trying to save time during a busy shift, asks the scribe to just use the physician's already-open EHR session to enter a note instead of logging in separately. What should the scribe do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Agree, since it is faster and the nurse suggested it",
+          "why": "Speed does not justify bypassing independent login practice."
+        },
+        {
+          "id": "b",
+          "text": "Decline, and log in independently using the scribe's own credentials",
+          "why": "Correct: preserves independent login, avoiding the identified safety issue."
+        },
+        {
+          "id": "c",
+          "text": "Agree, but only for short notes",
+          "why": "The login-independence concern applies regardless of note length."
+        },
+        {
+          "id": "d",
+          "text": "Ask the physician for permission first, then use the physician's session",
+          "why": "Even with permission, using someone else's login session is the flagged safety issue, not the note content itself."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "Documentation assistants using the physician's login rather than independently logging into the EMR was specifically identified by the Joint Commission as a quality and safety issue, regardless of who suggests it or how briefly it is used.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-INDEPENDENT-LOGIN",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L3-000005",
+      "domain": "Medical Scribe",
+      "skillArea": "Time-Pressure Prioritization",
+      "difficultyLevel": 3,
+      "trainingTier": 3,
+      "questionType": "prioritization",
+      "learningObjective": "Prioritize documentation tasks appropriately under competing time demands.",
+      "question": "A scribe is starting a new patient encounter while a prior patient's note still needs to be reviewed and finalized by the provider before the provider leaves the area. Which best reflects appropriate prioritization?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Ignore the unfinalized note entirely and focus only on the new patient",
+          "why": "Failure to prompt timely review is exactly the kind of gap Joint Commission research flagged as a safety issue."
+        },
+        {
+          "id": "b",
+          "text": "Stop documenting the new encounter entirely until the old note is finalized, even if this disrupts the new visit",
+          "why": "This is an overcorrection that isn't necessary if the prior note is simply flagged for prompt review."
+        },
+        {
+          "id": "c",
+          "text": "Flag the prior note for prompt review while starting the new encounter",
+          "why": "Correct: balances competing demands without abandoning the review requirement."
+        },
+        {
+          "id": "d",
+          "text": "Delete the prior note and start over later",
+          "why": "Deleting documentation rather than completing review is not an appropriate response."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "Because failure of a physician or licensed practitioner to verify orders or other documentation entered during a clinical encounter was identified as a specific quality and safety risk, a scribe under competing time pressure should still ensure unreviewed entries are promptly flagged rather than left indefinitely unaddressed.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-TIMELY-REVIEW",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: confirm distractor c is clearly inferior, not merely less efficient"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L4-000001",
+      "domain": "Medical Scribe",
+      "skillArea": "Complex Encounter Documentation",
+      "difficultyLevel": 4,
+      "trainingTier": 4,
+      "questionType": "scenario",
+      "learningObjective": "Avoid conflating findings across a multi-problem visit.",
+      "question": "During a multi-problem visit, the provider dictates findings for two separate complaints in quick succession. What is the best practice for the scribe to avoid errors?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Combine both complaints into a single generic entry to save time",
+          "why": "Combining distinct findings risks misattributing information between problems."
+        },
+        {
+          "id": "b",
+          "text": "Document only the first complaint and skip the second if time is short",
+          "why": "Omitting a dictated complaint is an omission error, not an acceptable shortcut."
+        },
+        {
+          "id": "c",
+          "text": "Guess which findings belong to which complaint if it becomes unclear",
+          "why": "Guessing risks fabricated attribution rather than confirmed accuracy."
+        },
+        {
+          "id": "d",
+          "text": "Document each complaint separately and clarify if unclear",
+          "why": "Correct: preserves accuracy and avoids conflating distinct findings."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "Maintaining documentation accuracy and completeness in a multi-problem encounter requires keeping distinct findings correctly attributed, seeking clarification when attribution is ambiguous rather than combining or guessing.",
+      "source": {
+        "ref": "AHDI-QA-TOOLKIT-2025",
+        "locator": "Introduction - accuracy/completeness discussion"
+      },
+      "variantGroup": "SCRIBE-MULTIPROBLEM-ACCURACY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L4-000002",
+      "domain": "Medical Scribe",
+      "skillArea": "Documentation QA / Compliance",
+      "difficultyLevel": 4,
+      "trainingTier": 4,
+      "questionType": "error-identification",
+      "learningObjective": "Classify a compliance issue found during a documentation audit.",
+      "question": "A documentation audit finds that a documentation assistant's entries across several encounters were all made under the physician's login rather than the assistant's own. How should this finding be classified?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The login-practice safety issue Joint Commission identified",
+          "why": "Correct: directly matches the identified issue category."
+        },
+        {
+          "id": "b",
+          "text": "A minor formatting inconsistency with no compliance significance",
+          "why": "Login practice is a specifically identified safety/quality issue, not a formatting matter."
+        },
+        {
+          "id": "c",
+          "text": "Evidence that the physician, not the documentation assistant, wrote the notes",
+          "why": "The finding is about login/authentication practice, not authorship content."
+        },
+        {
+          "id": "d",
+          "text": "An issue that only matters if a patient complains",
+          "why": "This is a systemic quality/safety issue regardless of whether a complaint occurs."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "Documentation assistants using the physician's login rather than independently logging into the EMR was specifically identified as a quality and safety issue in Joint Commission's research, making repeated instances a recognized compliance concern warranting correction.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-INDEPENDENT-LOGIN",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L4-000003",
+      "domain": "Medical Scribe",
+      "skillArea": "Order-Entry Boundaries",
+      "difficultyLevel": 4,
+      "trainingTier": 4,
+      "questionType": "next-best-action",
+      "learningObjective": "Apply repeat-back practice for verbally directed orders, especially medication orders.",
+      "question": "An organization authorizes its scribes to enter orders at a physician's direction. During a visit, the physician verbally directs a new medication order. What practice is specifically encouraged in this situation?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The scribe enters the order silently with no verbal confirmation",
+          "why": "Silent entry without repeat-back forgoes the specifically encouraged verification step."
+        },
+        {
+          "id": "b",
+          "text": "The scribe repeats the order back to the physician, especially given that it is a new medication order",
+          "why": "Correct: repeat-back is specifically encouraged, especially for new medication orders."
+        },
+        {
+          "id": "c",
+          "text": "The scribe waits for the patient to confirm the medication order",
+          "why": "The patient is not the appropriate party to confirm a physician's order."
+        },
+        {
+          "id": "d",
+          "text": "The scribe treats the verbal direction as a standing verbal order requiring immediate independent action",
+          "why": "Transcribing an order during documentation assistance is explicitly distinguished from a verbal order acted on independently."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "Joint Commission guidance encourages repeat-back of an order by the documentation assistant, especially for new medication orders, and separately clarifies that transcribing orders during documentation assistance is not considered a verbal order to be acted upon independently.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Orders section"
+      },
+      "variantGroup": "SCRIBE-ORDER-REPEATBACK",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L4-000004",
+      "domain": "Medical Scribe",
+      "skillArea": "Time-Pressure Accuracy",
+      "difficultyLevel": 4,
+      "trainingTier": 4,
+      "questionType": "prioritization",
+      "learningObjective": "Balance time pressure against the priority of documentation accuracy.",
+      "question": "Under significant time pressure with multiple encounters queued, a scribe notices an earlier patient's documentation is incomplete. Which approach best reflects the scribe's expected competencies?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Leave the earlier documentation incomplete permanently to keep pace with new patients",
+          "why": "Sacrificing accuracy for speed is not an acceptable trade-off."
+        },
+        {
+          "id": "b",
+          "text": "Fabricate plausible missing details to make the earlier note appear complete quickly",
+          "why": "Fabricating details to save time directly violates the accuracy/authenticity principle."
+        },
+        {
+          "id": "c",
+          "text": "Work efficiently, but still correct the incomplete documentation",
+          "why": "Correct: reflects both the ability to work under time constraints and the priority of accuracy."
+        },
+        {
+          "id": "d",
+          "text": "Refuse to see any new patients until every prior note is perfect",
+          "why": "This is an unrealistic overcorrection not supported by the competency to work effectively under time constraints."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "AHDI's scribe competencies include the ability to work under pressure with time constraints, while AHDI's documentation quality framework maintains accuracy as a core, non-negotiable element; the two are meant to work together rather than trading one off for the other.",
+      "source": {
+        "ref": "AHDI-SCRIBE-JOBDESC",
+        "locator": "Knowledge, Skills, and Abilities #6"
+      },
+      "variantGroup": "SCRIBE-TIME-PRESSURE-ACCURACY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L4-000005",
+      "domain": "Medical Scribe",
+      "skillArea": "Scope of Role",
+      "difficultyLevel": 4,
+      "trainingTier": 4,
+      "questionType": "scenario",
+      "learningObjective": "Respond appropriately when a patient asks the scribe for clinical information directly.",
+      "question": "During a visit, a patient turns to the scribe and asks directly what their diagnosis and treatment plan will be, before the provider has stated either. What should the scribe do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Offer the scribe's own best guess at the diagnosis to reassure the patient",
+          "why": "Offering a diagnosis is independent clinical judgment outside scribe scope."
+        },
+        {
+          "id": "b",
+          "text": "Document a diagnosis based on the patient's question so the provider can review it later",
+          "why": "This would fabricate a diagnosis that the provider has not actually made."
+        },
+        {
+          "id": "c",
+          "text": "Tell the patient to look up their symptoms online for now",
+          "why": "This is not an appropriate substitute for provider communication and is outside scribe role."
+        },
+        {
+          "id": "d",
+          "text": "Explain that the provider will discuss the diagnosis and plan",
+          "why": "Correct: keeps clinical communication within the provider's role."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "Because a scribe documents the provider's encounter rather than independently exercising clinical judgment, questions calling for diagnosis or treatment-plan information should be directed to the provider rather than answered or anticipated by the scribe.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Definition section"
+      },
+      "variantGroup": "SCRIBE-SCOPE-BOUNDARY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L5-000001",
+      "domain": "Medical Scribe",
+      "skillArea": "Integrated Compliance Judgment",
+      "difficultyLevel": 5,
+      "trainingTier": 5,
+      "questionType": "scenario",
+      "learningObjective": "Identify multiple simultaneous role/compliance violations in a single request.",
+      "question": "During a busy clinic session, a scribe is asked to: (1) use a shared generic login to keep documentation moving, and (2) submit a new medication order directly even though the organization has not authorized scribes to submit orders. Which best identifies the violations present?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Both are violations: shared login use and unauthorized order submission",
+          "why": "Correct: both matches the specifically identified issues."
+        },
+        {
+          "id": "b",
+          "text": "Only the login request is a violation; the order request is fine if the physician verbally directed it",
+          "why": "Verbal direction does not authorize an otherwise-unauthorized scribe to submit (rather than leave pending) an order."
+        },
+        {
+          "id": "c",
+          "text": "Only the order request is a violation; shared logins are acceptable if scribes are trustworthy",
+          "why": "Independent login is a safety practice regardless of the individual's trustworthiness."
+        },
+        {
+          "id": "d",
+          "text": "Neither is a violation, since both requests came from clinic staff trying to help the workflow",
+          "why": "Good intentions do not change that both practices were specifically flagged as issues."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "Joint Commission research separately identified documentation assistants using another person's login (rather than independently logging in) and the submission of orders by personnel not authorized to do so (rather than leaving them pending for verification) as distinct quality and safety issues; this scenario presents both simultaneously.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Quality and Safety section; Orders section"
+      },
+      "variantGroup": "SCRIBE-INTEGRATED-VIOLATIONS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: confirm both violations are independently and clearly defensible"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L5-000002",
+      "domain": "Medical Scribe",
+      "skillArea": "Systemic QA / Compliance",
+      "difficultyLevel": 5,
+      "trainingTier": 5,
+      "questionType": "interpretation",
+      "learningObjective": "Identify a systemic root cause behind multiple related audit findings.",
+      "question": "A chart audit finds three separate entries with: no independent login trail for the documentation assistant, an order activated without being left pending for verification, and no evidence of physician review before finalization. What single systemic gap most plausibly explains all three findings?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The documentation assistant is fundamentally unsuited for the role",
+          "why": "Three coordinated process gaps are more consistent with a systemic policy failure than an individual-only explanation."
+        },
+        {
+          "id": "b",
+          "text": "Inadequately defined policy and job-description boundaries",
+          "why": "Correct: all three findings map directly to the policy/job-description components Joint Commission guidance recommends organizations define."
+        },
+        {
+          "id": "c",
+          "text": "The EHR software itself is defective",
+          "why": "Nothing in the findings points to a software defect rather than a process/policy gap."
+        },
+        {
+          "id": "d",
+          "text": "The findings are unrelated coincidences with no common cause",
+          "why": "All three findings map to the same policy/procedure components, suggesting a common root cause."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "Joint Commission guidance recommends that organizations define, through policy/procedure and job descriptions, proper login procedures, the scope of documentation and order entry that may be performed, and requirements for physician review; gaps across all three of the audited findings point to inadequate definition of these components rather than three unrelated issues.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Role/Responsibilities section"
+      },
+      "variantGroup": "SCRIBE-SYSTEMIC-POLICY-GAP",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: interpretive/root-cause item, confirm defensibility of single best answer"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L5-000003",
+      "domain": "Medical Scribe",
+      "skillArea": "Patient Identification / Escalation",
+      "difficultyLevel": 5,
+      "trainingTier": 5,
+      "questionType": "scenario",
+      "learningObjective": "Escalate an identification discrepancy before continuing documentation.",
+      "question": "While preparing to document, a scribe notices the patient identifier shown on the front-desk chart does not match the identifier posted on the exam room whiteboard. What must happen before documentation continues?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Documentation can continue as long as one of the two sources is probably correct",
+          "why": "A probable match does not satisfy the requirement to reliably confirm identity."
+        },
+        {
+          "id": "b",
+          "text": "The mismatch can be resolved later, after the note is finished",
+          "why": "Identity should be confirmed before care/documentation proceeds, not resolved retroactively."
+        },
+        {
+          "id": "c",
+          "text": "The discrepancy must be resolved before continuing",
+          "why": "Correct: a mismatch means the two-identifier standard has not yet been met."
+        },
+        {
+          "id": "d",
+          "text": "The scribe should pick whichever identifier matches the EHR record already open",
+          "why": "An open EHR record does not resolve which identifier is actually correct for this patient."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "The two-identifier requirement exists specifically to reliably match the service or documentation to the correct individual and to prevent wrong-patient errors; a detected mismatch must be resolved and reconfirmed before proceeding, not assumed or deferred.",
+      "source": {
+        "ref": "TJC-NPSG-01",
+        "locator": "Rationale for NPSG.01.01.01"
+      },
+      "variantGroup": "PATIENT-ID-DISCREPANCY-ESCALATION",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L5-000004",
+      "domain": "Medical Scribe",
+      "skillArea": "Peer Workflow / Login Practices",
+      "difficultyLevel": 5,
+      "trainingTier": 5,
+      "questionType": "scenario",
+      "learningObjective": "Apply independent-login practice even in a peer-assistance context.",
+      "question": "Behind on documentation during a fast-paced clinic day, a scribe is offered help by a colleague, who suggests logging into the scribe's own already-open EHR session to enter some notes under the scribe's name to help catch up. What is the correct response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Accept the help, since it is offered in good faith by a colleague",
+          "why": "Good intent does not change that this recreates the same login-independence issue in a peer context."
+        },
+        {
+          "id": "b",
+          "text": "Accept, but only for non-clinical parts of the note",
+          "why": "The login-independence concern is about session/account use, not which part of the note is entered."
+        },
+        {
+          "id": "c",
+          "text": "Accept only if the scribe watches the colleague type",
+          "why": "Supervision does not resolve the underlying issue of entries not being made under the actual author's own credentials."
+        },
+        {
+          "id": "d",
+          "text": "Decline; each person should log in under their own credentials",
+          "why": "Correct: the independent-login principle applies regardless of who is being helped."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "The quality and safety concern about documentation not being entered under the actual author's own independent login applies regardless of whether the shared session involves a physician or a peer documentation assistant; each person's entries should be traceable to their own credentials.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-INDEPENDENT-LOGIN",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: extends a physician-scribe-sourced principle to a peer-to-peer context by reasoned analogy; confirm this extension is pedagogically sound and not overstated as directly stated by the source"
+      ],
+      "verification": {
+        "locatorConfidence": "REASONED-EXTENSION-OF-SOURCE",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L5-000005",
+      "domain": "Medical Scribe",
+      "skillArea": "Documentation Quality Assessment",
+      "difficultyLevel": 5,
+      "trainingTier": 5,
+      "questionType": "recall",
+      "learningObjective": "Recall the full set of elements a high-quality documentation entry should satisfy.",
+      "question": "Per AHDI's documentation quality framework, which combination of elements should a high-quality healthcare documentation entry satisfy?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Accurate, timely, relevant, complete, and authentic",
+          "why": "Correct: this is the full element set described in the framework."
+        },
+        {
+          "id": "b",
+          "text": "Fast, brief, and convenient for the scribe",
+          "why": "These describe scribe convenience, not the recognized quality elements."
+        },
+        {
+          "id": "c",
+          "text": "Detailed enough to maximize billing, regardless of accuracy",
+          "why": "Billing maximization is not a recognized quality element and conflicts with accuracy."
+        },
+        {
+          "id": "d",
+          "text": "Written in the scribe's preferred personal style",
+          "why": "Personal style preference is not one of the recognized quality elements."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "AHDI's quality assurance framework states that to satisfy its intended use, a report must be accurate, timely, relevant, complete, understandable, and authentic or trustworthy.",
+      "source": {
+        "ref": "AHDI-QA-TOOLKIT-2025",
+        "locator": "Introduction"
+      },
+      "variantGroup": "SCRIBE-QA-ELEMENTS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L6-000001",
+      "domain": "Medical Scribe",
+      "skillArea": "Integrated Compliance Judgment",
+      "difficultyLevel": 6,
+      "trainingTier": 5,
+      "questionType": "scenario",
+      "learningObjective": "Identify and correctly respond to multiple distinct violations embedded in a single complex request.",
+      "question": "Mid-encounter, a physician who is behind schedule directs the scribe to: (1) submit three new medication orders directly even though this scribe is not authorized to submit orders, and (2) finish documenting yesterday's unfinished encounter using the covering physician's login, since the original physician is out sick. Identify the correct response.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Submit the orders directly since three orders at once would otherwise take too long to leave pending, and use the covering physician's login since the original physician is unavailable",
+          "why": "Unavailability of the original physician does not authorize either bypassing pending-order status or using someone else's login."
+        },
+        {
+          "id": "b",
+          "text": "Leave the orders pending for authorized staff, and use the scribe's own login for the prior note",
+          "why": "Correct: addresses both violations with the appropriate correct action for each."
+        },
+        {
+          "id": "c",
+          "text": "Submit the orders directly, but insist on the scribe's own login for the prior note",
+          "why": "This only corrects one of the two violations; unauthorized direct order submission remains a violation regardless of login practice."
+        },
+        {
+          "id": "d",
+          "text": "Refuse to do anything at all until a supervisor is physically present",
+          "why": "The scribe can take the correct actions immediately (pending orders, independent login) without needing to halt all work."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "Unauthorized order submission should be handled by leaving orders pending for verification regardless of time pressure or urgency, and documentation should always be entered under the actual author's own independent login rather than another person's, including a covering physician's, regardless of the original physician's availability.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Orders section; Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-INTEGRATED-VIOLATIONS",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: high-complexity integrated item, confirm each of the two corrective actions is independently and clearly defensible"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L6-000002",
+      "domain": "Medical Scribe",
+      "skillArea": "Systemic QA / Compliance",
+      "difficultyLevel": 6,
+      "trainingTier": 5,
+      "questionType": "interpretation",
+      "learningObjective": "Select the systemic remediation that addresses a recurring root-cause safety pattern.",
+      "question": "A clinic's documentation-assistance program has repeated findings of physicians failing to verify or authenticate scribe-entered documentation and orders before relying on them clinically. Which remediation most directly addresses the root cause, consistent with Joint Commission guidance on organizational role definition?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Increase the number of scribes on shift without changing review requirements",
+          "why": "Adding staff does not address a review-and-verification gap."
+        },
+        {
+          "id": "b",
+          "text": "Allow scribes to self-certify their own entries as reviewed",
+          "why": "Self-certification by the scribe does not satisfy a requirement for physician review."
+        },
+        {
+          "id": "c",
+          "text": "Revise policy to explicitly require physician review of these entries",
+          "why": "Correct: directly targets the root-cause gap in role/policy definition Joint Commission guidance addresses."
+        },
+        {
+          "id": "d",
+          "text": "Remove documentation assistance from the workflow entirely",
+          "why": "Joint Commission guidance neither supports nor prohibits documentation assistance; removing it is a disproportionate response when the actual gap is in review/verification practice."
+        }
+      ],
+      "correctChoiceId": "c",
+      "rationale": "Joint Commission guidance recommends organizations define job descriptions and policies that specify requirements for physician review of information and orders entered by documentation assistants; a recurring pattern of unverified reliance on scribe-entered content points to a gap in that defined, monitored requirement.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Role/Responsibilities section; Quality and Safety section"
+      },
+      "variantGroup": "SCRIBE-SYSTEMIC-POLICY-GAP",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: systemic/organizational-remediation item, confirm defensibility"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L6-000003",
+      "domain": "Medical Scribe",
+      "skillArea": "Scope of Role / Safety",
+      "difficultyLevel": 6,
+      "trainingTier": 5,
+      "questionType": "scenario",
+      "learningObjective": "Recognize and correctly decline a request to independently perform clinical assessment.",
+      "question": "During a high-acuity encounter, a physician says, 'I have to step out to see another patient \u2014 go ahead and figure out the assessment and plan yourself and I'll sign off later.' What is the appropriate response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Independently determine and document a reasonable assessment and plan, since the physician gave permission",
+          "why": "Permission from the physician does not transfer clinical decision-making authority to the scribe."
+        },
+        {
+          "id": "b",
+          "text": "Leave the entire note blank until the physician returns, including sections the physician already dictated",
+          "why": "This unnecessarily discards content the physician already provided, rather than only flagging the undetermined section."
+        },
+        {
+          "id": "c",
+          "text": "Ask a nurse to determine the assessment and plan instead",
+          "why": "Delegating clinical judgment to another non-authorized party does not resolve the underlying scope issue."
+        },
+        {
+          "id": "d",
+          "text": "Decline; document only what was stated, and flag the assessment/plan as pending",
+          "why": "Correct: preserves the boundary that clinical judgment is the provider's responsibility, not the scribe's."
+        }
+      ],
+      "correctChoiceId": "d",
+      "rationale": "Because a scribe documents the provider's own clinical determinations rather than generating them independently, an assessment and plan must come from the physician's own judgment; a scribe should document what has been provided and flag what remains outstanding rather than substituting their own clinical conclusion, even with the physician's stated permission.",
+      "source": {
+        "ref": "TJC-SCRIBE-FAQ",
+        "locator": "Definition section"
+      },
+      "variantGroup": "SCRIBE-SCOPE-BOUNDARY",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: highest-stakes safety item in this batch, confirm distractor b cannot be defended under any reading"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L6-000004",
+      "domain": "Medical Scribe",
+      "skillArea": "HIPAA in EHR Workflow",
+      "difficultyLevel": 6,
+      "trainingTier": 5,
+      "questionType": "next-best-action",
+      "learningObjective": "Apply minimum-necessary and research-disclosure conditions to an ambiguous bulk data request.",
+      "question": "A researcher affiliated with the clinic asks the scribe to export all patient records from the last five years for a retrospective chart review, without mentioning any Institutional Review Board (IRB) approval, waiver, or other required documentation. What is the appropriate response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Do not export; this requires documented IRB/Privacy Board approval not yet provided",
+          "why": "Correct: matches the Privacy Rule's conditions for research disclosures without individual authorization."
+        },
+        {
+          "id": "b",
+          "text": "Export the records immediately, since research is a generally beneficial purpose",
+          "why": "General benefit does not substitute for the specific documented conditions the Privacy Rule requires for research disclosures."
+        },
+        {
+          "id": "c",
+          "text": "Export only records from the last year instead of five, without addressing the missing documentation",
+          "why": "Reducing the date range does not address the missing required documentation/approval."
+        },
+        {
+          "id": "d",
+          "text": "Ask the patients individually for verbal permission to cover the whole request",
+          "why": "This is not the applicable mechanism the Privacy Rule describes for this type of research disclosure, and is impractical at this scale."
+        }
+      ],
+      "correctChoiceId": "a",
+      "rationale": "The Privacy Rule permits research disclosures without individual authorization only where the covered entity obtains documented IRB/Privacy Board approval of an alteration or waiver of authorization, or specific representations from the researcher meeting defined conditions; absent that documentation, the request should not be fulfilled as presented.",
+      "source": {
+        "ref": "HHS-PRIVACY-RULE-SUMMARY",
+        "locator": "Permitted Uses and Disclosures - Research"
+      },
+      "variantGroup": "HIPAA-RESEARCH-DISCLOSURE",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "SCRIBE-SCOPE-REVIEW: confirm this correctly reflects that the missing element is documentation/approval, not a blanket prohibition on research disclosure"
+      ],
+      "verification": {
+        "locatorConfidence": "SINGLE-EXTRACT-DIRECT-FETCH",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    },
+    {
+      "id": "NEXUS-SCRIBE-L6-000005",
+      "domain": "Medical Scribe",
+      "skillArea": "Integrated Risk Judgment",
+      "difficultyLevel": 6,
+      "trainingTier": 5,
+      "questionType": "prioritization",
+      "learningObjective": "Rank multiple simultaneous documentation/compliance issues by relative patient-safety risk, citing the applicable authority for each.",
+      "question": "A single encounter is found to have all of the following: (1) a documentation assistant used the physician's login; (2) a medication order was activated without being left pending for licensed-personnel verification; (3) the chart was opened using only the patient's first name, with no second identifier confirmed; (4) the note was finalized with no evidence of physician review. Which ranking best reflects relative patient-safety risk, and why?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "All four issues are exactly equally severe with no meaningful distinction",
+          "why": "The identification and unverified-order issues carry a more direct, immediate harm pathway than the login/review accountability gaps, per the cited authorities' own framing (patient safety goal vs. quality/process issue)."
+        },
+        {
+          "id": "b",
+          "text": "(3) and (2) risk direct harm; (1) and (4) are accountability gaps",
+          "why": "Correct: (3) risks wrong-patient action and (2) risks an unverified medication reaching a patient, both direct harm pathways per the cited authorities; (1) and (4) are process/accountability failures that make such harm more likely to go undetected rather than being the direct harm event itself."
+        },
+        {
+          "id": "c",
+          "text": "(1) is the most severe because login misuse is explicitly named first in Joint Commission's list",
+          "why": "List order in a source does not establish severity ranking; the rationale must come from the actual risk pathway described, not sequence in a document."
+        },
+        {
+          "id": "d",
+          "text": "None of these issues are actually serious since no harm has yet occurred",
+          "why": "Absence of a realized harm event does not mean these are not serious risk factors; safety guidance addresses risk of harm, not only confirmed harm."
+        }
+      ],
+      "correctChoiceId": "b",
+      "rationale": "The patient-identification standard exists specifically to prevent wrong-patient errors, and the pending-order safeguard exists specifically to ensure an order is verified before it can be acted upon, both addressing direct pathways to patient harm; independent-login and physician-review requirements are described as accountability and verification safeguards whose absence makes other errors more likely to go undetected rather than being themselves the direct harm event.",
+      "source": {
+        "ref": "TJC-NPSG-01",
+        "locator": "Rationale for NPSG.01.01.01"
+      },
+      "variantGroup": "SCRIBE-INTEGRATED-RISK-RANKING",
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED",
+        "CLINICAL-REVIEW-NOT-REQUIRED; SCRIBE-SCOPE-REVIEW: this is the single most interpretively complex item in the batch - the ranking logic is a reasoned synthesis across two sources (TJC-NPSG-01 and TJC-SCRIBE-FAQ) rather than a single directly-stated ranking from either source. A human reviewer should independently confirm the ranking rationale is sound before this item proceeds past candidate status, or consider revising to reduce reliance on cross-source synthesis."
+      ],
+      "verification": {
+        "locatorConfidence": "MULTI-SOURCE-SYNTHESIS-NOT-DIRECTLY-STATED",
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null
+      }
+    }
+  ],
+  "blockedTopics": [],
+  "batchSummary": {
+    "totalGenerated": 30,
+    "totalBlocked": 0,
+    "byLevel": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5
+    },
+    "byTrainingTier": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 10
+    },
+    "byQuestionType": {
+      "recognition": 4,
+      "recall": 4,
+      "application": 5,
+      "scenario": 8,
+      "next-best-action": 4,
+      "error-identification": 3,
+      "interpretation": 2,
+      "prioritization": 3
+    },
+    "bySkillArea": {
+      "Scribe Role & Responsibilities": 1,
+      "Documentation Accuracy": 1,
+      "Documentation Assistance Competency": 1,
+      "Patient Safety / EHR Workflow": 1,
+      "Scope of Role": 4,
+      "EHR Navigation & Login Practices": 4,
+      "Patient Identification": 2,
+      "HIPAA in EHR Workflow": 3,
+      "Order-Entry Boundaries": 4,
+      "Documentation Quality": 1,
+      "Documentation Judgment": 1,
+      "Provider Review": 1,
+      "Time-Pressure Prioritization": 1,
+      "Complex Encounter Documentation": 1,
+      "Documentation QA / Compliance": 1,
+      "Time-Pressure Accuracy": 1,
+      "Integrated Compliance Judgment": 2,
+      "Systemic QA / Compliance": 2,
+      "Patient Identification / Escalation": 1,
+      "Peer Workflow / Login Practices": 1,
+      "Documentation Quality Assessment": 1,
+      "Integrated Risk Judgment": 1
+    },
+    "productionEligible": 0,
+    "note": "All 30 items candidate/pending. 0 blocked. See excludedCoverage for one topic proactively deferred rather than authored without adequate sourcing."
+  },
+  "revision": 1
+}

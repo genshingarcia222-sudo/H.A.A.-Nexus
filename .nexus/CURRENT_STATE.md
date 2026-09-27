@@ -23,17 +23,17 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
 project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
-current_phase: "Phase 9 - Packaging & Release Hardening (ENTRY: specification authored only; Phase 8 is NOT closed)"
-current_milestone: "Phase 9 spec authored (docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md); D13-D16 open; no Phase 9 implementation performed; control plane at P9-2026-09-26-003 in docs/PHASES_BUILDING_CONTROL.md; lane C-02 documentation sweep integrated (PR #18, #19); PR #3 kept CLEAN without merging (D15); Phase 8 steps 3-8 unstarted and D8, D9, D10 still open"
+current_phase: "Phase 9 - Packaging & Release Hardening (P9-A satisfied; P9-B/C/D-policy/E decision-blocked; Phase 8 is NOT closed)"
+current_milestone: "D15 resolved 2026-09-27 as a merge and executed (c384ac5): main carries the Training question run (M23), the D12 corpus module and the delivery layer, and P9-A is satisfied. Control plane at P9-2026-09-27-001. D13, D14, D16 still gate the rest of Phase 9; Phase 8 steps 3-8 unstarted with D8, D9, D10 open. DEVICE-02 owns the Knowledgebase lane (PR #21, not merged)"
 baseline_commit: 796c5e0ac698319df704b4ba47feb53a7d1f90e0
 last_verified_commit: 796c5e0ac698319df704b4ba47feb53a7d1f90e0
 last_verified_tests: "PASS - nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81 (2026-09-26, DEVICE-01, baseline B-003)"
 last_verified_build: "PASS - pnpm -r build (2026-09-26, DEVICE-01, baseline B-003)"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-26, DEVICE-01, baseline B-003)"
 last_verified_rust: "PASS - cargo test 55/55, rustc 1.98.1 (2026-09-26, DEVICE-01, baseline B-003)"
-active_task: P9-003
+active_task: P9-004
 task_owner: DEVICE-01
-task_status: COMPLETE
+task_status: ACTIVE
 last_successful_sync: 2026-09-26T15:26:21.606Z
 last_sync_device: DEVICE-01
 last_sync_commit: 2d5afe6f1188253f9b042373ae0722ec38dec75c
@@ -45,14 +45,12 @@ recovery_status: "none - no recovery in progress"
 
 Product and engineering work, with the canonical record for each:
 
-- **Phase 9 decisions D13 to D16.** All four are open owner decisions and
-  all Phase 9 implementation is blocked on them. See
+- **Phase 9 decisions D13, D14 and D16.** Three open owner decisions; D15 was
+  resolved on 2026-09-27 as a merge and P9-A is satisfied. See
   `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` §5. D13 (code-signing
   identity) needs a credential; D14 (update-feed location) is entangled with
-  D10 and prevents Phase 9 closing before D10 is decided; D15 (merge
-  `feat/training-question-bank`, whose tip `de2c2d1` already addresses P9-A) is
-  the previously escalated branch decision; D16 (release/version policy) has
-  no external dependency. Phase 9 items requiring a built or installed Windows
+  D10 and prevents Phase 9 closing before D10 is decided; D16 (release/version
+  policy) has no external dependency. Phase 9 items requiring a built or installed Windows
   artifact must be implemented on DEVICE-01 — DEVICE-02 cannot run WiX/NSIS or
   `cargo test` (§6 of that document).
 - **D8** (practice/simulation resume, with A6 as its engineering half) and
@@ -62,19 +60,24 @@ Product and engineering work, with the canonical record for each:
   (web deployment), and therefore step 5 (PayMongo). See `docs/DECISION_REGISTER.md`.
 - **A2, A7, A9, A12.** These are accepted Phase 7 debt awaiting decisions or content. See
   `docs/DECISION_REGISTER.md`.
-- **Unmerged branch `origin/feat/training-question-bank`** — measured 2026-09-26:
-  **44 commits** ahead of `main`, **85 files** differing, tip `082fa95`, and
-  **PR #3 is `MERGEABLE` / `CLEAN`**. (The earlier figures here — 18 commits
-  ahead of `865d31e`, tip `5bcf9f9`, conflicting — were left behind by the
-  branch's own progress and by `main` advancing.) It carries the Training
-  question run (M23), the Pilot 001 r3 fixture, decision **D12** (where
-  non-terminology reference knowledge lives — **resolved, but recorded only on
-  that branch**, so merging imports the decision into `main`), the P9-A
-  `windows_subsystem` fix at `de2c2d1` and the legacy `.claude/sync/` handoff
-  bus. Merging it is decision **D15** and is **not** decided. Mergeable is not
-  authorization: do not merge it without the owner. DEVICE-01 keeps it
-  conflict-free as `main` advances, under
-  `docs/PHASES_BUILDING_CONTROL.md` §10(G).
+- **`feat/training-question-bank` is MERGED** (D15, owner decision 2026-09-27;
+  merge commit `c384ac5`, PR #3). `main` now carries the Training question run
+  (M23), the D12 Knowledge Corpus module, Pilot Batch 001 r3 as fixtures, the
+  delivery layer with migration `004_delivery_events.sql`, and the P9-A
+  `windows_subsystem` attribute with its guard test. The branch's legacy
+  `.claude/sync/` bus came with it as history (N-007). Measured on the merged
+  tree before the merge commit was created: nexus-core 784/784, desktop 282/282,
+  cargo 70/70, typecheck and build clean, preflight 25/25, nexus-sync 81/81.
+- **DEVICE-02's Knowledgebase lane is open and deliberately unmerged.**
+  `origin/feat/knowledgebase-expansion` (PR #21, marked "do not merge") holds 324
+  KB-001 records, a JSON Schema and zero-dependency tooling under
+  `knowledge-corpus/` and `tools/knowledge-corpus/`. Its own recorded blocker is
+  an **owner decision neither device may take**: two implementations of one
+  content contract now exist — D12's Zod model on `main` and that JSON Schema on
+  the branch — and which one the runtime ingests is undecided. See
+  `knowledge-corpus/INTEGRATION_BLOCKERS.md` on that branch. The only files both
+  lanes touch are `CHANGELOG.md` and `.gitattributes`, and both resolve
+  mechanically under `docs/PHASES_BUILDING_CONTROL.md` §10(G).
 - **Human gate on Pilot Batch 001.** No person has verified the source
   locators, so production eligibility stays 0 of 12. This is a human action;
   no code can advance it.
