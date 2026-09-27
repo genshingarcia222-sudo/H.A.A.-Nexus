@@ -204,6 +204,14 @@ export function checkPolicy(record, registries, findings) {
   for (const target of record.remediationTargets ?? []) {
     if (!registries.remediationIds.has(target)) error("REF-INTEGRITY", `remediation target "${target}" is not registered`, "remediationTargets");
   }
+  // Choice-level trap labels were once unchecked, so an unregistered label could
+  // ride into the corpus and read as taxonomy. They resolve against the same
+  // registry as the record-level list.
+  (record.choices ?? []).forEach((choice, index) => {
+    if (choice.trapType && !registries.trapIds.has(choice.trapType)) {
+      error("REF-INTEGRITY", `choice ${choice.id ?? index} trap type "${choice.trapType}" is not registered`, `choices[${index}].trapType`);
+    }
+  });
   for (const trap of record.trapTypes ?? []) {
     if (!registries.trapIds.has(trap)) error("REF-INTEGRITY", `trap type "${trap}" is not registered`, "trapTypes");
   }

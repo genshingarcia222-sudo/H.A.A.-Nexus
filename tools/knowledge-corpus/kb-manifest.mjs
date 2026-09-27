@@ -66,7 +66,7 @@ export function buildManifest() {
   return {
     manifestId: "KB-CORPUS-MANIFEST",
     manifestVersion: "1.0.0",
-    generatedOn: "2026-09-26",
+    generatedOn: new Date().toISOString().slice(0, 10),
     sourceArchiveVersion: {
       declared: "Nexus Knowledgebase Archive v1.0",
       presentInRepository: false,
@@ -106,19 +106,30 @@ export function buildManifest() {
       schemaErrors: card.schemaErrors,
       codingVersionIssues: card.codingVersionIssues,
       status: card.errorCount === 0 ? "PASS" : "FAIL",
-      report: "knowledge-corpus/qa/KB-001.qa-report.json"
+      // One report per batch, listed rather than hardcoded, so a new batch does not
+      // leave the manifest pointing at an earlier batch's QA as though it covered
+      // the whole corpus.
+      reports: batches.map((batchId) => `knowledge-corpus/qa/${batchId}.qa-report.json`),
+      privacyScan: {
+        report: "knowledge-corpus/qa/corpus.privacy-scan.json",
+        tool: "kb-privacy-scan/1.0.0",
+        note: "PHI / PII / secret scan required by charter section XXXIII before a batch is review-ready. Verdict is recorded in the report; CLEAR means no finding, HELD means STOP GATE 9."
+      }
     },
     sourceRegistry: {
       sources: JSON.parse(readFileSync(path.join(CORPUS_ROOT, "sources/source-registry.json"), "utf8")).sources.length,
       retrievedInThisWorkstream: 0,
       humanVerified: 0
     },
+    // Limitations are measured from the corpus where they can be, so a number here
+    // cannot drift away from the records it describes.
     knownLimitations: [
       "The declared source archive is absent from the repository; the corpus does not contain the 400 seed records and nothing has been reconstructed from conversational memory.",
       "No source was retrieved or opened in the workstream that produced this manifest. Every citation is transcribed from an existing repository artifact and is unverified.",
-      "Zero records are approved for training or generation. Every record requires human review, and the 24 EXTERNAL_AUTHORITY records additionally require a registered reviewer to open the cited source.",
-      "The difficulty distribution is weighted toward HARD because counterfactual mutation adds dependencies and competing priorities. This is a measured imbalance to redress in KB-002, not a labelling artefact.",
-      "Competency coverage is uneven: KB-D07 and KB-D10 carry 12 records each against KB-D12's 96. Both under-covered axes are source-dependent, which is why they were not expanded here.",
+      `Zero records are approved for training or generation. All ${card.total} require human review, and the ${card.byEvidenceBasis.EXTERNAL_AUTHORITY ?? 0} EXTERNAL_AUTHORITY records additionally require a registered reviewer to open the cited source.`,
+      `The difficulty distribution remains weighted toward HARD (${card.byDifficulty.HARD ?? 0} of ${card.total}, ${(((card.byDifficulty.HARD ?? 0) / card.total) * 100).toFixed(1)}%) because counterfactual mutation adds dependencies and competing priorities. HARD is a fixed count, so its share falls only as the other bands grow; the arithmetic is in GAP_ANALYSIS.md section 3.1a.`,
+      `Competency coverage is uneven: the thinnest axis carries ${Math.min(...Object.values(card.byCompetency))} records against the widest at ${Math.max(...Object.values(card.byCompetency))}. KB-D07 coding is the thinnest and cannot be expanded without source verification.`,
+      "Reusable packet components do not exist. Every record embeds its own packet, and the record schema cannot represent a standalone CHART_PACKET: a component schema, an optional packetRef and a schema version bump are required first. See GAP_ANALYSIS.md section 3.4.",
       "The knowledge-corpus engine on feat/training-question-bank (owner decision D12) is not merged to main and is not imported by these tools. Alignment is by field naming and lifecycle vocabulary only; no integration contract exists yet."
     ],
     lastVerifiedCommit: git(["rev-parse", "HEAD"]),

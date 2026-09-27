@@ -1,0 +1,708 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000016",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000061",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M03"
+      ],
+      "competencyIds": [
+        "KB-D01",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D01",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Intake sequencing",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000016"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000016#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "Q1",
+            "text": "Intake covers identity, encounter selection, coverage, the reason for the visit, and the handoff to the clinical team.",
+            "section": "Workflow",
+            "decisive": false
+          },
+          {
+            "ref": "Q2",
+            "text": "the order stated for this scenario is fixed: identity is confirmed before any encounter is opened, the encounter before coverage is checked against it, coverage before the visit reason is recorded into it, and the handoff last",
+            "section": "Workflow",
+            "decisive": true
+          },
+          {
+            "ref": "Q3",
+            "text": "The waiting room is full and the clinical team has asked for the handoff as early as possible.",
+            "section": "Front desk",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Quilla Nakashima-Obi",
+        "encounterLabel": "Willowbank Primary Care — inbound telephone call",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "Put Willowbank Primary Care's intake steps for Quilla Nakashima-Obi (MRN SYN-3168) into the order the stated workflow requires.",
+      "steps": [
+        "Confirm the encounter being opened is the 2026-02-09 slot with Dr. Rurik Vandeveer.",
+        "Record the reason the patient gives for the visit, in their words.",
+        "Hand the encounter to the clinical team with the open items named.",
+        "Confirm the patient's identity on two identifiers against the chart header.",
+        "Check that coverage on file is current for this encounter."
+      ],
+      "canonicalOrder": [
+        3,
+        0,
+        4,
+        1,
+        2
+      ],
+      "goldBehavior": "Identity first, then the encounter, then coverage against that encounter, then the visit reason recorded into it, then the handoff. Each step depends on the one before: coverage cannot be checked against an encounter that has not been selected, and a reason recorded before identity is confirmed may land in the wrong chart. State that the clinical team's request for an early handoff does not reorder the sequence, because the handoff is what the earlier steps make safe.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Produces the stated order and explains the dependency behind at least two adjacent steps.",
+          "credit": 0.34,
+          "evidenceRef": "Q2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that identity precedes opening any encounter.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Declines to move the handoff earlier despite the request to do so.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Patient identity and encounter context; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000016",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "5a69277678b7509f",
+        "scenarioFingerprint": "b5002bf4349473f7",
+        "competencyFingerprint": "1e6ae4088e736742",
+        "evidenceLayoutFingerprint": "504de7dff82205d2",
+        "answerPatternFingerprint": "07337c584ad4a935"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000062",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M03"
+      ],
+      "competencyIds": [
+        "KB-D01",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D01",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Intake sequencing",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000016"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000016#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "Q1",
+            "text": "Intake covers identity, encounter selection, coverage, the reason for the visit, and the handoff to the clinical team.",
+            "section": "Workflow",
+            "decisive": false
+          },
+          {
+            "ref": "Q3",
+            "text": "The waiting room is full and the clinical team has asked for the handoff as early as possible.",
+            "section": "Front desk",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "Q2",
+            "text": "the order stated for this scenario is fixed: identity is confirmed before any encounter is opened, the encounter before coverage is checked against it, coverage before the visit reason is recorded into it, and the handoff last",
+            "section": "Workflow",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Rasheed Vondracek",
+        "encounterLabel": "Ashcombe Multispecialty Group — patient portal message",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "Put Ashcombe Multispecialty Group's intake steps for Rasheed Vondracek (MRN SYN-9503) into the order the stated workflow requires. Read to the end of the record before answering: the material is not in the order you need it.",
+      "steps": [
+        "Hand the encounter to the clinical team with the open items named.",
+        "Record the reason the patient gives for the visit, in their words.",
+        "Confirm the encounter being opened is the 2026-03-17 slot with Dr. Saoirse Mbeki-Lantz.",
+        "Confirm the patient's identity on two identifiers against the chart header.",
+        "Check that coverage on file is current for this encounter."
+      ],
+      "canonicalOrder": [
+        3,
+        2,
+        4,
+        1,
+        0
+      ],
+      "goldBehavior": "Identity first, then the encounter, then coverage against that encounter, then the visit reason recorded into it, then the handoff. Each step depends on the one before: coverage cannot be checked against an encounter that has not been selected, and a reason recorded before identity is confirmed may land in the wrong chart. State that the clinical team's request for an early handoff does not reorder the sequence, because the handoff is what the earlier steps make safe.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Produces the stated order and explains the dependency behind at least two adjacent steps.",
+          "credit": 0.34,
+          "evidenceRef": "Q2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that identity precedes opening any encounter.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Declines to move the handoff earlier despite the request to do so.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000061",
+      "variantOf": "KB-WFLW-KB002-000061",
+      "templateId": "KB-VART-KB002-000016",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "2f2ad11469adb381",
+        "scenarioFingerprint": "084834a7c6d989f2",
+        "competencyFingerprint": "1e6ae4088e736742",
+        "evidenceLayoutFingerprint": "bf376775e16a7c01",
+        "answerPatternFingerprint": "07337c584ad4a935"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000063",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M03"
+      ],
+      "competencyIds": [
+        "KB-D01",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D01",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Intake sequencing",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000016"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000016#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "Q2",
+            "text": "Routine reconciliation note from H. Ezeagwula-Roth: demographics confirmed, card image legible, and — the order stated for this scenario is fixed: identity is confirmed before any encounter is opened, the encounter before coverage is checked against it, coverage before the visit reason is recorded into it, and the handoff last — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "Q1",
+            "text": "Intake covers identity, encounter selection, coverage, the reason for the visit, and the handoff to the clinical team.",
+            "section": "Workflow",
+            "decisive": false
+          },
+          {
+            "ref": "Q3",
+            "text": "The waiting room is full and the clinical team has asked for the handoff as early as possible.",
+            "section": "Front desk",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Sunniva Balogun-Reith",
+        "encounterLabel": "Bellrock Community Health Center — inbound fax",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "Put Bellrock Community Health Center's intake steps for Sunniva Balogun-Reith (MRN SYN-4275) into the order the stated workflow requires. Nothing in this record is labelled as important.",
+      "steps": [
+        "Confirm the encounter being opened is the 2026-05-04 slot with NP Caius Ostrowski.",
+        "Check that coverage on file is current for this encounter.",
+        "Record the reason the patient gives for the visit, in their words.",
+        "Confirm the patient's identity on two identifiers against the chart header.",
+        "Hand the encounter to the clinical team with the open items named."
+      ],
+      "canonicalOrder": [
+        3,
+        0,
+        1,
+        2,
+        4
+      ],
+      "goldBehavior": "Identity first, then the encounter, then coverage against that encounter, then the visit reason recorded into it, then the handoff. Each step depends on the one before: coverage cannot be checked against an encounter that has not been selected, and a reason recorded before identity is confirmed may land in the wrong chart. State that the clinical team's request for an early handoff does not reorder the sequence, because the handoff is what the earlier steps make safe.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Produces the stated order and explains the dependency behind at least two adjacent steps.",
+          "credit": 0.34,
+          "evidenceRef": "Q2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that identity precedes opening any encounter.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Declines to move the handoff earlier despite the request to do so.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000061",
+      "variantOf": "KB-WFLW-KB002-000061",
+      "templateId": "KB-VART-KB002-000016",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "72461e65a556c4b2",
+        "scenarioFingerprint": "4ffb4734a3f5d834",
+        "competencyFingerprint": "1e6ae4088e736742",
+        "evidenceLayoutFingerprint": "2d4cfe116e5ee28b",
+        "answerPatternFingerprint": "07337c584ad4a935"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000064",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M03"
+      ],
+      "competencyIds": [
+        "KB-D01",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D01",
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SEQUENCING",
+      "scenarioType": "INTAKE_ORDER__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Intake sequencing",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000016"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000016#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "Q1",
+            "text": "Intake covers identity, encounter selection, coverage, the reason for the visit, and the handoff to the clinical team.",
+            "section": "Workflow",
+            "decisive": true
+          },
+          {
+            "ref": "Q3",
+            "text": "The waiting room is full and the clinical team has asked for the handoff as early as possible.",
+            "section": "Front desk",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Thaddeus Iwuchukwu",
+        "encounterLabel": "Thornfield Medical Partners — voicemail",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Put Thornfield Medical Partners's intake steps for Thaddeus Iwuchukwu (MRN SYN-7681) into the order the stated workflow requires. If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "steps": [
+        "Confirm the encounter being opened is the 2026-06-22 slot with PA Yolanda Trevisani.",
+        "Record the reason the patient gives for the visit, in their words.",
+        "Check that coverage on file is current for this encounter.",
+        "Confirm the patient's identity on two identifiers against the chart header.",
+        "Hand the encounter to the clinical team with the open items named."
+      ],
+      "canonicalOrder": [
+        3,
+        0,
+        2,
+        1,
+        4
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (the order the stated workflow requires the intake steps to run in), name PA Yolanda Trevisani as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"the order the stated workflow requires the intake steps to run in\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "Q1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000061",
+      "variantOf": "KB-WFLW-KB002-000061",
+      "templateId": "KB-VART-KB002-000016",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000061"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "9dc86427b2344024",
+        "scenarioFingerprint": "72828ff253f99fea",
+        "competencyFingerprint": "e9fea3da9f21e763",
+        "evidenceLayoutFingerprint": "ebd692568cbedbd6",
+        "answerPatternFingerprint": "f72a8cb616a4dc19"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

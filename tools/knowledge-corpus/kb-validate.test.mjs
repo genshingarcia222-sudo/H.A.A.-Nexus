@@ -9,14 +9,17 @@
 //   node tools/knowledge-corpus/kb-validate.test.mjs
 import assert from "node:assert/strict";
 import { checkAgainstSchema, checkCorpus, checkPolicy, loadRegistries, normalizeText, shortHash, trigramOverlap, validate } from "./kb-validate.mjs";
-import { generateBatch } from "./kb-generate.mjs";
-import { readFileSync } from "node:fs";
+import { batchToken, generateBatch, templatesForBatch } from "./kb-generate.mjs";
+import { poolsForBatch } from "./kb-slots.mjs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SCHEMA = JSON.parse(readFileSync(path.join(REPO_ROOT, "knowledge-corpus/schema/kb-record.schema.json"), "utf8"));
 const REGISTRIES = loadRegistries();
+/** Batches the generator is expected to be able to build. */
+const REGISTERED_BATCHES = ["KB-001", "KB-002"];
 
 let passed = 0;
 const failures = [];
@@ -451,6 +454,103 @@ test("every generated packet declares itself synthetic", () => {
 test("the committed corpus passes QA with no errors", () => {
   const report = validate({});
   assert.equal(report.scorecard.errorCount, 0, `${report.scorecard.errorCount} error(s): ${report.findings.filter((f) => f.severity === "ERROR").slice(0, 3).map((f) => `${f.rule} ${f.recordId}`).join(", ")}`);
+});
+
+test("REF-INTEGRITY rejects an unregistered trap type on a choice", () => {
+  // This was a real hole: only record.trapTypes was checked, so an unregistered
+  // label on a choice rode into the corpus and read as taxonomy.
+  const record = validRecord({
+    taskType: "MCQ",
+    choices: [
+      { id: "a", text: "A defensible action that resolves the task as posed.", why: "Correct." },
+      { id: "b", text: "A different action that fails for its own stated reason.", why: "Wrong.", trapType: "TRAP_NOT_A_REAL_TRAP" },
+      { id: "c", text: "A third action that also fails, for a different reason.", why: "Wrong." }
+    ],
+    correctChoiceIds: ["a"]
+  });
+  assert.ok(
+    findingsFor(record).some((f) => f.rule === "REF-INTEGRITY" && /TRAP_NOT_A_REAL_TRAP/.test(f.message)),
+    "an unregistered choice-level trap type was accepted"
+  );
+});
+
+// --- Batch isolation and the frozen KB-001 baseline -------------------------
+//
+// These are the regression guards charter section XXXV asks for, aimed at the
+// failure that actually threatens this corpus: a later batch quietly reproducing
+// an earlier one, or an edit to a shared pool re-casting records that are already
+// committed and awaiting review.
+
+test("a batch only draws the templates stamped with its own batch id", () => {
+  for (const batchId of ["KB-001", "KB-002"]) {
+    for (const template of templatesForBatch(batchId)) {
+      assert.ok(
+        template.templateId.includes(`-${batchToken(batchId)}-`),
+        `${template.templateId} was selected for ${batchId} but is not stamped with it`
+      );
+    }
+  }
+});
+
+test("no two batches produce the same content under different ids", () => {
+  // The bug this locks out: generateBatch once walked every template regardless
+  // of --batch, so `--batch KB-002` emitted 324 records byte-identical to KB-001.
+  // Per-batch QA could not see it, because duplicate detection is corpus-wide.
+  const seen = new Map();
+  for (const batchId of REGISTERED_BATCHES) {
+    for (const record of generateBatch(batchId)) {
+      const previous = seen.get(record.fingerprints.promptHash);
+      assert.ok(
+        !previous,
+        `${record.id} (${batchId}) repeats the prompt of ${previous} — a batch is cloning another batch's content`
+      );
+      seen.set(record.fingerprints.promptHash, `${record.id} (${batchId})`);
+    }
+  }
+});
+
+test("an unregistered batch fails closed instead of inheriting KB-001", () => {
+  assert.throws(() => generateBatch("KB-999"), /no templates declared for batch KB-999/);
+});
+
+test("every registered batch has its own slot pools", () => {
+  for (const batchId of REGISTERED_BATCHES) {
+    assert.doesNotThrow(() => poolsForBatch(batchId), `${batchId} has no registered slot pools`);
+  }
+  assert.throws(() => poolsForBatch("KB-999"), /no slot pools registered/);
+});
+
+test("KB-001 regenerates byte-identically to the committed files", () => {
+  // KB-001 is 324 committed records awaiting human review. Regeneration must
+  // reproduce them exactly: if this fails, something changed a shared pool, an
+  // operator, or the template order, and the records on disk no longer match the
+  // generator that claims to have produced them. Trust the committed files.
+  const generated = new Map(generateBatch("KB-001").map((record) => [record.id, record]));
+  const dir = path.join(REPO_ROOT, "knowledge-corpus/records/KB-001");
+  let compared = 0;
+  for (const file of readdirSync(dir).sort()) {
+    const onDisk = JSON.parse(readFileSync(path.join(dir, file), "utf8"));
+    for (const record of onDisk.records) {
+      const fresh = generated.get(record.id);
+      assert.ok(fresh, `${record.id} is committed but the generator no longer produces it`);
+      assert.equal(
+        JSON.stringify(fresh),
+        JSON.stringify(record),
+        `${record.id} regenerates differently from the committed file (${file})`
+      );
+      compared += 1;
+    }
+  }
+  assert.equal(compared, generated.size, `compared ${compared} records but the generator produced ${generated.size}`);
+});
+
+test("KB-001 personas are unaffected by pools added for a later batch", () => {
+  const kb001 = poolsForBatch("KB-001");
+  assert.equal(kb001.patients.length, 14, "KB-001's patient pool changed size; every KB-001 persona would shift");
+  assert.equal(kb001.providers.length, 7, "KB-001's provider pool changed size");
+  assert.equal(kb001.staff.length, 6, "KB-001's staff pool changed size");
+  assert.equal(kb001.practices.length, 4, "KB-001's practice pool changed size");
+  assert.equal(kb001.payers.length, 3, "KB-001's payer pool changed size");
 });
 
 console.log(`\n${passed} passed, ${failures.length} failed`);

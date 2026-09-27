@@ -19,7 +19,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { CHANNELS, ENCOUNTER_DATES, PATIENTS, PAYERS, PRACTICES, PROVIDERS, STAFF, pick } from "./kb-slots.mjs";
+import { poolsForBatch, pick } from "./kb-slots.mjs";
 import { OPERATORS } from "./kb-operators.mjs";
 import { TEMPLATES } from "./kb-templates.mjs";
 import { normalizeText, shortHash, trigramOverlap } from "./kb-validate.mjs";
@@ -48,11 +48,18 @@ function addDays(isoDate, days) {
   return date.toISOString().slice(0, 10);
 }
 
-/** The slot context for one record. Derived from the global index alone, so it is
- *  reproducible and every variant inside a family gets a different persona. */
-export function buildContext(globalIndex) {
-  const patient = pick(PATIENTS, globalIndex);
-  const encounterDate = pick(ENCOUNTER_DATES, globalIndex);
+/** The slot context for one record. Derived from the global index and the batch's
+ *  own pools, so it is reproducible and every variant inside a family gets a
+ *  different persona.
+ *
+ *  The pools are selected per batch on purpose. `pick` is `pool[index % length]`,
+ *  so appending one persona to a shared pool would silently re-cast every record
+ *  already generated. Batch-scoped pools mean a later batch can grow its persona
+ *  set — charter section XXV — without rewriting an earlier batch's bytes. */
+export function buildContext(globalIndex, batchId = "KB-001") {
+  const pools = poolsForBatch(batchId);
+  const patient = pick(pools.patients, globalIndex);
+  const encounterDate = pick(pools.encounterDates, globalIndex);
   return {
     patient,
     nearMatch: {
@@ -60,11 +67,11 @@ export function buildContext(globalIndex) {
       mrn: `${patient.mrn.slice(0, -1)}${(Number(patient.mrn.slice(-1)) + 1) % 10}`,
       dob: `${patient.dob.slice(0, 8)}${String(((Number(patient.dob.slice(8)) + 7) % 28) + 1).padStart(2, "0")}`
     },
-    provider: pick(PROVIDERS, globalIndex),
-    staff: pick(STAFF, globalIndex),
-    practice: pick(PRACTICES, globalIndex),
-    payer: pick(PAYERS, globalIndex),
-    channel: pick(CHANNELS, globalIndex),
+    provider: pick(pools.providers, globalIndex),
+    staff: pick(pools.staff, globalIndex),
+    practice: pick(pools.practices, globalIndex),
+    payer: pick(pools.payers, globalIndex),
+    channel: pick(pools.channels, globalIndex),
     encounterDate,
     expiryDate: addDays(encounterDate, 21),
     scheduledDate: addDays(encounterDate, 28)
@@ -229,23 +236,70 @@ function buildChoices(base, patch, operator, rotation, multi) {
   return { choices, correctChoiceIds };
 }
 
+/** The batch token embedded in an id: KB-001 -> KB001. */
+export function batchToken(batchId) {
+  return batchId.replace("-", "");
+}
+
+/** A template belongs to exactly one batch, and says so in its own batch-stamped
+ *  templateId. Selecting on that is what stops a later batch from re-emitting an
+ *  earlier batch's content under fresh ids: before this existed, `--batch KB-002`
+ *  walked every template and produced 324 records byte-identical to KB-001. A
+ *  per-batch QA run would not have caught it, because duplicate detection is
+ *  corpus-wide. */
+export function templatesForBatch(batchId) {
+  const token = batchToken(batchId);
+  return TEMPLATES.filter((template) => template.templateId.includes(`-${token}-`));
+}
+
+/** The operators a family is built with. A template may narrow the set — KB-002
+ *  leans on BASE/LATE_CLUE/BURIED_CLUE because those are the operators that do
+ *  not raise the difficulty band, and the corpus needs EASY and MODERATE mass.
+ *  Omitting the field keeps every operator, which is what KB-001's families do. */
+function operatorsForTemplate(template) {
+  if (!template.operatorIds) return OPERATORS;
+  const selected = template.operatorIds.map((id) => {
+    const operator = OPERATORS.find((candidate) => candidate.id === id);
+    if (!operator) throw new Error(`${template.templateId}: unknown operator "${id}"`);
+    return operator;
+  });
+  if (selected.length === 0) throw new Error(`${template.templateId}: operatorIds is empty`);
+  if (selected[0].id !== "BASE") throw new Error(`${template.templateId}: operatorIds must start with BASE`);
+  return selected;
+}
+
 export function generateBatch(batchId = "KB-001") {
   const records = [];
   let rotation = 0;
   let sequence = 0;
 
-  TEMPLATES.forEach((template, templateIndex) => {
-    const familyBaseId = `KB-${RECORD_TOKEN.get(template.recordType)}-${batchId.replace("-", "")}-${String(templateIndex * OPERATORS.length + 1).padStart(6, "0")}`;
+  const templates = templatesForBatch(batchId);
+  if (templates.length === 0) throw new Error(`no templates declared for batch ${batchId}`);
 
-    OPERATORS.forEach((operator, operatorIndex) => {
-      const globalIndex = templateIndex * OPERATORS.length + operatorIndex;
-      const ctx = buildContext(globalIndex);
+  templates.forEach((template) => {
+    // Sequence numbers run cumulatively through the batch, so a family that uses
+    // a narrowed operator set does not leave a gap in the id space.
+    const familyBaseId = `KB-${RECORD_TOKEN.get(template.recordType)}-${batchToken(batchId)}-${String(sequence + 1).padStart(6, "0")}`;
+
+    operatorsForTemplate(template).forEach((operator) => {
+      const globalIndex = sequence;
+      const ctx = buildContext(globalIndex, batchId);
       const base = resolveBase(template, ctx);
       const patch = operator.apply(base, ctx);
       sequence += 1;
 
+      // A family whose own base packet carries a red flag or a disclosure risk —
+      // rather than acquiring one from the SAFETY_CLUE or WRONG_RECIPIENT operator
+      // — declares it on the template. Without this, the only way to reach the
+      // safety and privacy competencies was through operators that force the band
+      // to HARD, which is precisely why KB-001 has no EASY safety content. The
+      // flags carry the same weight either way: escalationRequired, the hard
+      // failure conditions and SAFETY-PRECEDENCE all apply.
+      if (template.safetyBaseline) patch.safety = true;
+      if (template.privacyBaseline) patch.privacy = true;
+
       const token = RECORD_TOKEN.get(template.recordType);
-      const id = `KB-${token}-${batchId.replace("-", "")}-${String(sequence).padStart(6, "0")}`;
+      const id = `KB-${token}-${batchToken(batchId)}-${String(sequence).padStart(6, "0")}`;
       const isBase = operator.id === "BASE";
 
       const errorTargets = [...new Set(patch.errorTargets)].filter((target) => ERROR_BY_ID.has(target));
@@ -383,8 +437,11 @@ function main(argv) {
     byTemplate.get(record.templateId).push(record);
   }
 
+  // Report the operators actually used, not the size of the registry: a batch whose
+  // families narrow the operator set would otherwise print a number it never used.
+  const operatorsUsed = new Set(records.flatMap((record) => (record.variantOf ? record.scenarioType.split("__").slice(1) : ["BASE"])));
   console.log(`${GENERATOR_VERSION} — batch ${batchId}`);
-  console.log(`  templates ${byTemplate.size}, operators ${OPERATORS.length}, records ${records.length}`);
+  console.log(`  templates ${byTemplate.size}, operators used ${operatorsUsed.size}/${OPERATORS.length}, records ${records.length}`);
 
   if (argv.includes("--dry-run")) return 0;
 

@@ -67,6 +67,30 @@ is real.
 mutations, and make the BASE / LATE_CLUE / BURIED_CLUE operators the majority of
 that batch. Target a distribution nearer 15 / 35 / 30 / 12 / 8.
 
+### 3.1a What that target actually costs — added 2026-09-27 after KB-002
+
+KB-002 delivered 108 records in the two thin bands and moved the corpus to
+14.6 / 27.8 / 44.4 / 6.9 / 6.3 across 432 records. EASY reached its target. HARD
+did not, and the reason is arithmetic rather than effort:
+
+**HARD is a fixed 192 records.** No operator produces HARD from an EASY or MODERATE
+base without one of the seven band-raising operators, and this workstream is not
+going to delete KB-001's HARD records to improve a percentage. So:
+
+    HARD share = 192 / total.  For 30%, total ≈ 640.
+
+The corpus is at 432. Reaching the §3.1 distribution therefore requires roughly
+**210 more records in the non-HARD bands**, which is KB-003 and KB-004 work, not a
+KB-002 shortfall. Specifically, at a 640-record corpus the targets imply about
+96 EASY (+33), 224 MODERATE (+104), 77 VERY_HARD (+47) and 51 REALISTIC_PREMIUM
+(+24).
+
+VERY_HARD and REALISTIC_PREMIUM are the awkward pair: the only operators that reach
+them are `STALE_PREREQUISITE` and `MULTI_STAGE`, which fire once per family, so
+those bands grow only by adding families — 47 more VERY_HARD records means 47 more
+families carrying that operator. That is the real cost, and it should be stated
+before a future batch promises the distribution cheaply.
+
 ### 3.2 Competency spread is 12 to 96
 
 | Axis | Records | Note |
@@ -120,9 +144,27 @@ section XVII ultimately wants, and it is an honest one.
   reusable knowledge rule is a claim about the world and nearly all of layer 2 is
   therefore source-blocked.
 - **Packets are embedded, not shared.** Each record carries its own packet. The
-  charter (layer 4) wants reusable components cited by `id@revision`. The schema
-  supports pinning; the corpus does not use it yet. This is the main refactor
-  ahead of KB-002.
+  charter (layer 4) wants reusable components cited by `id@revision`.
+
+  **Correction, 2026-09-27 (KB-002).** An earlier revision of this section said
+  "the schema supports pinning; the corpus does not use it yet." That is wrong, and
+  it was verified wrong before KB-002 relied on it:
+
+  - `packet` in `schema/kb-record.schema.json` is `additionalProperties: false`
+    and declares no `packetRef`. The only `*Ref` fields in the schema are a packet
+    line's own `ref` and `acceptanceCriteria[].evidenceRef`.
+  - The record schema's `required` list includes `goldBehavior`, `rationale`,
+    `taskType`, `difficulty` and `fingerprints`, none of which a standalone
+    reusable packet has. A `CHART_PACKET` record is therefore not representable
+    under the current record schema at all.
+
+  So this is not a corpus-usage gap, it is a **missing schema capability**.
+  Delivering it needs a separate component schema
+  (`schema/kb-component.schema.json`), an optional `packetRef` on the record, a
+  schema version bump, and migration notes — which is STOP GATE 20 and 31
+  territory. KB-002 did not attempt it, because bundling a schema migration into a
+  content batch is the thing those gates exist to prevent. It is now KB-003's
+  first item, with the design stated in §4.
 - **Semantic near-duplicate detection is lexical only.** `trigramOverlap` is
   character-trigram Jaccard. It catches a reworded stem; it does not catch a
   genuine semantic paraphrase. The charter (section XIII) allows this — "semantic
@@ -132,12 +174,14 @@ section XVII ultimately wants, and it is an honest one.
 
 ## 4. Sequenced plan
 
-| Batch | Target | Blocked on |
-| --- | ---: | --- |
-| KB-002 | ~400 records. Redress the difficulty skew with EASY/MODERATE base families; refactor packets to shared `CHART_PACKET` records pinned by `id@revision`; grow the persona pool. | Nothing |
-| KB-003 | Layer 2 — `KNOWLEDGE_RULE`, `TERMINOLOGY`, `WORKFLOW` objects, and the `RUBRIC` / `ASSESSMENT_GATE` types. | **Source verification** for anything asserting a rule |
-| KB-004 | Privacy (KB-D10) and coding (KB-D07) expansion to parity. | **Source verification.** A registered human reviewer must open HHS, 45 CFR 164, and CDC/NCHS ICD-10-CM and record a `ReviewRecord` |
-| KB-005+ | Scale toward 3,000 then 10,000 by widening families and slots, not by adding operators. | Nothing, once KB-002's refactor lands |
+| Batch | Target | Blocked on | State |
+| --- | --- | --- | --- |
+| KB-002 | Redress the difficulty skew with EASY/MODERATE base families; grow the persona pool. | Nothing | **Done** — 108 records, EASY 2.8% → 14.6%, HARD 59.3% → 44.4%. `batches/KB-002/spec.md` |
+| KB-003 | **The component-schema change**, carried from KB-002 with its premise corrected (§3.4): add `schema/kb-component.schema.json`, an optional `packetRef` on the record, a schema version bump and migration notes; then extract shared `CHART_PACKET` components and pin them by `id@revision`. New content only — KB-001 and KB-002 keep embedded packets, so no existing record is migrated and none becomes uninterpretable. | Nothing. It is a schema change and must be its own commit, not bundled with content | Next |
+| KB-004 | MODERATE / VERY_HARD / REALISTIC_PREMIUM mass toward the §3.1 distribution — about 104 MODERATE, 47 VERY_HARD and 24 REALISTIC_PREMIUM, which means new families, not new operators (§3.1a). | Nothing | Planned |
+| KB-005 | Layer 2 — `KNOWLEDGE_RULE`, `TERMINOLOGY`, `RUBRIC`, `ASSESSMENT_GATE`. | **Source verification** for anything asserting a rule | Blocked |
+| KB-006 | Privacy (KB-D10) and coding (KB-D07) expansion to parity. KB-D07 is the corpus's thinnest axis at 12 records. | **Source verification.** A registered human reviewer must open the authoritative sources and record a `ReviewRecord` | Blocked |
+| KB-007+ | Scale toward 3,000 then 10,000 by widening families and slots, not by adding operators. | Nothing, once KB-003's component schema lands | Planned |
 
 **The honest ceiling.** Generation is not the constraint on this corpus; review
 is. 324 records are written and 0 are approved. Reaching 10,000 records changes

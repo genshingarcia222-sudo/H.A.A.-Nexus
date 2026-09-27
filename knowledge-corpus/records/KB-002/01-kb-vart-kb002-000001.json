@@ -1,0 +1,641 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000001",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000001",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "TWO_IDENTIFIER_CONFIRMATION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Patient identity and encounter context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000001"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000001#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "C1",
+            "text": "The person at the desk gives their name as Marisol Ekwueme-Trask and a date of birth of 1969-04-17.",
+            "section": "Front desk",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "C2",
+            "text": "the open chart is MRN SYN-2207, Marisol Ekwueme-Trask, date of birth 1969-04-17, and it is the only record in the system matching both that name and that date of birth",
+            "section": "Chart header",
+            "decisive": true
+          },
+          {
+            "ref": "C3",
+            "text": "The 2026-02-09 slot with Dr. Anwuli Steensgaard is booked under MRN SYN-2207.",
+            "section": "Schedule",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Marisol Ekwueme-Trask",
+        "encounterLabel": "Willowbank Primary Care — inbound telephone call",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A. Nwosu-Ferrand is opening the chart for a scheduled visit at Willowbank Primary Care. Which identifiers confirm that this is the right record, and what remains unconfirmed?",
+      "goldBehavior": "State that name and date of birth both match, and that the chart header is the only record matching both, so the record is confirmed on two identifiers. Name the identifier that has not been checked — the MRN was read off the chart rather than confirmed with the patient — and say that the booked slot in C3 agrees with the same MRN. Do not treat the name match alone as confirmation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names both matching identifiers and states that the chart header is the sole match on both.",
+          "credit": 0.34,
+          "evidenceRef": "C2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the MRN was taken from the chart, not confirmed against the patient.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Notes that the scheduled slot is booked under the same MRN.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000001",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "114e7d3e3fea2393",
+        "scenarioFingerprint": "6ec1f8a1c99f814a",
+        "competencyFingerprint": "a0557b0f3afc4575",
+        "evidenceLayoutFingerprint": "7bb0c72522788042",
+        "answerPatternFingerprint": "b1fd1084c2a7e711"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000002",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "TWO_IDENTIFIER_CONFIRMATION__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Patient identity and encounter context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000001"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000001#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "C1",
+            "text": "The person at the desk gives their name as Nikolai Adebayo-Frisk and a date of birth of 1992-12-05.",
+            "section": "Front desk",
+            "recordedBy": "B. Tkachenko",
+            "recordedOn": "2026-03-17",
+            "decisive": false
+          },
+          {
+            "ref": "C3",
+            "text": "The 2026-03-17 slot with Dr. Basim Oyeleke-Nyström is booked under MRN SYN-8836.",
+            "section": "Schedule",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "C2",
+            "text": "the open chart is MRN SYN-8836, Nikolai Adebayo-Frisk, date of birth 1992-12-05, and it is the only record in the system matching both that name and that date of birth",
+            "section": "Chart header",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Nikolai Adebayo-Frisk",
+        "encounterLabel": "Ashcombe Multispecialty Group — patient portal message",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "B. Tkachenko is opening the chart for a scheduled visit at Ashcombe Multispecialty Group. Which identifiers confirm that this is the right record, and what remains unconfirmed? Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "State that name and date of birth both match, and that the chart header is the only record matching both, so the record is confirmed on two identifiers. Name the identifier that has not been checked — the MRN was read off the chart rather than confirmed with the patient — and say that the booked slot in C3 agrees with the same MRN. Do not treat the name match alone as confirmation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names both matching identifiers and states that the chart header is the sole match on both.",
+          "credit": 0.34,
+          "evidenceRef": "C2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the MRN was taken from the chart, not confirmed against the patient.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Notes that the scheduled slot is booked under the same MRN.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000001",
+      "variantOf": "KB-QUES-KB002-000001",
+      "templateId": "KB-VART-KB002-000001",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000001"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "B. Tkachenko",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "23ad97804ad622ff",
+        "scenarioFingerprint": "d2d6eefbc3831170",
+        "competencyFingerprint": "a0557b0f3afc4575",
+        "evidenceLayoutFingerprint": "769132118a2917c8",
+        "answerPatternFingerprint": "b1fd1084c2a7e711"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000003",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "TWO_IDENTIFIER_CONFIRMATION__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Patient identity and encounter context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000001"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000001#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "C2",
+            "text": "Routine reconciliation note from C. Oyedepo-Mansur: demographics confirmed, card image legible, and — the open chart is MRN SYN-5019, Odalys Mwangi-Bergström, date of birth 1954-08-29, and it is the only record in the system matching both that name and that date of birth — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "C1",
+            "text": "The person at the desk gives their name as Odalys Mwangi-Bergström and a date of birth of 1954-08-29.",
+            "section": "Front desk",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "C3",
+            "text": "The 2026-05-04 slot with Dr. Coralie Abimbola-Wexler is booked under MRN SYN-5019.",
+            "section": "Schedule",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Odalys Mwangi-Bergström",
+        "encounterLabel": "Bellrock Community Health Center — inbound fax",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "C. Oyedepo-Mansur is opening the chart for a scheduled visit at Bellrock Community Health Center. Which identifiers confirm that this is the right record, and what remains unconfirmed? Nothing in this record is labelled as important.",
+      "goldBehavior": "State that name and date of birth both match, and that the chart header is the only record matching both, so the record is confirmed on two identifiers. Name the identifier that has not been checked — the MRN was read off the chart rather than confirmed with the patient — and say that the booked slot in C3 agrees with the same MRN. Do not treat the name match alone as confirmation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names both matching identifiers and states that the chart header is the sole match on both.",
+          "credit": 0.34,
+          "evidenceRef": "C2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the MRN was taken from the chart, not confirmed against the patient.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Notes that the scheduled slot is booked under the same MRN.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000001",
+      "variantOf": "KB-QUES-KB002-000001",
+      "templateId": "KB-VART-KB002-000001",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000001"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "36c9a810e8b78efc",
+        "scenarioFingerprint": "24e8ee8340dd0820",
+        "competencyFingerprint": "a0557b0f3afc4575",
+        "evidenceLayoutFingerprint": "669d651d1563d812",
+        "answerPatternFingerprint": "b1fd1084c2a7e711"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000004",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "TWO_IDENTIFIER_CONFIRMATION__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Patient identity and encounter context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000001"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000001#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "C1",
+            "text": "The person at the desk gives their name as Peregrine Oyelude and a date of birth of 1981-01-23.",
+            "section": "Front desk",
+            "recordedBy": "E. Villaseñor-Bak",
+            "recordedOn": "2026-06-22",
+            "decisive": true
+          },
+          {
+            "ref": "C3",
+            "text": "The 2026-06-22 slot with Dr. Dmitri Ogunsanya-Holt is booked under MRN SYN-6742.",
+            "section": "Schedule",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Peregrine Oyelude",
+        "encounterLabel": "Thornfield Medical Partners — voicemail",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "E. Villaseñor-Bak is opening the chart for a scheduled visit at Thornfield Medical Partners. Which identifiers confirm that this is the right record, and what remains unconfirmed? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether any second record in the system shares this patient's name and date of birth), name Dr. Dmitri Ogunsanya-Holt as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether any second record in the system shares this patient's name and date of birth\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "C1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000001",
+      "variantOf": "KB-QUES-KB002-000001",
+      "templateId": "KB-VART-KB002-000001",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000001"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-PATIENT",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-TWO-IDENTIFIER-CHECK",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "261c8d5fd01da038",
+        "scenarioFingerprint": "2193f727ed52398f",
+        "competencyFingerprint": "a6ae6788f53187b7",
+        "evidenceLayoutFingerprint": "ba4906e1e41aca4e",
+        "answerPatternFingerprint": "a9b16bce742d4462"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

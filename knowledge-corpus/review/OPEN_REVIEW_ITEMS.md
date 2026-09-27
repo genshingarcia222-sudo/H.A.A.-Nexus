@@ -1,16 +1,20 @@
 # Open review items
 
-**As of 2026-09-26. 324 records, 0 approved.**
+**As of 2026-09-27. 432 records, 0 approved.**
 
 Nothing in this corpus may be delivered to a learner. This file is the queue.
 
-## 1. Every record needs human content review — 324 items
+## 1. Every record needs human content review — 432 items
 
-All 324 are `MACHINE_DRAFTED` under `machine:claude-code-kb-workstream`. The
+All 432 are `MACHINE_DRAFTED` under `machine:claude-code-kb-workstream`. The
 lifecycle registry marks `human_reviewed` and above as not machine-reachable, and
 the validator enforces it: a machine-authored record cannot carry those states,
 cannot fill `verification.humanVerifiedBy`, and cannot carry
 `reviewStatus: approved`.
+
+KB-002 added 108 of these. Its own priority order is in
+`../batches/KB-002/spec.md`; the batch's five safety- and privacy-flagged families
+come first.
 
 What a content reviewer is being asked to confirm, per record:
 

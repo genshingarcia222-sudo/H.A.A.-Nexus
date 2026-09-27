@@ -18,10 +18,13 @@
     "nexus-sync:test": "node tools/nexus-sync/nexus-sync.test.mjs",
     "kb:generate": "node tools/knowledge-corpus/kb-generate.mjs",
     "kb:validate": "node tools/knowledge-corpus/kb-validate.mjs",
+    "kb:privacy": "node tools/knowledge-corpus/kb-privacy-scan.mjs",
     "kb:scorecard": "node tools/knowledge-corpus/kb-scorecard.mjs",
     "kb:manifest": "node tools/knowledge-corpus/kb-manifest.mjs",
     "kb:manifest:check": "node tools/knowledge-corpus/kb-manifest.mjs --check",
-    "kb:test": "node tools/knowledge-corpus/kb-validate.test.mjs"
+    "kb:test": "node tools/knowledge-corpus/kb-validate.test.mjs",
+    "kb:test:privacy": "node tools/knowledge-corpus/kb-privacy-scan.test.mjs",
+    "kb:verify": "npm run kb:manifest:check && npm run kb:validate && npm run kb:privacy && npm run kb:test && npm run kb:test:privacy"
   },
   "engines": {
     "node": ">=20"

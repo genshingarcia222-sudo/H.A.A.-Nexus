@@ -1,0 +1,603 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000023",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-SCEN-KB002-000085",
+      "recordType": "SCENARIO",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M19"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D02"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SCENARIO_CONTINUATION",
+      "scenarioType": "PATIENT_CALLS_BACK",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Scenario continuation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000023#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "Y1",
+            "text": "2026-08-13: patient asked for a copy of a report; coordinator recorded the request and said it would be sent within three days.",
+            "section": "Thread",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "Y2",
+            "text": "No further entry appears, and the patient says nothing has arrived.",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "Y3",
+            "text": "the thread holds no record of the report being sent and no record of anyone being assigned to send it, so the commitment was made and never given an owner",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "Y4",
+            "text": "The report exists and is releasable to the patient under the practice's stated rules for this scenario.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Marisol Ekwueme-Trask",
+        "encounterLabel": "Quietwater Family Health — inbound telephone call",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "Marisol Ekwueme-Trask (MRN SYN-2207) is calling back about an unresolved request. What does A. Nwosu-Ferrand do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Say it was never assigned or sent, take ownership now, act on the report, probe for other commitments, and record the failure.",
+          "why": "Correct: it is accurate to the patient, closes the loop with a named owner, and leaves the defect visible."
+        },
+        {
+          "id": "b",
+          "text": "Apologise for the delay, say the report is in progress, and promise it within three days.",
+          "why": "Nothing is in progress. It repeats an unowned commitment and misstates the position to the patient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Send the report now and close the item without recording why it was late.",
+          "why": "The fix is right and the defect disappears, so the same loss of ownership recurs unexamined.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Explain that the original request was not logged correctly and ask the patient to submit it again.",
+          "why": "The request was logged; only the assignment was missing, and re-submitting moves the practice's failure onto the patient.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Tell Marisol Ekwueme-Trask plainly that the request was recorded, never assigned and never sent — do not imply it is in progress. Take ownership of it on this call, send the releasable report or start the release now, and give a specific commitment you can keep. Probe whether anything else was expected from the 2026-08-13 call, since a commitment that lost its owner may not have been the only one. Record the failure as well as the fix, so the gap is visible rather than quietly closed.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Tells the patient accurately that the request was never assigned or sent.",
+          "credit": 0.25,
+          "evidenceRef": "Y3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Takes named ownership on this call and acts on the releasable report.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Probes for other commitments from the same call.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Records the failure alongside the correction.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Communication, calls, and closed-loop coordination; Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000023",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-FAILURE-TO-PROBE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "b1087c74829b68c0",
+        "scenarioFingerprint": "c2a53fbb9d6efa09",
+        "competencyFingerprint": "fc61479acd86d8a7",
+        "evidenceLayoutFingerprint": "0f706d7b45f81644",
+        "answerPatternFingerprint": "39a6e5e326224fd3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-SCEN-KB002-000086",
+      "recordType": "SCENARIO",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M19"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D02"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SCENARIO_CONTINUATION",
+      "scenarioType": "PATIENT_CALLS_BACK__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Scenario continuation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000023#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "Y1",
+            "text": "2026-09-01: patient asked for a copy of a report; coordinator recorded the request and said it would be sent within three days.",
+            "section": "Thread",
+            "recordedBy": "B. Tkachenko",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "Y2",
+            "text": "No further entry appears, and the patient says nothing has arrived.",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "Y4",
+            "text": "The report exists and is releasable to the patient under the practice's stated rules for this scenario.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "Y3",
+            "text": "the thread holds no record of the report being sent and no record of anyone being assigned to send it, so the commitment was made and never given an owner",
+            "section": "Thread",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Nikolai Adebayo-Frisk",
+        "encounterLabel": "Marbury Heights Clinic — patient portal message",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "Nikolai Adebayo-Frisk (MRN SYN-8836) is calling back about an unresolved request. What does B. Tkachenko do? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Say it was never assigned or sent, take ownership now, act on the report, probe for other commitments, and record the failure.",
+          "why": "Correct: it is accurate to the patient, closes the loop with a named owner, and leaves the defect visible."
+        },
+        {
+          "id": "c",
+          "text": "Apologise for the delay, say the report is in progress, and promise it within three days.",
+          "why": "Nothing is in progress. It repeats an unowned commitment and misstates the position to the patient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Send the report now and close the item without recording why it was late.",
+          "why": "The fix is right and the defect disappears, so the same loss of ownership recurs unexamined.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Tell Nikolai Adebayo-Frisk plainly that the request was recorded, never assigned and never sent — do not imply it is in progress. Take ownership of it on this call, send the releasable report or start the release now, and give a specific commitment you can keep. Probe whether anything else was expected from the 2026-09-01 call, since a commitment that lost its owner may not have been the only one. Record the failure as well as the fix, so the gap is visible rather than quietly closed.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Tells the patient accurately that the request was never assigned or sent.",
+          "credit": 0.25,
+          "evidenceRef": "Y3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Takes named ownership on this call and acts on the releasable report.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Probes for other commitments from the same call.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Records the failure alongside the correction.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-SCEN-KB002-000085",
+      "variantOf": "KB-SCEN-KB002-000085",
+      "templateId": "KB-VART-KB002-000023",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-SCEN-KB002-000085"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "B. Tkachenko",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "dfe444efb9d57d81",
+        "scenarioFingerprint": "eb891f6058ef7a6f",
+        "competencyFingerprint": "fc61479acd86d8a7",
+        "evidenceLayoutFingerprint": "783160cacf9ccc43",
+        "answerPatternFingerprint": "78cbcf16c3fc44f3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-SCEN-KB002-000087",
+      "recordType": "SCENARIO",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M19"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D02"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SCENARIO_CONTINUATION",
+      "scenarioType": "PATIENT_CALLS_BACK__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Scenario continuation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000023#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "Y3",
+            "text": "Routine reconciliation note from C. Oyedepo-Mansur: demographics confirmed, card image legible, and — the thread holds no record of the report being sent and no record of anyone being assigned to send it, so the commitment was made and never given an owner — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "Y1",
+            "text": "2026-11-05: patient asked for a copy of a report; coordinator recorded the request and said it would be sent within three days.",
+            "section": "Thread",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "Y2",
+            "text": "No further entry appears, and the patient says nothing has arrived.",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "Y4",
+            "text": "The report exists and is releasable to the patient under the practice's stated rules for this scenario.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Odalys Mwangi-Bergström",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "Odalys Mwangi-Bergström (MRN SYN-5019) is calling back about an unresolved request. What does C. Oyedepo-Mansur do? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Apologise for the delay, say the report is in progress, and promise it within three days.",
+          "why": "Nothing is in progress. It repeats an unowned commitment and misstates the position to the patient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Say it was never assigned or sent, take ownership now, act on the report, probe for other commitments, and record the failure.",
+          "why": "Correct: it is accurate to the patient, closes the loop with a named owner, and leaves the defect visible."
+        },
+        {
+          "id": "d",
+          "text": "Send the report now and close the item without recording why it was late.",
+          "why": "The fix is right and the defect disappears, so the same loss of ownership recurs unexamined.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Tell Odalys Mwangi-Bergström plainly that the request was recorded, never assigned and never sent — do not imply it is in progress. Take ownership of it on this call, send the releasable report or start the release now, and give a specific commitment you can keep. Probe whether anything else was expected from the 2026-11-05 call, since a commitment that lost its owner may not have been the only one. Record the failure as well as the fix, so the gap is visible rather than quietly closed.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Tells the patient accurately that the request was never assigned or sent.",
+          "credit": 0.25,
+          "evidenceRef": "Y3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Takes named ownership on this call and acts on the releasable report.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Probes for other commitments from the same call.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Records the failure alongside the correction.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-SCEN-KB002-000085",
+      "variantOf": "KB-SCEN-KB002-000085",
+      "templateId": "KB-VART-KB002-000023",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-SCEN-KB002-000085"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "47b57bcddaf49710",
+        "scenarioFingerprint": "e05cff6baefdc52c",
+        "competencyFingerprint": "fc61479acd86d8a7",
+        "evidenceLayoutFingerprint": "31bc97a9a9acc3f2",
+        "answerPatternFingerprint": "ff161a850f96d04f"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

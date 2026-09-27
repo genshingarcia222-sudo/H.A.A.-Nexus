@@ -1,0 +1,735 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000017",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000065",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "EASY",
+      "taskType": "PRIOR_AUTHORIZATION",
+      "scenarioType": "AUTHORIZATION_VALIDITY_WINDOW",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prior authorisation workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000017#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "A1",
+            "text": "Sablefield Mutual Health authorisation on file for the requested procedure, approved and recorded as active, reference SYN-AUTH-4471.",
+            "section": "Authorisation",
+            "decisive": false
+          },
+          {
+            "ref": "A2",
+            "text": "the authorisation's stated validity window for this scenario ends 2026-09-03, and the requested date of 2026-09-10 falls after it",
+            "section": "Authorisation",
+            "decisive": true
+          },
+          {
+            "ref": "A3",
+            "text": "2026-09-10 is the first date the proceduralist has available.",
+            "section": "Schedule",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ulyana Sørensen-Adeyemi",
+        "encounterLabel": "Quietwater Family Health — secure internal message",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "M. Okonjo is checking authorisation before booking a procedure for Ulyana Sørensen-Adeyemi (MRN SYN-1394). Can it be booked for 2026-09-10?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Do not book 2026-09-10: secure a new or extended authorisation, or use a date inside the window.",
+          "why": "Correct: an active authorisation still only covers dates inside its window."
+        },
+        {
+          "id": "b",
+          "text": "Book it: the authorisation is on file and recorded as active.",
+          "why": "Active status is not date cover. This is precisely the stale-authority trap.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "c",
+          "text": "Book 2026-09-10 and request an extension from Sablefield Mutual Health in parallel.",
+          "why": "It commits the patient to a date with no authorisation in force and shifts the risk onto them.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Book 2026-09-10 under the existing reference, noting the window in the comments.",
+          "why": "A comment does not extend a window, and the reference does not cover the date.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "It cannot be booked for 2026-09-10 on this authorisation. State that the authorisation, though marked active, expires 2026-09-03, and the requested date falls outside the window. Either secure an extension or a new authorisation from Sablefield Mutual Health before booking, or find a date inside the window. Do not book on the strength of the active status, and do not book and pursue the authorisation afterwards.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that the requested date falls outside the authorisation's validity window.",
+          "credit": 0.34,
+          "evidenceRef": "A2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Distinguishes an active status from cover for the requested date.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Names the two defensible routes: a new or extended authorisation, or a date inside the window.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000017",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "a586a31ece6a5575",
+        "scenarioFingerprint": "c62cc7b7038d2b35",
+        "competencyFingerprint": "2122e4601381c2ea",
+        "evidenceLayoutFingerprint": "16493ff542c34a9e",
+        "answerPatternFingerprint": "ea65ab713b2b5bad"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000066",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "EASY",
+      "taskType": "PRIOR_AUTHORIZATION",
+      "scenarioType": "AUTHORIZATION_VALIDITY_WINDOW__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prior authorisation workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000017#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "A1",
+            "text": "Thornwood Regional Care authorisation on file for the requested procedure, approved and recorded as active, reference SYN-AUTH-4471.",
+            "section": "Authorisation",
+            "decisive": false
+          },
+          {
+            "ref": "A3",
+            "text": "2026-09-29 is the first date the proceduralist has available.",
+            "section": "Schedule",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "A2",
+            "text": "the authorisation's stated validity window for this scenario ends 2026-09-22, and the requested date of 2026-09-29 falls after it",
+            "section": "Authorisation",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Vikram Oyinlola-Haugen",
+        "encounterLabel": "Marbury Heights Clinic — walk-in at the front desk",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "R. Skibinski is checking authorisation before booking a procedure for Vikram Oyinlola-Haugen (MRN SYN-8250). Can it be booked for 2026-09-29? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Do not book 2026-09-29: secure a new or extended authorisation, or use a date inside the window.",
+          "why": "Correct: an active authorisation still only covers dates inside its window."
+        },
+        {
+          "id": "c",
+          "text": "Book it: the authorisation is on file and recorded as active.",
+          "why": "Active status is not date cover. This is precisely the stale-authority trap.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "d",
+          "text": "Book 2026-09-29 and request an extension from Thornwood Regional Care in parallel.",
+          "why": "It commits the patient to a date with no authorisation in force and shifts the risk onto them.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "It cannot be booked for 2026-09-29 on this authorisation. State that the authorisation, though marked active, expires 2026-09-22, and the requested date falls outside the window. Either secure an extension or a new authorisation from Thornwood Regional Care before booking, or find a date inside the window. Do not book on the strength of the active status, and do not book and pursue the authorisation afterwards.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that the requested date falls outside the authorisation's validity window.",
+          "credit": 0.34,
+          "evidenceRef": "A2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Distinguishes an active status from cover for the requested date.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Names the two defensible routes: a new or extended authorisation, or a date inside the window.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000065",
+      "variantOf": "KB-WFLW-KB002-000065",
+      "templateId": "KB-VART-KB002-000017",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000065"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "206f2c2ca97d1d17",
+        "scenarioFingerprint": "28987490696b225b",
+        "competencyFingerprint": "2122e4601381c2ea",
+        "evidenceLayoutFingerprint": "5b3d829bf6dcb54b",
+        "answerPatternFingerprint": "96306b0d1856f921"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000067",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "EASY",
+      "taskType": "PRIOR_AUTHORIZATION",
+      "scenarioType": "AUTHORIZATION_VALIDITY_WINDOW__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prior authorisation workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000017#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound telephone call. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "A2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the authorisation's stated validity window for this scenario ends 2026-11-26, and the requested date of 2026-12-03 falls after it — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "A1",
+            "text": "Kestrel Public Option authorisation on file for the requested procedure, approved and recorded as active, reference SYN-AUTH-4471.",
+            "section": "Authorisation",
+            "decisive": false
+          },
+          {
+            "ref": "A3",
+            "text": "2026-12-03 is the first date the proceduralist has available.",
+            "section": "Schedule",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Wilhelmina Acheampong",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "T. Alvarado-Ng is checking authorisation before booking a procedure for Wilhelmina Acheampong (MRN SYN-5827). Can it be booked for 2026-12-03? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Book it: the authorisation is on file and recorded as active.",
+          "why": "Active status is not date cover. This is precisely the stale-authority trap.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Do not book 2026-12-03: secure a new or extended authorisation, or use a date inside the window.",
+          "why": "Correct: an active authorisation still only covers dates inside its window."
+        },
+        {
+          "id": "d",
+          "text": "Book 2026-12-03 and request an extension from Kestrel Public Option in parallel.",
+          "why": "It commits the patient to a date with no authorisation in force and shifts the risk onto them.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "It cannot be booked for 2026-12-03 on this authorisation. State that the authorisation, though marked active, expires 2026-11-26, and the requested date falls outside the window. Either secure an extension or a new authorisation from Kestrel Public Option before booking, or find a date inside the window. Do not book on the strength of the active status, and do not book and pursue the authorisation afterwards.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that the requested date falls outside the authorisation's validity window.",
+          "credit": 0.34,
+          "evidenceRef": "A2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Distinguishes an active status from cover for the requested date.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Names the two defensible routes: a new or extended authorisation, or a date inside the window.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000065",
+      "variantOf": "KB-WFLW-KB002-000065",
+      "templateId": "KB-VART-KB002-000017",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000065"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "c5672ee86729ab58",
+        "scenarioFingerprint": "53bf693027faf57b",
+        "competencyFingerprint": "2122e4601381c2ea",
+        "evidenceLayoutFingerprint": "e91f547b9a1a9913",
+        "answerPatternFingerprint": "7947f3f5450ca0ef"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000068",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "PRIOR_AUTHORIZATION",
+      "scenarioType": "AUTHORIZATION_VALIDITY_WINDOW__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prior authorisation workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000017"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000017#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "A1",
+            "text": "Meridian Health Plan authorisation on file for the requested procedure, approved and recorded as active, reference SYN-AUTH-4471.",
+            "section": "Authorisation",
+            "decisive": true
+          },
+          {
+            "ref": "A3",
+            "text": "2027-01-05 is the first date the proceduralist has available.",
+            "section": "Schedule",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Xavier Rautenbach-Ejiofor",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "L. Haverford is checking authorisation before booking a procedure for Xavier Rautenbach-Ejiofor (MRN SYN-2963). Can it be booked for 2027-01-05? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Book it: the authorisation is on file and recorded as active.",
+          "why": "Active status is not date cover. This is precisely the stale-authority trap.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Do not book 2027-01-05: secure a new or extended authorisation, or use a date inside the window.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that the date the authorisation's validity window ends is not in the record, request it from Dr. Dmitri Ogunsanya-Holt, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (the date the authorisation's validity window ends), name Dr. Dmitri Ogunsanya-Holt as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"the date the authorisation's validity window ends\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "A1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000065",
+      "variantOf": "KB-WFLW-KB002-000065",
+      "templateId": "KB-VART-KB002-000017",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000065"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "0bb7b2da563e1368",
+        "scenarioFingerprint": "fd01b75d11e954ed",
+        "competencyFingerprint": "22e0fcd30660e842",
+        "evidenceLayoutFingerprint": "3cd72dead0eebd82",
+        "answerPatternFingerprint": "26927c3b42e269ec"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

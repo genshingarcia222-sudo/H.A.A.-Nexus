@@ -1,0 +1,745 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000013",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-COMM-KB002-000049",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "HANDOFF",
+      "scenarioType": "SHIFT_CHANGE_OPEN_ITEM",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Handoffs and team coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000013"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000013#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "HANDOFF_STATE",
+        "lines": [
+          {
+            "ref": "H1",
+            "text": "One open item: a callback promised to the patient today about the 2027-01-14 referral, not yet made.",
+            "section": "Open items",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "H2",
+            "text": "the handoff format stated for this scenario requires each open item to name what was promised, to whom, by when, what has been done, and the person accepting it, and an item with no named acceptor is not handed off",
+            "section": "Handoff rule",
+            "decisive": true
+          },
+          {
+            "ref": "H3",
+            "text": "Dr. Anwuli Steensgaard is in clinic; the incoming coordinator starts in fifteen minutes.",
+            "section": "Staffing",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "H. Ezeagwula-Roth's shift ends in ten minutes. What must the handoff for Emeka Solberg (MRN SYN-5647) contain?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Write the item out in full and have a named person accept it before the shift ends.",
+          "why": "Correct: the stated format makes acceptance by a named person the thing that completes a handoff."
+        },
+        {
+          "id": "b",
+          "text": "Add the callback to the shared open-items list for the incoming shift to pick up.",
+          "why": "A shared list names no acceptor, which the stated format treats as not handed off.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Leave a note on the incoming coordinator's desk with the patient's name and number.",
+          "why": "A note is not an acceptance, and it omits what was promised and by when.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Make the callback now, whatever else is outstanding, so nothing needs handing off.",
+          "why": "It may not be possible in ten minutes, and it treats the handoff rule as avoidable rather than as the safeguard.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Write the item out in full: the callback promised to Emeka Solberg today about the 2027-01-14 referral, that it has not been made, and what remains to be said. Then get the incoming coordinator to accept it by name, because the stated format treats an unaccepted item as not handed off. If the shift ends before they arrive, the item goes to a named person who is present, not into a shared list. Do not leave it in a queue and do not mark it handed off without an acceptor.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States the promise, the recipient, the deadline and what has been done so far.",
+          "credit": 0.34,
+          "evidenceRef": "H2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the person accepting the item, rather than leaving it in a shared queue.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Provides for the case where the incoming coordinator has not yet arrived.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000013",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "90d8b24215dbd9e1",
+        "scenarioFingerprint": "b423bc48465614cc",
+        "competencyFingerprint": "4bf02ed7d61fda7d",
+        "evidenceLayoutFingerprint": "2f69ed8ea4f87b9c",
+        "answerPatternFingerprint": "9712f0792132dc8e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000050",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "HANDOFF",
+      "scenarioType": "SHIFT_CHANGE_OPEN_ITEM__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Handoffs and team coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000013"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000013#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "HANDOFF_STATE",
+        "lines": [
+          {
+            "ref": "H1",
+            "text": "One open item: a callback promised to the patient today about the 2027-02-23 referral, not yet made.",
+            "section": "Open items",
+            "recordedBy": "J. Marchesini-Ola",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "H3",
+            "text": "Dr. Basim Oyeleke-Nyström is in clinic; the incoming coordinator starts in fifteen minutes.",
+            "section": "Staffing",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "H2",
+            "text": "the handoff format stated for this scenario requires each open item to name what was promised, to whom, by when, what has been done, and the person accepting it, and an item with no named acceptor is not handed off",
+            "section": "Handoff rule",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "J. Marchesini-Ola's shift ends in ten minutes. What must the handoff for Fenella Quintanilla (MRN SYN-2914) contain? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Write the item out in full and have a named person accept it before the shift ends.",
+          "why": "Correct: the stated format makes acceptance by a named person the thing that completes a handoff."
+        },
+        {
+          "id": "c",
+          "text": "Add the callback to the shared open-items list for the incoming shift to pick up.",
+          "why": "A shared list names no acceptor, which the stated format treats as not handed off.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Leave a note on the incoming coordinator's desk with the patient's name and number.",
+          "why": "A note is not an acceptance, and it omits what was promised and by when.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Write the item out in full: the callback promised to Fenella Quintanilla today about the 2027-02-23 referral, that it has not been made, and what remains to be said. Then get the incoming coordinator to accept it by name, because the stated format treats an unaccepted item as not handed off. If the shift ends before they arrive, the item goes to a named person who is present, not into a shared list. Do not leave it in a queue and do not mark it handed off without an acceptor.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States the promise, the recipient, the deadline and what has been done so far.",
+          "credit": 0.34,
+          "evidenceRef": "H2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the person accepting the item, rather than leaving it in a shared queue.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Provides for the case where the incoming coordinator has not yet arrived.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000049",
+      "variantOf": "KB-COMM-KB002-000049",
+      "templateId": "KB-VART-KB002-000013",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "dfbb63562bc8734c",
+        "scenarioFingerprint": "051cef87de6a76b8",
+        "competencyFingerprint": "4bf02ed7d61fda7d",
+        "evidenceLayoutFingerprint": "21fa9d75095985e1",
+        "answerPatternFingerprint": "3d189d0ee781e1ba"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000051",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "HANDOFF",
+      "scenarioType": "SHIFT_CHANGE_OPEN_ITEM__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Handoffs and team coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000013"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000013#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "HANDOFF_STATE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "H2",
+            "text": "Routine reconciliation note from M. Okonjo: demographics confirmed, card image legible, and — the handoff format stated for this scenario requires each open item to name what was promised, to whom, by when, what has been done, and the person accepting it, and an item with no named acceptor is not handed off — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "H1",
+            "text": "One open item: a callback promised to the patient today about the 2026-02-09 referral, not yet made.",
+            "section": "Open items",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "H3",
+            "text": "Dr. Coralie Abimbola-Wexler is in clinic; the incoming coordinator starts in fifteen minutes.",
+            "section": "Staffing",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Willowbank Primary Care — inbound fax",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "M. Okonjo's shift ends in ten minutes. What must the handoff for Gideon Marchetti-Oyelaran (MRN SYN-6073) contain? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add the callback to the shared open-items list for the incoming shift to pick up.",
+          "why": "A shared list names no acceptor, which the stated format treats as not handed off.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Write the item out in full and have a named person accept it before the shift ends.",
+          "why": "Correct: the stated format makes acceptance by a named person the thing that completes a handoff."
+        },
+        {
+          "id": "d",
+          "text": "Leave a note on the incoming coordinator's desk with the patient's name and number.",
+          "why": "A note is not an acceptance, and it omits what was promised and by when.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Write the item out in full: the callback promised to Gideon Marchetti-Oyelaran today about the 2026-02-09 referral, that it has not been made, and what remains to be said. Then get the incoming coordinator to accept it by name, because the stated format treats an unaccepted item as not handed off. If the shift ends before they arrive, the item goes to a named person who is present, not into a shared list. Do not leave it in a queue and do not mark it handed off without an acceptor.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States the promise, the recipient, the deadline and what has been done so far.",
+          "credit": 0.34,
+          "evidenceRef": "H2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the person accepting the item, rather than leaving it in a shared queue.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Provides for the case where the incoming coordinator has not yet arrived.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000049",
+      "variantOf": "KB-COMM-KB002-000049",
+      "templateId": "KB-VART-KB002-000013",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "fa42bce3a7cdda86",
+        "scenarioFingerprint": "c18ce2653243a012",
+        "competencyFingerprint": "4bf02ed7d61fda7d",
+        "evidenceLayoutFingerprint": "6fbcd78c3fe2c150",
+        "answerPatternFingerprint": "d6ba6b13fad5bf12"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000052",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "HANDOFF",
+      "scenarioType": "SHIFT_CHANGE_OPEN_ITEM__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Handoffs and team coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000013"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000013#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "HANDOFF_STATE",
+        "lines": [
+          {
+            "ref": "H1",
+            "text": "One open item: a callback promised to the patient today about the 2026-03-17 referral, not yet made.",
+            "section": "Open items",
+            "recordedBy": "R. Skibinski",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "H3",
+            "text": "Dr. Dmitri Ogunsanya-Holt is in clinic; the incoming coordinator starts in fifteen minutes.",
+            "section": "Staffing",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Ashcombe Multispecialty Group — voicemail",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "R. Skibinski's shift ends in ten minutes. What must the handoff for Halina Berkovits (MRN SYN-1528) contain? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add the callback to the shared open-items list for the incoming shift to pick up.",
+          "why": "A shared list names no acceptor, which the stated format treats as not handed off.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Write the item out in full and have a named person accept it before the shift ends.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that who is accepting the open item at the shift change is not in the record, request it from Dr. Dmitri Ogunsanya-Holt, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (who is accepting the open item at the shift change), name Dr. Dmitri Ogunsanya-Holt as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"who is accepting the open item at the shift change\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "H1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000049",
+      "variantOf": "KB-COMM-KB002-000049",
+      "templateId": "KB-VART-KB002-000013",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000049"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "a001dbfc57867df1",
+        "scenarioFingerprint": "357e7aae05799760",
+        "competencyFingerprint": "c13242c26e29d527",
+        "evidenceLayoutFingerprint": "b1d25660425013ad",
+        "answerPatternFingerprint": "ff5a930a112b42b3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

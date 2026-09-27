@@ -1,0 +1,813 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000002",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-COMM-KB002-000005",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D03",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D03",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CALL_PROBING",
+      "scenarioType": "RED_FLAG_DURING_SCHEDULING",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling and escalation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000002#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Caller asks to move the 2026-09-10 appointment with Dr. Esperanza Nkemdirim to a later week because of a work conflict.",
+            "section": "Call",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "mid-call the patient adds, unprompted, that they have had a squeezing pressure across the chest for two days that comes on when they climb stairs and eases when they stop",
+            "section": "Call",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "This queue is a scheduling role. It may not assess a symptom, offer reassurance about one, or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Quilla Nakashima-Obi",
+        "encounterLabel": "Quietwater Family Health — secure internal message",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "F. Adegboyega is taking a routine rescheduling call from Quilla Nakashima-Obi (MRN SYN-3168). What must happen before the call ends?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold the call, tell the patient this needs a clinician now, hand it to Dr. Esperanza Nkemdirim or the covering clinician before ending, and record the words used and the handoff.",
+          "why": "Correct: escalation precedes the administrative task, and the handoff is named and recorded."
+        },
+        {
+          "id": "b",
+          "text": "Complete the reschedule the patient asked for, then send a message to Dr. Esperanza Nkemdirim noting what was mentioned.",
+          "why": "It puts the administrative task ahead of the escalation and leaves the symptom sitting in a queue. The patient is also off the line by then.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "c",
+          "text": "Tell the patient that stair-related chest pressure is usually muscular and to raise it at the rescheduled visit.",
+          "why": "That is a clinical assessment and a reassurance, both outside a scheduling role, and it converts an escalation into a delay.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Advise the patient to hang up and call emergency services, then close the call.",
+          "why": "Deciding the level of urgency is itself a clinical judgement this role may not make, and closing the call ends the loop with no named owner.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Stop treating this as a scheduling call. Keep Quilla Nakashima-Obi on the line, tell them plainly that what they have described needs a clinician now rather than at a future appointment, and get it to a named clinician — Dr. Esperanza Nkemdirim or whoever is covering — before the call ends. Do not reschedule first and escalate afterwards, and do not characterise the symptom, rate its urgency, or reassure them that it can wait. Record what was said in the patient's own words, who it was handed to, and when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Recognises the volunteered statement as the reason the call changes, not an aside.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Gets it to a named clinician before the call ends, rather than completing the reschedule first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the patient's own words, the recipient and the time, closing the loop.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Offers no assessment, threshold or reassurance about the symptom.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Safety, red flags, and escalation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000002",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "Dr. Esperanza Nkemdirim",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "38cc7992085c7cb2",
+        "scenarioFingerprint": "388e8ababd53233f",
+        "competencyFingerprint": "1340d3923a1f84f5",
+        "evidenceLayoutFingerprint": "4ef5e38659efd38d",
+        "answerPatternFingerprint": "afdd9208283c6918"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000006",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D03",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D03",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CALL_PROBING",
+      "scenarioType": "RED_FLAG_DURING_SCHEDULING__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling and escalation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000002#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Caller asks to move the 2026-09-29 appointment with Dr. Fionnuala Adeoti-Krause to a later week because of a work conflict.",
+            "section": "Call",
+            "recordedBy": "G. Hallgrimsdottir",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "S3",
+            "text": "This queue is a scheduling role. It may not assess a symptom, offer reassurance about one, or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "mid-call the patient adds, unprompted, that they have had a squeezing pressure across the chest for two days that comes on when they climb stairs and eases when they stop",
+            "section": "Call",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Rasheed Vondracek",
+        "encounterLabel": "Marbury Heights Clinic — walk-in at the front desk",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "G. Hallgrimsdottir is taking a routine rescheduling call from Rasheed Vondracek (MRN SYN-9503). What must happen before the call ends? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Hold the call, tell the patient this needs a clinician now, hand it to Dr. Fionnuala Adeoti-Krause or the covering clinician before ending, and record the words used and the handoff.",
+          "why": "Correct: escalation precedes the administrative task, and the handoff is named and recorded."
+        },
+        {
+          "id": "c",
+          "text": "Complete the reschedule the patient asked for, then send a message to Dr. Fionnuala Adeoti-Krause noting what was mentioned.",
+          "why": "It puts the administrative task ahead of the escalation and leaves the symptom sitting in a queue. The patient is also off the line by then.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Tell the patient that stair-related chest pressure is usually muscular and to raise it at the rescheduled visit.",
+          "why": "That is a clinical assessment and a reassurance, both outside a scheduling role, and it converts an escalation into a delay.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Stop treating this as a scheduling call. Keep Rasheed Vondracek on the line, tell them plainly that what they have described needs a clinician now rather than at a future appointment, and get it to a named clinician — Dr. Fionnuala Adeoti-Krause or whoever is covering — before the call ends. Do not reschedule first and escalate afterwards, and do not characterise the symptom, rate its urgency, or reassure them that it can wait. Record what was said in the patient's own words, who it was handed to, and when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Recognises the volunteered statement as the reason the call changes, not an aside.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Gets it to a named clinician before the call ends, rather than completing the reschedule first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the patient's own words, the recipient and the time, closing the loop.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Offers no assessment, threshold or reassurance about the symptom.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Safety, red flags, and escalation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000005",
+      "variantOf": "KB-COMM-KB002-000005",
+      "templateId": "KB-VART-KB002-000002",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000005"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "Dr. Fionnuala Adeoti-Krause",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "65bd3fa09e02af9e",
+        "scenarioFingerprint": "2cfdfaf5165bed8f",
+        "competencyFingerprint": "1340d3923a1f84f5",
+        "evidenceLayoutFingerprint": "39ed600420cf9cd1",
+        "answerPatternFingerprint": "3236dd8bd8acc0d2"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000007",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D03",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D03",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CALL_PROBING",
+      "scenarioType": "RED_FLAG_DURING_SCHEDULING__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling and escalation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000002#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound telephone call. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "S2",
+            "text": "Routine reconciliation note from H. Ezeagwula-Roth: demographics confirmed, card image legible, and — mid-call the patient adds, unprompted, that they have had a squeezing pressure across the chest for two days that comes on when they climb stairs and eases when they stop — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "S1",
+            "text": "Caller asks to move the 2026-12-03 appointment with NP Gustavo Ihejirika to a later week because of a work conflict.",
+            "section": "Call",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "S3",
+            "text": "This queue is a scheduling role. It may not assess a symptom, offer reassurance about one, or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Sunniva Balogun-Reith",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "H. Ezeagwula-Roth is taking a routine rescheduling call from Sunniva Balogun-Reith (MRN SYN-4275). What must happen before the call ends? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Complete the reschedule the patient asked for, then send a message to NP Gustavo Ihejirika noting what was mentioned.",
+          "why": "It puts the administrative task ahead of the escalation and leaves the symptom sitting in a queue. The patient is also off the line by then.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Hold the call, tell the patient this needs a clinician now, hand it to NP Gustavo Ihejirika or the covering clinician before ending, and record the words used and the handoff.",
+          "why": "Correct: escalation precedes the administrative task, and the handoff is named and recorded."
+        },
+        {
+          "id": "d",
+          "text": "Tell the patient that stair-related chest pressure is usually muscular and to raise it at the rescheduled visit.",
+          "why": "That is a clinical assessment and a reassurance, both outside a scheduling role, and it converts an escalation into a delay.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Stop treating this as a scheduling call. Keep Sunniva Balogun-Reith on the line, tell them plainly that what they have described needs a clinician now rather than at a future appointment, and get it to a named clinician — NP Gustavo Ihejirika or whoever is covering — before the call ends. Do not reschedule first and escalate afterwards, and do not characterise the symptom, rate its urgency, or reassure them that it can wait. Record what was said in the patient's own words, who it was handed to, and when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Recognises the volunteered statement as the reason the call changes, not an aside.",
+          "credit": 0.25,
+          "evidenceRef": "S2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Gets it to a named clinician before the call ends, rather than completing the reschedule first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the patient's own words, the recipient and the time, closing the loop.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Offers no assessment, threshold or reassurance about the symptom.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Safety, red flags, and escalation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000005",
+      "variantOf": "KB-COMM-KB002-000005",
+      "templateId": "KB-VART-KB002-000002",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000005"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "NP Gustavo Ihejirika",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "b062ef1314c1b4a1",
+        "scenarioFingerprint": "af3d1d392d241f36",
+        "competencyFingerprint": "1340d3923a1f84f5",
+        "evidenceLayoutFingerprint": "418dc264c81cfc63",
+        "answerPatternFingerprint": "868a38ee313c9c55"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000008",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D03",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D03",
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CALL_PROBING",
+      "scenarioType": "RED_FLAG_DURING_SCHEDULING__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Call handling and escalation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000002"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000002#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "S1",
+            "text": "Caller asks to move the 2027-01-05 appointment with PA Hyacinth Obuya-Lindfors to a later week because of a work conflict.",
+            "section": "Call",
+            "recordedBy": "J. Marchesini-Ola",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "S3",
+            "text": "This queue is a scheduling role. It may not assess a symptom, offer reassurance about one, or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Thaddeus Iwuchukwu",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "J. Marchesini-Ola is taking a routine rescheduling call from Thaddeus Iwuchukwu (MRN SYN-7681). What must happen before the call ends? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Complete the reschedule the patient asked for, then send a message to PA Hyacinth Obuya-Lindfors noting what was mentioned.",
+          "why": "It puts the administrative task ahead of the escalation and leaves the symptom sitting in a queue. The patient is also off the line by then.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Hold the call, tell the patient this needs a clinician now, hand it to PA Hyacinth Obuya-Lindfors or the covering clinician before ending, and record the words used and the handoff.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which clinician is available now to receive the escalation is not in the record, request it from PA Hyacinth Obuya-Lindfors, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which clinician is available now to receive the escalation), name PA Hyacinth Obuya-Lindfors as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which clinician is available now to receive the escalation\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Safety, red flags, and escalation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000005",
+      "variantOf": "KB-COMM-KB002-000005",
+      "templateId": "KB-VART-KB002-000002",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000005"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "PA Hyacinth Obuya-Lindfors",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "059afb399e73065f",
+        "scenarioFingerprint": "e265af476a304748",
+        "competencyFingerprint": "816e81d5b9eb5a07",
+        "evidenceLayoutFingerprint": "4ed1957e682f59f3",
+        "answerPatternFingerprint": "86969230345a2125"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

@@ -1,0 +1,572 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000020",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000076",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D06",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "INFORMATION_GAP",
+      "scenarioType": "GAP_WITH_COMPETING_PRESSURE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral completeness",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000020"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000020#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "W1",
+            "text": "Referral reason, the 2026-09-01 note and the medication list are attached and current.",
+            "section": "Packet",
+            "decisive": false
+          },
+          {
+            "ref": "W2",
+            "text": "The receiving office holds one slot this week and has asked for the packet by end of day to hold it.",
+            "section": "Receiving office",
+            "decisive": false
+          },
+          {
+            "ref": "W3",
+            "text": "the note's plan depends on a specialist opinion the packet does not contain, and the receiving office's stated intake rule for this scenario rejects a packet whose referral reason cites a document that is absent",
+            "section": "Packet",
+            "decisive": true
+          },
+          {
+            "ref": "W4",
+            "text": "Dr. Ngozi Brandtsen is in clinic today and can be reached.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Marbury Heights Clinic — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "G. Hallgrimsdottir must decide what to do with a referral for Delphine Achterberg (MRN SYN-8102) today. What is missing, and what follows from that?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send the packet with the referral reason rewritten so it no longer cites the absent document.",
+          "why": "That edits the clinical reason for the referral to defeat an intake check. The dependency is real.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "b",
+          "text": "Send the packet now to hold the slot and forward the specialist opinion when it arrives.",
+          "why": "The stated intake rule rejects exactly this packet, so the slot is lost anyway and a day is wasted.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "c",
+          "text": "Hold the packet until the opinion arrives and re-request a slot when it is complete.",
+          "why": "It gives up a slot that is still open today without attempting the one action that could keep it.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "d",
+          "text": "Request the missing opinion from Dr. Ngozi Brandtsen today and tell the receiving office the packet follows with that item named.",
+          "why": "Correct: it treats the deadline as real without pretending the intake rule is negotiable."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Name the gap — the specialist opinion the referral reason depends on is not in the packet — and recognise that the deadline does not change the intake rule: a packet sent incomplete will be rejected, which loses the slot rather than securing it. Ask Dr. Ngozi Brandtsen for the missing document today, while the slot is still open, and tell the receiving office the packet is coming with a named outstanding item. Do not send the packet incomplete to meet the deadline, and do not let the slot lapse without telling anyone.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing specialist opinion and the intake rule that makes its absence fatal.",
+          "credit": 0.34,
+          "evidenceRef": "W3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Reasons that sending incomplete loses the slot rather than securing it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Acts on both fronts today: requests the document and tells the receiving office where things stand.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Orders, referrals, and fax workflows; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000020",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "3cc21ddaf3d9ac35",
+        "scenarioFingerprint": "70dc9fed4ebf4dfc",
+        "competencyFingerprint": "8330f100faa3e95a",
+        "evidenceLayoutFingerprint": "89b821ed174a7d29",
+        "answerPatternFingerprint": "b1ea08282d6c9291"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000077",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D06",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "INFORMATION_GAP",
+      "scenarioType": "GAP_WITH_COMPETING_PRESSURE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral completeness",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000020"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000020#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "W1",
+            "text": "Referral reason, the 2026-11-05 note and the medication list are attached and current.",
+            "section": "Packet",
+            "decisive": false
+          },
+          {
+            "ref": "W2",
+            "text": "The receiving office holds one slot this week and has asked for the packet by end of day to hold it.",
+            "section": "Receiving office",
+            "decisive": false
+          },
+          {
+            "ref": "W4",
+            "text": "Dr. Rurik Vandeveer is in clinic today and can be reached.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "W3",
+            "text": "the note's plan depends on a specialist opinion the packet does not contain, and the receiving office's stated intake rule for this scenario rejects a packet whose referral reason cites a document that is absent",
+            "section": "Packet",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "H. Ezeagwula-Roth must decide what to do with a referral for Emeka Solberg (MRN SYN-5647) today. What is missing, and what follows from that? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Request the missing opinion from Dr. Rurik Vandeveer today and tell the receiving office the packet follows with that item named.",
+          "why": "Correct: it treats the deadline as real without pretending the intake rule is negotiable."
+        },
+        {
+          "id": "b",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "Send the packet now to hold the slot and forward the specialist opinion when it arrives.",
+          "why": "The stated intake rule rejects exactly this packet, so the slot is lost anyway and a day is wasted.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Hold the packet until the opinion arrives and re-request a slot when it is complete.",
+          "why": "It gives up a slot that is still open today without attempting the one action that could keep it.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Name the gap — the specialist opinion the referral reason depends on is not in the packet — and recognise that the deadline does not change the intake rule: a packet sent incomplete will be rejected, which loses the slot rather than securing it. Ask Dr. Rurik Vandeveer for the missing document today, while the slot is still open, and tell the receiving office the packet is coming with a named outstanding item. Do not send the packet incomplete to meet the deadline, and do not let the slot lapse without telling anyone.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing specialist opinion and the intake rule that makes its absence fatal.",
+          "credit": 0.34,
+          "evidenceRef": "W3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Reasons that sending incomplete loses the slot rather than securing it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Acts on both fronts today: requests the document and tells the receiving office where things stand.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000076",
+      "variantOf": "KB-WFLW-KB002-000076",
+      "templateId": "KB-VART-KB002-000020",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000076"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "df8255abfdb23a81",
+        "scenarioFingerprint": "1b21811487ad5215",
+        "competencyFingerprint": "8330f100faa3e95a",
+        "evidenceLayoutFingerprint": "e7b90005c8b5cd6d",
+        "answerPatternFingerprint": "c180d0cc7787d964"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000078",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D06",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "INFORMATION_GAP",
+      "scenarioType": "GAP_WITH_COMPETING_PRESSURE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral completeness",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000020"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000020#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "W3",
+            "text": "Routine reconciliation note from J. Marchesini-Ola: demographics confirmed, card image legible, and — the note's plan depends on a specialist opinion the packet does not contain, and the receiving office's stated intake rule for this scenario rejects a packet whose referral reason cites a document that is absent — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "J. Marchesini-Ola",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "W1",
+            "text": "Referral reason, the 2026-12-08 note and the medication list are attached and current.",
+            "section": "Packet",
+            "decisive": false
+          },
+          {
+            "ref": "W2",
+            "text": "The receiving office holds one slot this week and has asked for the packet by end of day to hold it.",
+            "section": "Receiving office",
+            "decisive": false
+          },
+          {
+            "ref": "W4",
+            "text": "Dr. Saoirse Mbeki-Lantz is in clinic today and can be reached.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "J. Marchesini-Ola must decide what to do with a referral for Fenella Quintanilla (MRN SYN-2914) today. What is missing, and what follows from that? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "b",
+          "text": "Request the missing opinion from Dr. Saoirse Mbeki-Lantz today and tell the receiving office the packet follows with that item named.",
+          "why": "Correct: it treats the deadline as real without pretending the intake rule is negotiable."
+        },
+        {
+          "id": "c",
+          "text": "Send the packet now to hold the slot and forward the specialist opinion when it arrives.",
+          "why": "The stated intake rule rejects exactly this packet, so the slot is lost anyway and a day is wasted.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Hold the packet until the opinion arrives and re-request a slot when it is complete.",
+          "why": "It gives up a slot that is still open today without attempting the one action that could keep it.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Name the gap — the specialist opinion the referral reason depends on is not in the packet — and recognise that the deadline does not change the intake rule: a packet sent incomplete will be rejected, which loses the slot rather than securing it. Ask Dr. Saoirse Mbeki-Lantz for the missing document today, while the slot is still open, and tell the receiving office the packet is coming with a named outstanding item. Do not send the packet incomplete to meet the deadline, and do not let the slot lapse without telling anyone.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing specialist opinion and the intake rule that makes its absence fatal.",
+          "credit": 0.34,
+          "evidenceRef": "W3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Reasons that sending incomplete loses the slot rather than securing it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Acts on both fronts today: requests the document and tells the receiving office where things stand.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000076",
+      "variantOf": "KB-WFLW-KB002-000076",
+      "templateId": "KB-VART-KB002-000020",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000076"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "b71635973c767f60",
+        "scenarioFingerprint": "07b47d341d3eefd4",
+        "competencyFingerprint": "8330f100faa3e95a",
+        "evidenceLayoutFingerprint": "23a8b46cf401048a",
+        "answerPatternFingerprint": "e7f76cbc092edac0"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}
