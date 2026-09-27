@@ -71,19 +71,19 @@ Consequences, in order of how often they matter:
 ```yaml nexus-state
 registry_version: 1
 S-phases-building.DEVICE-01.attached_at: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen: 2026-09-26T15:26:01.646Z
-S-phases-building.DEVICE-01.last_seen_commit: 152257f378c54ccf9535fde12481b3103909dcfa
+S-phases-building.DEVICE-01.last_seen: 2026-09-27T00:39:29.804Z
+S-phases-building.DEVICE-01.last_seen_commit: e8f0c0dfb81e9b73842aa167a5d7ec7947d25bc9
 S-phases-building.name: "PHASES BUILDING"
 S-phases-building.role: "orchestrator: authoritative phase plan, task partition, integration and conflict policy"
 S-phases-building.status: ACTIVE
-S-phases-building.control_version: P9-2026-09-26-003
+S-phases-building.control_version: P9-2026-09-27-001
 S-phases-building.branch: main
-S-phases-building.next_action: "C-02 integrated (PR #18, #19); baseline B-003 at 796c5e0; PR #3 CLEAN at 082fa95 and unmerged pending D15. All remaining work is owner-gated: D15, D16, D13, then D14 (needs D10); Phase 8 needs D8/D9/D10. DEVICE-02: record state through nexus-sync and independently audit B-003."
+S-phases-building.next_action: "D15 resolved and merged (c384ac5); P9-A satisfied. Assessment closed-book hardened (26 tests, 3 mutations killed) and exercised live; catch-all route added. Baseline B-004 at 7dcad6b. DEVICE-02 owns the Knowledgebase lane (PR #21, do not merge): D18 - which content contract the runtime ingests - is the owner decision that comes first. Remaining gates: D13, D14 (needs D10), D16, D17, D18, and D8/D9/D10 for Phase 8."
 S-phases-building.created_by: DEVICE-01
 S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
-S-phases-building.updated_at: 2026-09-26T15:26:01.646Z
-S-phases-building.revision: 3
+S-phases-building.updated_at: 2026-09-27T00:39:29.804Z
+S-phases-building.revision: 4
 S-phases-building.DEVICE-02.attached_at: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen_commit: d162b6d36f1b11873b6d60359d281fcac55b426d
@@ -101,3 +101,4 @@ it replaced. Timestamps are UTC.
 | 2026-09-26T13:11:25.551Z | UPDATE | DEVICE-01 | S-phases-building | set next_action at revision 2 |
 | 2026-09-26T14:17:11.329Z | ATTACH | DEVICE-02 | S-phases-building | attached DEVICE-02 to the session created by DEVICE-01 at revision 2; no shared field changed |
 | 2026-09-26T15:26:01.646Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 3 |
+| 2026-09-27T00:39:29.804Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 4 |
