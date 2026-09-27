@@ -94,6 +94,11 @@ also carries the Training question run (M23), Pilot Batch 001 r3 and decision
 **D12**, whose register entry exists *only on that branch*. Merging it imports a
 product decision into `main`. That is the owner's call, not a device's.
 
+**Evidence for every phase claim is in `docs/PHASES_BUILDING_LEDGER.md`**: phase
+status, the Phase 9 item table, open decisions, the Windows-readiness
+classification and the integration state, each with the command or commit that
+proves it.
+
 ## 4. Known completed checkpoints
 
 | Checkpoint | SHA | What it established |

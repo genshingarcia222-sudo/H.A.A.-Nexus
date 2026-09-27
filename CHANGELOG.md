@@ -11,6 +11,43 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## PHASES BUILDING Ledger, and a Windows-Readiness Classification (2026-09-27)
+
+**Records only. No application behaviour changed.** `docs/PHASES_BUILDING_LEDGER.md`
+is new: the evidence behind every phase claim in one place, with one rule — a
+status is only as good as the command or commit in its evidence column. The
+control document says who does what; the ledger says what is true and what proves
+it.
+
+**Phase 9 item by item**, with P9-A now **SATISFIED** (the attribute is on `main`
+with its guard test), P9-D **half done** (parity enforced, policy unwritten), and
+P9-B, P9-C and P9-E blocked on D13, D14 and D13-plus-a-legal-identity — each row
+carrying the measurement that establishes it rather than an assertion.
+
+**Windows readiness is classified rather than claimed.** Six items are *verified*
+— run on this Windows workstation, including `cargo test` 70/70, the packaging
+figures, and the cross-platform path handling (`app_data_dir().join(...)`,
+`std::env::temp_dir()` in tests, no hardcoded POSIX path in shipped code). Six are
+*statically validated*, read from configuration and not executed. Four are
+*awaiting environment-specific validation*, including one worth naming: **`tauri
+build` has not been re-run since the D15 merge**. Nothing in that merge touches
+the bundler configuration, but the artifact has not been rebuilt and measured, and
+the ledger says so instead of implying otherwise.
+
+**One finding recommended rather than executed: there is no CI.**
+`.github/workflows/` does not exist, so every check in this ledger was run by hand
+on a device — which is also how a commit made outside a session can land on `main`
+with no suite running at all. A workflow running the suites, typecheck, build,
+preflight and nexus-sync on every push would close that gap cheaply. It was **not**
+created: standing automation on the owner's account, consuming their Actions
+minutes, is their decision.
+
+**Also deliberately not changed:** `Cargo.toml` has no `[profile.release]`, so
+symbols are not stripped and LTO is off. That is a sizing choice belonging with
+the release policy **D16**, not an unrequested edit to what the product ships.
+
+---
+
 ## Route Audit — An Unknown URL Rendered Nothing At All (2026-09-27)
 
 **Found by walking the routes in a real browser**, not by reading code:
