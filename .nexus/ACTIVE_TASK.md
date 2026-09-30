@@ -49,18 +49,18 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-006
-task_name: "D8 practice and simulation resume: decide and implement"
+task_id: P9-007
+task_name: "D9 evaluation-failure behaviour: decide and implement"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-09-30T23:27:46.110Z
-last_update: 2026-09-30T23:40:22.263Z
+status: ACTIVE
+started_at: 2026-09-30T23:40:59.163Z
+last_update: 2026-09-30T23:40:59.163Z
 stale_after_hours: 12
-expected_scope: "Resolve D8 under the owner's standing decision authority: establish what happens to an interrupted practice or simulation attempt - attempt identity, time accounting, draft continuity, reload/close/navigation behaviour and the persistence boundary - and implement it. Assessment is out of scope (D6 governs it, and D17 remains open). Must not touch DEVICE-02's Knowledgebase lane or PR #21."
+expected_scope: "Resolve D9 under the owner's standing decision authority: what a learner sees when evaluation itself fails, whether the attempt may be retried, and what the failed attempt counts toward. Must not weaken the D2 live-feedback boundary or the D5 population separation, and must not touch DEVICE-02's Knowledgebase lane."
 affected_areas: "packages/nexus-core/, apps/desktop/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: b8a4ad2c61899d25d6e67588d397ec354c4a38c7
-last_commit: 965deb11336099fc84207e490f85a56d43b7e93e
+claim_commit: 7a5840b7469a65ab521b8dd48543409965bb9e88
+last_commit: 7a5840b7469a65ab521b8dd48543409965bb9e88
 handoff_required: no
 handoff_to: none
 next_action: "not recorded"
@@ -92,3 +92,4 @@ Timestamps are UTC.
 | 2026-09-30T23:25:30.457Z | RELEASE COMPLETE | DEVICE-01 | P9-005 | D16 resolved under the owner's standing authorization and implemented: docs/RELEASE_POLICY.md, tools/release/version.mjs (25 tests), the preflight format rule, the version display in Settings, and the release profile measured rather than assumed. P9-D satisfied. Baseline B-005 at fba3544. cargo fmt --check had been failing on main since the D15 merge and is fixed at 33b7398. |
 | 2026-09-30T23:27:46.110Z | CLAIM | DEVICE-01 | P9-006 | claimed |
 | 2026-09-30T23:40:22.263Z | RELEASE COMPLETE | DEVICE-01 | P9-006 | D8 resolved under the owner's standing authorization and implemented: an interrupted practice or simulation attempt is continued into a new attempt carrying its draft and its measured time, never resumed in place. Assessment excluded by mayContinueFromDraft, keeping D6 intact. Two defects fixed: the autosaved clock was zero, and the Dashboard offered to continue the live attempt. nexus-core 796/796, desktop 317/317, cargo 70/70. |
+| 2026-09-30T23:40:59.163Z | CLAIM | DEVICE-01 | P9-007 | claimed |
