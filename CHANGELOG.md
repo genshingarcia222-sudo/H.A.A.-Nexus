@@ -11,6 +11,72 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D9 — When Scoring Itself Fails (2026-10-01)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,
+the third decision closed this way after D16 and D8. An owner decision overrules
+it.
+
+**What it was.** `evaluateAttempt` was called outside `submit`'s try/catch, so a
+throw rejected the promise the Submit handler awaited. The session stayed
+`in_progress`, nothing was written, and **the learner saw no response at all to
+having pressed Submit.** `evaluation_failed` had been in `SessionStatus` and in
+the SQLite status constraint since Phase 5, and nothing produced it.
+Deterministic evaluation over validated content is why a throw is unlikely - but
+"unlikely" and "silent" together are how work gets lost.
+
+**The decision: a failed scoring is the same class of event as a failed save**,
+which Architecture Package §28 already covers - surface it as a recoverable
+error, never as silent data loss. Reusing the established rule rather than
+inventing a second one is the project's own principle, and it gives all three
+answers the register asked for at once. The learner is told; the attempt is
+retryable; and it counts toward nothing until it is actually scored.
+
+The attempt is recorded `evaluation_failed` with its draft and its timings, so
+the work survives a crash immediately afterwards. A "Not scored" notice says
+plainly that nothing has been lost and nothing counted against them. Submit is
+disabled, because the attempt is already finished and pressing it again would do
+nothing. No competency fold happens, and no analytics - there is no result to
+fold.
+
+**The retry is scored on the original time.** `evaluationSucceeded` completes
+the attempt *without* folding another interval of elapsed time into it, which
+`completeSession` would have done - a learner who retries an hour later would
+otherwise be scored as having taken an hour longer. That is the entire reason it
+is a separate transition rather than a second call to `completeSession`.
+
+**Neither Assessment boundary moves.** `mayRevealPerformance` and
+`mayAccessReferenceMaterial` both test for `completed`, so an assessment whose
+evaluation failed reveals nothing and stays closed-book. Not incidental: an open
+reference surface plus a retryable attempt is a way to look things up and score
+again. Both directions are tested, and D5's populations still separate - a
+recovered assessment folds into the assessment population and not practice.
+
+The competency fold moved out of `submit` into `foldCompetency`, because D9 gave
+an attempt a second way to finish. It is unchanged otherwise: still one atomic
+batch write, still read-then-write-once, still population-scoped.
+
+**Verified in the running application.** The evaluator was deliberately made to
+throw in the dev server: the "Not scored" notice rendered with its text, Submit
+came back disabled, "Try scoring again" was offered, and the learner's
+documentation stayed on screen. The file was then restored and checksum-verified
+byte-identical. The retry paths are covered by tests rather than by that walk.
+
+**Mutation checks.** Letting the throw escape `submit` as before, re-timing the
+attempt on a retry, folding competency for an attempt that was never scored, and
+letting a failed assessment reopen the books were each killed by the test aimed
+at them, with every file restored byte-identical.
+
+**Validation.** nexus-core **804/804** (66 files, +8), desktop **330/330** (33
+files, +13), typecheck clean, build clean, preflight **27/27** with the run
+exiting 0 and the register now recording 18 decisions, 10 blocked, 7 resolved.
+No test was deleted, weakened or skipped.
+
+**Phase 8.3's decision group is now closed.** D1 and D3–D9 are all resolved; what
+remains outside Assessment is **D10**.
+
+---
+
 ## D8 — Interrupted Practice and Simulation Attempts (2026-10-01)
 
 **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,

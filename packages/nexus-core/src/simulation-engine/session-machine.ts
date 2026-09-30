@@ -203,6 +203,33 @@ export function completeSession(session: SimulationSession, now: number): Simula
   };
 }
 
+/**
+ * The attempt was completed but scoring it threw (D9).
+ *
+ * The timings are kept exactly as `completeSession` left them. A retry must be
+ * scored on the time the learner actually took, not on the time it took them to
+ * press a button again - so nothing here touches `activeMs`, `pausedMs` or
+ * `completedAt`.
+ *
+ * `evaluation_failed` already existed in `SessionStatus` and in the SQLite
+ * status constraint, and nothing produced it. D9 is what produces it.
+ */
+export function failEvaluation(session: SimulationSession): SimulationSession {
+  assertStatus(session, ["completed", "evaluation_failed"], "record an evaluation failure for");
+  return { ...session, status: "evaluation_failed" };
+}
+
+/**
+ * Scoring succeeded on a retry (D9): the attempt is completed after all.
+ *
+ * Deliberately not `completeSession`, which would fold another interval of
+ * elapsed time into an attempt that already finished.
+ */
+export function evaluationSucceeded(session: SimulationSession): SimulationSession {
+  assertStatus(session, ["evaluation_failed", "completed"], "record a successful evaluation for");
+  return { ...session, status: "completed" };
+}
+
 export function abandonSession(session: SimulationSession): SimulationSession {
   assertStatus(session, ["in_progress", "paused", "not_started"], "abandon");
   return { ...session, status: "abandoned" };

@@ -433,8 +433,9 @@ interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
 authorized and enforced. **D3, D4, D5, D6 and D7 were all answered on
 2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them.
-D8 was answered on 2026-10-01 under the owner's standing authorization and has
-its own entry below; D9 remains open.**
+D8 and D9 were both answered on 2026-10-01 under the owner's standing
+authorization and have their own entries below. Every decision in this group is
+now resolved.**
 
 **D7 — contradictory documentation — answered 2026-09-20 under delegated
 authority.** A note that documents a pertinent negative and asserts the
@@ -574,6 +575,56 @@ Adding `revealedCount` to the record would still be speculative.
 fails (**D9**), what persists a web learner's progress (**D10**), whether an
 interrupted *Assessment* may be studied against before the retake (**D17**), and
 anything about transcript position (**A6**).
+
+---
+
+## D9 — What happens when evaluation itself fails? — **RESOLVED**
+
+**Resolved** on 2026-10-01 by **DEVICE-01 under the owner's standing decision
+authority**, not by the owner personally.
+
+| | |
+|---|---|
+| **Decision** | D9 — evaluation-failure behaviour |
+| **Selected value** | Treated exactly as a failed **save** already is: the work is never lost, the failure is visible, the attempt is retryable, and it counts toward nothing until it is actually scored |
+| **Rejected alternatives** | discarding the attempt; scoring it zero; counting it as an attempt with no result; leaving today's silence in place |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
+
+**What it was before.** `evaluateAttempt` was called outside `submit`'s
+try/catch, so a throw rejected the promise the Submit handler awaited: the
+session stayed `in_progress`, nothing was written, and **the learner saw no
+response at all to having pressed Submit.** `evaluation_failed` existed in
+`SessionStatus` and in the SQLite status constraint since Phase 5, and nothing
+produced it.
+
+**The rule, and where it comes from.** Architecture Package §28 already says a
+failed *write* must surface as a recoverable error and never as silent data
+loss. A failed *scoring* is the same class of event, and the project's own
+principle is to reuse an established rule rather than invent a second one. So:
+
+| Question the register asked | Answer |
+|---|---|
+| What the learner is told | A "Not scored" notice, in the same shape as the save-failure notice: the attempt was submitted, the documentation is saved, nothing has been counted against them, and there is no result yet |
+| Whether the attempt may be retried | Yes. "Try scoring again" re-runs evaluation on the attempt's own recorded time |
+| Whether a failed evaluation counts as an attempt | It is recorded and kept, and it counts toward **nothing** — no competency fold, no analytics. There is no result to count |
+
+**The retry is scored on the original time.** `evaluationSucceeded` completes
+the attempt without folding another interval of elapsed time into it, which
+`completeSession` would have done. A learner who retries an hour later is scored
+as having taken the minutes they actually took. That is the whole reason it is a
+separate transition.
+
+**Neither Assessment boundary moves.** `mayRevealPerformance` and
+`mayAccessReferenceMaterial` both test for `completed`, so an assessment whose
+evaluation failed reveals nothing and stays closed-book. That is not incidental:
+an open reference surface plus a retryable attempt would be a way to look things
+up and score again. Both directions are tested.
+
+**What this decision does NOT decide.** It does not make evaluation more
+reliable — deterministic evaluation over validated content is why a throw is
+unlikely — and it says nothing about a failed *save*, which §28 and the existing
+`SaveError` already cover. It does not touch **D10**.
 
 ---
 

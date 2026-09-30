@@ -4,6 +4,8 @@ import {
   pauseSession,
   resumeSession,
   completeSession,
+  evaluationSucceeded,
+  failEvaluation,
   addFlag,
   splitNarrativeIntoBeats,
   visibleBeats,
@@ -60,6 +62,12 @@ interface SessionState {
   result: EvaluationResult | null;
   /** Set when the latest save failed; cleared by the next successful save. */
   saveError: SaveError | null;
+  /**
+   * Set when scoring the attempt threw (D9). The attempt is finished and its
+   * work is saved; it simply has no result yet, and `retryEvaluation` is the
+   * way forward.
+   */
+  evaluationFailed: boolean;
 
   /**
    * Starts a session, or refuses to. Returns `true` if a session started and
@@ -78,6 +86,12 @@ interface SessionState {
   updateField: (section: keyof DocumentationDraft, value: string) => void;
   clearDraft: () => void;
   submit: () => Promise<void>;
+  /**
+   * Scores an attempt whose evaluation failed (D9). Re-runs evaluation on the
+   * attempt's own recorded time, so a retry can never earn a better
+   * `timeEfficiency` than the original submission would have.
+   */
+  retryEvaluation: () => Promise<void>;
   reset: () => void;
   /**
    * Saves the current session, draft and (once revealable) result. Called on
@@ -135,6 +149,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   revealedCount: 0,
   result: null,
   saveError: null,
+  evaluationFailed: false,
 
   start: (scenario, mode, continueFrom) => {
     // Entitlement enforcement (Phase 8.2). Every way into a session - the
@@ -259,9 +274,27 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     // because the session has just been completed; stated so that any future
     // path that evaluates earlier fails loudly for an active assessment.
     assertMayRevealPerformance(completedSession, "an evaluation");
-    const result = evaluateAttempt({ scenario, draft, activeMs: completedSession.activeMs });
 
-    set({ session: completedSession, result });
+    let result: EvaluationResult;
+    try {
+      result = evaluateAttempt({ scenario, draft, activeMs: completedSession.activeMs });
+    } catch (err) {
+      // D9: scoring threw. Before this the throw escaped `submit` and rejected
+      // the promise the Submit handler awaited - the session stayed
+      // in_progress, nothing was written, and the learner saw no response to
+      // having pressed Submit at all.
+      //
+      // The attempt is finished either way: the work is done and the clock has
+      // stopped. What it lacks is a result. So it is recorded as
+      // `evaluation_failed` with its draft and its timings, which keeps the
+      // work safe across a crash, and `retryEvaluation` is offered.
+      console.error("Evaluation failed:", err);
+      set({ session: failEvaluation(completedSession), result: null, evaluationFailed: true });
+      await get().persistDraft();
+      return;
+    }
+
+    set({ session: completedSession, result, evaluationFailed: false });
 
     try {
       await sessionRepository.save(toSessionRecord(scenario, completedSession, draft, result));
@@ -271,36 +304,37 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       set({ saveError: "submission" });
     }
 
-    // Fold this attempt's category scores into each domain's competency
-    // record. Domains here are the 7 scoring categories the evaluator
-    // actually produces per-attempt (Architecture Package Section 21 lists
-    // additional per-section domains like HPI/ROS individually, which
-    // would need the evaluator to score sections independently - a
-    // reasonable future refinement, not implemented in Phase 5).
+    await foldCompetency(completedSession, result);
+  },
+
+  retryEvaluation: async () => {
+    const { scenario, session, draft } = get();
+    if (!scenario || !session || session.status !== "evaluation_failed") return;
+
+    let result: EvaluationResult;
     try {
-      // Read and compute everything first, then write once. Folding domain by
-      // domain meant a failure partway through left this attempt counted in
-      // some domains and not others - and `submit` is idempotent, so a retry
-      // finds the session already completed and never finishes the fold. The
-      // repository writes the batch atomically (one SQLite transaction), so
-      // an attempt lands in every domain or in none.
-      // Which body of results this attempt belongs to (decision D5).
-      // Assessment and Practice are separate populations: this fold reads and
-      // writes only its own, so an assessment can never overwrite practice
-      // competency, or the reverse.
-      const population = resultPopulationFor(completedSession.mode);
-      const foldedAt = Date.now();
-      const updates = [];
-      for (const domain of COMPETENCY_DOMAINS) {
-        const existing = await competencyRepository.get(population, domain);
-        updates.push(
-          updateCompetencyRecord(existing, population, domain, result.categoryScores[domain], foldedAt)
-        );
-      }
-      await competencyRepository.upsertMany(updates);
+      // The attempt's own recorded time, not a new measurement. A retry must
+      // not be able to earn a better timeEfficiency than the submission would
+      // have, and must not be punished for the minutes spent retrying.
+      result = evaluateAttempt({ scenario, draft, activeMs: session.activeMs });
     } catch (err) {
-      console.error("Failed to update competency records:", err);
+      console.error("Evaluation failed again:", err);
+      set({ evaluationFailed: true });
+      return;
     }
+
+    const completed = evaluationSucceeded(session);
+    set({ session: completed, result, evaluationFailed: false });
+
+    try {
+      await sessionRepository.save(toSessionRecord(scenario, completed, draft, result));
+      if (get().saveError) set({ saveError: null });
+    } catch (err) {
+      console.error("Failed to save completed session:", err);
+      set({ saveError: "submission" });
+    }
+
+    await foldCompetency(completed, result);
   },
 
   reset: () => {
@@ -311,10 +345,51 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       beats: [],
       revealedCount: 0,
       result: null,
-      saveError: null
+      saveError: null,
+      evaluationFailed: false
     });
   }
 }));
+
+/**
+ * Folds one attempt's category scores into each domain's competency record.
+ *
+ * Domains here are the 7 scoring categories the evaluator actually produces
+ * per-attempt (Architecture Package Section 21 lists additional per-section
+ * domains like HPI/ROS individually, which would need the evaluator to score
+ * sections independently - a reasonable future refinement, not implemented in
+ * Phase 5).
+ *
+ * Extracted when D9 gave an attempt a second way to finish. A failed
+ * evaluation folds nothing, because there is nothing to fold; a successful
+ * retry folds exactly once, on the path that produced the result.
+ */
+async function foldCompetency(session: SimulationSession, result: EvaluationResult): Promise<void> {
+  try {
+    // Read and compute everything first, then write once. Folding domain by
+    // domain meant a failure partway through left this attempt counted in
+    // some domains and not others - and `submit` is idempotent, so a retry
+    // finds the session already completed and never finishes the fold. The
+    // repository writes the batch atomically (one SQLite transaction), so
+    // an attempt lands in every domain or in none.
+    // Which body of results this attempt belongs to (decision D5).
+    // Assessment and Practice are separate populations: this fold reads and
+    // writes only its own, so an assessment can never overwrite practice
+    // competency, or the reverse.
+    const population = resultPopulationFor(session.mode);
+    const foldedAt = Date.now();
+    const updates = [];
+    for (const domain of COMPETENCY_DOMAINS) {
+      const existing = await competencyRepository.get(population, domain);
+      updates.push(
+        updateCompetencyRecord(existing, population, domain, result.categoryScores[domain], foldedAt)
+      );
+    }
+    await competencyRepository.upsertMany(updates);
+  } catch (err) {
+    console.error("Failed to update competency records:", err);
+  }
+}
 
 export function visibleTranscriptBeats(): TranscriptBeat[] {
   const { beats, revealedCount } = useSessionStore.getState();
