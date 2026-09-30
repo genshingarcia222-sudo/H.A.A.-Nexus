@@ -25,12 +25,12 @@ repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
 current_phase: "Phase 9 - Packaging & Release Hardening (P9-A satisfied; P9-B/C/D-policy/E decision-blocked; Phase 8 is NOT closed)"
 current_milestone: "D16 resolved 2026-10-01 under the owner STANDING AUTHORIZATION (not an owner decision): docs/RELEASE_POLICY.md, tools/release/version.mjs, the version display in Settings, and the release profile measured rather than assumed. P9-D is SATISFIED, so Phase 9 now has P9-A and P9-D done and P9-B/C/E blocked on D13 and D14 (D14 needs D10). Control plane at P9-2026-10-01-001. Phase 8 steps 3-8 unstarted with D8, D9, D10 open. DEVICE-02 owns the Knowledgebase lane (PR #21, not merged, D18 first)"
-baseline_commit: 7dcad6b264d2f16ae0e9f49f0fa842ac26033293
-last_verified_commit: 7dcad6b264d2f16ae0e9f49f0fa842ac26033293
-last_verified_tests: "PASS - nexus-core 784/784, desktop 296/296, preflight 25/25, nexus-sync 81/81 (2026-09-27, DEVICE-01, baseline B-004)"
-last_verified_build: "PASS - pnpm -r build (2026-09-27, DEVICE-01, baseline B-004)"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-27, DEVICE-01, baseline B-004)"
-last_verified_rust: "PASS - cargo test 70/70, rustc 1.98.1 (2026-09-27, DEVICE-01, baseline B-004)"
+baseline_commit: fba35448eee7c2a777c465b8a78483cc3ce77335
+last_verified_commit: fba35448eee7c2a777c465b8a78483cc3ce77335
+last_verified_tests: "PASS - nexus-core 784/784, desktop 305/305, preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-01, DEVICE-01, baseline B-005)"
+last_verified_build: "PASS - pnpm -r build; cargo build --release 10,278,912 B (2026-10-01, DEVICE-01, baseline B-005)"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-01, DEVICE-01, baseline B-005)"
+last_verified_rust: "PASS - cargo test 70/70 and cargo fmt --check clean, rustc 1.98.1 (2026-10-01, DEVICE-01, baseline B-005)"
 active_task: P9-005
 task_owner: DEVICE-01
 task_status: ACTIVE

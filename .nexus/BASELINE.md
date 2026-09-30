@@ -14,19 +14,62 @@ Earlier checkpoints, from before this file existed, are recorded in
 preserved there, not copied here.
 
 ```yaml nexus-state
-commit: 7dcad6b264d2f16ae0e9f49f0fa842ac26033293
+commit: fba35448eee7c2a777c465b8a78483cc3ce77335
 branch: main
-timestamp: 2026-09-27T09:20:00Z
+timestamp: 2026-10-01T07:40:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 784/784, desktop 296/296, preflight 25/25, nexus-sync 81/81"
-build: "PASS - pnpm -r build"
+tests: "PASS - nexus-core 784/784, desktop 305/305, preflight 27/27, nexus-sync 81/81, release version tool 25/25"
+build: "PASS - pnpm -r build; cargo build --release 10,278,912 bytes"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
-rust: "PASS - cargo test 70/70; rustc 1.98.1, cargo 1.98.1"
-audit_status: "Phase 7 closed PASS WITH CONDITIONS (packaging and CSP cleared); Phase 8.3 decisions D1-D7 resolved; D15 resolved as a merge and executed; P9-A satisfied; closed-book boundary hardened and exercised live"
-known_conditions: "D8, D9, D10, D13, D14, D16, D17, D18 open; A2, A6, A7, A9, A12 open; Phase 9 P9-B/C/E and P9-D policy blocked; Phase 8 not closed; tauri build not re-run since the D15 merge; no CI exists; feat/knowledgebase-expansion (PR #21) deliberately unmerged pending D18"
+rust: "PASS - cargo test 70/70 and cargo fmt --check clean; rustc 1.98.1, rustfmt 1.9.0-stable"
+audit_status: "Phase 7 closed PASS WITH CONDITIONS; Phase 8.3 decisions D1-D7 resolved; D15 resolved and executed (c384ac5); D16 resolved 2026-10-01 under the owner STANDING AUTHORIZATION (docs/RELEASE_POLICY.md) - P9-A and P9-D both SATISFIED"
+known_conditions: "D8, D9, D10, D13, D14, D17, D18 open; A2, A6, A7, A9, A12 open; Phase 9 P9-B/C/E blocked on D13 and D14 (D14 needs D10); Phase 8 not closed; tauri build not re-run since the D15 merge; no CI exists; no release tag exists and the policy refuses a stable one at 0.1.0; feat/knowledgebase-expansion (PR #21) deliberately unmerged pending D18"
 ```
 
 ## History
+
+### B-005 — D16 closed; release gates run end to end — `fba3544` — 2026-10-01 — DEVICE-01
+
+The tree at `fba35448eee7c2a777c465b8a78483cc3ce77335`, on `main`, verified in full on DEVICE-01. It is the first
+baseline taken by running the release gates in `docs/RELEASE_POLICY.md` §7 in
+order, which is what those gates are for.
+
+| Check | Command | Result |
+|---|---|---|
+| Version | `node tools/release/version.mjs check` | all six declarations `0.1.0`, format releasable |
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **784/784** (64 files), desktop **305/305** (31 files) |
+| Preflight tool | `node tools/preflight/preflight.test.mjs` | **27/27** |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; 16 decisions recorded, **10 blocked**, 5 resolved |
+| Sync tool | `node tools/nexus-sync/nexus-sync.test.mjs` | **81/81** |
+| Release tool | `node tools/release/version.test.mjs` | **25/25** |
+| Typecheck | `npx --yes pnpm@9 -r typecheck` | clean |
+| Build | `npx --yes pnpm@9 -r build` | clean; `dist/assets/index-*.js` 341.60 kB |
+| Rust | `cargo test --offline` in `apps/desktop/src-tauri` | **70/70**, rustc 1.98.1 |
+| Rust format | `cargo fmt --check` | clean — **it was not**, see below |
+| Release binary | `cargo build --release --offline` | 10,278,912 bytes, reproduced on a second run |
+
+**Movement from B-004.** desktop 296 → **305**: six tests for the version read and
+three for the Settings surface that shows it. preflight 25 → **27**: the release
+policy's format rule, in both directions. The new release-tool suite is **25**.
+Nothing regressed, and no test was deleted, weakened or skipped.
+
+**`cargo fmt --check` was failing when this cycle started.** Three files in the
+delivery layer that arrived with the D15 merge, one last touched by `24f5cc0`
+"update" — a commit made outside a session. Fixed mechanically at `33b7398` with
+the Rust suite at 70/70 before and after. The register's header still describes
+`cargo fmt --check` as clean at `aeb56d6`; that was true then and stopped being
+true at the merge.
+
+**Measured on this device only.** `cargo test`, `cargo build --release`,
+`cargo fmt` and `pnpm -r build` are Windows-workstation measurements. DEVICE-02's
+Linux container cannot reproduce them, so for that device they remain
+`NOT VERIFIED ON DEVICE-02`.
+
+**What this baseline does not cover.** `tauri build` has still not been re-run
+since the D15 merge — the last bundled artifacts are from `894a425`. The
+unbundled release binary *was* rebuilt and measured here, four times, but no
+installer has been produced or run on a clean machine at this commit. P9-B, P9-C
+and P9-E remain blocked on D13 and D14.
 
 ### B-004 — D15 merged; Assessment integrity hardened — `7dcad6b` — 2026-09-27 — DEVICE-01
 
