@@ -71,19 +71,19 @@ Consequences, in order of how often they matter:
 ```yaml nexus-state
 registry_version: 1
 S-phases-building.DEVICE-01.attached_at: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen: 2026-09-30T23:25:17.163Z
-S-phases-building.DEVICE-01.last_seen_commit: c6b7fd5e2bdf57cf22449061c6f23df31084c41e
+S-phases-building.DEVICE-01.last_seen: 2026-09-30T23:54:22.595Z
+S-phases-building.DEVICE-01.last_seen_commit: 3eb5694d3488d5e964efe8c89486fd0f44b2801b
 S-phases-building.name: "PHASES BUILDING"
 S-phases-building.role: "orchestrator: authoritative phase plan, task partition, integration and conflict policy"
 S-phases-building.status: ACTIVE
 S-phases-building.control_version: P9-2026-10-01-001
 S-phases-building.branch: main
-S-phases-building.next_action: "DEVICE-01: D16 closed under standing authorization; P9-D satisfied. Next in the recommended order is D8 (Practice/Simulation resume), then D9, then D10 - all closable without a credential. DEVICE-02: Knowledgebase lane unchanged, PR #21 still held pending D18; note package.json scripts now conflicts mechanically with main."
+S-phases-building.next_action: "DEVICE-01: D16, D8 and D9 closed under standing authorization; CI created but never executed. Remaining blockers are all owner-gated: D10 (provider account + account model) which blocks D14, D13 (signing identity), D17 and D18. Next DEVICE-01 action is the first CI run's result, then nothing ungated. DEVICE-02: Knowledgebase lane unchanged, PR #21 held pending D18; package.json scripts now conflicts mechanically with main."
 S-phases-building.created_by: DEVICE-01
 S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
-S-phases-building.updated_at: 2026-09-30T23:25:17.163Z
-S-phases-building.revision: 5
+S-phases-building.updated_at: 2026-09-30T23:54:22.595Z
+S-phases-building.revision: 6
 S-phases-building.DEVICE-02.attached_at: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen_commit: d162b6d36f1b11873b6d60359d281fcac55b426d
@@ -103,3 +103,4 @@ it replaced. Timestamps are UTC.
 | 2026-09-26T15:26:01.646Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 3 |
 | 2026-09-27T00:39:29.804Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 4 |
 | 2026-09-30T23:25:17.163Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 5 |
+| 2026-09-30T23:54:22.595Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 6 |
