@@ -26,3 +26,22 @@ rusqlite = { version = "0.31", features = ["bundled"] }
 [[bin]]
 name = "haa-nexus-desktop"
 path = "src/main.rs"
+
+# No [profile.release] on purpose, and this is now a measured decision rather
+# than an unexamined default (D16, docs/RELEASE_POLICY.md "Release profile").
+#
+# Measured on DEVICE-01, rustc 1.98.1, x86_64-pc-windows-msvc, same source:
+#
+#   Cargo defaults                    10,278,912 bytes
+#   strip = true                      10,277,888 bytes   (-1 KB)
+#   strip = true, lto = "thin"        10,433,024 bytes   (+150 KB)
+#
+# strip buys ~1 KB because the MSVC toolchain already puts debug information in
+# a separate .pdb, and thin LTO made the executable *larger* through inlining.
+# Neither earns a change to what ships. If a future release has a size budget,
+# measure again on that code rather than trusting these three numbers.
+#
+# panic is also left at "unwind" on purpose: `commands.rs` treats a poisoned
+# mutex as a recoverable error and returns it to the frontend, and
+# panic = "abort" would remove poisoning from the language, making that handling
+# unreachable and turning one bad command into a killed application.

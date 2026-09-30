@@ -15,7 +15,11 @@
     "preflight": "node tools/preflight/preflight.mjs",
     "preflight:test": "node tools/preflight/preflight.test.mjs",
     "nexus-sync": "node tools/nexus-sync/nexus-sync.mjs",
-    "nexus-sync:test": "node tools/nexus-sync/nexus-sync.test.mjs"
+    "nexus-sync:test": "node tools/nexus-sync/nexus-sync.test.mjs",
+    "version:show": "node tools/release/version.mjs",
+    "version:check": "node tools/release/version.mjs check",
+    "version:set": "node tools/release/version.mjs set",
+    "version:test": "node tools/release/version.test.mjs"
   },
   "engines": {
     "node": ">=20"

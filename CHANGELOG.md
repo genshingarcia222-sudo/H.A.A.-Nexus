@@ -11,6 +11,109 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D16 — Release and Version Policy (2026-10-01)
+
+**The first decision closed under the owner's *standing* authorization rather
+than by the owner personally**, and the record says so in every place it is
+written: `docs/RELEASE_POLICY.md`, the register entry, the ledger and this
+changelog all label it `CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING
+AUTHORIZATION`. An owner decision overrules any of it.
+
+**Phase 9 item P9-D is satisfied.** Its enforcement half shipped at `d3bca14`;
+the policy half is what was missing.
+
+**The authoritative version source is the root `package.json`.** Not a
+preference: it is the only version declaration *both* devices can read without a
+toolchain, and DEVICE-02's Linux container cannot build the Cargo crate at all. A
+source only one device can check is not a source. The other five declarations
+mirror it, and `node tools/release/version.mjs set X.Y.Z` rewrites all six or
+refuses and rewrites none - a half-applied bump leaves exactly the disagreeing
+state P9-D calls a release defect, and does it silently.
+
+**The crate version stays pinned to the product version.** The register recorded
+that `preflight`'s parity check includes the Cargo crate version and that D16 had
+to say what that version was allowed to do. It is allowed nothing of its own: the
+crate is a private application shell with exactly one consumer, the installer
+that wraps it. So `versionParity` needed no change - it was *extended* instead,
+because agreement was never sufficient. Six files agreeing on `1.0` still cannot
+be bundled: the MSI version field is numeric, and the format rule is now checked
+on every preflight run alongside the parity rule.
+
+**The release profile answer is a measurement that contradicted the intention.**
+`Cargo.toml` had no `[profile.release]`, so one was added with `strip = true` and
+`lto = "thin"` for the obvious reasons - and then measured. On identical source,
+rustc 1.98.1, `x86_64-pc-windows-msvc`:
+
+| Profile | Bytes | vs defaults |
+|---|---|---|
+| Cargo defaults | 10,278,912 | — |
+| `strip = true` | 10,277,888 | −1,024 |
+| `strip = true`, `lto = "thin"` | 10,433,024 | **+154,112** |
+
+`strip` saves about a kilobyte, because MSVC already writes debug information to
+a separate `.pdb`. Thin LTO made the executable **larger**. The profile was
+removed; Cargo's defaults ship. The default figure was rebuilt a fourth time and
+reproduced exactly. The numbers are recorded in `Cargo.toml` so the next person
+does not repeat the experiment blind, and `panic` is documented as staying at
+`unwind` because `commands.rs` returns a poisoned-mutex error to the frontend and
+`panic = "abort"` would make that handling unreachable.
+
+**A defect found while answering the question.** `get_app_version` has existed in
+the Rust shell since before Phase 7 and **nothing in the frontend had ever called
+it** - the running version was unreachable from the product. Settings now shows
+it, read from the binary (`CARGO_PKG_VERSION`) rather than from a JSON file. That
+distinction is the whole point: the defect this policy prevents is an installer
+advertising a version its executable does not carry, and a Settings page reading
+`package.json` would report the advertised number in precisely the case where the
+two differ. A test asserts the binary's answer wins even when it disagrees with
+the build's.
+
+The build-time version reaches the browser through a plain `import { version }`
+rather than a bundler `define` or a `VITE_` variable. Both of those are
+build-time substitutions that the Vitest transform does not perform, which left
+the test asserting against the `"unknown"` fallback - a test that could not see
+the thing it guarded. The import is the same value in the bundle, the dev server
+and the test run, and it is tree-shaken: the built asset contains the version
+string and no other part of `package.json`.
+
+**What the policy refuses.** A stable release while P9-B (signing) or P9-E
+(bundle metadata) is unsatisfied, a release while an integration hold is open
+(today PR #21), and a release cut anywhere but DEVICE-01 - every Phase 9
+acceptance criterion is a built or installed Windows artifact. Stated plainly:
+**`0.1.0` cannot become a stable release.** The first artifact this policy admits
+is an alpha or rc on the NSIS target, installed by hand for the pilot, and still
+unsigned - which is D13's cost, not a bug.
+
+**Pre-releases are NSIS-only, and that rule is marked NOT YET VERIFIED** in the
+policy. It follows from how the MSI version field is defined, not from an
+observed bundler run; nothing here has ever been bundled with a pre-release
+version. The policy says to run `tauri build` with `-rc.1` before the first
+pre-release ships and to rewrite the section with what actually happened.
+
+**Carried into D14 rather than fixed here:** every artifact filename contains
+spaces and dots (`H.A.A. Nexus_0.1.0_x64_en-US.msi`), because `productName` does.
+Renaming the artifacts renames the installed application, which is a product
+decision - so the names stay and D14 must URL-encode them.
+
+**A second defect, found by writing the gate list down.** `cargo fmt --check`
+fails on `main` - on three files in the delivery layer that arrived with the D15
+merge, one of them last touched by `24f5cc0 "update"`, a commit made outside a
+session of the kind `.nexus/CURRENT_STATE.md` records under "Known issues". The
+register's header still describes `cargo fmt --check` as clean; that was true at
+`aeb56d6` and stopped being true at the merge. Fixed in its own commit, since it
+is rustfmt's output and nothing else, with the Rust suite at 70/70 before and
+after. A gate that fails on the day it is written is not a gate.
+
+**Validation.** nexus-core **784/784** (64 files), desktop **305/305** (31 files,
+up from 296 - nine new, none removed), `pnpm -r typecheck` clean, `pnpm -r build`
+clean, preflight **27/27** (up from 25) with the run exiting 0 and the register
+now reporting 16 decisions, 10 blocked, 5 resolved, `nexus-sync` **81/81**, the
+new `tools/release/version.mjs` suite **25/25**, `cargo test` **70/70** and
+`cargo fmt --check` clean. Four `cargo build --release` runs produced the size
+table above. No test was deleted, weakened or skipped.
+
+---
+
 ## PHASES BUILDING Ledger, and a Windows-Readiness Classification (2026-09-27)
 
 **Records only. No application behaviour changed.** `docs/PHASES_BUILDING_LEDGER.md`

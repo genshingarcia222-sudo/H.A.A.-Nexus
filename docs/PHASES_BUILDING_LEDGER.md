@@ -7,7 +7,7 @@ One rule governs every row: a status is only as good as the command or commit in
 its evidence column. "Verified" means it was run on a named device against a
 named commit. Anything else says so.
 
-**Control version:** `P9-2026-09-27-001` · **Ledger updated:** 2026-09-27 ·
+**Control version:** `P9-2026-10-01-001` · **Ledger updated:** 2026-10-01 ·
 **Canonical `main`:** see `.nexus/CURRENT_STATE.md`, which `nexus-sync` re-checks
 against the remote on every read.
 
@@ -17,7 +17,7 @@ against the remote on every read.
 |---|---|---|---|---|
 | 7 | Pre-commercialization audit and stabilization gate | **CLOSED — PASS WITH CONDITIONS** | `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`; two of its conditions (packaging, `csp: null`) since cleared and marked in place | — |
 | 8 | Commercialization implementation | **OPEN** | 8.1 entitlements and 8.3 Assessment complete (D1, D3–D7 resolved); roadmap steps 3–8 unstarted | **D8, D9, D10** |
-| 9 | Packaging and release hardening | **OPEN, one item done** | `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`; P9-A satisfied at `c384ac5`, P9-D enforcement half at `d3bca14` | **D13, D14, D16** |
+| 9 | Packaging and release hardening | **OPEN, two items done** | `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`; P9-A satisfied at `c384ac5`; P9-D satisfied 2026-10-01 (`docs/RELEASE_POLICY.md`, enforcement half at `d3bca14`) | **D13, D14** |
 | 10 | Cloud and API architecture | **NOT STARTED, by design** | Architecture Package §22 | D14 must not be used as a route into it |
 
 ## 2. Phase 9 items
@@ -27,7 +27,7 @@ against the remote on every read.
 | **P9-A** | Release builds open no console window | **SATISFIED** | `main.rs:8` carries `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`; guard test in the 70-test Rust suite; arrived with D15 merge `c384ac5` | A Windows release build showing no console window — the attribute is the mechanism; a clean-machine run has not been repeated since the merge |
 | **P9-B** | Installers are signed | **BLOCKED** | No `certificateThumbprint`, `digestAlgorithm`, `timestampUrl` or `signCommand` anywhere in `tauri.conf.json`; `Get-AuthenticodeSignature` reported `NotSigned` for all three artifacts | **D13** names an identity, then a signed installer runs on a clean machine without a signing-attributable SmartScreen block |
 | **P9-C** | Auto-update is wired | **BLOCKED** | `Cargo.toml` has no `tauri-plugin-updater`; `tauri.conf.json` has no `plugins.updater` and no `createUpdaterArtifacts` (confirmed again 2026-09-27: `plugins: []`) | **D14** (needs **D10**), then one version-to-version update completed against a real feed |
-| **P9-D** | Release discipline | **HALF DONE** | Version parity enforced in `tools/preflight/preflight.mjs`, all four declarations `0.1.0`; the policy half is unwritten | **D16** sets tagging, channels and who cuts a release |
+| **P9-D** | Release discipline | **SATISFIED** | `docs/RELEASE_POLICY.md` (D16, 2026-10-01, standing authorization); parity enforced in `tools/preflight/preflight.mjs` and extended to reject an unshippable format; `tools/release/version.mjs` sets all six declarations atomically, **25/25** | A written policy, one authoritative source, and a tool that makes a bump a single command - all three present |
 | **P9-E** | Bundle metadata | **BLOCKED** | `bundle` carries only `active`, `icon`, `targets`; no `publisher`, `copyright` or `licenseFile`; `LICENSE.md` holds a placeholder, not a legal entity | **D13** plus a recorded legal identity |
 
 ## 3. Open decisions
@@ -39,12 +39,14 @@ against the remote on every read.
 | **D10** | What persists a web learner's progress | Roadmap steps 4–5; **D14** | Choose the persistence model |
 | **D13** | Code-signing identity | P9-B, P9-E | Purchase or designate a certificate |
 | **D14** | Update-feed location | P9-C | Decide, after D10 |
-| **D16** | Release and version policy | P9-D policy half | Write the policy |
 | **D17** | May a learner study before retaking an interrupted Assessment? | The scope of the closed-book window | Decide whether the window extends past an attempt |
 | **D18** | Which content contract does the runtime ingest | Every Knowledgebase consumer | Choose D12's Zod model or the KB JSON Schema |
 | **A2, A6, A7, A9, A12** | Accepted Phase 7 debt | Various | See the register |
 
-Resolved and implemented: **D1, D2, D3, D4, D5, D6, D7, D11, D12, D15**.
+Resolved and implemented: **D1, D2, D3, D4, D5, D6, D7, D11, D12, D15**, and
+**D16** - the first decision closed under the owner's *standing* authorization
+rather than by the owner personally. The record distinguishes the two
+deliberately: see `docs/RELEASE_POLICY.md` and the D16 entry in the register.
 
 ## 4. Windows and desktop readiness
 
@@ -61,16 +63,20 @@ not actually performed on a Windows machine.**
 | Cross-platform path handling | `app_data_dir().join("haa-nexus.sqlite")` with `create_dir_all`; tests use `std::env::temp_dir()`. No hardcoded POSIX path in shipped code |
 | Tooling runs on Windows | preflight **25/25**, nexus-sync **81/81**, both zero-dependency Node with explicit CRLF handling |
 | Web/desktop parity of the closed-book boundary | Exercised live in the browser preview on 2026-09-27 as well as in jsdom |
+| Release binary size, three profiles | `cargo build --release --offline` run three times on identical source, rustc 1.98.1; the default figure reproduced exactly on a fourth run |
+| The running version is reachable from the product | `get_app_version` had never been called from the frontend; Settings now reads it over IPC, 6 + 3 tests |
 
 **2. Statically validated — read from configuration, not executed**
 
 - No signing configuration of any kind (P9-B).
 - No updater plugin or dependency; `plugins` is empty (P9-C).
 - `bundle` has no `publisher`, `copyright` or `licenseFile` (P9-E).
-- **No `[profile.release]` in `Cargo.toml`**, so Cargo's defaults apply: symbols
-  are not stripped and LTO is off. Not a defect, and deliberately **not changed
-  here** — it alters the shipped artifact, and sizing belongs with the release
-  policy D16 rather than with an unrequested edit.
+- ~~No `[profile.release]`~~ — **now measured rather than assumed** (D16). A
+  profile was added, measured and removed: defaults **10,278,912 bytes**,
+  `strip = true` **10,277,888**, `strip = true` + `lto = "thin"` **10,433,024**.
+  Thin LTO made the binary *larger*. Cargo's defaults ship, and the numbers are
+  recorded in `Cargo.toml` and `docs/RELEASE_POLICY.md` §9. This moves from
+  "statically validated" to **verified on DEVICE-01**.
 - Window configuration is present and sane (1280×800, minimum 1024×700).
 - A real Content Security Policy is set, with a separate `devCsp`.
 
@@ -84,8 +90,8 @@ not actually performed on a Windows machine.**
   re-run since the D15 merge. Nothing in that merge touches the bundler
   configuration, but the artifact itself has not been rebuilt and measured.
 
-**4. Blocked** — P9-B (D13), P9-C (D14 → D10), P9-E (D13 plus a legal identity),
-P9-D's policy half (D16).
+**4. Blocked** — P9-B (D13), P9-C (D14 → D10), P9-E (D13 plus a legal identity).
+P9-D is no longer among them.
 
 **5. Recommended, not executed: there is no CI.** `.github/workflows/` does not
 exist, so every check in this ledger was run by hand on a device. That is also why
@@ -104,7 +110,8 @@ their decision, not an engineering one.
 | `feat/training-question-bank` (PR #3) | **MERGED** `c384ac5` | D15, owner decision 2026-09-27 |
 | `feat/knowledgebase-expansion` (PR #21) | **OPEN, do not merge** | DEVICE-02's lane; its own integration gate is unsatisfied and **D18** comes first |
 | PR #18, #19 (C-02 sweep) | **MERGED** `b1ef49d`, `2556d1e` | Documentation accuracy |
-| Overlap between the two live lanes | `CHANGELOG.md`, `.gitattributes` only | Mechanical; resolve under control document §10(G) |
+| Overlap between the two live lanes | `CHANGELOG.md`, `.gitattributes`, and now `package.json` `scripts` | All mechanical. Both lanes append to the same `scripts` block after `nexus-sync:test` — `main` four `version:*`, PR #21 nine `kb:*`. Union resolution, §10(G) and §10(H) |
+| Any release tag | **none exists** | `docs/RELEASE_POLICY.md` §6 refuses a stable release while P9-B and P9-E are blocked |
 
 ## 6. How to extend this ledger
 

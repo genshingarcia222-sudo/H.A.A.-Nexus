@@ -6,14 +6,26 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-003
-phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
-lane: C-01 - primary implementation and integration coordination
+control_version: P9-2026-10-01-001
+phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A and P9-D satisfied; P9-B/C/E blocked on D13 and D14)"
+lane: C-01 - integration coordination and decision closure under standing authorization
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: 082fa95  # PR #3 re-reconciled after the C-02 sweep on the branch
-nexus_task: P9-003 - C-02 integration and governance reconciliation (NEXUS-SYNC-002 COMPLETE)
+current_checkpoint: see .nexus/CURRENT_STATE.md  # PR #3 was merged at c384ac5 (D15)
+nexus_task: P9-005 - D16 release and version policy (see .nexus/ACTIVE_TASK.md for live status)
 session: S-phases-building (register/attach it at every session start)
 ```
+
+## Exact next action at control version P9-2026-10-01-001
+
+**Next action.** D16 is closed; P9-D is satisfied. The recommended order in the
+master control prompt puts **D8 (Practice/Simulation resume)** next, then D9,
+then D10. All three are product-semantics decisions that no credential blocks, so
+they are closable under the standing authorization in control §1a - but D8 must
+be established from Practice's own behaviour, not derived from Assessment's:
+`docs/DECISION_REGISTER.md` A6 records exact mid-transcript resume as
+unimplemented, and D6 covers Assessment only.
+
+Do not touch `knowledge-corpus/`, `tools/knowledge-corpus/`, or PR #21.
 
 ## Assigned work
 

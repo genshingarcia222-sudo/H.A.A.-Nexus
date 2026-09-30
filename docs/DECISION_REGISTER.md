@@ -685,37 +685,63 @@ easier.
 
 ---
 
-## D16 — What is the release and version policy?
+## D16 — What is the release and version policy? — **RESOLVED**
 
-**Blocked work:** Phase 9 item P9-D.
+**Resolved** on 2026-10-01 by **DEVICE-01 under the owner's standing decision
+authority**, not by the owner personally. The full policy is
+`docs/RELEASE_POLICY.md`; this entry records the decision and what it cost.
 
-**Current behaviour, verified in the repository:** `tauri.conf.json` `version` is
-`0.1.0` and root `package.json` `version` is `0.1.0`. Nothing enforces that they
-agree. There is no tagging convention, no channel policy (stable/beta), no
-release checklist, and no mapping from `CHANGELOG.md` to a release —
-`CHANGELOG.md` is a development log, not a release log.
+| | |
+|---|---|
+| **Decision** | D16 — the release and version policy |
+| **Selected value** | root `package.json` is authoritative; strict `MAJOR.MINOR.PATCH[-alpha\|beta\|rc.N]`; six declarations kept equal by one tool; DEVICE-01 cuts releases; the owner approves the tag; Cargo release defaults ship |
+| **Rejected alternatives** | decoupling the crate version from the product version; adding `[profile.release]` optimisation; treating `CHANGELOG.md` as the release log; allowing full semver including build metadata |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** (master control prompt §3). Overruled by any owner decision |
+| **Status** | RESOLVED and implemented; P9-D closed |
 
-**No external dependency.** Unlike D13 and D14 this needs no credential and
-no provider, so it is the cheapest Phase 9 decision to resolve and is authorable
-on either device.
+**What it was blocking:** Phase 9 item **P9-D**. The enforcement half of P9-D
+(version parity in `tools/preflight/preflight.mjs`) had already shipped at
+`d3bca14`; the policy half is what this closes.
 
-**Constraint this decision now carries** (recorded by DEVICE-01's integration
-review of PR #14, which delivered the enforcement half of P9-D): `preflight`
-asserts that all four declared versions agree, and one of the four is the
-**Cargo crate version** of `apps/desktop/src-tauri`. That invariant therefore
-pins the crate version to the product version.
+**What the register required this decision to say, and what it says.**
 
-If D16 is answered by **decoupling crate versioning from product releases** —
-for example letting the crate follow its own semver while the installer carries
-a marketing version — then `versionParity` in `tools/preflight/preflight.mjs`
-and its real-repository test in `tools/preflight/preflight.test.mjs` must be
-updated in the same change. They are test-only, additive and reversible, so this
-does not constrain which answer D16 may take; it only means the answer must say
-what the crate version is allowed to do.
+| Required | Answer |
+|---|---|
+| Authoritative version source | root `package.json` — the only declaration both devices can read without a toolchain |
+| What the crate version may do | nothing of its own; it stays pinned to the product version, so `versionParity` is unchanged |
+| Parity rules | all six declarations equal, checked by `version.mjs` and by preflight |
+| Version format | strict `MAJOR.MINOR.PATCH[-channel.N]`, narrower than semver because the MSI version field is numeric |
+| Bump rules | MAJOR = unmigratable persisted-data or IPC change; MINOR = learner-visible capability or a closed phase item; PATCH = fixes. Only in a release commit |
+| Pre-release behaviour | `alpha`/`beta`/`rc` with a counter, NSIS target only |
+| Artifact naming | Tauri defaults kept; D14 must URL-encode the spaces in them |
+| Release profile | Cargo defaults, **measured** (see below) |
+| Application version display | Settings, read from the binary over IPC, not from a JSON file |
+| Updater comparison | `compareVersions`; a pre-release precedes its own release; a stable install is never offered a pre-release |
+| Who cuts a release | DEVICE-01 builds it, the owner approves the tag |
 
-The enforcement was not held back pending this decision because P9-D's own
-evidence frames non-agreement as a release defect — an installer advertising a
-version its binary does not carry — rather than as a stylistic preference.
+**The release profile answer is a measurement, not a preference.** `Cargo.toml`
+had no `[profile.release]`, so the register left open whether one should be added.
+One was added, measured, and removed again. On DEVICE-01, rustc 1.98.1,
+`x86_64-pc-windows-msvc`, identical source: defaults **10,278,912 bytes**;
+`strip = true` **10,277,888**; `strip = true` plus `lto = "thin"`
+**10,433,024** — thin LTO made the binary **larger**. The defaults ship, and the
+numbers are recorded in `Cargo.toml` so the next person does not repeat the
+experiment blind.
+
+**A defect this decision uncovered and fixed.** `get_app_version` existed in the
+Rust shell and **nothing in the frontend had ever called it**, so the running
+version was unreachable from the product. Settings now shows it.
+
+**What this decision does NOT decide.** It does not sign anything (**D13**), does
+not say where an update feed lives (**D14**, which needs **D10**), does not
+populate bundle metadata or the installer-visible licence (**P9-E**, needs D13
+plus a recorded legal entity), and does not create CI — automating the release
+gates is standing automation on the owner's account and Actions minutes.
+
+**A consequence worth stating plainly:** `0.1.0` cannot become a *stable*
+release. It is unsigned, its bundle metadata is empty and its licence file is a
+placeholder. The first artifact this policy admits is an alpha or rc on the NSIS
+target, installed by hand for the pilot, still unsigned.
 
 ---
 

@@ -12,14 +12,14 @@ two disagree about who holds a task, `.nexus/` is right; when they disagree abou
 what the work *is*, this document is right.
 
 ```yaml control
-control_version: P9-2026-09-27-001
+control_version: P9-2026-10-01-001
 issued: 2026-09-26
 issued_by: DEVICE-01 (orchestration session; integration coordinator)
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c   # origin/main when this plan was first issued
-authoritative_phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A SATISFIED by the D15 merge; P9-B/C/D-policy/E still decision-blocked)"
+authoritative_phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A SATISFIED by the D15 merge; P9-D SATISFIED by the D16 release policy; P9-B/C/E still decision-blocked)"
 phase_8_state: "OPEN - not closed by Phase 9; roadmap steps 3-8 unstarted; D8, D9, D10 open"
 phase_10_state: "NOT STARTED by design (Architecture Package section 22)"
-device_01_assignment: "C-01 - integration, QA and system integrity: D15 merge executed, Assessment closed-book hardening, regression barriers around the incoming Knowledgebase"
+device_01_assignment: "C-01 - integration, QA and decision closure: closing the decisions that no longer need an owner or a credential, under the standing authorization in section 4a, starting with D16 (done). Still the integration coordinator"
 device_02_assignment: "KB-01 - Knowledgebase feature lane (feat/knowledgebase-expansion, PR #21); C-02 documentation sweep COMPLETE"
 ```
 
@@ -40,6 +40,32 @@ state.
 **Version check, every session.** Read `control_version` here. If the session was
 told to work under a different one, stop substantive mutation, diagnose
 read-only, and reconcile against this file before editing anything.
+
+## 1a. Decisions closed under standing authorization
+
+The owner has granted a standing authorization to make and implement reasoned
+recommendations for decisions that are not already fixed by a higher-priority
+control artifact. It changes what a session may *do*; it does not change what the
+record must *say*.
+
+**Every decision must be labelled with how it was made**, and the labels are not
+interchangeable:
+
+| Label | Means |
+|---|---|
+| `OWNER-DECIDED` | the owner chose it. D1, D3–D7, D11, D12, D15 |
+| `CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION` | a session chose it from the project's own principles and implemented it. **D16** |
+| `EXTERNALLY BLOCKED` | needs a credential, an identity or infrastructure that does not exist. D13, D14 |
+| `CONFLICTING CONTROL-PLANE INSTRUCTION` | two authoritative documents disagree and repository evidence does not settle it |
+
+**Never record a decision a session made as one the owner made.** An owner
+decision overrules a standing-authorization decision without argument, and the
+owner can only exercise that if the record tells them which is which.
+
+The exceptions remain: a session still stops and reports before anything needing
+a secret, a signing identity, payment or legal details, an irreversible external
+action, an action that would overwrite another session's work, or a destructive
+Git operation.
 
 ## 2. Authoritative reason for the current phase state
 
@@ -167,7 +193,18 @@ artifact belongs to **DEVICE-01**.
 Owned files: `apps/desktop/**`, `packages/**`, `CHANGELOG.md`,
 `docs/DECISION_REGISTER.md`, `docs/PHASE_9_DEVICE01_VALIDATION.md`,
 `docs/PHASES_BUILDING_CONTROL.md`, `docs/PHASE_BUILD_HANDOFF_DEVICE-01.md`,
-`.nexus/**` (through `nexus-sync` only).
+`docs/PHASES_BUILDING_LEDGER.md`, `docs/RELEASE_POLICY.md`, `tools/release/**`,
+`tools/nexus-sync/**`, `.nexus/**` (through `nexus-sync` only).
+
+**Two files moved out of DEVICE-02's C-02 list at this control version**, and it
+is recorded rather than done quietly: `tools/preflight/**` and
+`docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`. D16 lives in both - preflight now
+enforces the version format the policy sets, and P9-D is a Phase 9 item - and
+C-02 is COMPLETE, while DEVICE-02's live lane (KB-01) touches neither. Verified
+against `origin/feat/knowledgebase-expansion` before editing: that branch changes
+no file under `tools/preflight/` and does not touch the Phase 9 document. If
+DEVICE-02 has unpushed work in either, say so and it is reconciled by §10, not
+overwritten.
 
 1. **Integration coordination.** Review and integrate DEVICE-02 PRs against §9.
 2. **Keep PR #3 mergeable without merging it.** Whenever `main` advances, merge
@@ -297,6 +334,7 @@ specifications are authoritative.
 
 | Control version | Date | Reason |
 |---|---|---|
+| `P9-2026-10-01-001` | 2026-10-01 | **D16 resolved and implemented under the owner's standing authorization** (`docs/RELEASE_POLICY.md`), so **P9-D is satisfied** and Phase 9's blocked set shrinks to P9-B, P9-C and P9-E. Adds §1a: how a decision records the way it was made, and why an owner decision and a standing-authorization decision must never be written the same way. Moves `tools/preflight/**` and `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` into DEVICE-01's list, with the check that made it safe. Records a new mechanical overlap with PR #21: both lanes append to `package.json` `scripts`. |
 | `P9-2026-09-27-001` | 2026-09-27 | **D15 resolved as a merge and executed** (`c384ac5`), so P9-A is satisfied and `main` now carries the Training question run, the D12 corpus module and the delivery layer. DEVICE-02's lane becomes the Knowledgebase feature lane (PR #21); DEVICE-01's becomes integration, QA and Assessment-integrity hardening. The schema-reconciliation question DEVICE-02 escalated is recorded, not resolved. |
 | `P9-2026-09-26-003` | 2026-09-26 | C-02 integrated: PR #18 (`b1ef49d`) and PR #19 (`2556d1e`). Lane C-02 is COMPLETE and has no ungated work left. PR #3 re-reconciled at `082fa95` after the sweep touched the Phase 7 audit. Governance reconciled and baseline B-003 recorded. Phase 9 is still fully decision-blocked; Phase 8 is still open. |
 | `P9-2026-09-26-002` | 2026-09-26 | Owner-directed infrastructure task NEXUS-SYNC-002: the canonical cross-device session registry (`.nexus/SESSION_REGISTRY.md`, `nexus-sync session`, N-008). Assignments otherwise unchanged; Phase 9 is still fully decision-blocked. P9-002 released COMPLETE on its recorded scope. |
