@@ -49,18 +49,18 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-005
-task_name: "D16 release and version policy: decide, implement, enforce"
+task_id: P9-006
+task_name: "D8 practice and simulation resume: decide and implement"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-09-30T23:06:32.858Z
-last_update: 2026-09-30T23:25:30.457Z
+status: ACTIVE
+started_at: 2026-09-30T23:27:46.110Z
+last_update: 2026-09-30T23:27:46.110Z
 stale_after_hours: 12
-expected_scope: "Resolve D16 under the owner's standing decision authority: write the release/version policy, make the authoritative version source explicit and tooled, define and set the release profile, wire the application version display, and extend preflight to enforce the policy's version-format rule. Must not touch DEVICE-02's Knowledgebase lane (knowledge-corpus/, tools/knowledge-corpus/) and must not merge PR #21."
-affected_areas: "docs/, tools/release/, tools/preflight/, apps/desktop/, CHANGELOG.md, .nexus/"
+expected_scope: "Resolve D8 under the owner's standing decision authority: establish what happens to an interrupted practice or simulation attempt - attempt identity, time accounting, draft continuity, reload/close/navigation behaviour and the persistence boundary - and implement it. Assessment is out of scope (D6 governs it, and D17 remains open). Must not touch DEVICE-02's Knowledgebase lane or PR #21."
+affected_areas: "packages/nexus-core/, apps/desktop/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: e2af2af5eefc5eff3105a43abc30bc2822b2307e
-last_commit: 4810f110412721875fdcfb106efa747d10fc7153
+claim_commit: b8a4ad2c61899d25d6e67588d397ec354c4a38c7
+last_commit: b8a4ad2c61899d25d6e67588d397ec354c4a38c7
 handoff_required: no
 handoff_to: none
 next_action: "not recorded"
@@ -90,3 +90,4 @@ Timestamps are UTC.
 | 2026-09-27T00:39:35.599Z | RELEASE COMPLETE | DEVICE-01 | P9-004 | D15 executed with full pre-merge validation and recorded; Assessment closed-book boundary hardened with mutation-verified tests and confirmed live in the running app; catch-all route defect found by the route walk and fixed; ledger, Windows-readiness classification and baseline B-004 recorded; D17 and D18 opened rather than answered. |
 | 2026-09-30T23:06:32.858Z | CLAIM | DEVICE-01 | P9-005 | claimed |
 | 2026-09-30T23:25:30.457Z | RELEASE COMPLETE | DEVICE-01 | P9-005 | D16 resolved under the owner's standing authorization and implemented: docs/RELEASE_POLICY.md, tools/release/version.mjs (25 tests), the preflight format rule, the version display in Settings, and the release profile measured rather than assumed. P9-D satisfied. Baseline B-005 at fba3544. cargo fmt --check had been failing on main since the D15 merge and is fixed at 33b7398. |
+| 2026-09-30T23:27:46.110Z | CLAIM | DEVICE-01 | P9-006 | claimed |
