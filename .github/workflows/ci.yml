@@ -1,0 +1,116 @@
+## H.A.A. Nexus continuous integration.
+##
+## Runs the gates that docs/RELEASE_POLICY.md section 7 lists, using the exact
+## commands a device runs by hand. Before this workflow existed every gate was
+## a hand-run command, which is how a commit pushed from outside a session
+## could reach `main` with no suite having run at all (see the GitHub Desktop
+## commits recorded under "Known issues" in .nexus/CURRENT_STATE.md, one of
+## which left `cargo fmt --check` failing on `main` unnoticed).
+##
+## STATUS: this workflow has never been executed by GitHub Actions. Every
+## command in it passes on DEVICE-01; whether each one passes on a hosted
+## runner is AWAITING ENVIRONMENT VALIDATION, and the `windows` job is the
+## uncertain part - it builds the Tauri crate, which needs the WebView2 SDK and
+## a current Rust toolchain. Read the first run's result before trusting a
+## green badge.
+##
+## It does not build installers. Packaging is a Phase 9 item with Windows-only
+## acceptance criteria that P9-B and P9-E block, and the release policy requires
+## a release to be cut on DEVICE-01 with the owner approving the tag.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: Tests, types, build and tooling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # nexus-sync's end-to-end tests clone and push between bare remotes,
+          # and preflight reads the repository's own state. A shallow checkout
+          # is enough for both, but the full ref set is not.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # nexus-sync commits during its own tests, so it needs an identity.
+      - name: Give git an identity for the sync tests
+        run: |
+          git config --global user.email "ci@haa-nexus.invalid"
+          git config --global user.name "H.A.A. Nexus CI"
+          git config --global init.defaultBranch main
+
+      - name: Product version agrees across all six declarations
+        run: node tools/release/version.mjs check
+
+      - run: pnpm -r test
+      - run: pnpm -r typecheck
+      - run: pnpm -r build
+
+      - name: Preflight tool
+        run: node tools/preflight/preflight.test.mjs
+
+      - name: Preflight run
+        run: node tools/preflight/preflight.mjs
+
+      - name: Release version tool
+        run: node tools/release/version.test.mjs
+
+      - name: Cross-device sync tool
+        run: node tools/nexus-sync/nexus-sync.test.mjs
+
+  windows:
+    name: Rust suite and formatting (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      # The crate embeds the frontend through `frontendDist`, so the bundle has
+      # to exist before the Rust side will compile.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+
+      - name: Formatting
+        working-directory: apps/desktop/src-tauri
+        run: cargo fmt --check
+
+      - name: Rust tests
+        working-directory: apps/desktop/src-tauri
+        run: cargo test

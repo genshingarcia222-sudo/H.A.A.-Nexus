@@ -282,6 +282,62 @@ test mode, and absent from any production bundle. It has no migration story,
 no schema versioning and no account model, and **does not** resolve D10 in
 either direction - `persistenceMode` reports which backend is live.
 
+### The persistence boundary, classified (2026-10-01, DEVICE-01)
+
+The unblocked half of D10: **what** would have to persist, and where each piece
+could honestly live. Read from the repository, not proposed. Choosing the layer
+is still the decision; this is the inventory it applies to.
+
+| State | Where it lives today | Honest classification |
+|---|---|---|
+| The live `SimulationSession` in the store | memory only | **temporary** — lost on reload by design; D8 makes the *record* the durable thing, not the store |
+| Transcript reveal position, beats | memory only | **temporary** — A6; deliberately not persisted |
+| `SessionRecord` (draft, timings, flags, status, evaluation) | SQLite on desktop; in-memory on web | **authoritative** — this is the learner's work |
+| `CompetencyRecord` per population and domain | SQLite; in-memory on web | **derived**, but not cheaply: it is folded incrementally at submission and is not recomputable from history without replaying every attempt |
+| Analytics figures | computed on read from `SessionRecord` | **derived** — no storage decision of its own |
+| `UserProfile` (display name) | SQLite; in-memory on web | **device-local** today; would become **account-bound** the moment accounts exist |
+| Entitlements / subscription | resolved from the capability matrix; no learner row | **account-bound in principle**, and already outside this decision — a paid tier cannot be decided by a browser (Architectural rule: never rely on frontend-only checks for protected commercial capabilities) |
+| Knowledge corpus, scenarios, lessons | bundled content | **not learner state** — versioned with the build |
+| `.nexus/` | Git | **not learner state at all.** It is development synchronization. Reusing its semantics for learner data would be a category error, and this decision must not |
+
+Two consequences fall out of the table and are worth stating before the layer is
+chosen:
+
+1. **Competency is the hard part, not sessions.** A `SessionRecord` is a
+   self-contained document; a `CompetencyRecord` is an accumulator that is
+   folded once per attempt and would be **wrong** if two devices folded into it
+   independently. Any cross-device answer has to say what happens when they do.
+2. **Entitlement must not ride along.** Whatever carries learner progress, the
+   subscription state a paid tier depends on is server-authoritative or it is
+   not a paid tier.
+
+### Why the standing authorization does not close this one
+
+The owner's standing authorization covers decisions that need no credential, no
+external account and no infrastructure that does not exist. **D10 fails that
+test in the direction the product documents point.** Business Model Spec §3 step
+4 names *cloud* persistence, and cloud persistence requires a provider account,
+an account model and authentication — none of which exist, and none of which may
+be fabricated.
+
+Choosing browser-local storage instead would be closing the decision by
+contradicting an owner-authored product document, which is a different act from
+choosing between options the document left open. So D10 stays **EXTERNALLY
+BLOCKED**, and it stays the block on **D14**, which cannot name an update feed
+before the deployment topology is settled.
+
+**CLAUDE-RECOMMENDED, NOT IMPLEMENTED — for the owner to accept or reject:** ship
+web step 4 with **browser-local persistence as the device-local layer** and
+record cross-device continuity as a Phase 10 item behind an account decision.
+The rationale is that §3 step 4's stated *goal* is "refreshes do not lose
+progress", which browser-local storage satisfies in full, while the *mechanism*
+it names buys continuity across devices — a promise no part of the product makes
+to a learner yet. Accepting this would need three things the current dev-only
+scaffolding deliberately lacks: a stored schema version, a policy for an
+unreadable or older payload, and learner-visible wording about what clearing
+site data destroys. **None of that has been built**, because building it would
+pre-commit the decision.
+
 ---
 
 ## A2 — The module registry declares 12 competency domains; the evaluator produces 7

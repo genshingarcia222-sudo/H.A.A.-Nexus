@@ -11,6 +11,68 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## CI, and the D10 Persistence Boundary (2026-10-01)
+
+Two things, one of which is deliberately *not* a decision.
+
+### CI exists, and has never run
+
+`.github/workflows/ci.yml` runs the release-policy §7 gates on every push and
+pull request, with the same commands a device runs by hand: version parity across
+all six declarations, `pnpm -r test`, `-r typecheck`, `-r build`, preflight (the
+tool's tests and a real run), the release-version tool, the nexus-sync suite, and
+a Windows job for `cargo fmt --check` and `cargo test`.
+
+**Status: `AWAITING ENVIRONMENT VALIDATION`, not verified.** Every command passes
+on DEVICE-01, and the most likely runner-specific failure was checked directly
+rather than assumed: the tool suites were re-run with `.nexus/local-device.yaml`
+moved aside — the state a CI checkout is actually in, since that file is
+gitignored — and preflight, its 27 tests and all 81 nexus-sync tests still
+passed. `pnpm install --frozen-lockfile` was confirmed against the committed
+lockfile. But **no hosted runner has executed the workflow**, and the Windows job
+is the uncertain part because it compiles the Tauri crate against the WebView2
+SDK. A green badge is not evidence until a run exists.
+
+Why it was created now: the master control prompt requires CI before release
+certification. Why it matters: until today every gate in this project was a
+hand-run command, which is how a commit pushed from outside a session could land
+on `main` untested — and one did, leaving `cargo fmt --check` failing on `main`
+from the D15 merge until this morning with nothing to notice. It spends the
+owner's Actions minutes; deleting the file is the whole of turning it off.
+
+### D10 stays open, with its unblocked half delivered
+
+**D10 is NOT resolved, and closing it was declined.** The Business Model Spec
+§3 step 4 names *cloud* persistence, and cloud persistence needs a provider
+account, an account model and authentication — none of which exist and none of
+which may be fabricated. Choosing browser-local storage instead would close the
+decision by contradicting an owner-authored product document, which is a
+different act from choosing among options that document left open. So D10 is
+recorded `EXTERNALLY BLOCKED`, and it remains the block on **D14**.
+
+What was delivered is the half that needed no decision: every piece of learner
+state classified as temporary, authoritative, derived, device-local, or
+account-bound, read from the repository. Two things fall out of that table and
+are worth knowing before the layer is chosen:
+
+- **Competency is the hard part, not sessions.** A `SessionRecord` is a
+  self-contained document. A `CompetencyRecord` is an accumulator folded once per
+  attempt, and it would be *wrong* if two devices folded into it independently.
+  Any cross-device answer has to say what happens when they do.
+- **Entitlement must not ride along.** Whatever carries learner progress, the
+  subscription state a paid tier depends on is server-authoritative or it is not
+  a paid tier.
+
+A recommendation is recorded for the owner to accept or reject — ship web step 4
+with browser-local persistence and treat cross-device continuity as a Phase 10
+item behind an account decision — together with the three things the existing
+dev-only scaffolding would need first: a stored schema version, a policy for an
+unreadable payload, and learner-visible wording about what clearing site data
+destroys. **None of it has been built**, because building it would pre-commit the
+decision.
+
+---
+
 ## D9 — When Scoring Itself Fails (2026-10-01)
 
 **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,

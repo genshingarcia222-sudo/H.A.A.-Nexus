@@ -171,11 +171,15 @@ Then, before the tag: record the artifact sizes and `Get-AuthenticodeSignature`
 results, append the baseline to `.nexus/BASELINE.md`, and confirm no test count
 has regressed.
 
-**None of this is automated.** `.github/workflows/` does not exist, so every gate
-above is a hand-run command on a device, and a commit pushed from outside a
-session can reach `main` with no suite having run. That gap is recorded in
-`docs/PHASES_BUILDING_LEDGER.md` §4(5); closing it is a CI decision on the
-owner's account and Actions minutes.
+**`.github/workflows/ci.yml` runs these gates on every push and pull request**,
+with the same commands. It was created on 2026-10-01 and **has never been
+executed by GitHub Actions**, so it is `AWAITING ENVIRONMENT VALIDATION`: read
+the first run before trusting it, and the Windows job (which compiles the Tauri
+crate) is the uncertain part. A green badge is not evidence until a run exists.
+
+CI does not replace this list. A release is still cut on DEVICE-01, because the
+Windows-only acceptance criteria and `tauri build` are outside what the workflow
+does.
 
 ## 8. Artifact naming
 
@@ -274,5 +278,5 @@ An empty table is the honest state; a row for a release nobody cut would not be.
 | Which identity signs the installers | **D13** — blocks stable releases through P9-B and P9-E |
 | Where the update feed lives | **D14** (needs **D10**) — blocks P9-C |
 | Publisher, copyright, and the licence the MSI shows | **P9-E** — needs D13 plus a recorded legal entity |
-| Whether CI enforces §7 | owner: their account, their Actions minutes |
+| Whether CI stays | owner: it exists now (`.github/workflows/ci.yml`), it has never run, and deleting the file turns it off |
 | The commercial licence itself | no repository document records it; `LICENSE.md` is a placeholder and `package.json` says `UNLICENSED` |

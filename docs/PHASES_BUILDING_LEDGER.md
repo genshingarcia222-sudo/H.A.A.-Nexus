@@ -93,15 +93,30 @@ not actually performed on a Windows machine.**
 **4. Blocked** — P9-B (D13), P9-C (D14 → D10), P9-E (D13 plus a legal identity).
 P9-D is no longer among them.
 
-**5. Recommended, not executed: there is no CI.** `.github/workflows/` does not
-exist, so every check in this ledger was run by hand on a device. That is also why
-a commit made outside a session — the GitHub Desktop commits recorded in
-`.nexus/CURRENT_STATE.md` "Known issues" — can land on `main` without any suite
-running. A workflow running `pnpm -r test`, `-r typecheck`, `-r build`, preflight
-and the nexus-sync suite on every push would close that gap cheaply, with an
-optional Windows job for `cargo test`. It is **not** created here: it is standing
-automation on the owner's account and it consumes their Actions minutes, which is
-their decision, not an engineering one.
+**5. CI now exists, and has never run.** `.github/workflows/ci.yml` was created
+on 2026-10-01 under the master control prompt §30, which requires CI to be
+established before release certification. It runs the release-policy §7 gates
+with the same commands a device runs: version parity, `pnpm -r test`,
+`-r typecheck`, `-r build`, preflight (tool and run), the release-version tool,
+the nexus-sync suite, and a Windows job for `cargo fmt --check` and `cargo test`.
+
+**Its status is `AWAITING ENVIRONMENT VALIDATION`, not verified.** Every command
+in it passes on DEVICE-01, and the most likely runner-specific failure was
+checked directly — the tool suites were re-run with `.nexus/local-device.yaml`
+moved aside, which is the state a CI checkout is in, and preflight, its tests and
+all 81 nexus-sync tests still passed. `pnpm install --frozen-lockfile` was
+confirmed against the committed lockfile. But **no hosted runner has executed
+it**, and the Windows job is the uncertain part: it compiles the Tauri crate,
+which needs the WebView2 SDK. Read the first run before trusting a green badge.
+
+Why it matters: before it, every check in this ledger was a hand-run command,
+which is how a commit made outside a session — the GitHub Desktop commits under
+"Known issues" in `.nexus/CURRENT_STATE.md` — could land on `main` untested. One
+of them left `cargo fmt --check` failing on `main` from the D15 merge until
+2026-10-01, and nothing noticed.
+
+It consumes the owner's Actions minutes. Deleting the file is the whole of
+turning it off.
 
 ## 5. Integration state
 
