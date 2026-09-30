@@ -7,12 +7,13 @@
 ## commits recorded under "Known issues" in .nexus/CURRENT_STATE.md, one of
 ## which left `cargo fmt --check` failing on `main` unnoticed).
 ##
-## STATUS: this workflow has never been executed by GitHub Actions. Every
-## command in it passes on DEVICE-01; whether each one passes on a hosted
-## runner is AWAITING ENVIRONMENT VALIDATION, and the `windows` job is the
-## uncertain part - it builds the Tauri crate, which needs the WebView2 SDK and
-## a current Rust toolchain. Read the first run's result before trusting a
-## green badge.
+## STATUS: partially validated. Run 36793450663 (2026-09-30) failed both jobs at
+## `pnpm/action-setup`, which refuses to run when a pnpm version is given both
+## in the action and in package.json's `packageManager`. Fixed by removing the
+## action's `version:` and letting the manifest be the single source. Whether
+## the gates themselves pass on a hosted runner - and in particular whether the
+## `windows` job can compile the Tauri crate against the WebView2 SDK - is still
+## AWAITING ENVIRONMENT VALIDATION. Read the run, not the badge.
 ##
 ## It does not build installers. Packaging is a Phase 9 item with Windows-only
 ## acceptance criteria that P9-B and P9-E block, and the release policy requires
@@ -44,9 +45,10 @@ jobs:
           # is enough for both, but the full ref set is not.
           fetch-depth: 0
 
+      # No `version:` here on purpose. The root package.json declares
+      # `packageManager: pnpm@9.15.9`, and the action refuses to run when a
+      # version is specified in both places. The manifest is the one source.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - uses: actions/setup-node@v4
         with:
@@ -98,8 +100,6 @@ jobs:
       # The crate embeds the frontend through `frontendDist`, so the bundle has
       # to exist before the Rust side will compile.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
