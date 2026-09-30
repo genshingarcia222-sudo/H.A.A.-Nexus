@@ -7,13 +7,20 @@
 ## commits recorded under "Known issues" in .nexus/CURRENT_STATE.md, one of
 ## which left `cargo fmt --check` failing on `main` unnoticed).
 ##
-## STATUS: partially validated. Run 36793450663 (2026-09-30) failed both jobs at
-## `pnpm/action-setup`, which refuses to run when a pnpm version is given both
-## in the action and in package.json's `packageManager`. Fixed by removing the
-## action's `version:` and letting the manifest be the single source. Whether
-## the gates themselves pass on a hosted runner - and in particular whether the
-## `windows` job can compile the Tauri crate against the WebView2 SDK - is still
-## AWAITING ENVIRONMENT VALIDATION. Read the run, not the badge.
+## STATUS: being validated, run by run, and each failure is recorded here rather
+## than quietly fixed.
+##
+##   36793450663  both jobs failed at `pnpm/action-setup` - it refuses a pnpm
+##                version given both in the action and in package.json's
+##                `packageManager`. Fixed: the manifest is the one source.
+##   36793592091  `pnpm -r test` failed on Node 20: jsdom 30 needs
+##                ^22.22.2 || ^24.15.0 || >=26, and 16 of the 33 desktop test
+##                files could not load their environment at all. `engines` said
+##                ">=20", which was simply untrue. Fixed in both places.
+##
+## Whether the remaining gates pass on a hosted runner - and in particular
+## whether the `windows` job can compile the Tauri crate against the WebView2
+## SDK - is still AWAITING ENVIRONMENT VALIDATION. Read the run, not the badge.
 ##
 ## It does not build installers. Packaging is a Phase 9 item with Windows-only
 ## acceptance criteria that P9-B and P9-E block, and the release policy requires
@@ -52,7 +59,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # 20 is not enough: jsdom 30 requires ^22.22.2 || ^24.15.0 || >=26,
+          # and on Node 20 its environment fails to load at all - which vitest
+          # reports as "errors" beside a green-looking pass count. See the
+          # engines field, which was wrong and now says the same thing.
+          node-version: 24
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
@@ -102,7 +113,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
