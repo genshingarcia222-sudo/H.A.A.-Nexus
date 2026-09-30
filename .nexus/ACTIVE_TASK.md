@@ -52,15 +52,15 @@ reviewed commit.
 task_id: P9-005
 task_name: "D16 release and version policy: decide, implement, enforce"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-09-30T23:06:32.858Z
-last_update: 2026-09-30T23:06:32.858Z
+last_update: 2026-09-30T23:25:30.457Z
 stale_after_hours: 12
 expected_scope: "Resolve D16 under the owner's standing decision authority: write the release/version policy, make the authoritative version source explicit and tooled, define and set the release profile, wire the application version display, and extend preflight to enforce the policy's version-format rule. Must not touch DEVICE-02's Knowledgebase lane (knowledge-corpus/, tools/knowledge-corpus/) and must not merge PR #21."
 affected_areas: "docs/, tools/release/, tools/preflight/, apps/desktop/, CHANGELOG.md, .nexus/"
 branch: main
 claim_commit: e2af2af5eefc5eff3105a43abc30bc2822b2307e
-last_commit: e2af2af5eefc5eff3105a43abc30bc2822b2307e
+last_commit: 4810f110412721875fdcfb106efa747d10fc7153
 handoff_required: no
 handoff_to: none
 next_action: "not recorded"
@@ -89,3 +89,4 @@ Timestamps are UTC.
 | 2026-09-27T00:08:00.965Z | CLAIM | DEVICE-01 | P9-004 | claimed |
 | 2026-09-27T00:39:35.599Z | RELEASE COMPLETE | DEVICE-01 | P9-004 | D15 executed with full pre-merge validation and recorded; Assessment closed-book boundary hardened with mutation-verified tests and confirmed live in the running app; catch-all route defect found by the route walk and fixed; ledger, Windows-readiness classification and baseline B-004 recorded; D17 and D18 opened rather than answered. |
 | 2026-09-30T23:06:32.858Z | CLAIM | DEVICE-01 | P9-005 | claimed |
+| 2026-09-30T23:25:30.457Z | RELEASE COMPLETE | DEVICE-01 | P9-005 | D16 resolved under the owner's standing authorization and implemented: docs/RELEASE_POLICY.md, tools/release/version.mjs (25 tests), the preflight format rule, the version display in Settings, and the release profile measured rather than assumed. P9-D satisfied. Baseline B-005 at fba3544. cargo fmt --check had been failing on main since the D15 merge and is fixed at 33b7398. |
