@@ -16,7 +16,7 @@ against the remote on every read.
 | Phase | Objective | Status | Evidence | Blocker |
 |---|---|---|---|---|
 | 7 | Pre-commercialization audit and stabilization gate | **CLOSED — PASS WITH CONDITIONS** | `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`; two of its conditions (packaging, `csp: null`) since cleared and marked in place | — |
-| 8 | Commercialization implementation | **OPEN** | 8.1 entitlements and 8.3 Assessment complete (D1, D3–D7 resolved); roadmap steps 3–8 unstarted | **D8, D9, D10** |
+| 8 | Commercialization implementation | **OPEN** | 8.1 entitlements and 8.3 Assessment complete (D1, D3–D7 resolved); **D8 resolved 2026-10-01** under standing authorization; roadmap steps 3–8 unstarted | **D9, D10** |
 | 9 | Packaging and release hardening | **OPEN, two items done** | `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md`; P9-A satisfied at `c384ac5`; P9-D satisfied 2026-10-01 (`docs/RELEASE_POLICY.md`, enforcement half at `d3bca14`) | **D13, D14** |
 | 10 | Cloud and API architecture | **NOT STARTED, by design** | Architecture Package §22 | D14 must not be used as a route into it |
 
@@ -34,7 +34,6 @@ against the remote on every read.
 
 | ID | Question | Blocks | Owner action needed |
 |---|---|---|---|
-| **D8** | Practice/simulation resume (A6 is its engineering half) | Phase 8 remainder | Decide resume semantics |
 | **D9** | Evaluation-failure behaviour | Phase 8 remainder | Decide what happens to a failed evaluation |
 | **D10** | What persists a web learner's progress | Roadmap steps 4–5; **D14** | Choose the persistence model |
 | **D13** | Code-signing identity | P9-B, P9-E | Purchase or designate a certificate |
@@ -44,7 +43,7 @@ against the remote on every read.
 | **A2, A6, A7, A9, A12** | Accepted Phase 7 debt | Various | See the register |
 
 Resolved and implemented: **D1, D2, D3, D4, D5, D6, D7, D11, D12, D15**, and
-**D16** - the first decision closed under the owner's *standing* authorization
+**D16** and **D8** - the first decisions closed under the owner's *standing* authorization
 rather than by the owner personally. The record distinguishes the two
 deliberately: see `docs/RELEASE_POLICY.md` and the D16 entry in the register.
 
@@ -64,6 +63,7 @@ not actually performed on a Windows machine.**
 | Tooling runs on Windows | preflight **25/25**, nexus-sync **81/81**, both zero-dependency Node with explicit CRLF handling |
 | Web/desktop parity of the closed-book boundary | Exercised live in the browser preview on 2026-09-27 as well as in jsdom |
 | Release binary size, three profiles | `cargo build --release --offline` run three times on identical source, rustc 1.98.1; the default figure reproduced exactly on a fourth run |
+| A continued attempt carries the draft and the clock | Walked in the browser preview 2026-10-01: an autosaved practice attempt, the Dashboard card, the carried draft, and a timer continuing from the carried time rather than restarting |
 | The running version is reachable from the product | `get_app_version` had never been called from the frontend; Settings now reads it over IPC, 6 + 3 tests |
 
 **2. Statically validated — read from configuration, not executed**

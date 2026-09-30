@@ -16,7 +16,9 @@ import {
   canStartMode,
   modeAllowsPause,
   mayRevealPerformance,
+  mayContinueFromDraft,
   assertMayRevealPerformance,
+  sessionTimesAt,
   type Scenario,
   type SimulationSession,
   type SimulationMode,
@@ -37,6 +39,18 @@ import { currentEntitlements } from "./entitlementStore.js";
  */
 export type SaveError = "autosave" | "submission";
 
+/**
+ * The work carried out of an interrupted attempt and into a new one (D8).
+ *
+ * The draft is the learner's text. `activeMs` is the time that was actually
+ * measured on it, which travels with the draft so that continuing cannot buy a
+ * better `timeEfficiency` than finishing in one sitting would have.
+ */
+export interface ContinuedWork {
+  draft: DocumentationDraft;
+  activeMs: number;
+}
+
 interface SessionState {
   scenario: Scenario | null;
   session: SimulationSession | null;
@@ -51,8 +65,12 @@ interface SessionState {
    * Starts a session, or refuses to. Returns `true` if a session started and
    * `false` if the learner's entitlements do not unlock this scenario's
    * difficulty - in which case nothing at all changes.
+   *
+   * `continueFrom` carries an interrupted attempt's work into this new one
+   * (D8). It is never a resume: the attempt gets a new id and the interrupted
+   * record is left for the caller to abandon.
    */
-  start: (scenario: Scenario, mode: SimulationMode) => boolean;
+  start: (scenario: Scenario, mode: SimulationMode, continueFrom?: ContinuedWork) => boolean;
   pause: () => void;
   resume: () => void;
   advanceTranscript: () => void;
@@ -84,8 +102,11 @@ function toSessionRecord(
     mode: session.mode,
     status: session.status,
     startedAt: session.startedAt ?? Date.now(),
-    activeMs: session.activeMs,
-    pausedMs: session.pausedMs,
+    // The live clocks, not the stored ones. Both are only advanced at a
+    // transition, so copying them writes zero for an attempt that has never
+    // been paused - which is every ordinary practice attempt. Nothing read an
+    // unfinished record's clock before D8; now a continued attempt does.
+    ...sessionTimesAt(session, Date.now()),
     completedAt: session.completedAt,
     flags: session.flags,
     draft,
@@ -115,7 +136,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   result: null,
   saveError: null,
 
-  start: (scenario, mode) => {
+  start: (scenario, mode, continueFrom) => {
     // Entitlement enforcement (Phase 8.2). Every way into a session - the
     // scenario library, "Retry this scenario", a recommendation's retry, and
     // resuming an interrupted session from the Dashboard - calls this
@@ -135,6 +156,12 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       return false;
     }
 
+    // D8: an interrupted attempt is never resumed in place, and an Assessment
+    // may not even be continued from its draft (D6). Enforced here as well as
+    // in the Dashboard, because this function is the single door into every
+    // session and a future entry point would otherwise have to remember.
+    const carried = continueFrom && mayContinueFromDraft(mode) ? continueFrom : undefined;
+
     const beats = splitNarrativeIntoBeats(scenario.encounter.narrative);
     set({
       scenario,
@@ -142,10 +169,19 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         // crypto.randomUUID() rather than an in-memory counter: a counter
         // resets to 0 on every reload, which would collide with IDs already
         // persisted from a prior session now that Phase 5 adds real storage.
-        { id: crypto.randomUUID(), scenarioId: scenario.scenarioId, scenarioVersion: scenario.version, mode },
+        {
+          id: crypto.randomUUID(),
+          scenarioId: scenario.scenarioId,
+          scenarioVersion: scenario.version,
+          mode,
+          carriedActiveMs: carried?.activeMs
+        },
         Date.now()
       ),
-      draft: createEmptyDraft(),
+      // Copied, not referenced. The store's field updates are immutable, so
+      // this is not the only thing keeping the abandoned record's draft intact
+      // - it is the one that does not depend on that staying true.
+      draft: carried ? { ...carried.draft } : createEmptyDraft(),
       beats,
       result: null,
       saveError: null,

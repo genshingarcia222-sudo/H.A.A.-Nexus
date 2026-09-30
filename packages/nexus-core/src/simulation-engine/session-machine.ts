@@ -116,14 +116,44 @@ export interface StartSessionParams {
   scenarioId: string;
   scenarioVersion: string;
   mode: SimulationMode;
+  /**
+   * Measured work time carried forward from an interrupted attempt (D8).
+   *
+   * An interrupted attempt is never resumed in place; the learner may carry
+   * their draft into a **new** attempt, and this carries the time that was
+   * actually measured on that draft along with it. Without it, a learner could
+   * write a complete note, lose the app, continue from the draft and submit in
+   * seconds on a clock that started at zero - and `timeEfficiency` feeds the
+   * score. The gap while the app was closed is deliberately *not* included: it
+   * is not work time, and nothing measured it.
+   */
+  carriedActiveMs?: number;
+}
+
+/**
+ * Whether an interrupted attempt in this mode may be continued from its draft.
+ *
+ * Assessment: **no**. D6 (owner, 2026-09-20) says an interrupted Assessment is
+ * retaken as a fresh attempt, and carrying the draft forward would be a resume
+ * in all but name. Practice and simulation: **yes**, by D8.
+ *
+ * It lives here rather than in the Dashboard so that a second entry point
+ * cannot be added later that forgets the Assessment case.
+ */
+export function mayContinueFromDraft(mode: SimulationMode): boolean {
+  return mode !== "assessment";
 }
 
 export function startSession(params: StartSessionParams, now: number): SimulationSession {
+  const { carriedActiveMs, ...identity } = params;
   return {
-    ...params,
+    ...identity,
     status: "in_progress",
     startedAt: now,
-    activeMs: 0,
+    // A carried figure is clamped rather than trusted: it arrives from a
+    // persisted record, and a negative or fractional value would flow straight
+    // into the score.
+    activeMs: Number.isFinite(carriedActiveMs) ? Math.max(0, Math.trunc(carriedActiveMs as number)) : 0,
     pausedMs: 0,
     lastTransitionAt: now,
     completedAt: null,
@@ -196,4 +226,31 @@ export function computeLiveActiveMs(session: SimulationSession, now: number): nu
     return session.activeMs;
   }
   return session.activeMs + (now - session.lastTransitionAt);
+}
+
+/**
+ * Both clocks as they stand right now, for writing a record mid-attempt.
+ *
+ * `activeMs` and `pausedMs` on the session are only advanced at a transition,
+ * so an autosave that copies them writes the figures from the *last* pause or
+ * start - zero, for an attempt that has never been paused. That was invisible
+ * while nothing read an unfinished record's clock. D8 makes something read it:
+ * the time carried into a continued attempt.
+ *
+ * A completed or abandoned session returns its stored figures unchanged, since
+ * `completeSession` has already folded the final interval in; calling this
+ * afterwards cannot double-count it.
+ */
+export function sessionTimesAt(
+  session: SimulationSession,
+  now: number
+): { activeMs: number; pausedMs: number } {
+  const since = now - (session.lastTransitionAt ?? now);
+  if (session.status === "in_progress") {
+    return { activeMs: session.activeMs + since, pausedMs: session.pausedMs };
+  }
+  if (session.status === "paused") {
+    return { activeMs: session.activeMs, pausedMs: session.pausedMs + since };
+  }
+  return { activeMs: session.activeMs, pausedMs: session.pausedMs };
 }

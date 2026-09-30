@@ -371,6 +371,13 @@ implementation details. Assessment resume is separately blocked by **D6**.
 schema addition **only if** resume is authorized; doing it first would be
 speculative infrastructure.
 
+**D8 was answered on 2026-10-01 and did not authorize it.** The decision is that
+an interrupted attempt is never resumed in place - a new attempt may carry the
+draft and the measured time, and nothing restores a position in the transcript.
+Practice reveals the whole transcript at the start, and a continued simulation
+attempt begins revealing again. So A6 stays open, and persisting `revealedCount`
+would still be infrastructure nothing reads.
+
 ---
 
 ## A7 — Recommendations ignore competency trends
@@ -425,8 +432,9 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
 authorized and enforced. **D3, D4, D5, D6 and D7 were all answered on
-2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them;
-D8 and D9 remain open.**
+2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them.
+D8 was answered on 2026-10-01 under the owner's standing authorization and has
+its own entry below; D9 remains open.**
 
 **D7 — contradictory documentation — answered 2026-09-20 under delegated
 authority.** A note that documents a pertinent negative and asserts the
@@ -492,6 +500,80 @@ record in `PHASE_8_3_ASSESSMENT_MODE.md` D3.
 whether Assessment attempts should count in analytics and competency (D5), and
 what happens to an interrupted Assessment (D6). Assessment attempts do count
 today; D3 left that exactly as it was rather than ratifying it.
+
+---
+
+## D8 — May an interrupted practice or simulation attempt be resumed? — **RESOLVED**
+
+**Resolved** on 2026-10-01 by **DEVICE-01 under the owner's standing decision
+authority**, not by the owner personally. Assessment is out of scope: **D6**
+governs it and answered the same question in 2026-09-20.
+
+| | |
+|---|---|
+| **Decision** | D8 — interrupted practice and simulation attempts |
+| **Selected value** | **Never resumed in place.** The learner may carry the draft into a *new* attempt, and the time already measured on that draft is carried with it |
+| **Rejected alternatives** | exact in-place resume; carrying the draft on a fresh zero clock; a fresh attempt only, with the draft unreachable |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
+
+**Why not exact resume.** Two reasons, and the second is decisive. An attempt's
+`activeMs` feeds `timeEfficiency`, which is weighted into the overall score, so
+an attempt restored onto a running clock is scored on a number nobody measured.
+And the repository cannot supply that number honestly: an interruption is a
+crash, nothing recorded when it happened, and the app may be reopened days
+later. Any in-place resume would have to invent the missing interval, reset the
+clock, or count the time the application was closed. All three are worse than
+not resuming.
+
+**Why the time travels with the draft.** Carrying the work on a zero clock is
+the obvious shape and it is exploitable: write the whole note, close the app,
+continue from the draft, submit in thirty seconds, and `timeEfficiency` rewards
+it. Carrying both means a continued attempt is scored on the work *and* the time
+the work took. The gap while the app was closed is excluded deliberately — it is
+not work time.
+
+**Attempt identity.** The new attempt gets a new id and its own history row. The
+interrupted record becomes `abandoned`, is kept rather than deleted, and carries
+no evaluation, so it folds into no competency record and cannot double-count.
+**No link field was added** between the two: nothing consumes one, and a
+persisted field nothing reads is the speculative infrastructure A6 warns about.
+
+**What this decision answers, point by point.**
+
+| Question | Answer |
+|---|---|
+| Interruption (crash, force quit) | The record stays `in_progress` and is surfaced on the Dashboard on next launch |
+| Reload / app close | The in-memory session is lost; the persisted record is not. Same as an interruption |
+| Route navigation | Neither ends nor pauses the attempt. The clock keeps running, because looking something up is time on task — and practice is open-book by design (D4 restricts Assessment only) |
+| Temporary state | Transcript reveal position, beats and entitlement state are not persisted and are not restored |
+| Exact resume vs fresh attempt | Always a fresh attempt |
+| Stale session handling | No expiry. An interrupted record waits until the learner continues it or discards it; a time limit would be arbitrary |
+| Attempt identity | New id; old record `abandoned`; no link field |
+| Cross-device | Out of scope — **D10** owns it. Practice progress is device-local today because the repository is |
+| Persistence boundary | Draft, mode, status, flags and both clocks persist. Transcript position does not |
+
+**A6 stays open and stays unnecessary.** Transcript reveal position is still not
+persisted, and D8 does not require it: practice reveals the whole transcript at
+the start anyway, and a continued simulation attempt begins revealing again.
+Adding `revealedCount` to the record would still be speculative.
+
+**Two defects this decision uncovered.**
+
+1. **An autosaved record's clock was zero.** `activeMs` and `pausedMs` only
+   advance at a transition, and the autosave copied them — so a practice attempt
+   that had never been paused was saved as "0 ms of work" however long the
+   learner had been writing. Invisible while nothing read an unfinished record's
+   clock. D8 makes something read it. Fixed with `sessionTimesAt`.
+2. **The Dashboard offered to "continue" the attempt already on screen.**
+   `findInterrupted` returns every `in_progress` record, and a live attempt
+   autosaves into exactly that state. Found by walking the flow in a browser;
+   the live attempt is now excluded.
+
+**What this decision does NOT decide.** What happens when evaluation itself
+fails (**D9**), what persists a web learner's progress (**D10**), whether an
+interrupted *Assessment* may be studied against before the retake (**D17**), and
+anything about transcript position (**A6**).
 
 ---
 

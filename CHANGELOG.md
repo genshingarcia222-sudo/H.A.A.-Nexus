@@ -11,6 +11,80 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D8 — Interrupted Practice and Simulation Attempts (2026-10-01)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,
+like D16 before it. An owner decision overrules it. Assessment is untouched: D6
+answered the same question for Assessment in 2026-09-20 and still governs it.
+
+**The decision: an interrupted attempt is never resumed in place.** The learner
+may carry their draft into a *new* attempt, and the time already measured on
+that draft is carried with it.
+
+**Why not an exact resume.** An attempt's `activeMs` feeds `timeEfficiency`,
+which is weighted into the overall score - so an attempt restored onto a running
+clock is scored on a number nobody measured. And the repository cannot supply
+that number honestly: an interruption is a crash, nothing recorded when it
+happened, and the app may be reopened days later. Every in-place resume would
+have to invent the missing interval, reset the clock, or count the hours the
+application was closed.
+
+**Why the time travels with the draft.** Carrying the work on a fresh zero clock
+is the obvious shape, and it is exploitable: write the whole note, close the app,
+continue from the draft, submit in thirty seconds, and `timeEfficiency` rewards
+it. Carrying both means a continued attempt is scored on the work *and* on the
+time the work took, while the gap when the app was closed is excluded - it is
+not work time, and nothing measured it.
+
+The new attempt gets a new id, and the interrupted record becomes `abandoned`
+rather than being deleted. It carries no evaluation, so it folds into no
+competency record and cannot double-count. **No link field between the two was
+added**: nothing consumes one, and a persisted field nothing reads is the
+speculative infrastructure A6 warns against. `mayContinueFromDraft` in
+`nexus-core` is what keeps Assessment out, so a future entry point cannot forget
+D6 - and the D6 test now asserts the button is absent for an Assessment.
+
+**Two defects this uncovered, both fixed.**
+
+1. **An autosaved record's clock was zero.** `activeMs` and `pausedMs` only
+   advance at a transition, and the autosave copied them - so a practice attempt
+   that had never been paused was persisted as "0 ms of work" however long the
+   learner had been writing. It was invisible because nothing read an unfinished
+   record's clock. D8 makes something read it. `sessionTimesAt` now supplies the
+   live figures, and a completed attempt still returns its stored ones so the
+   final interval cannot be counted twice.
+2. **The Dashboard offered to continue the attempt already on screen.**
+   `findInterrupted` returns every `in_progress` record and a live attempt
+   autosaves into exactly that state, so the card offered to "continue" the
+   session the learner was sitting in - which would have abandoned it and
+   started a third. Found by walking the flow in a browser, not by reading code.
+
+**What D8 answers beyond resume:** navigation neither ends nor pauses an attempt
+(looking something up is time on task, and practice is open-book by design);
+interrupted records never expire, because a time limit would be arbitrary;
+transcript position is still not persisted, so **A6 stays open and stays
+unnecessary**; and cross-device continuity is explicitly **D10's**, not this
+decision's.
+
+**Verified in the running application**, not only in jsdom: a practice attempt
+autosaved, the Dashboard card appeared, "Continue from your draft" restored the
+note, and the timer read 00:37 - continuing from the carried time rather than
+restarting at zero. No console errors.
+
+**Mutation checks.** Carrying the work but not the time, letting an Assessment
+carry its draft, autosaving the stored clock again, and removing the live-attempt
+filter were each killed by the test aimed at them. One test - that editing the
+continued draft does not rewrite the abandoned record - survives either
+mechanism being removed alone, because two independent things guarantee it; it
+was verified to fail when both are removed, and the test says so.
+
+**Validation.** nexus-core **796/796** (65 files, +12), desktop **317/317** (32
+files, +12), typecheck clean, build clean, preflight **27/27** with the run
+exiting 0 and the register now recording 17 decisions, 10 blocked, 6 resolved.
+No test was deleted, weakened or skipped.
+
+---
+
 ## D16 — Release and Version Policy (2026-10-01)
 
 **The first decision closed under the owner's *standing* authorization rather
