@@ -49,18 +49,18 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-007
-task_name: "D9 evaluation-failure behaviour: decide and implement"
+task_id: P9-008
+task_name: "CI gates, and the D10 persistence boundary analysis"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-09-30T23:40:59.163Z
-last_update: 2026-09-30T23:49:17.161Z
+status: ACTIVE
+started_at: 2026-09-30T23:50:28.277Z
+last_update: 2026-09-30T23:50:28.277Z
 stale_after_hours: 12
-expected_scope: "Resolve D9 under the owner's standing decision authority: what a learner sees when evaluation itself fails, whether the attempt may be retried, and what the failed attempt counts toward. Must not weaken the D2 live-feedback boundary or the D5 population separation, and must not touch DEVICE-02's Knowledgebase lane."
-affected_areas: "packages/nexus-core/, apps/desktop/, docs/, CHANGELOG.md, .nexus/"
+expected_scope: "Two items. (1) Establish CI: a GitHub Actions workflow running the release gates that exist today, per master control prompt section 30. It has never been executed by Actions, so it is recorded as AWAITING ENVIRONMENT VALIDATION, not as verified. (2) D10: deliver the unblocked half - classify every piece of learner state as temporary, device-local, account-bound, cloud or derived, name the exact external blocker, and record a labelled recommendation. D10 is NOT resolved: cloud persistence needs a provider account and an account model that do not exist."
+affected_areas: ".github/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: 7a5840b7469a65ab521b8dd48543409965bb9e88
-last_commit: ef5d7cb0e6c468fa33f2b8955b9764046b868a70
+claim_commit: 67f037b9972298c00381bc61933d753b25656241
+last_commit: 67f037b9972298c00381bc61933d753b25656241
 handoff_required: no
 handoff_to: none
 next_action: "not recorded"
@@ -94,3 +94,4 @@ Timestamps are UTC.
 | 2026-09-30T23:40:22.263Z | RELEASE COMPLETE | DEVICE-01 | P9-006 | D8 resolved under the owner's standing authorization and implemented: an interrupted practice or simulation attempt is continued into a new attempt carrying its draft and its measured time, never resumed in place. Assessment excluded by mayContinueFromDraft, keeping D6 intact. Two defects fixed: the autosaved clock was zero, and the Dashboard offered to continue the live attempt. nexus-core 796/796, desktop 317/317, cargo 70/70. |
 | 2026-09-30T23:40:59.163Z | CLAIM | DEVICE-01 | P9-007 | claimed |
 | 2026-09-30T23:49:17.161Z | RELEASE COMPLETE | DEVICE-01 | P9-007 | D9 resolved under the owner's standing authorization and implemented: a failed evaluation is recorded as evaluation_failed with its draft and timings, surfaced as a recoverable error, retryable on the attempt's own recorded time, and counts toward nothing until scored. Assessment boundaries D2/D4 unchanged and tested in both directions. Baseline B-006 at 0c09e36. |
+| 2026-09-30T23:50:28.277Z | CLAIM | DEVICE-01 | P9-008 | claimed |
