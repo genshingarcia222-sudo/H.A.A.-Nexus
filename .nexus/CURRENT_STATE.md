@@ -31,9 +31,9 @@ last_verified_tests: "PASS - nexus-core 784/784, desktop 296/296, preflight 25/2
 last_verified_build: "PASS - pnpm -r build (2026-09-27, DEVICE-01, baseline B-004)"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-27, DEVICE-01, baseline B-004)"
 last_verified_rust: "PASS - cargo test 70/70, rustc 1.98.1 (2026-09-27, DEVICE-01, baseline B-004)"
-active_task: P9-004
+active_task: P9-005
 task_owner: DEVICE-01
-task_status: COMPLETE
+task_status: ACTIVE
 last_successful_sync: 2026-09-27T00:39:41.384Z
 last_sync_device: DEVICE-01
 last_sync_commit: 40f0f0a3dca29d69cc3fec046d700062eb286c30
