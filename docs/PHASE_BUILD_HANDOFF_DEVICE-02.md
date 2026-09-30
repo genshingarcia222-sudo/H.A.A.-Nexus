@@ -22,22 +22,27 @@ session: attach to S-phases-building, then register your own lane session
 integration gate is unsatisfied and **D18** (which content contract the runtime
 ingests) comes first.
 
-**Two things arrived on `main` that touch your branch mechanically**, neither of
-them a change to your architecture:
+**What arrived on `main` that touches your branch mechanically**, none of it a
+change to your architecture:
 
 1. `package.json` `scripts` - `main` now appends four `version:*` entries after
-   `nexus-sync:test`, where your branch appends nine `kb:*` entries. That is a
-   textual conflict on merge and a union resolution: keep both sets. Control
-   §10(H).
-2. `tools/preflight/preflight.mjs` now imports `tools/release/version.mjs` for
-   the one definition of a releasable version, and `versionParity` gained a
-   `policyFormat` field. `tools/preflight/**` moved to DEVICE-01's owned list at
-   this control version, after checking that your branch changes nothing in it.
-   If you have unpushed preflight work, say so rather than merging over it.
+   `nexus-sync:test`, where your branch appends nine `kb:*` entries. A textual
+   conflict on merge, and a union resolution: keep both sets. Control §10(H).
+2. `tools/preflight/preflight.mjs` imports `tools/release/version.mjs` for the
+   one definition of a releasable version, and `versionParity` gained a
+   `policyFormat` field. `tools/preflight/**` moved to DEVICE-01's owned list
+   after checking that your branch changes nothing in it. If you have unpushed
+   preflight work, say so rather than merging over it.
+3. **CI now exists** (`.github/workflows/ci.yml`) and runs on every pull request,
+   so PR #21 will be checked by it. It has never been validated on a hosted
+   runner - if it fails on your PR, read the failure before assuming your branch
+   caused it.
 
-`docs/RELEASE_POLICY.md` is new and worth reading before any release-adjacent
-audit: it is a **standing-authorization** decision, not an owner decision, and it
-is labelled as such.
+**Three decisions closed since your last handoff**, all under the owner's
+*standing* authorization rather than by the owner personally, and all labelled as
+such: **D16** (`docs/RELEASE_POLICY.md`), **D8** (interrupted attempts are
+continued, never resumed) and **D9** (a failed evaluation is visible and
+retryable). **D10 was deliberately not closed** and remains externally blocked.
 
 ## Why this lane is documentation work right now
 

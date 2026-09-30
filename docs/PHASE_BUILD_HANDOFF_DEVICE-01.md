@@ -17,15 +17,26 @@ session: S-phases-building (register/attach it at every session start)
 
 ## Exact next action at control version P9-2026-10-01-001
 
-**Next action.** D16 is closed; P9-D is satisfied. The recommended order in the
-master control prompt puts **D8 (Practice/Simulation resume)** next, then D9,
-then D10. All three are product-semantics decisions that no credential blocks, so
-they are closable under the standing authorization in control §1a - but D8 must
-be established from Practice's own behaviour, not derived from Assessment's:
-`docs/DECISION_REGISTER.md` A6 records exact mid-transcript resume as
-unimplemented, and D6 covers Assessment only.
+**Next action.** Read the first CI run. `.github/workflows/ci.yml` now runs the
+release-policy §7 gates on every push and has never been validated by a hosted
+runner; the Windows job (which compiles the Tauri crate) is the uncertain part.
+That result is the one piece of unfinished, ungated work in this lane.
 
-Do not touch `knowledge-corpus/`, `tools/knowledge-corpus/`, or PR #21.
+**After that, nothing in this lane is ungated.** D16, D8 and D9 were closed under
+the standing authorization and Phase 8.3's decision group is complete. What
+remains needs the owner:
+
+| Blocker | Why a session cannot close it |
+|---|---|
+| **D10** | Cloud persistence needs a provider account, an account model and authentication. The unblocked half - the learner-state classification and a labelled recommendation - is already in the register |
+| **D14** | Needs D10 first |
+| **D13** | A signing identity costs money and requires a legal entity |
+| **D17** | Changes D4's scope or D6's retake rule |
+| **D18** | DEVICE-02's lane is blocked on it |
+
+Do not touch `knowledge-corpus/`, `tools/knowledge-corpus/`, or PR #21. Do not
+cut a release: `docs/RELEASE_POLICY.md` §6 refuses a stable one at `0.1.0`, and
+the tag is the owner's.
 
 ## Assigned work
 
