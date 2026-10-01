@@ -68,6 +68,15 @@ re-asserted. The local `node` is v22.22.0 against `main`'s declared
 `^22.22.2 || ^24.15.0 || >=26.0.0`, so pnpm prints an engine warning; it is
 `main`'s pre-existing constraint, not a product of this reconciliation.
 
+**CI then supplied the half DEVICE-02 cannot measure, on this exact commit.**
+Run **36821096497** at `fa5a040` passed both jobs: `windows-latest` ran
+`cargo test` **70/70** — including the P9-A guard
+`release_builds_are_windowed_not_console` — with `cargo fmt --check` clean, and
+the Linux job reproduced every figure above on a machine that is neither
+DEVICE-01 nor DEVICE-02. The Rust result is therefore measured on the merged
+tree rather than inherited from `0c09e36`. Installers and anything needing an
+installed Windows artifact remain outside CI and outside this entry.
+
 **D18 is untouched, and it is still what blocks the merge.** Two implementations
 of one content contract remain — D12's Zod model in
 `packages/nexus-core/src/knowledge-corpus/` on `main`, and
