@@ -54,16 +54,16 @@ task_name: "CI gates, and the D10 persistence boundary analysis"
 owner: DEVICE-01
 status: COMPLETE
 started_at: 2026-09-30T23:50:28.277Z
-last_update: 2026-09-30T23:54:16.491Z
+last_update: 2026-10-01T05:22:27.623Z
 stale_after_hours: 12
 expected_scope: "Two items. (1) Establish CI: a GitHub Actions workflow running the release gates that exist today, per master control prompt section 30. It has never been executed by Actions, so it is recorded as AWAITING ENVIRONMENT VALIDATION, not as verified. (2) D10: deliver the unblocked half - classify every piece of learner state as temporary, device-local, account-bound, cloud or derived, name the exact external blocker, and record a labelled recommendation. D10 is NOT resolved: cloud persistence needs a provider account and an account model that do not exist."
 affected_areas: ".github/, docs/, CHANGELOG.md, .nexus/"
 branch: main
 claim_commit: 67f037b9972298c00381bc61933d753b25656241
-last_commit: 0cf982727bd120ed6706334d8282bbc6d4daeb4e
+last_commit: 61540b12717f8ec59cae79d7b5d9de1107c551ef
 handoff_required: no
 handoff_to: none
-next_action: "not recorded"
+next_action: probe
 ```
 
 ## Ownership history
@@ -96,3 +96,4 @@ Timestamps are UTC.
 | 2026-09-30T23:49:17.161Z | RELEASE COMPLETE | DEVICE-01 | P9-007 | D9 resolved under the owner's standing authorization and implemented: a failed evaluation is recorded as evaluation_failed with its draft and timings, surfaced as a recoverable error, retryable on the attempt's own recorded time, and counts toward nothing until scored. Assessment boundaries D2/D4 unchanged and tested in both directions. Baseline B-006 at 0c09e36. |
 | 2026-09-30T23:50:28.277Z | CLAIM | DEVICE-01 | P9-008 | claimed |
 | 2026-09-30T23:54:16.491Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | CI created (.github/workflows/ci.yml) running the release-policy gates; AWAITING ENVIRONMENT VALIDATION - no hosted runner has executed it, and the Windows job is the uncertain part. D10 NOT resolved and closing it declined: cloud persistence needs a provider account and an account model that do not exist, and browser-local would contradict the Business Model Spec. Delivered the unblocked half - the learner-state classification, the competency-accumulator and entitlement consequences, and a labelled recommendation. |
+| 2026-10-01T05:22:27.623Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | complete |
