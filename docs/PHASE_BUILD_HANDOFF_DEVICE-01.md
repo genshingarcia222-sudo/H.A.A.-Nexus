@@ -17,12 +17,12 @@ session: S-phases-building (register/attach it at every session start)
 
 ## Exact next action at control version P9-2026-10-01-001
 
-**Next action.** Read the first CI run. `.github/workflows/ci.yml` now runs the
-release-policy §7 gates on every push and has never been validated by a hosted
-runner; the Windows job (which compiles the Tauri crate) is the uncertain part.
-That result is the one piece of unfinished, ungated work in this lane.
+**Next action: there is none that is ungated.** CI is green — run 36793771261 at
+`df5dae9` passed both jobs on hosted runners and reproduced every baseline B-006
+figure off this device, including `cargo test` 70/70 on `windows-latest`. The
+last piece of unfinished work in this lane is finished.
 
-**After that, nothing in this lane is ungated.** D16, D8 and D9 were closed under
+**Do not invent work to fill the gap.** D16, D8 and D9 were closed under
 the standing authorization and Phase 8.3's decision group is complete. What
 remains needs the owner:
 
