@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Card, Button } from "@haa-nexus/ui-kit";
-import type { SessionRecord } from "@haa-nexus/nexus-core";
+import { mayContinueFromDraft, type SessionRecord } from "@haa-nexus/nexus-core";
 import { useProfileStore } from "../store/profileStore.js";
 import { useSessionStore } from "../store/sessionStore.js";
 import { moduleRegistry } from "../modules.js";
@@ -20,6 +20,7 @@ function formatDate(ms: number): string {
 export function Dashboard() {
   const displayName = useProfileStore((s) => s.displayName);
   const startSession = useSessionStore((s) => s.start);
+  const liveSessionId = useSessionStore((s) => s.session?.id ?? null);
   const modules = moduleRegistry.list();
 
   const [history, setHistory] = useState<SessionRecord[]>([]);
@@ -30,36 +31,54 @@ export function Dashboard() {
     try {
       const [all, stuck] = await Promise.all([sessionRepository.list(), sessionRepository.findInterrupted()]);
       setHistory(all);
-      setInterrupted(stuck);
+      // The attempt the learner is in right now is not an interrupted one
+      // (D8). `findInterrupted` returns every in_progress record, and the live
+      // attempt autosaves into exactly that state - so without this the card
+      // offers to "continue" the session already on screen, which would
+      // abandon it and start a third. Found by walking the flow in a browser.
+      setInterrupted(stuck.filter((r) => r.id !== liveSessionId));
     } catch (err) {
       console.error("Failed to load session history:", err);
     } finally {
       setLoaded(true);
     }
-  }, []);
+  }, [liveSessionId]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
-  async function handleResume(record: SessionRecord) {
+  /**
+   * D8: what an interrupted practice or simulation attempt may become.
+   *
+   * Neither route resumes the attempt. Both start a *new* one and abandon the
+   * interrupted record, so an attempt is never scored on a clock that was
+   * reset mid-way or that counts the time the app was closed. The difference
+   * is only what the new attempt starts from:
+   *
+   * - `continue` carries the learner's draft, and with it the time that was
+   *   actually measured on that draft. Carrying the work without the time
+   *   would let a learner write the whole note, restart, and submit in seconds
+   *   on a fresh clock - and `timeEfficiency` feeds the score.
+   * - `fresh` starts empty, on a zero clock.
+   *
+   * Transcript position is not restored either way: it is not persisted, and
+   * D8 does not require it (see A6 in the decision register).
+   */
+  async function beginNewAttempt(record: SessionRecord, from: "continue" | "fresh") {
     const scenario = scenarioRepository.get(record.scenarioId, record.scenarioVersion);
     if (!scenario) {
       window.alert("That scenario is no longer available in this build.");
       return;
     }
-    // Note: this starts a fresh session for the same scenario rather than
-    // restoring the exact transcript position - transcript-reveal state
-    // isn't persisted yet (only the session and its draft are). The prior
-    // draft text itself is not lost; it remains in history under its
-    // original (now-abandoned) session id.
-    //
-    // The new attempt is started *before* the old record is abandoned. If
-    // the learner's entitlements no longer unlock this scenario, `start`
-    // refuses without side effects, and the interrupted record must survive
-    // that refusal rather than being abandoned for a session that never
-    // began. `start` is synchronous and writes nothing to the repository.
-    if (!startSession(scenario, record.mode)) {
+    // The new attempt starts *before* the old record is abandoned. If the
+    // learner's entitlements no longer unlock this scenario, `start` refuses
+    // without side effects, and the interrupted record must survive that
+    // refusal rather than being abandoned for a session that never began.
+    // `start` is synchronous and writes nothing to the repository.
+    const carried =
+      from === "continue" ? { draft: record.draft, activeMs: record.activeMs } : undefined;
+    if (!startSession(scenario, record.mode, carried)) {
       window.alert(`That scenario is locked. ${lockedScenarioMessage(scenario)}`);
       return;
     }
@@ -88,10 +107,22 @@ export function Dashboard() {
             <div key={record.id} style={{ marginBottom: "var(--nexus-space-2)" }}>
               <p style={{ margin: "0 0 var(--nexus-space-2) 0", fontSize: "var(--nexus-font-size-sm)" }}>
                 <strong>{record.scenarioTitle}</strong> was left {record.status} on {formatDate(record.startedAt)}.
-                Your last-saved draft is still there.
+                {mayContinueFromDraft(record.mode)
+                  ? " You can pick your draft up in a new attempt, or start again from an empty one. Either way this counts as a new attempt."
+                  : " An interrupted Assessment is retaken from the beginning, so this one starts from an empty draft."}
               </p>
               <div style={{ display: "flex", gap: "var(--nexus-space-2)" }}>
-                <Button onClick={() => void handleResume(record)}>Start a new attempt</Button>
+                {mayContinueFromDraft(record.mode) && (
+                  <Button onClick={() => void beginNewAttempt(record, "continue")}>
+                    Continue from your draft
+                  </Button>
+                )}
+                <Button
+                  variant={mayContinueFromDraft(record.mode) ? "secondary" : "primary"}
+                  onClick={() => void beginNewAttempt(record, "fresh")}
+                >
+                  Start a new attempt
+                </Button>
                 <Button variant="secondary" onClick={() => void handleDiscard(record)}>
                   Discard
                 </Button>

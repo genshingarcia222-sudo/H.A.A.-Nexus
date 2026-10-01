@@ -397,12 +397,16 @@ fn a_delivery_survives_a_database_round_trip_byte_for_byte() {
 #[test]
 fn an_empty_ledger_answers_with_an_empty_list_rather_than_an_error() {
     let db = TempDb::new();
-    assert!(delivery::list_deliveries_for_learner(db.conn(), "nobody", None)
-        .unwrap()
-        .is_empty());
-    assert!(delivery::list_deliveries_for_session(db.conn(), "no-such-run")
-        .unwrap()
-        .is_empty());
+    assert!(
+        delivery::list_deliveries_for_learner(db.conn(), "nobody", None)
+            .unwrap()
+            .is_empty()
+    );
+    assert!(
+        delivery::list_deliveries_for_session(db.conn(), "no-such-run")
+            .unwrap()
+            .is_empty()
+    );
 }
 
 #[test]
@@ -484,7 +488,8 @@ fn the_since_bound_filters_by_delivery_date() {
     delivery::append_delivery_event(db.conn(), &newer).unwrap();
 
     let recent =
-        delivery::list_deliveries_for_learner(db.conn(), "learner-7f3a", Some("2026-10-01")).unwrap();
+        delivery::list_deliveries_for_learner(db.conn(), "learner-7f3a", Some("2026-10-01"))
+            .unwrap();
     assert_eq!(recent.len(), 1);
     assert_eq!(recent[0].delivery_id, "newer-delivery");
 }

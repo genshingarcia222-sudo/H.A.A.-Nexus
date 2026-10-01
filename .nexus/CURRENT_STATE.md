@@ -24,19 +24,19 @@ project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
 current_phase: "Phase 9 - Packaging & Release Hardening (P9-A satisfied; P9-B/C/D-policy/E decision-blocked; Phase 8 is NOT closed)"
-current_milestone: "D15 resolved 2026-09-27 as a merge and executed (c384ac5): main carries the Training question run (M23), the D12 corpus module and the delivery layer, and P9-A is satisfied. Control plane at P9-2026-09-27-001. D13, D14, D16 still gate the rest of Phase 9; Phase 8 steps 3-8 unstarted with D8, D9, D10 open. DEVICE-02 owns the Knowledgebase lane (PR #21, not merged)"
-baseline_commit: 7dcad6b264d2f16ae0e9f49f0fa842ac26033293
-last_verified_commit: 7dcad6b264d2f16ae0e9f49f0fa842ac26033293
-last_verified_tests: "PASS - nexus-core 784/784, desktop 296/296, preflight 25/25, nexus-sync 81/81 (2026-09-27, DEVICE-01, baseline B-004)"
-last_verified_build: "PASS - pnpm -r build (2026-09-27, DEVICE-01, baseline B-004)"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-09-27, DEVICE-01, baseline B-004)"
-last_verified_rust: "PASS - cargo test 70/70, rustc 1.98.1 (2026-09-27, DEVICE-01, baseline B-004)"
-active_task: P9-004
+current_milestone: "D16, D8 and D9 all resolved 2026-10-01 under the owner STANDING AUTHORIZATION (none of them owner decisions; each labelled in the register, ledger and changelog). P9-D is SATISFIED so Phase 9 has P9-A and P9-D done with P9-B/C/E blocked on D13 and D14. Phase 8.3 decision group COMPLETE (D1, D3-D9). Phase 8 still open: roadmap steps 3-8 unstarted and D10 blocks step 4. Control plane at P9-2026-10-01-001. DEVICE-02 owns the Knowledgebase lane (PR #21, not merged, D18 first)"
+baseline_commit: 0c09e361ddaa46b0634859a220e049a9c5096758
+last_verified_commit: 0c09e361ddaa46b0634859a220e049a9c5096758
+last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-01, DEVICE-01, baseline B-006)"
+last_verified_build: "PASS - pnpm -r build (2026-10-01, DEVICE-01, baseline B-006); cargo build --release measured 10,278,912 B at B-005"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-01, DEVICE-01, baseline B-006)"
+last_verified_rust: "PASS - cargo test 70/70 and cargo fmt --check clean, rustc 1.98.1 (2026-10-01, DEVICE-01, baseline B-006)"
+active_task: P9-008
 task_owner: DEVICE-01
 task_status: COMPLETE
-last_successful_sync: 2026-09-27T00:39:41.384Z
+last_successful_sync: 2026-10-01T00:07:25.606Z
 last_sync_device: DEVICE-01
-last_sync_commit: 40f0f0a3dca29d69cc3fec046d700062eb286c30
+last_sync_commit: a83a9d3cd82954ae12d11fc6ea2b7f53a92e953e
 sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```

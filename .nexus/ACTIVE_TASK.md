@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-004
-task_name: "D15 integration, then Assessment integrity and regression hardening"
+task_id: P9-008
+task_name: "CI gates, and the D10 persistence boundary analysis"
 owner: DEVICE-01
 status: COMPLETE
-started_at: 2026-09-27T00:08:00.965Z
-last_update: 2026-09-27T00:39:35.599Z
+started_at: 2026-09-30T23:50:28.277Z
+last_update: 2026-10-01T05:22:45.293Z
 stale_after_hours: 12
-expected_scope: "Execute the owner-directed D15 integration of feat/training-question-bank into main with full validation; record D15 in the register; then harden Assessment closed-book integrity and regression coverage around the incoming Knowledgebase work. Must not touch DEVICE-02's Knowledgebase lane (knowledge-corpus/, tools/knowledge-corpus/) or resolve the schema-reconciliation question DEVICE-02 escalated."
-affected_areas: "packages/nexus-core/, apps/desktop/, docs/, .nexus/, CHANGELOG.md"
+expected_scope: "Two items. (1) Establish CI: a GitHub Actions workflow running the release gates that exist today, per master control prompt section 30. It has never been executed by Actions, so it is recorded as AWAITING ENVIRONMENT VALIDATION, not as verified. (2) D10: deliver the unblocked half - classify every piece of learner state as temporary, device-local, account-bound, cloud or derived, name the exact external blocker, and record a labelled recommendation. D10 is NOT resolved: cloud persistence needs a provider account and an account model that do not exist."
+affected_areas: ".github/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: 6c92a303590d759e45ce2c906a5938098d654402
-last_commit: c5f880e0e55e285554bd58744775de82a07e5490
+claim_commit: 67f037b9972298c00381bc61933d753b25656241
+last_commit: 6c86f32ded8a215666b9c0f34e308659856a1330
 handoff_required: no
 handoff_to: none
-next_action: "Owner decisions: D18 (content contract) blocks the Knowledgebase lane; D13, D14 (needs D10) and D16 block the rest of Phase 9; D8, D9, D10 block Phase 8; D17 sets the scope of the closed-book window. DEVICE-01 has no ungated engineering work left in its lane."
+next_action: "No ungated engineering work remains in the DEVICE-01 lane. Every remaining blocker is an owner decision: D18 first (it alone blocks DEVICE-02's Knowledgebase lane and PR #21), then D10 (needs a provider account and an account model; blocks D14 and roadmap steps 4-5), D13 (signing identity; blocks P9-B and P9-E), D17 (would change D4's scope or D6's retake rule). Do not cut a release: RELEASE_POLICY section 6 refuses a stable one at 0.1.0 and the tag is the owner's. CI is green and runs on every push and PR - read the run, not the badge."
 ```
 
 ## Ownership history
@@ -88,3 +88,13 @@ Timestamps are UTC.
 | 2026-09-26T15:26:15.833Z | RELEASE COMPLETE | DEVICE-01 | P9-003 | PR #18 and #19 integrated against the control-plane gate; PR #3 re-reconciled at 082fa95 and left unmerged (D15); governance reconciled at P9-2026-09-26-003; baseline B-003 recorded at 796c5e0. Measured: nexus-core 390/390, desktop 228/228, preflight 25/25, nexus-sync 81/81, build and typecheck clean, cargo test 55/55. |
 | 2026-09-27T00:08:00.965Z | CLAIM | DEVICE-01 | P9-004 | claimed |
 | 2026-09-27T00:39:35.599Z | RELEASE COMPLETE | DEVICE-01 | P9-004 | D15 executed with full pre-merge validation and recorded; Assessment closed-book boundary hardened with mutation-verified tests and confirmed live in the running app; catch-all route defect found by the route walk and fixed; ledger, Windows-readiness classification and baseline B-004 recorded; D17 and D18 opened rather than answered. |
+| 2026-09-30T23:06:32.858Z | CLAIM | DEVICE-01 | P9-005 | claimed |
+| 2026-09-30T23:25:30.457Z | RELEASE COMPLETE | DEVICE-01 | P9-005 | D16 resolved under the owner's standing authorization and implemented: docs/RELEASE_POLICY.md, tools/release/version.mjs (25 tests), the preflight format rule, the version display in Settings, and the release profile measured rather than assumed. P9-D satisfied. Baseline B-005 at fba3544. cargo fmt --check had been failing on main since the D15 merge and is fixed at 33b7398. |
+| 2026-09-30T23:27:46.110Z | CLAIM | DEVICE-01 | P9-006 | claimed |
+| 2026-09-30T23:40:22.263Z | RELEASE COMPLETE | DEVICE-01 | P9-006 | D8 resolved under the owner's standing authorization and implemented: an interrupted practice or simulation attempt is continued into a new attempt carrying its draft and its measured time, never resumed in place. Assessment excluded by mayContinueFromDraft, keeping D6 intact. Two defects fixed: the autosaved clock was zero, and the Dashboard offered to continue the live attempt. nexus-core 796/796, desktop 317/317, cargo 70/70. |
+| 2026-09-30T23:40:59.163Z | CLAIM | DEVICE-01 | P9-007 | claimed |
+| 2026-09-30T23:49:17.161Z | RELEASE COMPLETE | DEVICE-01 | P9-007 | D9 resolved under the owner's standing authorization and implemented: a failed evaluation is recorded as evaluation_failed with its draft and timings, surfaced as a recoverable error, retryable on the attempt's own recorded time, and counts toward nothing until scored. Assessment boundaries D2/D4 unchanged and tested in both directions. Baseline B-006 at 0c09e36. |
+| 2026-09-30T23:50:28.277Z | CLAIM | DEVICE-01 | P9-008 | claimed |
+| 2026-09-30T23:54:16.491Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | CI created (.github/workflows/ci.yml) running the release-policy gates; AWAITING ENVIRONMENT VALIDATION - no hosted runner has executed it, and the Windows job is the uncertain part. D10 NOT resolved and closing it declined: cloud persistence needs a provider account and an account model that do not exist, and browser-local would contradict the Business Model Spec. Delivered the unblocked half - the learner-state classification, the competency-accumulator and entitlement consequences, and a labelled recommendation. |
+| 2026-10-01T05:22:27.623Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | complete |
+| 2026-10-01T05:22:45.293Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | Finalization verified for the 2026-10-01 cycle: origin/main 61540b1, tree clean, control plane P9-2026-10-01-001, D16/D8/D9 recorded RESOLVED and independently classified so by preflight, D10 still classified blocked, CI run 36793771261 at df5dae9 recorded as evidence in six places, DEVICE-02's record untouched (UNKNOWN / NOT VERIFIED from its own commit trailer). The only gap was this record's own next_action, which read 'not recorded'. |

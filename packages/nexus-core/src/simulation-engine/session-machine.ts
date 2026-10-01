@@ -116,14 +116,44 @@ export interface StartSessionParams {
   scenarioId: string;
   scenarioVersion: string;
   mode: SimulationMode;
+  /**
+   * Measured work time carried forward from an interrupted attempt (D8).
+   *
+   * An interrupted attempt is never resumed in place; the learner may carry
+   * their draft into a **new** attempt, and this carries the time that was
+   * actually measured on that draft along with it. Without it, a learner could
+   * write a complete note, lose the app, continue from the draft and submit in
+   * seconds on a clock that started at zero - and `timeEfficiency` feeds the
+   * score. The gap while the app was closed is deliberately *not* included: it
+   * is not work time, and nothing measured it.
+   */
+  carriedActiveMs?: number;
+}
+
+/**
+ * Whether an interrupted attempt in this mode may be continued from its draft.
+ *
+ * Assessment: **no**. D6 (owner, 2026-09-20) says an interrupted Assessment is
+ * retaken as a fresh attempt, and carrying the draft forward would be a resume
+ * in all but name. Practice and simulation: **yes**, by D8.
+ *
+ * It lives here rather than in the Dashboard so that a second entry point
+ * cannot be added later that forgets the Assessment case.
+ */
+export function mayContinueFromDraft(mode: SimulationMode): boolean {
+  return mode !== "assessment";
 }
 
 export function startSession(params: StartSessionParams, now: number): SimulationSession {
+  const { carriedActiveMs, ...identity } = params;
   return {
-    ...params,
+    ...identity,
     status: "in_progress",
     startedAt: now,
-    activeMs: 0,
+    // A carried figure is clamped rather than trusted: it arrives from a
+    // persisted record, and a negative or fractional value would flow straight
+    // into the score.
+    activeMs: Number.isFinite(carriedActiveMs) ? Math.max(0, Math.trunc(carriedActiveMs as number)) : 0,
     pausedMs: 0,
     lastTransitionAt: now,
     completedAt: null,
@@ -173,6 +203,33 @@ export function completeSession(session: SimulationSession, now: number): Simula
   };
 }
 
+/**
+ * The attempt was completed but scoring it threw (D9).
+ *
+ * The timings are kept exactly as `completeSession` left them. A retry must be
+ * scored on the time the learner actually took, not on the time it took them to
+ * press a button again - so nothing here touches `activeMs`, `pausedMs` or
+ * `completedAt`.
+ *
+ * `evaluation_failed` already existed in `SessionStatus` and in the SQLite
+ * status constraint, and nothing produced it. D9 is what produces it.
+ */
+export function failEvaluation(session: SimulationSession): SimulationSession {
+  assertStatus(session, ["completed", "evaluation_failed"], "record an evaluation failure for");
+  return { ...session, status: "evaluation_failed" };
+}
+
+/**
+ * Scoring succeeded on a retry (D9): the attempt is completed after all.
+ *
+ * Deliberately not `completeSession`, which would fold another interval of
+ * elapsed time into an attempt that already finished.
+ */
+export function evaluationSucceeded(session: SimulationSession): SimulationSession {
+  assertStatus(session, ["evaluation_failed", "completed"], "record a successful evaluation for");
+  return { ...session, status: "completed" };
+}
+
 export function abandonSession(session: SimulationSession): SimulationSession {
   assertStatus(session, ["in_progress", "paused", "not_started"], "abandon");
   return { ...session, status: "abandoned" };
@@ -196,4 +253,31 @@ export function computeLiveActiveMs(session: SimulationSession, now: number): nu
     return session.activeMs;
   }
   return session.activeMs + (now - session.lastTransitionAt);
+}
+
+/**
+ * Both clocks as they stand right now, for writing a record mid-attempt.
+ *
+ * `activeMs` and `pausedMs` on the session are only advanced at a transition,
+ * so an autosave that copies them writes the figures from the *last* pause or
+ * start - zero, for an attempt that has never been paused. That was invisible
+ * while nothing read an unfinished record's clock. D8 makes something read it:
+ * the time carried into a continued attempt.
+ *
+ * A completed or abandoned session returns its stored figures unchanged, since
+ * `completeSession` has already folded the final interval in; calling this
+ * afterwards cannot double-count it.
+ */
+export function sessionTimesAt(
+  session: SimulationSession,
+  now: number
+): { activeMs: number; pausedMs: number } {
+  const since = now - (session.lastTransitionAt ?? now);
+  if (session.status === "in_progress") {
+    return { activeMs: session.activeMs + since, pausedMs: session.pausedMs };
+  }
+  if (session.status === "paused") {
+    return { activeMs: session.activeMs, pausedMs: session.pausedMs + since };
+  }
+  return { activeMs: session.activeMs, pausedMs: session.pausedMs };
 }

@@ -1,0 +1,132 @@
+## H.A.A. Nexus continuous integration.
+##
+## Runs the gates that docs/RELEASE_POLICY.md section 7 lists, using the exact
+## commands a device runs by hand. Before this workflow existed every gate was
+## a hand-run command, which is how a commit pushed from outside a session
+## could reach `main` with no suite having run at all (see the GitHub Desktop
+## commits recorded under "Known issues" in .nexus/CURRENT_STATE.md, one of
+## which left `cargo fmt --check` failing on `main` unnoticed).
+##
+## STATUS: VERIFIED. Run 36793771261 (`df5dae9`, 2026-10-01) passed both jobs on
+## hosted runners, reproducing every figure DEVICE-01 measures by hand:
+## nexus-core 804/804, desktop 330/330, preflight 27/27, release tool 25/25,
+## nexus-sync 81/81, typecheck and build clean, and on Windows `cargo fmt
+## --check` clean with `cargo test` 70/70 under the same rustc 1.98.1.
+##
+## It took three runs, and each failure is recorded rather than quietly fixed:
+##
+##   36793450663  both jobs failed at `pnpm/action-setup` - it refuses a pnpm
+##                version given both in the action and in package.json's
+##                `packageManager`. Fixed: the manifest is the one source.
+##   36793592091  `pnpm -r test` failed on Node 20: jsdom 30 needs
+##                ^22.22.2 || ^24.15.0 || >=26, and 16 of the 33 desktop test
+##                files could not load their environment at all - while vitest
+##                still printed "147 passed". `engines` said ">=20", which was
+##                simply untrue. Fixed in both places.
+##   36793771261  green.
+##
+## A green badge on a later commit is still only evidence about that commit.
+##
+## It does not build installers. Packaging is a Phase 9 item with Windows-only
+## acceptance criteria that P9-B and P9-E block, and the release policy requires
+## a release to be cut on DEVICE-01 with the owner approving the tag.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: Tests, types, build and tooling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # nexus-sync's end-to-end tests clone and push between bare remotes,
+          # and preflight reads the repository's own state. A shallow checkout
+          # is enough for both, but the full ref set is not.
+          fetch-depth: 0
+
+      # No `version:` here on purpose. The root package.json declares
+      # `packageManager: pnpm@9.15.9`, and the action refuses to run when a
+      # version is specified in both places. The manifest is the one source.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 20 is not enough: jsdom 30 requires ^22.22.2 || ^24.15.0 || >=26,
+          # and on Node 20 its environment fails to load at all - which vitest
+          # reports as "errors" beside a green-looking pass count. See the
+          # engines field, which was wrong and now says the same thing.
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # nexus-sync commits during its own tests, so it needs an identity.
+      - name: Give git an identity for the sync tests
+        run: |
+          git config --global user.email "ci@haa-nexus.invalid"
+          git config --global user.name "H.A.A. Nexus CI"
+          git config --global init.defaultBranch main
+
+      - name: Product version agrees across all six declarations
+        run: node tools/release/version.mjs check
+
+      - run: pnpm -r test
+      - run: pnpm -r typecheck
+      - run: pnpm -r build
+
+      - name: Preflight tool
+        run: node tools/preflight/preflight.test.mjs
+
+      - name: Preflight run
+        run: node tools/preflight/preflight.mjs
+
+      - name: Release version tool
+        run: node tools/release/version.test.mjs
+
+      - name: Cross-device sync tool
+        run: node tools/nexus-sync/nexus-sync.test.mjs
+
+  windows:
+    name: Rust suite and formatting (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      # The crate embeds the frontend through `frontendDist`, so the bundle has
+      # to exist before the Rust side will compile.
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
+
+      - name: Formatting
+        working-directory: apps/desktop/src-tauri
+        run: cargo fmt --check
+
+      - name: Rust tests
+        working-directory: apps/desktop/src-tauri
+        run: cargo test

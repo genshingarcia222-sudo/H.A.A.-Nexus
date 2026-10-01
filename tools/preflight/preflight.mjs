@@ -14,6 +14,11 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+// The one definition of what a releasable version looks like lives with the
+// release tool (D16). Importing it keeps preflight and `version.mjs` from
+// drifting into two different ideas of the same policy rule. Still zero
+// dependencies: it is a sibling module in this repository.
+import { parseVersion } from "../release/version.mjs";
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -272,7 +277,14 @@ function cargoPackageVersion(rel) {
 export function parseVersionParity(sources) {
   const problems = [];
   for (const source of sources) {
-    if (source.version === null || source.version === undefined) problems.push(`${source.file}: no version declared`);
+    if (source.version === null || source.version === undefined) {
+      problems.push(`${source.file}: no version declared`);
+    } else if (!parseVersion(source.version)) {
+      // Agreement alone was the pre-D16 check. Six files agreeing on "1.0" is
+      // still not releasable, because the installer's version field cannot
+      // carry it - so the format the release policy admits is checked here too.
+      problems.push(`${source.file}: "${source.version}" is not a releasable version (docs/RELEASE_POLICY.md)`);
+    }
   }
 
   const declared = sources.filter((s) => s.version !== null && s.version !== undefined);
@@ -281,7 +293,13 @@ export function parseVersionParity(sources) {
     problems.push(`versions disagree: ${declared.map((s) => `${s.file}=${s.version}`).join(", ")}`);
   }
 
-  return { sources, distinct, agree: problems.length === 0, problems };
+  return {
+    sources,
+    distinct,
+    agree: problems.length === 0,
+    policyFormat: sources.every((s) => s.version && parseVersion(s.version)),
+    problems
+  };
 }
 
 /**
@@ -367,6 +385,7 @@ function render(r) {
     lines.push(`  ${source.label.padEnd(20)}  ${source.version ?? "none"}`);
   }
   lines.push(`  agree                 ${yn(r.versionParity.agree)}`);
+  lines.push(`  releasable format     ${yn(r.versionParity.policyFormat)}  (docs/RELEASE_POLICY.md)`);
   for (const p of r.versionParity.problems) lines.push(`  PROBLEM               ${p}`);
 
   lines.push("");

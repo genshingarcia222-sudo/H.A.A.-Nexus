@@ -10,6 +10,512 @@ Progress** (started, not yet verified) · **Not Started** (by design, per the
 phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
+
+## CI Is Green, and It Found Two Real Defects Getting There (2026-10-01)
+
+Run **36793771261** at `df5dae9` passed both jobs on hosted runners, reproducing
+every figure in baseline B-006 on machines that are not DEVICE-01: nexus-core
+**804/804** (66 files), desktop **330/330** (33 files), preflight **27/27**,
+release tool **25/25**, nexus-sync **81/81**, typecheck and build clean, and on
+`windows-latest` `cargo fmt --check` clean with `cargo test` **70/70** under the
+same rustc 1.98.1. That independent reproduction is the part worth having; the
+badge is incidental.
+
+**It took three runs, and the second failure was the repository's, not the
+workflow's.**
+
+The first run failed at `pnpm/action-setup`, which refuses a pnpm version given
+both in the action and in `package.json`'s `packageManager`. A workflow defect,
+fixed by letting the manifest be the one source.
+
+The second run found something worse. `pnpm -r test` failed on Node 20 because
+**jsdom 30 requires `^22.22.2 || ^24.15.0 || >=26.0.0`** and its undici 8
+requires `>=22.19.0`. On Node 20 the jsdom environment cannot load at all, so
+**16 of the 33 desktop test files never ran** - and vitest printed
+`Tests 147 passed` beside `Errors 16 errors`, which a quick reading takes for
+green. Meanwhile `package.json` declared `engines: { node: ">=20" }`, which was
+simply untrue and is the first field anyone provisioning a machine or container
+reads.
+
+Both are now fixed: `engines` states the range jsdom actually admits, and CI runs
+Node 24, matching what DEVICE-01 develops on (24.21.0). **Worth passing to
+DEVICE-02:** its Linux container will show exactly this if its Node is older than
+22.22.2, and the symptom is a third of the desktop suite vanishing rather than
+failing.
+
+This is the defect class CI was created to catch, found on its second run: a
+suite that is green on one developer's machine and cannot execute on another's.
+Nothing in the project could have noticed it, because every gate before today was
+a hand-run command on DEVICE-01.
+
+**What CI still does not do:** build installers, or anything with a Windows-only
+acceptance criterion. A release is cut on DEVICE-01 with the owner approving the
+tag. And a green badge is evidence about the commit it ran on - the workflow
+header keeps a per-run log so the next session reads history rather than a
+colour.
+
+---
+
+## CI, and the D10 Persistence Boundary (2026-10-01)
+
+Two things, one of which is deliberately *not* a decision.
+
+### CI exists, and has never run
+
+`.github/workflows/ci.yml` runs the release-policy §7 gates on every push and
+pull request, with the same commands a device runs by hand: version parity across
+all six declarations, `pnpm -r test`, `-r typecheck`, `-r build`, preflight (the
+tool's tests and a real run), the release-version tool, the nexus-sync suite, and
+a Windows job for `cargo fmt --check` and `cargo test`.
+
+**Status: `AWAITING ENVIRONMENT VALIDATION`, not verified.** Every command passes
+on DEVICE-01, and the most likely runner-specific failure was checked directly
+rather than assumed: the tool suites were re-run with `.nexus/local-device.yaml`
+moved aside — the state a CI checkout is actually in, since that file is
+gitignored — and preflight, its 27 tests and all 81 nexus-sync tests still
+passed. `pnpm install --frozen-lockfile` was confirmed against the committed
+lockfile. But **no hosted runner has executed the workflow**, and the Windows job
+is the uncertain part because it compiles the Tauri crate against the WebView2
+SDK. A green badge is not evidence until a run exists.
+
+Why it was created now: the master control prompt requires CI before release
+certification. Why it matters: until today every gate in this project was a
+hand-run command, which is how a commit pushed from outside a session could land
+on `main` untested — and one did, leaving `cargo fmt --check` failing on `main`
+from the D15 merge until this morning with nothing to notice. It spends the
+owner's Actions minutes; deleting the file is the whole of turning it off.
+
+### D10 stays open, with its unblocked half delivered
+
+**D10 is NOT resolved, and closing it was declined.** The Business Model Spec
+§3 step 4 names *cloud* persistence, and cloud persistence needs a provider
+account, an account model and authentication — none of which exist and none of
+which may be fabricated. Choosing browser-local storage instead would close the
+decision by contradicting an owner-authored product document, which is a
+different act from choosing among options that document left open. So D10 is
+recorded `EXTERNALLY BLOCKED`, and it remains the block on **D14**.
+
+What was delivered is the half that needed no decision: every piece of learner
+state classified as temporary, authoritative, derived, device-local, or
+account-bound, read from the repository. Two things fall out of that table and
+are worth knowing before the layer is chosen:
+
+- **Competency is the hard part, not sessions.** A `SessionRecord` is a
+  self-contained document. A `CompetencyRecord` is an accumulator folded once per
+  attempt, and it would be *wrong* if two devices folded into it independently.
+  Any cross-device answer has to say what happens when they do.
+- **Entitlement must not ride along.** Whatever carries learner progress, the
+  subscription state a paid tier depends on is server-authoritative or it is not
+  a paid tier.
+
+A recommendation is recorded for the owner to accept or reject — ship web step 4
+with browser-local persistence and treat cross-device continuity as a Phase 10
+item behind an account decision — together with the three things the existing
+dev-only scaffolding would need first: a stored schema version, a policy for an
+unreadable payload, and learner-visible wording about what clearing site data
+destroys. **None of it has been built**, because building it would pre-commit the
+decision.
+
+---
+
+## D9 — When Scoring Itself Fails (2026-10-01)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,
+the third decision closed this way after D16 and D8. An owner decision overrules
+it.
+
+**What it was.** `evaluateAttempt` was called outside `submit`'s try/catch, so a
+throw rejected the promise the Submit handler awaited. The session stayed
+`in_progress`, nothing was written, and **the learner saw no response at all to
+having pressed Submit.** `evaluation_failed` had been in `SessionStatus` and in
+the SQLite status constraint since Phase 5, and nothing produced it.
+Deterministic evaluation over validated content is why a throw is unlikely - but
+"unlikely" and "silent" together are how work gets lost.
+
+**The decision: a failed scoring is the same class of event as a failed save**,
+which Architecture Package §28 already covers - surface it as a recoverable
+error, never as silent data loss. Reusing the established rule rather than
+inventing a second one is the project's own principle, and it gives all three
+answers the register asked for at once. The learner is told; the attempt is
+retryable; and it counts toward nothing until it is actually scored.
+
+The attempt is recorded `evaluation_failed` with its draft and its timings, so
+the work survives a crash immediately afterwards. A "Not scored" notice says
+plainly that nothing has been lost and nothing counted against them. Submit is
+disabled, because the attempt is already finished and pressing it again would do
+nothing. No competency fold happens, and no analytics - there is no result to
+fold.
+
+**The retry is scored on the original time.** `evaluationSucceeded` completes
+the attempt *without* folding another interval of elapsed time into it, which
+`completeSession` would have done - a learner who retries an hour later would
+otherwise be scored as having taken an hour longer. That is the entire reason it
+is a separate transition rather than a second call to `completeSession`.
+
+**Neither Assessment boundary moves.** `mayRevealPerformance` and
+`mayAccessReferenceMaterial` both test for `completed`, so an assessment whose
+evaluation failed reveals nothing and stays closed-book. Not incidental: an open
+reference surface plus a retryable attempt is a way to look things up and score
+again. Both directions are tested, and D5's populations still separate - a
+recovered assessment folds into the assessment population and not practice.
+
+The competency fold moved out of `submit` into `foldCompetency`, because D9 gave
+an attempt a second way to finish. It is unchanged otherwise: still one atomic
+batch write, still read-then-write-once, still population-scoped.
+
+**Verified in the running application.** The evaluator was deliberately made to
+throw in the dev server: the "Not scored" notice rendered with its text, Submit
+came back disabled, "Try scoring again" was offered, and the learner's
+documentation stayed on screen. The file was then restored and checksum-verified
+byte-identical. The retry paths are covered by tests rather than by that walk.
+
+**Mutation checks.** Letting the throw escape `submit` as before, re-timing the
+attempt on a retry, folding competency for an attempt that was never scored, and
+letting a failed assessment reopen the books were each killed by the test aimed
+at them, with every file restored byte-identical.
+
+**Validation.** nexus-core **804/804** (66 files, +8), desktop **330/330** (33
+files, +13), typecheck clean, build clean, preflight **27/27** with the run
+exiting 0 and the register now recording 18 decisions, 10 blocked, 7 resolved.
+No test was deleted, weakened or skipped.
+
+**Phase 8.3's decision group is now closed.** D1 and D3–D9 are all resolved; what
+remains outside Assessment is **D10**.
+
+---
+
+## D8 — Interrupted Practice and Simulation Attempts (2026-10-01)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,
+like D16 before it. An owner decision overrules it. Assessment is untouched: D6
+answered the same question for Assessment in 2026-09-20 and still governs it.
+
+**The decision: an interrupted attempt is never resumed in place.** The learner
+may carry their draft into a *new* attempt, and the time already measured on
+that draft is carried with it.
+
+**Why not an exact resume.** An attempt's `activeMs` feeds `timeEfficiency`,
+which is weighted into the overall score - so an attempt restored onto a running
+clock is scored on a number nobody measured. And the repository cannot supply
+that number honestly: an interruption is a crash, nothing recorded when it
+happened, and the app may be reopened days later. Every in-place resume would
+have to invent the missing interval, reset the clock, or count the hours the
+application was closed.
+
+**Why the time travels with the draft.** Carrying the work on a fresh zero clock
+is the obvious shape, and it is exploitable: write the whole note, close the app,
+continue from the draft, submit in thirty seconds, and `timeEfficiency` rewards
+it. Carrying both means a continued attempt is scored on the work *and* on the
+time the work took, while the gap when the app was closed is excluded - it is
+not work time, and nothing measured it.
+
+The new attempt gets a new id, and the interrupted record becomes `abandoned`
+rather than being deleted. It carries no evaluation, so it folds into no
+competency record and cannot double-count. **No link field between the two was
+added**: nothing consumes one, and a persisted field nothing reads is the
+speculative infrastructure A6 warns against. `mayContinueFromDraft` in
+`nexus-core` is what keeps Assessment out, so a future entry point cannot forget
+D6 - and the D6 test now asserts the button is absent for an Assessment.
+
+**Two defects this uncovered, both fixed.**
+
+1. **An autosaved record's clock was zero.** `activeMs` and `pausedMs` only
+   advance at a transition, and the autosave copied them - so a practice attempt
+   that had never been paused was persisted as "0 ms of work" however long the
+   learner had been writing. It was invisible because nothing read an unfinished
+   record's clock. D8 makes something read it. `sessionTimesAt` now supplies the
+   live figures, and a completed attempt still returns its stored ones so the
+   final interval cannot be counted twice.
+2. **The Dashboard offered to continue the attempt already on screen.**
+   `findInterrupted` returns every `in_progress` record and a live attempt
+   autosaves into exactly that state, so the card offered to "continue" the
+   session the learner was sitting in - which would have abandoned it and
+   started a third. Found by walking the flow in a browser, not by reading code.
+
+**What D8 answers beyond resume:** navigation neither ends nor pauses an attempt
+(looking something up is time on task, and practice is open-book by design);
+interrupted records never expire, because a time limit would be arbitrary;
+transcript position is still not persisted, so **A6 stays open and stays
+unnecessary**; and cross-device continuity is explicitly **D10's**, not this
+decision's.
+
+**Verified in the running application**, not only in jsdom: a practice attempt
+autosaved, the Dashboard card appeared, "Continue from your draft" restored the
+note, and the timer read 00:37 - continuing from the carried time rather than
+restarting at zero. No console errors.
+
+**Mutation checks.** Carrying the work but not the time, letting an Assessment
+carry its draft, autosaving the stored clock again, and removing the live-attempt
+filter were each killed by the test aimed at them. One test - that editing the
+continued draft does not rewrite the abandoned record - survives either
+mechanism being removed alone, because two independent things guarantee it; it
+was verified to fail when both are removed, and the test says so.
+
+**Validation.** nexus-core **796/796** (65 files, +12), desktop **317/317** (32
+files, +12), typecheck clean, build clean, preflight **27/27** with the run
+exiting 0 and the register now recording 17 decisions, 10 blocked, 6 resolved.
+No test was deleted, weakened or skipped.
+
+---
+
+## D16 — Release and Version Policy (2026-10-01)
+
+**The first decision closed under the owner's *standing* authorization rather
+than by the owner personally**, and the record says so in every place it is
+written: `docs/RELEASE_POLICY.md`, the register entry, the ledger and this
+changelog all label it `CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING
+AUTHORIZATION`. An owner decision overrules any of it.
+
+**Phase 9 item P9-D is satisfied.** Its enforcement half shipped at `d3bca14`;
+the policy half is what was missing.
+
+**The authoritative version source is the root `package.json`.** Not a
+preference: it is the only version declaration *both* devices can read without a
+toolchain, and DEVICE-02's Linux container cannot build the Cargo crate at all. A
+source only one device can check is not a source. The other five declarations
+mirror it, and `node tools/release/version.mjs set X.Y.Z` rewrites all six or
+refuses and rewrites none - a half-applied bump leaves exactly the disagreeing
+state P9-D calls a release defect, and does it silently.
+
+**The crate version stays pinned to the product version.** The register recorded
+that `preflight`'s parity check includes the Cargo crate version and that D16 had
+to say what that version was allowed to do. It is allowed nothing of its own: the
+crate is a private application shell with exactly one consumer, the installer
+that wraps it. So `versionParity` needed no change - it was *extended* instead,
+because agreement was never sufficient. Six files agreeing on `1.0` still cannot
+be bundled: the MSI version field is numeric, and the format rule is now checked
+on every preflight run alongside the parity rule.
+
+**The release profile answer is a measurement that contradicted the intention.**
+`Cargo.toml` had no `[profile.release]`, so one was added with `strip = true` and
+`lto = "thin"` for the obvious reasons - and then measured. On identical source,
+rustc 1.98.1, `x86_64-pc-windows-msvc`:
+
+| Profile | Bytes | vs defaults |
+|---|---|---|
+| Cargo defaults | 10,278,912 | — |
+| `strip = true` | 10,277,888 | −1,024 |
+| `strip = true`, `lto = "thin"` | 10,433,024 | **+154,112** |
+
+`strip` saves about a kilobyte, because MSVC already writes debug information to
+a separate `.pdb`. Thin LTO made the executable **larger**. The profile was
+removed; Cargo's defaults ship. The default figure was rebuilt a fourth time and
+reproduced exactly. The numbers are recorded in `Cargo.toml` so the next person
+does not repeat the experiment blind, and `panic` is documented as staying at
+`unwind` because `commands.rs` returns a poisoned-mutex error to the frontend and
+`panic = "abort"` would make that handling unreachable.
+
+**A defect found while answering the question.** `get_app_version` has existed in
+the Rust shell since before Phase 7 and **nothing in the frontend had ever called
+it** - the running version was unreachable from the product. Settings now shows
+it, read from the binary (`CARGO_PKG_VERSION`) rather than from a JSON file. That
+distinction is the whole point: the defect this policy prevents is an installer
+advertising a version its executable does not carry, and a Settings page reading
+`package.json` would report the advertised number in precisely the case where the
+two differ. A test asserts the binary's answer wins even when it disagrees with
+the build's.
+
+The build-time version reaches the browser through a plain `import { version }`
+rather than a bundler `define` or a `VITE_` variable. Both of those are
+build-time substitutions that the Vitest transform does not perform, which left
+the test asserting against the `"unknown"` fallback - a test that could not see
+the thing it guarded. The import is the same value in the bundle, the dev server
+and the test run, and it is tree-shaken: the built asset contains the version
+string and no other part of `package.json`.
+
+**What the policy refuses.** A stable release while P9-B (signing) or P9-E
+(bundle metadata) is unsatisfied, a release while an integration hold is open
+(today PR #21), and a release cut anywhere but DEVICE-01 - every Phase 9
+acceptance criterion is a built or installed Windows artifact. Stated plainly:
+**`0.1.0` cannot become a stable release.** The first artifact this policy admits
+is an alpha or rc on the NSIS target, installed by hand for the pilot, and still
+unsigned - which is D13's cost, not a bug.
+
+**Pre-releases are NSIS-only, and that rule is marked NOT YET VERIFIED** in the
+policy. It follows from how the MSI version field is defined, not from an
+observed bundler run; nothing here has ever been bundled with a pre-release
+version. The policy says to run `tauri build` with `-rc.1` before the first
+pre-release ships and to rewrite the section with what actually happened.
+
+**Carried into D14 rather than fixed here:** every artifact filename contains
+spaces and dots (`H.A.A. Nexus_0.1.0_x64_en-US.msi`), because `productName` does.
+Renaming the artifacts renames the installed application, which is a product
+decision - so the names stay and D14 must URL-encode them.
+
+**A second defect, found by writing the gate list down.** `cargo fmt --check`
+fails on `main` - on three files in the delivery layer that arrived with the D15
+merge, one of them last touched by `24f5cc0 "update"`, a commit made outside a
+session of the kind `.nexus/CURRENT_STATE.md` records under "Known issues". The
+register's header still describes `cargo fmt --check` as clean; that was true at
+`aeb56d6` and stopped being true at the merge. Fixed in its own commit, since it
+is rustfmt's output and nothing else, with the Rust suite at 70/70 before and
+after. A gate that fails on the day it is written is not a gate.
+
+**Validation.** nexus-core **784/784** (64 files), desktop **305/305** (31 files,
+up from 296 - nine new, none removed), `pnpm -r typecheck` clean, `pnpm -r build`
+clean, preflight **27/27** (up from 25) with the run exiting 0 and the register
+now reporting 16 decisions, 10 blocked, 5 resolved, `nexus-sync` **81/81**, the
+new `tools/release/version.mjs` suite **25/25**, `cargo test` **70/70** and
+`cargo fmt --check` clean. Four `cargo build --release` runs produced the size
+table above. No test was deleted, weakened or skipped.
+
+---
+
+## PHASES BUILDING Ledger, and a Windows-Readiness Classification (2026-09-27)
+
+**Records only. No application behaviour changed.** `docs/PHASES_BUILDING_LEDGER.md`
+is new: the evidence behind every phase claim in one place, with one rule — a
+status is only as good as the command or commit in its evidence column. The
+control document says who does what; the ledger says what is true and what proves
+it.
+
+**Phase 9 item by item**, with P9-A now **SATISFIED** (the attribute is on `main`
+with its guard test), P9-D **half done** (parity enforced, policy unwritten), and
+P9-B, P9-C and P9-E blocked on D13, D14 and D13-plus-a-legal-identity — each row
+carrying the measurement that establishes it rather than an assertion.
+
+**Windows readiness is classified rather than claimed.** Six items are *verified*
+— run on this Windows workstation, including `cargo test` 70/70, the packaging
+figures, and the cross-platform path handling (`app_data_dir().join(...)`,
+`std::env::temp_dir()` in tests, no hardcoded POSIX path in shipped code). Six are
+*statically validated*, read from configuration and not executed. Four are
+*awaiting environment-specific validation*, including one worth naming: **`tauri
+build` has not been re-run since the D15 merge**. Nothing in that merge touches
+the bundler configuration, but the artifact has not been rebuilt and measured, and
+the ledger says so instead of implying otherwise.
+
+**One finding recommended rather than executed: there is no CI.**
+`.github/workflows/` does not exist, so every check in this ledger was run by hand
+on a device — which is also how a commit made outside a session can land on `main`
+with no suite running at all. A workflow running the suites, typecheck, build,
+preflight and nexus-sync on every push would close that gap cheaply. It was **not**
+created: standing automation on the owner's account, consuming their Actions
+minutes, is their decision.
+
+**Also deliberately not changed:** `Cargo.toml` has no `[profile.release]`, so
+symbols are not stripped and LTO is off. That is a sizing choice belonging with
+the release policy **D16**, not an unrequested edit to what the product ships.
+
+---
+
+## Route Audit — An Unknown URL Rendered Nothing At All (2026-09-27)
+
+**Found by walking the routes in a real browser**, not by reading code:
+`#/does-not-exist` rendered an entirely empty document. The router had no
+`path="*"`, so an unmatched path matched no layout either — and the navigation
+rail lives in that layout. A learner who mistyped a URL, or followed a link to a
+route that had moved, lost every way back except editing the address bar.
+
+**The fix is a catch-all inside the shell**, so the rail survives: a card that
+says what happened, states that nothing was lost and that any attempt in progress
+is untouched, and offers a link back. It renders **no** reference content, which
+is deliberate — an ungated route showing terminology, lessons or question content
+would be a hole in D4, and the enforcement scan would catch it.
+
+**Five tests**, covering what the fix must keep true at once: that something is
+rendered; that the rail is still there (the regression being the catch-all moved
+outside `AppShell`); that nested and deep unknown paths are caught too, not only
+single segments; that the real routes still match, so the catch-all is not
+swallowing them; and that during an assessment the page shows no reference
+content and no reference links, with the attempt still `in_progress` afterwards.
+
+**Verified in the running application**, before and after: `#/does-not-exist`
+now renders the card with all six navigation links present and no console errors.
+The rest of the walk was clean — `/`, `/live-scribing`, `/training`,
+`/knowledge-base`, `/analytics` and `/settings` all render, their empty states
+say what is missing rather than showing a blank panel, the dark theme is
+consistent, and no route logged an error.
+
+**The closed-book boundary was exercised live, not only in jsdom.** With an
+assessment started from the scenario library: `/knowledge-base` and
+`/training?tab=lessons` both showed the closed-book notice, the two reference
+links were gone from the navigation, and going back through browser history
+landed on the notice rather than on the content.
+
+**And the D17 window was reproduced in the browser.** Reloading the page during
+an active assessment reopened the Knowledge Base in full. In that run the attempt
+did not survive the reload either — the dashboard's history was empty, because
+autosave had not yet fired — so what a reload costs depends on timing as well as
+on runtime. The desktop build persists attempts to SQLite, which is the case
+D17's register entry describes.
+
+**Also fixed:** `.claude/launch.json` invoked `pnpm` directly, which is not on
+PATH on the DEVICE-01 workstation (`.nexus/CURRENT_STATE.md` "Known issues"), so
+the preview could not start at all. It now uses the `npx --yes pnpm@9` form the
+rest of the repository uses.
+
+**Validation.** nexus-core **784/784**, desktop **296/296** (29 files),
+`pnpm -r typecheck` clean, `pnpm -r build` clean.
+
+---
+
+## Assessment Integrity — Closed-Book Hardening Around the Incoming Knowledgebase (2026-09-27)
+
+**Tests and records only. No application behaviour changed**, and no decision was
+resolved: two were *opened*, which is the honest outcome of finding questions the
+repository had not asked.
+
+**The hole the D15 merge opened, and why the existing guard did not see it.** The
+D4 enforcement scan asserted that no surface outside the gated routes reads
+reference content, and it did that by searching for two symbols:
+`terminologyRepository` and `lessonRepository`. The merge brought the Training
+question run and the D12 corpus module onto `main`, so a component reading
+`previewQuestionRepository` or `getProductionEligible` — question content a
+learner sees — would have passed that scan cleanly. The scan now covers eight
+symbols, including two (`buildKnowledgeCorpus`, `knowledgeRecords`) that no
+surface renders yet, so the **first** surface to render corpus content is caught
+rather than the second. A companion test asserts the list is not dead weight:
+every symbol must appear in the application, except exactly those two, which are
+named as deliberately ahead of it.
+
+**Three vectors that were not tested, now tested.** `ReferenceGate` is correct,
+and these prove it rather than assume it:
+
+- **Already reading when the attempt starts.** A gate that decided once at mount
+  would leave the terminology search on screen, fully usable, for as long as the
+  learner did not navigate. The test starts an assessment while sitting on
+  `/knowledge-base` and asserts the search is *gone*, and the reverse on submit.
+- **Back through history.** Reaching a reference route by going back is an entry
+  point like any other; the route element is re-rendered and still gated.
+- **Deep-link variants.** `/knowledge-base?from=nav`, `/knowledge-base/` and
+  `/training?tab=lessons` are all blocked, so a future route refactor cannot
+  introduce an unguarded alias of a gated path.
+
+**Each new test was verified to fail when the thing it protects is broken.** Three
+mutations, all killed by the intended test and no other: making the gate decide
+once at mount, removing the gate from the `/knowledge-base` route, and giving an
+ungated route a question-bank reference. Every mutated file was restored and
+checked byte-identical by checksum.
+
+**Two decisions opened, neither answered.**
+
+**D17 — after an interrupted Assessment, may the learner study before retaking the
+same scenario?** Measured on `main`: the session store does not restore an
+in-flight attempt at boot, so after a restart reference material opens while the
+attempt is still recorded `in_progress` in SQLite. D4 closes the book *during* an
+attempt; D6 permits a retake and reasons from D2 that there is no performance
+information to score-shop against — which is true, and says nothing about
+*content* information. A learner who has read the transcript can restart, look up
+its terminology, and retake the same scenario. Every way of closing that window
+changes D4's scope or D6's retake rule, so the behaviour was **pinned by a
+characterization test rather than changed**: the test says plainly that it records
+today's behaviour and does not endorse it, so whoever decides sees it fail and
+reads why.
+
+**D18 — which content contract does the runtime ingest?** D15 put D12's Zod model
+on `main` and retired nothing: DEVICE-02's `kb-record.schema.json` with 324 KB-001
+records is still on `feat/knowledgebase-expansion`. DEVICE-02 recorded this as the
+blocker before all its others; it is now in the canonical register, because that
+is where both devices look. **No bridge or adapter was written** — a bridge would
+be a third contract and would make the decision harder, not easier.
+
+**Validation.** Targeted: `closedBookBoundary.test.tsx` **26/26** (was 17). Full:
+nexus-core **784/784**, desktop **291/291**, `pnpm -r typecheck` clean, preflight
+**25/25** with the run exiting 0 and the register now reporting 16 decisions, 11
+blocked, 4 resolved. No test was deleted, weakened or skipped.
+
+---
+
 ## Knowledgebase Workstream — Batch KB-002, Difficulty Rebalance and QA Hardening (2026-09-27)
 
 **Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
@@ -105,6 +611,9 @@ KB-002 moved that ratio in the wrong direction by 108 records, which is the hone
 cost of expanding a corpus nobody has reviewed. Generation is not the constraint;
 review is. The branch remains unmerged and governance-blocked per
 `knowledge-corpus/INTEGRATION_BLOCKERS.md`.
+
+---
+
 ## D15 Resolved — `feat/training-question-bank` Merged (2026-09-27)
 
 **Owner decision D15, 2026-09-27: merge.** The escalation had been outstanding
@@ -4122,158 +4631,3 @@ Key decisions recorded:
 - Any future interpretive AI assessment should be explicitly metered because its cost scales directly with unique learner submissions.
 - Commercial capabilities must be represented as testable entitlements rather than scattered UI-only paywalls.
 - Payment, AI, and TTS vendors remain behind adapter boundaries so clinical-training logic is vendor-independent.
-
-## PHASES BUILDING Ledger, and a Windows-Readiness Classification (2026-09-27)
-
-**Records only. No application behaviour changed.** `docs/PHASES_BUILDING_LEDGER.md`
-is new: the evidence behind every phase claim in one place, with one rule — a
-status is only as good as the command or commit in its evidence column. The
-control document says who does what; the ledger says what is true and what proves
-it.
-
-**Phase 9 item by item**, with P9-A now **SATISFIED** (the attribute is on `main`
-with its guard test), P9-D **half done** (parity enforced, policy unwritten), and
-P9-B, P9-C and P9-E blocked on D13, D14 and D13-plus-a-legal-identity — each row
-carrying the measurement that establishes it rather than an assertion.
-
-**Windows readiness is classified rather than claimed.** Six items are *verified*
-— run on this Windows workstation, including `cargo test` 70/70, the packaging
-figures, and the cross-platform path handling (`app_data_dir().join(...)`,
-`std::env::temp_dir()` in tests, no hardcoded POSIX path in shipped code). Six are
-*statically validated*, read from configuration and not executed. Four are
-*awaiting environment-specific validation*, including one worth naming: **`tauri
-build` has not been re-run since the D15 merge**. Nothing in that merge touches
-the bundler configuration, but the artifact has not been rebuilt and measured, and
-the ledger says so instead of implying otherwise.
-
-**One finding recommended rather than executed: there is no CI.**
-`.github/workflows/` does not exist, so every check in this ledger was run by hand
-on a device — which is also how a commit made outside a session can land on `main`
-with no suite running at all. A workflow running the suites, typecheck, build,
-preflight and nexus-sync on every push would close that gap cheaply. It was **not**
-created: standing automation on the owner's account, consuming their Actions
-minutes, is their decision.
-
-**Also deliberately not changed:** `Cargo.toml` has no `[profile.release]`, so
-symbols are not stripped and LTO is off. That is a sizing choice belonging with
-the release policy **D16**, not an unrequested edit to what the product ships.
-
----
-
-## Route Audit — An Unknown URL Rendered Nothing At All (2026-09-27)
-
-**Found by walking the routes in a real browser**, not by reading code:
-`#/does-not-exist` rendered an entirely empty document. The router had no
-`path="*"`, so an unmatched path matched no layout either — and the navigation
-rail lives in that layout. A learner who mistyped a URL, or followed a link to a
-route that had moved, lost every way back except editing the address bar.
-
-**The fix is a catch-all inside the shell**, so the rail survives: a card that
-says what happened, states that nothing was lost and that any attempt in progress
-is untouched, and offers a link back. It renders **no** reference content, which
-is deliberate — an ungated route showing terminology, lessons or question content
-would be a hole in D4, and the enforcement scan would catch it.
-
-**Five tests**, covering what the fix must keep true at once: that something is
-rendered; that the rail is still there (the regression being the catch-all moved
-outside `AppShell`); that nested and deep unknown paths are caught too, not only
-single segments; that the real routes still match, so the catch-all is not
-swallowing them; and that during an assessment the page shows no reference
-content and no reference links, with the attempt still `in_progress` afterwards.
-
-**Verified in the running application**, before and after: `#/does-not-exist`
-now renders the card with all six navigation links present and no console errors.
-The rest of the walk was clean — `/`, `/live-scribing`, `/training`,
-`/knowledge-base`, `/analytics` and `/settings` all render, their empty states
-say what is missing rather than showing a blank panel, the dark theme is
-consistent, and no route logged an error.
-
-**The closed-book boundary was exercised live, not only in jsdom.** With an
-assessment started from the scenario library: `/knowledge-base` and
-`/training?tab=lessons` both showed the closed-book notice, the two reference
-links were gone from the navigation, and going back through browser history
-landed on the notice rather than on the content.
-
-**And the D17 window was reproduced in the browser.** Reloading the page during
-an active assessment reopened the Knowledge Base in full. In that run the attempt
-did not survive the reload either — the dashboard's history was empty, because
-autosave had not yet fired — so what a reload costs depends on timing as well as
-on runtime. The desktop build persists attempts to SQLite, which is the case
-D17's register entry describes.
-
-**Also fixed:** `.claude/launch.json` invoked `pnpm` directly, which is not on
-PATH on the DEVICE-01 workstation (`.nexus/CURRENT_STATE.md` "Known issues"), so
-the preview could not start at all. It now uses the `npx --yes pnpm@9` form the
-rest of the repository uses.
-
-**Validation.** nexus-core **784/784**, desktop **296/296** (29 files),
-`pnpm -r typecheck` clean, `pnpm -r build` clean.
-
----
-
-## Assessment Integrity — Closed-Book Hardening Around the Incoming Knowledgebase (2026-09-27)
-
-**Tests and records only. No application behaviour changed**, and no decision was
-resolved: two were *opened*, which is the honest outcome of finding questions the
-repository had not asked.
-
-**The hole the D15 merge opened, and why the existing guard did not see it.** The
-D4 enforcement scan asserted that no surface outside the gated routes reads
-reference content, and it did that by searching for two symbols:
-`terminologyRepository` and `lessonRepository`. The merge brought the Training
-question run and the D12 corpus module onto `main`, so a component reading
-`previewQuestionRepository` or `getProductionEligible` — question content a
-learner sees — would have passed that scan cleanly. The scan now covers eight
-symbols, including two (`buildKnowledgeCorpus`, `knowledgeRecords`) that no
-surface renders yet, so the **first** surface to render corpus content is caught
-rather than the second. A companion test asserts the list is not dead weight:
-every symbol must appear in the application, except exactly those two, which are
-named as deliberately ahead of it.
-
-**Three vectors that were not tested, now tested.** `ReferenceGate` is correct,
-and these prove it rather than assume it:
-
-- **Already reading when the attempt starts.** A gate that decided once at mount
-  would leave the terminology search on screen, fully usable, for as long as the
-  learner did not navigate. The test starts an assessment while sitting on
-  `/knowledge-base` and asserts the search is *gone*, and the reverse on submit.
-- **Back through history.** Reaching a reference route by going back is an entry
-  point like any other; the route element is re-rendered and still gated.
-- **Deep-link variants.** `/knowledge-base?from=nav`, `/knowledge-base/` and
-  `/training?tab=lessons` are all blocked, so a future route refactor cannot
-  introduce an unguarded alias of a gated path.
-
-**Each new test was verified to fail when the thing it protects is broken.** Three
-mutations, all killed by the intended test and no other: making the gate decide
-once at mount, removing the gate from the `/knowledge-base` route, and giving an
-ungated route a question-bank reference. Every mutated file was restored and
-checked byte-identical by checksum.
-
-**Two decisions opened, neither answered.**
-
-**D17 — after an interrupted Assessment, may the learner study before retaking the
-same scenario?** Measured on `main`: the session store does not restore an
-in-flight attempt at boot, so after a restart reference material opens while the
-attempt is still recorded `in_progress` in SQLite. D4 closes the book *during* an
-attempt; D6 permits a retake and reasons from D2 that there is no performance
-information to score-shop against — which is true, and says nothing about
-*content* information. A learner who has read the transcript can restart, look up
-its terminology, and retake the same scenario. Every way of closing that window
-changes D4's scope or D6's retake rule, so the behaviour was **pinned by a
-characterization test rather than changed**: the test says plainly that it records
-today's behaviour and does not endorse it, so whoever decides sees it fail and
-reads why.
-
-**D18 — which content contract does the runtime ingest?** D15 put D12's Zod model
-on `main` and retired nothing: DEVICE-02's `kb-record.schema.json` with 324 KB-001
-records is still on `feat/knowledgebase-expansion`. DEVICE-02 recorded this as the
-blocker before all its others; it is now in the canonical register, because that
-is where both devices look. **No bridge or adapter was written** — a bridge would
-be a third contract and would make the decision harder, not easier.
-
-**Validation.** Targeted: `closedBookBoundary.test.tsx` **26/26** (was 17). Full:
-nexus-core **784/784**, desktop **291/291**, `pnpm -r typecheck` clean, preflight
-**25/25** with the run exiting 0 and the register now reporting 16 decisions, 11
-blocked, 4 resolved. No test was deleted, weakened or skipped.
-
----

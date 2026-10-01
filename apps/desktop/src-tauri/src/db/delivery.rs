@@ -42,16 +42,18 @@ fn row_to_event(row: &rusqlite::Row) -> rusqlite::Result<DeliveryEventDto> {
         // A trace that will not parse is a bug in whatever wrote it. Rather
         // than fail the whole read, the row comes back with an empty trace
         // whose reasons say so - the delivery itself is still history.
-        trace: serde_json::from_str::<SelectionTraceDto>(&trace_json).unwrap_or(SelectionTraceDto {
-            novelty: "UNSEEN".to_string(),
-            best_novelty_available: "UNSEEN".to_string(),
-            cross_user_over_exposed: false,
-            cross_user_share: None,
-            diversity_cost: 0.0,
-            pool_size: 0,
-            stratum_key: String::new(),
-            reasons: vec!["TRACE_UNREADABLE".to_string()],
-        }),
+        trace: serde_json::from_str::<SelectionTraceDto>(&trace_json).unwrap_or(
+            SelectionTraceDto {
+                novelty: "UNSEEN".to_string(),
+                best_novelty_available: "UNSEEN".to_string(),
+                cross_user_over_exposed: false,
+                cross_user_share: None,
+                diversity_cost: 0.0,
+                pool_size: 0,
+                stratum_key: String::new(),
+                reasons: vec!["TRACE_UNREADABLE".to_string()],
+            },
+        ),
     })
 }
 
@@ -59,7 +61,8 @@ fn row_to_event(row: &rusqlite::Row) -> rusqlite::Result<DeliveryEventDto> {
 /// key rather than accepted, because a silently accepted copy would inflate
 /// every exposure count the ledger exists to measure.
 pub fn append_delivery_event(conn: &Connection, event: &DeliveryEventDto) -> rusqlite::Result<()> {
-    let jurisdictions = serde_json::to_string(&event.jurisdictions).unwrap_or_else(|_| "[]".to_string());
+    let jurisdictions =
+        serde_json::to_string(&event.jurisdictions).unwrap_or_else(|_| "[]".to_string());
     let trace = serde_json::to_string(&event.trace).unwrap_or_else(|_| "{}".to_string());
 
     conn.execute(

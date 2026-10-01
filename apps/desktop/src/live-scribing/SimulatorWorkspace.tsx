@@ -11,6 +11,7 @@ import {
 import { useSessionStore } from "../store/sessionStore.js";
 import { formatDuration } from "./formatDuration.js";
 import { SaveErrorNotice } from "./SaveErrorNotice.js";
+import { EvaluationErrorNotice } from "./EvaluationErrorNotice.js";
 
 const SECTION_LABELS: Record<string, string> = {
   chiefComplaint: "Chief Complaint",
@@ -51,6 +52,7 @@ export function SimulatorWorkspace() {
     submit: s.submit
   }));
   const clearDraft = useSessionStore((s) => s.clearDraft);
+  const evaluationFailed = useSessionStore((s) => s.evaluationFailed);
   const persistDraft = useSessionStore((s) => s.persistDraft);
 
   // Forces a re-render every second so the live timer reflects real elapsed
@@ -150,6 +152,7 @@ export function SimulatorWorkspace() {
 
       <div style={{ display: "grid", gap: "var(--nexus-space-3)" }}>
         <SaveErrorNotice />
+        <EvaluationErrorNotice />
         <Card title="Documentation">
           <div style={{ display: "grid", gap: "var(--nexus-space-3)" }}>
             {(Object.keys(SECTION_LABELS) as (keyof typeof SECTION_LABELS)[]).map((section) => (
@@ -164,7 +167,12 @@ export function SimulatorWorkspace() {
             ))}
           </div>
           <div style={{ marginTop: "var(--nexus-space-3)", display: "flex", gap: "var(--nexus-space-2)" }}>
-            <Button onClick={handleSubmit}>Submit</Button>
+            {/* D9: once an attempt has been submitted and scoring failed, the
+                way forward is the notice above, not Submit again - the attempt
+                is already finished and re-submitting would do nothing. */}
+            <Button onClick={handleSubmit} disabled={evaluationFailed}>
+              Submit
+            </Button>
             <Button variant="secondary" onClick={handleClear}>
               Clear
             </Button>

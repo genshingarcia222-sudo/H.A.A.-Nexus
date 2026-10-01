@@ -282,6 +282,62 @@ test mode, and absent from any production bundle. It has no migration story,
 no schema versioning and no account model, and **does not** resolve D10 in
 either direction - `persistenceMode` reports which backend is live.
 
+### The persistence boundary, classified (2026-10-01, DEVICE-01)
+
+The unblocked half of D10: **what** would have to persist, and where each piece
+could honestly live. Read from the repository, not proposed. Choosing the layer
+is still the decision; this is the inventory it applies to.
+
+| State | Where it lives today | Honest classification |
+|---|---|---|
+| The live `SimulationSession` in the store | memory only | **temporary** — lost on reload by design; D8 makes the *record* the durable thing, not the store |
+| Transcript reveal position, beats | memory only | **temporary** — A6; deliberately not persisted |
+| `SessionRecord` (draft, timings, flags, status, evaluation) | SQLite on desktop; in-memory on web | **authoritative** — this is the learner's work |
+| `CompetencyRecord` per population and domain | SQLite; in-memory on web | **derived**, but not cheaply: it is folded incrementally at submission and is not recomputable from history without replaying every attempt |
+| Analytics figures | computed on read from `SessionRecord` | **derived** — no storage decision of its own |
+| `UserProfile` (display name) | SQLite; in-memory on web | **device-local** today; would become **account-bound** the moment accounts exist |
+| Entitlements / subscription | resolved from the capability matrix; no learner row | **account-bound in principle**, and already outside this decision — a paid tier cannot be decided by a browser (Architectural rule: never rely on frontend-only checks for protected commercial capabilities) |
+| Knowledge corpus, scenarios, lessons | bundled content | **not learner state** — versioned with the build |
+| `.nexus/` | Git | **not learner state at all.** It is development synchronization. Reusing its semantics for learner data would be a category error, and this decision must not |
+
+Two consequences fall out of the table and are worth stating before the layer is
+chosen:
+
+1. **Competency is the hard part, not sessions.** A `SessionRecord` is a
+   self-contained document; a `CompetencyRecord` is an accumulator that is
+   folded once per attempt and would be **wrong** if two devices folded into it
+   independently. Any cross-device answer has to say what happens when they do.
+2. **Entitlement must not ride along.** Whatever carries learner progress, the
+   subscription state a paid tier depends on is server-authoritative or it is
+   not a paid tier.
+
+### Why the standing authorization does not close this one
+
+The owner's standing authorization covers decisions that need no credential, no
+external account and no infrastructure that does not exist. **D10 fails that
+test in the direction the product documents point.** Business Model Spec §3 step
+4 names *cloud* persistence, and cloud persistence requires a provider account,
+an account model and authentication — none of which exist, and none of which may
+be fabricated.
+
+Choosing browser-local storage instead would be closing the decision by
+contradicting an owner-authored product document, which is a different act from
+choosing between options the document left open. So D10 stays **EXTERNALLY
+BLOCKED**, and it stays the block on **D14**, which cannot name an update feed
+before the deployment topology is settled.
+
+**CLAUDE-RECOMMENDED, NOT IMPLEMENTED — for the owner to accept or reject:** ship
+web step 4 with **browser-local persistence as the device-local layer** and
+record cross-device continuity as a Phase 10 item behind an account decision.
+The rationale is that §3 step 4's stated *goal* is "refreshes do not lose
+progress", which browser-local storage satisfies in full, while the *mechanism*
+it names buys continuity across devices — a promise no part of the product makes
+to a learner yet. Accepting this would need three things the current dev-only
+scaffolding deliberately lacks: a stored schema version, a policy for an
+unreadable or older payload, and learner-visible wording about what clearing
+site data destroys. **None of that has been built**, because building it would
+pre-commit the decision.
+
 ---
 
 ## A2 — The module registry declares 12 competency domains; the evaluator produces 7
@@ -371,6 +427,13 @@ implementation details. Assessment resume is separately blocked by **D6**.
 schema addition **only if** resume is authorized; doing it first would be
 speculative infrastructure.
 
+**D8 was answered on 2026-10-01 and did not authorize it.** The decision is that
+an interrupted attempt is never resumed in place - a new attempt may carry the
+draft and the measured time, and nothing restores a position in the transcript.
+Practice reveals the whole transcript at the start, and a continued simulation
+attempt begins revealing again. So A6 stays open, and persisting `revealedCount`
+would still be infrastructure nothing reads.
+
 ---
 
 ## A7 — Recommendations ignore competency trends
@@ -425,8 +488,10 @@ Recorded in full in `PHASE_8_3_ASSESSMENT_MODE.md`: post-submission experience
 interrupted-Assessment policy (D6), contradictory-documentation grading (D7),
 practice/simulation resume (D8), evaluation-failure behaviour (D9). D2 is
 authorized and enforced. **D3, D4, D5, D6 and D7 were all answered on
-2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them;
-D8 and D9 remain open.**
+2026-09-20. Every Phase 8.3 Assessment decision is resolved, and D7 with them.
+D8 and D9 were both answered on 2026-10-01 under the owner's standing
+authorization and have their own entries below. Every decision in this group is
+now resolved.**
 
 **D7 — contradictory documentation — answered 2026-09-20 under delegated
 authority.** A note that documents a pertinent negative and asserts the
@@ -492,6 +557,130 @@ record in `PHASE_8_3_ASSESSMENT_MODE.md` D3.
 whether Assessment attempts should count in analytics and competency (D5), and
 what happens to an interrupted Assessment (D6). Assessment attempts do count
 today; D3 left that exactly as it was rather than ratifying it.
+
+---
+
+## D8 — May an interrupted practice or simulation attempt be resumed? — **RESOLVED**
+
+**Resolved** on 2026-10-01 by **DEVICE-01 under the owner's standing decision
+authority**, not by the owner personally. Assessment is out of scope: **D6**
+governs it and answered the same question in 2026-09-20.
+
+| | |
+|---|---|
+| **Decision** | D8 — interrupted practice and simulation attempts |
+| **Selected value** | **Never resumed in place.** The learner may carry the draft into a *new* attempt, and the time already measured on that draft is carried with it |
+| **Rejected alternatives** | exact in-place resume; carrying the draft on a fresh zero clock; a fresh attempt only, with the draft unreachable |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
+
+**Why not exact resume.** Two reasons, and the second is decisive. An attempt's
+`activeMs` feeds `timeEfficiency`, which is weighted into the overall score, so
+an attempt restored onto a running clock is scored on a number nobody measured.
+And the repository cannot supply that number honestly: an interruption is a
+crash, nothing recorded when it happened, and the app may be reopened days
+later. Any in-place resume would have to invent the missing interval, reset the
+clock, or count the time the application was closed. All three are worse than
+not resuming.
+
+**Why the time travels with the draft.** Carrying the work on a zero clock is
+the obvious shape and it is exploitable: write the whole note, close the app,
+continue from the draft, submit in thirty seconds, and `timeEfficiency` rewards
+it. Carrying both means a continued attempt is scored on the work *and* the time
+the work took. The gap while the app was closed is excluded deliberately — it is
+not work time.
+
+**Attempt identity.** The new attempt gets a new id and its own history row. The
+interrupted record becomes `abandoned`, is kept rather than deleted, and carries
+no evaluation, so it folds into no competency record and cannot double-count.
+**No link field was added** between the two: nothing consumes one, and a
+persisted field nothing reads is the speculative infrastructure A6 warns about.
+
+**What this decision answers, point by point.**
+
+| Question | Answer |
+|---|---|
+| Interruption (crash, force quit) | The record stays `in_progress` and is surfaced on the Dashboard on next launch |
+| Reload / app close | The in-memory session is lost; the persisted record is not. Same as an interruption |
+| Route navigation | Neither ends nor pauses the attempt. The clock keeps running, because looking something up is time on task — and practice is open-book by design (D4 restricts Assessment only) |
+| Temporary state | Transcript reveal position, beats and entitlement state are not persisted and are not restored |
+| Exact resume vs fresh attempt | Always a fresh attempt |
+| Stale session handling | No expiry. An interrupted record waits until the learner continues it or discards it; a time limit would be arbitrary |
+| Attempt identity | New id; old record `abandoned`; no link field |
+| Cross-device | Out of scope — **D10** owns it. Practice progress is device-local today because the repository is |
+| Persistence boundary | Draft, mode, status, flags and both clocks persist. Transcript position does not |
+
+**A6 stays open and stays unnecessary.** Transcript reveal position is still not
+persisted, and D8 does not require it: practice reveals the whole transcript at
+the start anyway, and a continued simulation attempt begins revealing again.
+Adding `revealedCount` to the record would still be speculative.
+
+**Two defects this decision uncovered.**
+
+1. **An autosaved record's clock was zero.** `activeMs` and `pausedMs` only
+   advance at a transition, and the autosave copied them — so a practice attempt
+   that had never been paused was saved as "0 ms of work" however long the
+   learner had been writing. Invisible while nothing read an unfinished record's
+   clock. D8 makes something read it. Fixed with `sessionTimesAt`.
+2. **The Dashboard offered to "continue" the attempt already on screen.**
+   `findInterrupted` returns every `in_progress` record, and a live attempt
+   autosaves into exactly that state. Found by walking the flow in a browser;
+   the live attempt is now excluded.
+
+**What this decision does NOT decide.** What happens when evaluation itself
+fails (**D9**), what persists a web learner's progress (**D10**), whether an
+interrupted *Assessment* may be studied against before the retake (**D17**), and
+anything about transcript position (**A6**).
+
+---
+
+## D9 — What happens when evaluation itself fails? — **RESOLVED**
+
+**Resolved** on 2026-10-01 by **DEVICE-01 under the owner's standing decision
+authority**, not by the owner personally.
+
+| | |
+|---|---|
+| **Decision** | D9 — evaluation-failure behaviour |
+| **Selected value** | Treated exactly as a failed **save** already is: the work is never lost, the failure is visible, the attempt is retryable, and it counts toward nothing until it is actually scored |
+| **Rejected alternatives** | discarding the attempt; scoring it zero; counting it as an attempt with no result; leaving today's silence in place |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
+
+**What it was before.** `evaluateAttempt` was called outside `submit`'s
+try/catch, so a throw rejected the promise the Submit handler awaited: the
+session stayed `in_progress`, nothing was written, and **the learner saw no
+response at all to having pressed Submit.** `evaluation_failed` existed in
+`SessionStatus` and in the SQLite status constraint since Phase 5, and nothing
+produced it.
+
+**The rule, and where it comes from.** Architecture Package §28 already says a
+failed *write* must surface as a recoverable error and never as silent data
+loss. A failed *scoring* is the same class of event, and the project's own
+principle is to reuse an established rule rather than invent a second one. So:
+
+| Question the register asked | Answer |
+|---|---|
+| What the learner is told | A "Not scored" notice, in the same shape as the save-failure notice: the attempt was submitted, the documentation is saved, nothing has been counted against them, and there is no result yet |
+| Whether the attempt may be retried | Yes. "Try scoring again" re-runs evaluation on the attempt's own recorded time |
+| Whether a failed evaluation counts as an attempt | It is recorded and kept, and it counts toward **nothing** — no competency fold, no analytics. There is no result to count |
+
+**The retry is scored on the original time.** `evaluationSucceeded` completes
+the attempt without folding another interval of elapsed time into it, which
+`completeSession` would have done. A learner who retries an hour later is scored
+as having taken the minutes they actually took. That is the whole reason it is a
+separate transition.
+
+**Neither Assessment boundary moves.** `mayRevealPerformance` and
+`mayAccessReferenceMaterial` both test for `completed`, so an assessment whose
+evaluation failed reveals nothing and stays closed-book. That is not incidental:
+an open reference surface plus a retryable attempt would be a way to look things
+up and score again. Both directions are tested.
+
+**What this decision does NOT decide.** It does not make evaluation more
+reliable — deterministic evaluation over validated content is why a throw is
+unlikely — and it says nothing about a failed *save*, which §28 and the existing
+`SaveError` already cover. It does not touch **D10**.
 
 ---
 
@@ -685,37 +874,63 @@ easier.
 
 ---
 
-## D16 — What is the release and version policy?
+## D16 — What is the release and version policy? — **RESOLVED**
 
-**Blocked work:** Phase 9 item P9-D.
+**Resolved** on 2026-10-01 by **DEVICE-01 under the owner's standing decision
+authority**, not by the owner personally. The full policy is
+`docs/RELEASE_POLICY.md`; this entry records the decision and what it cost.
 
-**Current behaviour, verified in the repository:** `tauri.conf.json` `version` is
-`0.1.0` and root `package.json` `version` is `0.1.0`. Nothing enforces that they
-agree. There is no tagging convention, no channel policy (stable/beta), no
-release checklist, and no mapping from `CHANGELOG.md` to a release —
-`CHANGELOG.md` is a development log, not a release log.
+| | |
+|---|---|
+| **Decision** | D16 — the release and version policy |
+| **Selected value** | root `package.json` is authoritative; strict `MAJOR.MINOR.PATCH[-alpha\|beta\|rc.N]`; six declarations kept equal by one tool; DEVICE-01 cuts releases; the owner approves the tag; Cargo release defaults ship |
+| **Rejected alternatives** | decoupling the crate version from the product version; adding `[profile.release]` optimisation; treating `CHANGELOG.md` as the release log; allowing full semver including build metadata |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** (master control prompt §3). Overruled by any owner decision |
+| **Status** | RESOLVED and implemented; P9-D closed |
 
-**No external dependency.** Unlike D13 and D14 this needs no credential and
-no provider, so it is the cheapest Phase 9 decision to resolve and is authorable
-on either device.
+**What it was blocking:** Phase 9 item **P9-D**. The enforcement half of P9-D
+(version parity in `tools/preflight/preflight.mjs`) had already shipped at
+`d3bca14`; the policy half is what this closes.
 
-**Constraint this decision now carries** (recorded by DEVICE-01's integration
-review of PR #14, which delivered the enforcement half of P9-D): `preflight`
-asserts that all four declared versions agree, and one of the four is the
-**Cargo crate version** of `apps/desktop/src-tauri`. That invariant therefore
-pins the crate version to the product version.
+**What the register required this decision to say, and what it says.**
 
-If D16 is answered by **decoupling crate versioning from product releases** —
-for example letting the crate follow its own semver while the installer carries
-a marketing version — then `versionParity` in `tools/preflight/preflight.mjs`
-and its real-repository test in `tools/preflight/preflight.test.mjs` must be
-updated in the same change. They are test-only, additive and reversible, so this
-does not constrain which answer D16 may take; it only means the answer must say
-what the crate version is allowed to do.
+| Required | Answer |
+|---|---|
+| Authoritative version source | root `package.json` — the only declaration both devices can read without a toolchain |
+| What the crate version may do | nothing of its own; it stays pinned to the product version, so `versionParity` is unchanged |
+| Parity rules | all six declarations equal, checked by `version.mjs` and by preflight |
+| Version format | strict `MAJOR.MINOR.PATCH[-channel.N]`, narrower than semver because the MSI version field is numeric |
+| Bump rules | MAJOR = unmigratable persisted-data or IPC change; MINOR = learner-visible capability or a closed phase item; PATCH = fixes. Only in a release commit |
+| Pre-release behaviour | `alpha`/`beta`/`rc` with a counter, NSIS target only |
+| Artifact naming | Tauri defaults kept; D14 must URL-encode the spaces in them |
+| Release profile | Cargo defaults, **measured** (see below) |
+| Application version display | Settings, read from the binary over IPC, not from a JSON file |
+| Updater comparison | `compareVersions`; a pre-release precedes its own release; a stable install is never offered a pre-release |
+| Who cuts a release | DEVICE-01 builds it, the owner approves the tag |
 
-The enforcement was not held back pending this decision because P9-D's own
-evidence frames non-agreement as a release defect — an installer advertising a
-version its binary does not carry — rather than as a stylistic preference.
+**The release profile answer is a measurement, not a preference.** `Cargo.toml`
+had no `[profile.release]`, so the register left open whether one should be added.
+One was added, measured, and removed again. On DEVICE-01, rustc 1.98.1,
+`x86_64-pc-windows-msvc`, identical source: defaults **10,278,912 bytes**;
+`strip = true` **10,277,888**; `strip = true` plus `lto = "thin"`
+**10,433,024** — thin LTO made the binary **larger**. The defaults ship, and the
+numbers are recorded in `Cargo.toml` so the next person does not repeat the
+experiment blind.
+
+**A defect this decision uncovered and fixed.** `get_app_version` existed in the
+Rust shell and **nothing in the frontend had ever called it**, so the running
+version was unreachable from the product. Settings now shows it.
+
+**What this decision does NOT decide.** It does not sign anything (**D13**), does
+not say where an update feed lives (**D14**, which needs **D10**), does not
+populate bundle metadata or the installer-visible licence (**P9-E**, needs D13
+plus a recorded legal entity), and does not create CI — automating the release
+gates is standing automation on the owner's account and Actions minutes.
+
+**A consequence worth stating plainly:** `0.1.0` cannot become a *stable*
+release. It is unsigned, its bundle metadata is empty and its licence file is a
+placeholder. The first artifact this policy admits is an alpha or rc on the NSIS
+target, installed by hand for the pilot, still unsigned.
 
 ---
 
