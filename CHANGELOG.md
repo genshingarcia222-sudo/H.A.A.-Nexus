@@ -10,82 +10,98 @@ Progress** (started, not yet verified) · **Not Started** (by design, per the
 phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
-## Knowledgebase Conflict Reconciliation — Both Lanes Preserved, D18 Still Unanswered (2026-10-01)
+## Knowledgebase Conflict Reconciliation — Two Independent Resolutions, Compared and Converged (2026-10-01)
 
-**Integration only. No application behaviour changed, no corpus record changed,
-and no decision resolved.** `main` had advanced 29 commits past the merge base
-`e2af2af`, and `feat/knowledgebase-expansion` could no longer take it: two files
-conflicted. This entry records how they were resolved, and what the resolution
-deliberately did **not** do.
+**Records and integration only. No application behaviour changed, no corpus
+record changed, and no decision resolved.** `main` had advanced 29 commits past
+the merge base `e2af2af` and the Knowledgebase lane could no longer take it. Two
+DEVICE-02 sessions then resolved that conflict **independently and at the same
+time** — the coordination failure this entry exists to record, because the
+duplicate work is the interesting part, not the merge.
 
-**Exactly two files conflicted, and both were mechanical.** `git merge-tree`
-against `origin/main` at `9416bf8` reported `CHANGELOG.md` and `package.json` and
-nothing else. No file under `knowledge-corpus/` or `tools/knowledge-corpus/`
-conflicted, and no Rust, bundler, schema, entitlement or Assessment file did
-either — the two lanes still overlap only in shared configuration and the
-changelog, which is why the overlap stayed resolvable without a decision.
+**What conflicted: exactly two files, both mechanical.** `git merge-tree` against
+`origin/main` at `9416bf8` reported `CHANGELOG.md` and `package.json` and nothing
+else. No file under `knowledge-corpus/` or `tools/knowledge-corpus/` conflicted,
+and no Rust, bundler, schema, entitlement or Assessment file did either. There was
+no architectural conflict *in the Git overlap* — the architectural conflict is
+real, but it is **D18**, and it does not present as a hunk.
 
-**`package.json`: both script blocks survive, neither side was taken wholesale.**
-`main` had added four `version:*` scripts (D16) and tightened `engines.node`; the
-branch had added nine `kb:*` scripts. The resolved file carries **23 scripts** —
-ten base, four `version:*`, nine `kb:*` — with no duplicate key, and takes
-`main`'s `engines` because the branch never changed that field. Verified by diff
-in both directions: the result is exactly `main` plus the `kb:*` block, and
-exactly the branch plus the `version:*` block and the `engines` value.
+**The two resolutions were compared rather than one being assumed correct.** Both
+merges have identical parents (`6aab0c8` + `9416bf8`), so their trees are directly
+comparable:
 
-**`CHANGELOG.md`: a defect in this branch's own earlier merge was found and
-fixed.** `c29447e` ("Merge origin/main into feat/knowledgebase-expansion:
-CHANGELOG only") had relocated three DEVICE-01 entries — the PHASES BUILDING
-Ledger, the Route Audit, and Assessment Integrity, all 2026-09-27 — from the top
-of the file to **line 4126**, below the oldest historical sections. Nothing was
-deleted, so no check caught it; the newest-first convention was simply broken for
-three entries belonging to the other lane. They are back in order.
+| | Result |
+|---|---|
+| `package.json` | **byte-identical** in both. 23 scripts — ten base, `main`'s four `version:*` from D16, the lane's nine `kb:*` — no duplicate key, `engines` from `main`. Two independent resolutions agreeing exactly is the strongest evidence available that this one was mechanical |
+| `CHANGELOG.md` | differed in **two** respects only: where the KB-002 entry sits inside the 2026-09-27 block (6th vs 9th, both valid newest-first), and a trailing `---` separator the lane's resolution adds to its own KB-002 entry |
+| everything else | **no difference at all** |
 
-The merge was then composed rather than hand-patched, and checked the way
-`docs/PHASES_BUILDING_CONTROL.md` §10(G) prescribes: **77 headings on `main`, 74
-on the branch, union 79, merged 79** — none lost, duplicated or invented. Both
-sides were first proved purely additive against the merge base (`main` +5 entries,
-the branch +2, **zero** entries edited or removed on either side), and every entry
-in the result is byte-identical to its source side. No entry's text was edited,
-including this branch's own.
+**The lane's own resolution (`9e58995`) is canonical, and this entry defers to
+it.** The Knowledge Expansion workstream owns its corpus and its own changelog
+entry, so its placement of KB-002 and its separator fix stand; the separator was
+in fact missing before, so its version is the better of the two. All 79 entries
+here are taken verbatim from `9e58995`. Nothing was overwritten to make one
+session's resolution win.
 
-**What was verified, on the merged tree, on DEVICE-02.** Corpus: manifest and
+**Both resolutions independently fixed the same real defect.** `c29447e` ("Merge
+origin/main into feat/knowledgebase-expansion: CHANGELOG only") had relocated
+three DEVICE-01 entries from 2026-09-27 — the PHASES BUILDING Ledger, the Route
+Audit, and Assessment Integrity — from the top of the file to **line 4126**, below
+the oldest historical sections. Nothing was deleted, so no check caught it: the
+`§10(G)` heading-count rule detects loss, not misplacement. They are back in
+order, and the one remaining date inversion is present on `main` and on the merge
+base, so it predates both lanes and was left alone.
+
+**Verified mechanically, the way `docs/PHASES_BUILDING_CONTROL.md` §10(G)
+prescribes**, for both resolutions: both sides were first proved purely additive
+against the merge base (`main` +5 entries, the lane +2, **zero** entries edited or
+removed on either side), then **77 headings on `main`, 74 on the lane, union 79,
+out 79** — none lost, duplicated or invented, and every entry byte-identical to its
+source side.
+
+**What was verified on the merged tree.** Corpus, on DEVICE-02: manifest and
 checksums match at **432 records / 70 checksummed files**, `kb-validate` 432
-records with **0 errors and 0 warnings**, privacy scan **CLEAR / 0 findings**,
-`kb-validate.test` **52/52**, `kb-privacy-scan.test` **19/19**, and the scorecard
-regenerated byte-identically. Application: nexus-core **804/804** (66 files),
-desktop **330/330** (33 files), `pnpm -r typecheck` clean, `pnpm -r build` clean,
-preflight **27/27** with the run exiting 0, `nexus-sync` **81/81**, release tool
-**25/25**. `pnpm install --frozen-lockfile` reported the lockfile up to date, which
-is the mechanical confirmation that the corpus lane added no dependency.
+records with **0 errors and 0 warnings** and 0 duplicates, privacy scan **CLEAR /
+0 findings**, `kb-validate.test` **52/52**, `kb-privacy-scan.test` **19/19**, and
+the scorecard regenerated byte-identically. Application: nexus-core **804/804**
+(66 files), desktop **330/330** (33 files), `pnpm -r typecheck` clean, `pnpm -r
+build` clean, preflight **27/27** exiting 0, `nexus-sync` **81/81**, release tool
+**25/25**. `pnpm install --frozen-lockfile` reported the lockfile up to date — the
+mechanical confirmation that the corpus lane adds no dependency. Every application
+figure reproduces baseline **B-006**.
 
-**What was NOT verified, and is not claimed.** `cargo test`, `cargo fmt --check`
-and anything Windows or installer-shaped are **NOT VERIFIED ON DEVICE-02** — this
-container has no usable Rust/GTK toolchain (§7 of the control document). The merge
-changes no Rust file: `main`'s Rust commits arrive unmodified and the corpus lane
-touches none, so DEVICE-01's 70/70 at `0c09e36` stands unchallenged rather than
-re-asserted. The local `node` is v22.22.0 against `main`'s declared
-`^22.22.2 || ^24.15.0 || >=26.0.0`, so pnpm prints an engine warning; it is
+**CI supplied the half DEVICE-02 cannot measure.** Run **36821384469** at
+`640b600` passed both jobs: `windows-latest` ran `cargo test` **70/70** —
+including the P9-A guard `release_builds_are_windowed_not_console` — with
+`cargo fmt --check` clean, and the Linux job reproduced every figure above on a
+machine that is neither DEVICE-01 nor DEVICE-02. The Rust result is therefore
+measured on the merged tree rather than inherited from `0c09e36`. Installers and
+anything needing an installed Windows artifact remain outside CI and are not
+claimed here. The container's own `node` is v22.22.0 against `main`'s declared
+`^22.22.2 || ^24.15.0 || >=26.0.0`, so pnpm prints an engine warning; that is
 `main`'s pre-existing constraint, not a product of this reconciliation.
 
-**CI then supplied the half DEVICE-02 cannot measure, on this exact commit.**
-Run **36821096497** at `fa5a040` passed both jobs: `windows-latest` ran
-`cargo test` **70/70** — including the P9-A guard
-`release_builds_are_windowed_not_console` — with `cargo fmt --check` clean, and
-the Linux job reproduced every figure above on a machine that is neither
-DEVICE-01 nor DEVICE-02. The Rust result is therefore measured on the merged
-tree rather than inherited from `0c09e36`. Installers and anything needing an
-installed Windows artifact remain outside CI and outside this entry.
-
-**D18 is untouched, and it is still what blocks the merge.** Two implementations
-of one content contract remain — D12's Zod model in
+**D18 is untouched, and it is still what blocks the merge to `main`.** Two
+implementations of one content contract remain — D12's Zod model in
 `packages/nexus-core/src/knowledge-corpus/` on `main`, and
-`knowledge-corpus/schema/kb-record.schema.json` with its 24 policy rules on this
-branch. No loader, adapter, translation layer or shim was written: a bridge would
-be a third contract. Integration gate item 2 forbids a merge that resolves,
-narrows or **implies** an open decision, so this branch stays unmerged and PR #21
-stays as it is. What changed is only that the branch is now reconcilable with
-`main` on demand instead of accumulating drift while the decision waits.
+`knowledge-corpus/schema/kb-record.schema.json` with its 24 policy rules on the
+lane. No loader, adapter, translation layer or shim was written: a bridge would be
+a third contract and would make the decision harder rather than easier.
+Integration gate item 2 forbids a merge that resolves, narrows or **implies** an
+open decision, so the lane stays unmerged and PR #21 stays as it is. What changed
+is only that the lane is reconcilable with `main` on demand instead of
+accumulating drift while the decision waits.
+
+**The coordination lesson, recorded because it cost real work.** Two sessions in
+the same device's lane resolved one conflict in parallel; nothing in `.nexus/`
+could have stopped it, because `ACTIVE_TASK.md` is advisory and neither session
+held a claim on `CHANGELOG.md`. The cost here was small — the resolutions agreed —
+but that was luck, not process. A session about to resolve a shared-file conflict
+should claim it through `nexus-sync` first, and a session that cannot write state
+(as one of these two could not, being scoped to its own branch) should say so
+before resolving rather than after.
+
+---
 
 
 ## CI Is Green, and It Found Two Real Defects Getting There (2026-10-01)
@@ -438,102 +454,6 @@ table above. No test was deleted, weakened or skipped.
 
 ---
 
-## Knowledgebase Workstream — Batch KB-002, Difficulty Rebalance and QA Hardening (2026-09-27)
-
-**Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
-`main` at `6c92a30`. Not merged. No application, Rust, bundler or `.nexus`
-behaviour changed, and no file outside `knowledge-corpus/` and
-`tools/knowledge-corpus/` was touched.** No loader reads the corpus, nothing under
-`content/` changed, no entitlement or Assessment logic was altered, and no other
-device's branch was modified. The PHASES BUILDING workstream is untouched: no phase
-task was claimed and no owner decision was resolved.
-
-**Base note, added on merging.** This entry was written against `main` at
-`6c92a30`. DEVICE-01 resolved **D15** the same day and merged `main` into this
-branch at `9b08a0c`; KB-002 was then merged on top. The batch's own content and
-tooling are unaffected by that merge — it touched no file under
-`knowledge-corpus/` or `tools/knowledge-corpus/` — and the corpus figures above
-were re-verified after it.
-
-**Corpus: 324 → 432 records. 0 approved, before and after.** Batch KB-002 adds 108
-records. KB-001's 324 are byte-identical and a test now asserts it.
-
-**A latent bug that would have cloned the corpus was found and fixed.**
-`generateBatch` walked every template regardless of `--batch`, so
-`kb-generate.mjs --batch KB-002` produced 324 records whose content was
-byte-identical to KB-001 under fresh ids — verified, 324 of 324 matching prompt
-hashes. A per-batch QA run could not have caught it, because duplicate detection is
-corpus-wide. Templates are now selected by the batch stamped in their own
-`templateId`, and an unregistered batch throws rather than silently inheriting
-KB-001's families. Left alone, the next batch would have doubled the corpus with
-duplicates that passed their own QA.
-
-**The difficulty skew recorded in KB-001 was redressed by adding records, not by
-relabelling them.** 30 new template families declare a narrowed operator set —
-`BASE`, `LATE_CLUE`, `BURIED_CLUE` preserve the difficulty band; `CLUE_REMOVED`
-raises it exactly one — so EASY and MODERATE mass became reachable for the first
-time. EASY 2.8% → 14.6%; HARD 59.3% → 44.4%. HARD remains 14 points above its
-target and **cannot** be brought down by this method: it is a fixed 192 records, so
-its share falls only as other bands grow, which needs a corpus of about 640.
-`knowledge-corpus/GAP_ANALYSIS.md` §3.1a records that arithmetic rather than
-leaving a future batch to promise it cheaply.
-
-**A PHI / PII / secret scan now exists, because there was none.** Charter section
-XXXIII and STOP GATE 9 require one before a batch is review-ready, and no such tool
-was in the pipeline. `tools/knowledge-corpus/kb-privacy-scan.mjs` proves provenance
-— every identity traces to a declared synthetic pool, every MRN is a reserved
-`SYN-####`, every synthetic token matches a declared convention — and pattern-matches
-ten classes of contact detail and credential. 19 tests plant violations and assert
-detection; a scanner never shown to fail proves nothing. It also documents what it
-cannot prove: that an invented name belongs to nobody real. Corpus verdict: CLEAR,
-0 findings across 432 records.
-
-**Two QA defects were found by planting them.** `REF-INTEGRITY` validated
-`record.trapTypes` but never `choices[].trapType`, so an unregistered trap label
-rode into the corpus reading as taxonomy; closing it was non-breaking, as all 890
-pre-existing choice-level values were already registered. The generator also
-misreported its own work, printing the size of the operator registry rather than the
-operators a batch used.
-
-**Persona pools are now scoped per batch.** `pick` indexes modulo pool length, so
-appending one persona to a shared pool re-casts every record already generated from
-it — which would have rewritten 324 records awaiting review. KB-001's pools are
-frozen with a test asserting their sizes; KB-002 draws from its own cohort, roughly
-doubling every pool.
-
-**Safety and privacy content is reachable at low difficulty for the first time.**
-Previously the only route to those competencies was through operators that force
-HARD, which is structurally why KB-001 had no EASY safety content. A template may
-now declare `safetyBaseline` or `privacyBaseline`, carrying identical weight:
-`escalationRequired`, the hard-failure conditions and `SAFETY-PRECEDENCE` all apply.
-KB-D03 safety rose 24 → 35, KB-D06 orders and referrals 24 → 35, KB-D09 insurance
-24 → 35 — the three thinnest axes that are not source-blocked.
-
-**A false premise in the previous batch's analysis was corrected rather than built
-on.** `GAP_ANALYSIS.md` §3.4 stated that the schema supports packet pinning and the
-corpus simply did not use it. It does not: `packet` is `additionalProperties: false`
-with no `packetRef`, and the record schema's required fields make a standalone
-`CHART_PACKET` unrepresentable. The shared-component refactor KB-002 was assigned is
-therefore a **schema change**, needing a component schema, an optional `packetRef`, a
-version bump and migration notes — STOP GATE 20 and 31. It was not bundled into a
-content batch, which is what those gates exist to prevent; it is now KB-003's first
-item and blocker B6.
-
-**Source discipline: KB-002 adds no `EXTERNAL_AUTHORITY` records at all.** The
-source-verification backlog is unchanged at KB-001's 24. KB-D07 coding is still the
-corpus's thinnest axis at 12 records and was deliberately not expanded — writing
-more would have produced records at `candidate_needs_source_verification` and no
-more usable content (STOP GATE 4). Where a family needs a rule to reason from, the
-rule is a stated given of the synthetic scenario, never a claim about a real payer,
-regulator or organisation.
-
-**Still true, and still the binding constraint: 432 records written, 0 approved.**
-No machine-reachable path to an approved state exists and the validator enforces it.
-KB-002 moved that ratio in the wrong direction by 108 records, which is the honest
-cost of expanding a corpus nobody has reviewed. Generation is not the constraint;
-review is. The branch remains unmerged and governance-blocked per
-`knowledge-corpus/INTEGRATION_BLOCKERS.md`.
-
 ## PHASES BUILDING Ledger, and a Windows-Readiness Classification (2026-09-27)
 
 **Records only. No application behaviour changed.** `docs/PHASES_BUILDING_LEDGER.md`
@@ -686,6 +606,104 @@ be a third contract and would make the decision harder, not easier.
 nexus-core **784/784**, desktop **291/291**, `pnpm -r typecheck` clean, preflight
 **25/25** with the run exiting 0 and the register now reporting 16 decisions, 11
 blocked, 4 resolved. No test was deleted, weakened or skipped.
+
+---
+
+## Knowledgebase Workstream — Batch KB-002, Difficulty Rebalance and QA Hardening (2026-09-27)
+
+**Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
+`main` at `6c92a30`. Not merged. No application, Rust, bundler or `.nexus`
+behaviour changed, and no file outside `knowledge-corpus/` and
+`tools/knowledge-corpus/` was touched.** No loader reads the corpus, nothing under
+`content/` changed, no entitlement or Assessment logic was altered, and no other
+device's branch was modified. The PHASES BUILDING workstream is untouched: no phase
+task was claimed and no owner decision was resolved.
+
+**Base note, added on merging.** This entry was written against `main` at
+`6c92a30`. DEVICE-01 resolved **D15** the same day and merged `main` into this
+branch at `9b08a0c`; KB-002 was then merged on top. The batch's own content and
+tooling are unaffected by that merge — it touched no file under
+`knowledge-corpus/` or `tools/knowledge-corpus/` — and the corpus figures above
+were re-verified after it.
+
+**Corpus: 324 → 432 records. 0 approved, before and after.** Batch KB-002 adds 108
+records. KB-001's 324 are byte-identical and a test now asserts it.
+
+**A latent bug that would have cloned the corpus was found and fixed.**
+`generateBatch` walked every template regardless of `--batch`, so
+`kb-generate.mjs --batch KB-002` produced 324 records whose content was
+byte-identical to KB-001 under fresh ids — verified, 324 of 324 matching prompt
+hashes. A per-batch QA run could not have caught it, because duplicate detection is
+corpus-wide. Templates are now selected by the batch stamped in their own
+`templateId`, and an unregistered batch throws rather than silently inheriting
+KB-001's families. Left alone, the next batch would have doubled the corpus with
+duplicates that passed their own QA.
+
+**The difficulty skew recorded in KB-001 was redressed by adding records, not by
+relabelling them.** 30 new template families declare a narrowed operator set —
+`BASE`, `LATE_CLUE`, `BURIED_CLUE` preserve the difficulty band; `CLUE_REMOVED`
+raises it exactly one — so EASY and MODERATE mass became reachable for the first
+time. EASY 2.8% → 14.6%; HARD 59.3% → 44.4%. HARD remains 14 points above its
+target and **cannot** be brought down by this method: it is a fixed 192 records, so
+its share falls only as other bands grow, which needs a corpus of about 640.
+`knowledge-corpus/GAP_ANALYSIS.md` §3.1a records that arithmetic rather than
+leaving a future batch to promise it cheaply.
+
+**A PHI / PII / secret scan now exists, because there was none.** Charter section
+XXXIII and STOP GATE 9 require one before a batch is review-ready, and no such tool
+was in the pipeline. `tools/knowledge-corpus/kb-privacy-scan.mjs` proves provenance
+— every identity traces to a declared synthetic pool, every MRN is a reserved
+`SYN-####`, every synthetic token matches a declared convention — and pattern-matches
+ten classes of contact detail and credential. 19 tests plant violations and assert
+detection; a scanner never shown to fail proves nothing. It also documents what it
+cannot prove: that an invented name belongs to nobody real. Corpus verdict: CLEAR,
+0 findings across 432 records.
+
+**Two QA defects were found by planting them.** `REF-INTEGRITY` validated
+`record.trapTypes` but never `choices[].trapType`, so an unregistered trap label
+rode into the corpus reading as taxonomy; closing it was non-breaking, as all 890
+pre-existing choice-level values were already registered. The generator also
+misreported its own work, printing the size of the operator registry rather than the
+operators a batch used.
+
+**Persona pools are now scoped per batch.** `pick` indexes modulo pool length, so
+appending one persona to a shared pool re-casts every record already generated from
+it — which would have rewritten 324 records awaiting review. KB-001's pools are
+frozen with a test asserting their sizes; KB-002 draws from its own cohort, roughly
+doubling every pool.
+
+**Safety and privacy content is reachable at low difficulty for the first time.**
+Previously the only route to those competencies was through operators that force
+HARD, which is structurally why KB-001 had no EASY safety content. A template may
+now declare `safetyBaseline` or `privacyBaseline`, carrying identical weight:
+`escalationRequired`, the hard-failure conditions and `SAFETY-PRECEDENCE` all apply.
+KB-D03 safety rose 24 → 35, KB-D06 orders and referrals 24 → 35, KB-D09 insurance
+24 → 35 — the three thinnest axes that are not source-blocked.
+
+**A false premise in the previous batch's analysis was corrected rather than built
+on.** `GAP_ANALYSIS.md` §3.4 stated that the schema supports packet pinning and the
+corpus simply did not use it. It does not: `packet` is `additionalProperties: false`
+with no `packetRef`, and the record schema's required fields make a standalone
+`CHART_PACKET` unrepresentable. The shared-component refactor KB-002 was assigned is
+therefore a **schema change**, needing a component schema, an optional `packetRef`, a
+version bump and migration notes — STOP GATE 20 and 31. It was not bundled into a
+content batch, which is what those gates exist to prevent; it is now KB-003's first
+item and blocker B6.
+
+**Source discipline: KB-002 adds no `EXTERNAL_AUTHORITY` records at all.** The
+source-verification backlog is unchanged at KB-001's 24. KB-D07 coding is still the
+corpus's thinnest axis at 12 records and was deliberately not expanded — writing
+more would have produced records at `candidate_needs_source_verification` and no
+more usable content (STOP GATE 4). Where a family needs a rule to reason from, the
+rule is a stated given of the synthetic scenario, never a claim about a real payer,
+regulator or organisation.
+
+**Still true, and still the binding constraint: 432 records written, 0 approved.**
+No machine-reachable path to an approved state exists and the validator enforces it.
+KB-002 moved that ratio in the wrong direction by 108 records, which is the honest
+cost of expanding a corpus nobody has reviewed. Generation is not the constraint;
+review is. The branch remains unmerged and governance-blocked per
+`knowledge-corpus/INTEGRATION_BLOCKERS.md`.
 
 ---
 
