@@ -46,6 +46,12 @@ gates in `docs/RELEASE_POLICY.md` §7.
 | Rust | `cargo test --offline` | **70/70**, rustc 1.98.1 |
 | Rust format | `cargo fmt --check` | clean |
 
+**Independently reproduced off this device.** CI run 36793771261 (at `df5dae9`,
+three commits later) passed every one of these gates on hosted Ubuntu and Windows
+runners with identical counts — 804, 330, 27, 25, 81, and `cargo test` 70/70
+under the same rustc 1.98.1. It is the first time any baseline figure has been
+confirmed on a machine that is not DEVICE-01.
+
 **Movement from B-005.** nexus-core 796 → **804** (D9's session transitions);
 desktop 317 → **330** (D9's store and notice). Earlier in the same day B-005 →
 this baseline covers D8 as well: nexus-core 784 → 804, desktop 305 → 330.

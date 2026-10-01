@@ -172,14 +172,14 @@ results, append the baseline to `.nexus/BASELINE.md`, and confirm no test count
 has regressed.
 
 **`.github/workflows/ci.yml` runs these gates on every push and pull request**,
-with the same commands. It was created on 2026-10-01 and **has never been
-executed by GitHub Actions**, so it is `AWAITING ENVIRONMENT VALIDATION`: read
-the first run before trusting it, and the Windows job (which compiles the Tauri
-crate) is the uncertain part. A green badge is not evidence until a run exists.
+with the same commands, and it is **verified**: run 36793771261 at `df5dae9`
+passed both jobs on hosted runners, including the Windows job's `cargo fmt
+--check` and `cargo test` 70/70.
 
 CI does not replace this list. A release is still cut on DEVICE-01, because the
 Windows-only acceptance criteria and `tauri build` are outside what the workflow
-does.
+does — and a green badge is evidence about the commit it ran on, not about the
+one being released.
 
 ## 8. Artifact naming
 

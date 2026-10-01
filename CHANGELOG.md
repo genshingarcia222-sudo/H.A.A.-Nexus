@@ -11,6 +11,51 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## CI Is Green, and It Found Two Real Defects Getting There (2026-10-01)
+
+Run **36793771261** at `df5dae9` passed both jobs on hosted runners, reproducing
+every figure in baseline B-006 on machines that are not DEVICE-01: nexus-core
+**804/804** (66 files), desktop **330/330** (33 files), preflight **27/27**,
+release tool **25/25**, nexus-sync **81/81**, typecheck and build clean, and on
+`windows-latest` `cargo fmt --check` clean with `cargo test` **70/70** under the
+same rustc 1.98.1. That independent reproduction is the part worth having; the
+badge is incidental.
+
+**It took three runs, and the second failure was the repository's, not the
+workflow's.**
+
+The first run failed at `pnpm/action-setup`, which refuses a pnpm version given
+both in the action and in `package.json`'s `packageManager`. A workflow defect,
+fixed by letting the manifest be the one source.
+
+The second run found something worse. `pnpm -r test` failed on Node 20 because
+**jsdom 30 requires `^22.22.2 || ^24.15.0 || >=26.0.0`** and its undici 8
+requires `>=22.19.0`. On Node 20 the jsdom environment cannot load at all, so
+**16 of the 33 desktop test files never ran** - and vitest printed
+`Tests 147 passed` beside `Errors 16 errors`, which a quick reading takes for
+green. Meanwhile `package.json` declared `engines: { node: ">=20" }`, which was
+simply untrue and is the first field anyone provisioning a machine or container
+reads.
+
+Both are now fixed: `engines` states the range jsdom actually admits, and CI runs
+Node 24, matching what DEVICE-01 develops on (24.21.0). **Worth passing to
+DEVICE-02:** its Linux container will show exactly this if its Node is older than
+22.22.2, and the symptom is a third of the desktop suite vanishing rather than
+failing.
+
+This is the defect class CI was created to catch, found on its second run: a
+suite that is green on one developer's machine and cannot execute on another's.
+Nothing in the project could have noticed it, because every gate before today was
+a hand-run command on DEVICE-01.
+
+**What CI still does not do:** build installers, or anything with a Windows-only
+acceptance criterion. A release is cut on DEVICE-01 with the owner approving the
+tag. And a green badge is evidence about the commit it ran on - the workflow
+header keeps a per-run log so the next session reads history rather than a
+colour.
+
+---
+
 ## CI, and the D10 Persistence Boundary (2026-10-01)
 
 Two things, one of which is deliberately *not* a decision.

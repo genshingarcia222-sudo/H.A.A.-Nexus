@@ -93,21 +93,25 @@ not actually performed on a Windows machine.**
 **4. Blocked** — P9-B (D13), P9-C (D14 → D10), P9-E (D13 plus a legal identity).
 P9-D is no longer among them.
 
-**5. CI now exists, and has never run.** `.github/workflows/ci.yml` was created
-on 2026-10-01 under the master control prompt §30, which requires CI to be
-established before release certification. It runs the release-policy §7 gates
-with the same commands a device runs: version parity, `pnpm -r test`,
-`-r typecheck`, `-r build`, preflight (tool and run), the release-version tool,
-the nexus-sync suite, and a Windows job for `cargo fmt --check` and `cargo test`.
+**5. CI exists and is VERIFIED.** `.github/workflows/ci.yml`, created 2026-10-01
+under the master control prompt §30, runs the release-policy §7 gates with the
+same commands a device runs: version parity, `pnpm -r test`, `-r typecheck`,
+`-r build`, preflight (tool and run), the release-version tool, the nexus-sync
+suite, and a Windows job for `cargo fmt --check` and `cargo test`.
 
-**Its status is `AWAITING ENVIRONMENT VALIDATION`, not verified.** Every command
-in it passes on DEVICE-01, and the most likely runner-specific failure was
-checked directly — the tool suites were re-run with `.nexus/local-device.yaml`
-moved aside, which is the state a CI checkout is in, and preflight, its tests and
-all 81 nexus-sync tests still passed. `pnpm install --frozen-lockfile` was
-confirmed against the committed lockfile. But **no hosted runner has executed
-it**, and the Windows job is the uncertain part: it compiles the Tauri crate,
-which needs the WebView2 SDK. Read the first run before trusting a green badge.
+**Run 36793771261 at `df5dae9` passed both jobs on hosted runners**, reproducing
+every figure in baseline B-006 on machines that are not DEVICE-01: nexus-core
+**804/804** (66 files), desktop **330/330** (33 files), preflight **27/27**,
+release tool **25/25**, nexus-sync **81/81**, typecheck and build clean, and on
+`windows-latest` `cargo fmt --check` clean with `cargo test` **70/70** under the
+same rustc 1.98.1. That independent reproduction is worth more than the badge.
+
+**It took three runs, and both failures were real.**
+
+| Run | What it found |
+|---|---|
+| 36793450663 | `pnpm/action-setup` refuses a pnpm version given both in the action and in `packageManager`. A workflow defect |
+| 36793592091 | `pnpm -r test` failed on Node 20 — jsdom 30 needs `^22.22.2 \|\| ^24.15.0 \|\| >=26`, so **16 of the 33 desktop test files could not load their environment at all** while vitest still printed "147 passed". `engines` claimed `>=20`, which was untrue. A **repository** defect, found on CI's second run |
 
 Why it matters: before it, every check in this ledger was a hand-run command,
 which is how a commit made outside a session — the GitHub Desktop commits under
@@ -115,8 +119,10 @@ which is how a commit made outside a session — the GitHub Desktop commits unde
 of them left `cargo fmt --check` failing on `main` from the D15 merge until
 2026-10-01, and nothing noticed.
 
-It consumes the owner's Actions minutes. Deleting the file is the whole of
-turning it off.
+**What CI still does not do:** build installers, or anything else with a
+Windows-only acceptance criterion. A release is cut on DEVICE-01 with the owner
+approving the tag (`docs/RELEASE_POLICY.md` §6). It consumes the owner's Actions
+minutes; deleting the file is the whole of turning it off.
 
 ## 5. Integration state
 
