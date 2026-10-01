@@ -6,14 +6,37 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-003
-phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
-lane: C-01 - primary implementation and integration coordination
+control_version: P9-2026-10-01-001
+phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A and P9-D satisfied; P9-B/C/E blocked on D13 and D14)"
+lane: C-01 - integration coordination and decision closure under standing authorization
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: 082fa95  # PR #3 re-reconciled after the C-02 sweep on the branch
-nexus_task: P9-003 - C-02 integration and governance reconciliation (NEXUS-SYNC-002 COMPLETE)
+current_checkpoint: see .nexus/CURRENT_STATE.md  # PR #3 was merged at c384ac5 (D15)
+nexus_task: P9-005 - D16 release and version policy (see .nexus/ACTIVE_TASK.md for live status)
 session: S-phases-building (register/attach it at every session start)
 ```
+
+## Exact next action at control version P9-2026-10-01-001
+
+**Next action: there is none that is ungated.** CI is green — run 36793771261 at
+`df5dae9` passed both jobs on hosted runners and reproduced every baseline B-006
+figure off this device, including `cargo test` 70/70 on `windows-latest`. The
+last piece of unfinished work in this lane is finished.
+
+**Do not invent work to fill the gap.** D16, D8 and D9 were closed under
+the standing authorization and Phase 8.3's decision group is complete. What
+remains needs the owner:
+
+| Blocker | Why a session cannot close it |
+|---|---|
+| **D10** | Cloud persistence needs a provider account, an account model and authentication. The unblocked half - the learner-state classification and a labelled recommendation - is already in the register |
+| **D14** | Needs D10 first |
+| **D13** | A signing identity costs money and requires a legal entity |
+| **D17** | Changes D4's scope or D6's retake rule |
+| **D18** | DEVICE-02's lane is blocked on it |
+
+Do not touch `knowledge-corpus/`, `tools/knowledge-corpus/`, or PR #21. Do not
+cut a release: `docs/RELEASE_POLICY.md` §6 refuses a stable one at `0.1.0`, and
+the tag is the owner's.
 
 ## Assigned work
 

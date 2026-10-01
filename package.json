@@ -16,6 +16,10 @@
     "preflight:test": "node tools/preflight/preflight.test.mjs",
     "nexus-sync": "node tools/nexus-sync/nexus-sync.mjs",
     "nexus-sync:test": "node tools/nexus-sync/nexus-sync.test.mjs",
+    "version:show": "node tools/release/version.mjs",
+    "version:check": "node tools/release/version.mjs check",
+    "version:set": "node tools/release/version.mjs set",
+    "version:test": "node tools/release/version.test.mjs",
     "kb:generate": "node tools/knowledge-corpus/kb-generate.mjs",
     "kb:validate": "node tools/knowledge-corpus/kb-validate.mjs",
     "kb:privacy": "node tools/knowledge-corpus/kb-privacy-scan.mjs",
@@ -27,6 +31,6 @@
     "kb:verify": "npm run kb:manifest:check && npm run kb:validate && npm run kb:privacy && npm run kb:test && npm run kb:test:privacy"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   }
 }

@@ -140,8 +140,14 @@ pub fn record_delivery_answer(
         .0
         .lock()
         .map_err(|_| "Database lock poisoned".to_string())?;
-    delivery::record_delivery_answer(&conn, &delivery_id, &answered_choice_id, correct, &answered_at)
-        .map_err(map_err)
+    delivery::record_delivery_answer(
+        &conn,
+        &delivery_id,
+        &answered_choice_id,
+        correct,
+        &answered_at,
+    )
+    .map_err(map_err)
 }
 
 #[tauri::command]

@@ -6,7 +6,11 @@ decision or a credential, and which device can do the work. This document is the
 durable home for the Phase 9 decision log.
 
 **Status at entry:** specification authored on DEVICE-02 (2026-09-26). No Phase 9
-implementation has been performed.
+implementation had been performed at that point.
+
+**Status now (2026-10-01, DEVICE-01):** **P9-A satisfied** by the D15 merge
+(`c384ac5`); **P9-D satisfied** by the D16 release policy. **P9-B and P9-E remain
+blocked on D13**, **P9-C on D14 (which needs D10)**. Phase 9 is open.
 
 ---
 
@@ -107,16 +111,31 @@ release feed". Wiring it requires an update-feed endpoint and an update-signing
 keypair (Tauri's updater verifies a detached signature, which is a *separate*
 key from the installer code-signing certificate in P9-B). Resolve **D14**.
 
-### P9-D — No release discipline
+### P9-D — No release discipline — **SATISFIED** (2026-10-01)
 
-`tauri.conf.json` `version` is `0.1.0`; root `package.json` `version` is `0.1.0`.
-Nothing in the repository enforces that they agree, and there is no recorded
-release process: no tagging convention, no channel policy (stable/beta), no
-release checklist, no changelog-to-release mapping. `CHANGELOG.md` is a
-development log, not a release log.
+*What this said before it was satisfied:* `tauri.conf.json` `version` and root
+`package.json` `version` were both `0.1.0`, nothing enforced that they agree, and
+there was no recorded release process — no tagging convention, no channel policy,
+no release checklist, no changelog-to-release mapping.
 
-**Resolve D16.** This is the item with no external dependency — it is
-authorable on either device once the owner sets the policy.
+Both halves now exist:
+
+- **Enforcement** shipped at `d3bca14`: `tools/preflight/preflight.mjs` fails
+  when the four shipping declarations disagree. **D16** extended it to fail when
+  they agree on a version the installer cannot carry.
+- **Policy** is `docs/RELEASE_POLICY.md`, resolving **D16** on 2026-10-01 —
+  CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION,
+  not an owner decision. It names the authoritative version source, the version
+  format, bump rules, channels, the release gates, artifact naming, the release
+  profile (measured), the version the application displays, updater comparison
+  semantics, and who cuts a release.
+- **Tooling**: `node tools/release/version.mjs set X.Y.Z` rewrites all six
+  declarations or refuses and rewrites none (25 tests).
+
+**P9-D no longer blocks Phase 9.** What remains blocked is P9-B and P9-E (**D13**)
+and P9-C (**D14**, which needs **D10**). Note that the policy itself refuses a
+*stable* release while P9-B and P9-E are unsatisfied, so closing Phase 9 and
+shipping a stable build remain the same gate.
 
 ### P9-E — Bundle metadata is minimal
 
@@ -140,7 +159,7 @@ authorization.
 | **D13** | What code-signing identity signs the installers — an OV/EV certificate, Azure Trusted Signing, or a self-signed certificate for an internal pilot only? | P9-B, P9-E | Costs money, requires legal identity, and determines whether public distribution is possible at all |
 | **D14** | Where does the update feed live — GitHub Releases, or first-party hosting? | P9-C | Intersects Phase 10 cloud architecture and **D10** (web persistence). Choosing first-party hosting pre-commits Phase 10 infrastructure |
 | **D15** | Is `origin/feat/training-question-bank` merged, or is its `windows_subsystem` fix reimplemented on `main`? | P9-A | The branch also carries the Training question run (M23), Pilot 001 r3 and open decision **D12**. Merging was already escalated and is undecided |
-| **D16** | What is the release/version policy — tagging scheme, channels, and who cuts a release? | P9-D | No repository document establishes it |
+| ~~**D16**~~ | ~~What is the release/version policy?~~ **RESOLVED 2026-10-01** under the owner's standing authorization: `docs/RELEASE_POLICY.md` | ~~P9-D~~ nothing | Was: no repository document established it |
 
 **D14 has a dependency worth stating plainly:** it is entangled with **D10**,
 which is itself open and already blocks commercialization roadmap steps 4 and 5.
@@ -182,9 +201,10 @@ Phase 9 closes when all hold:
    `plugins.updater` block points at the feed **D14** names, updater artifacts
    are produced, and one version-to-version update has been completed
    end-to-end against a real feed.
-4. **P9-D** resolved — a written release process exists, `tauri.conf.json` and
-   `package.json` versions are reconciled, and the policy **D16** sets is
-   recorded.
+4. **P9-D** resolved — **SATISFIED 2026-10-01.** A written release process
+   exists (`docs/RELEASE_POLICY.md`), all six version declarations are reconciled
+   and enforced by preflight and `tools/release/version.mjs`, and the policy
+   **D16** sets is recorded.
 5. **P9-E** resolved — bundle metadata and the installer-visible license are
    populated and consistent with the commercial licensing decision.
 6. The baseline is re-verified on DEVICE-01 at the closing commit, appended to

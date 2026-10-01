@@ -22,8 +22,13 @@ import { scenarioRepository } from "../content/scenarios.js";
  * Assessment as a new attempt.** The interrupted attempt is recorded as
  * abandoned rather than deleted, and contributes nothing. Exact in-place
  * resume is deliberately *not* offered: restoring an attempt changes elapsed
- * time, which feeds `timeEfficiencyRatio` and therefore the score, and that is
- * D8 (with A6 as its engineering half) - still undecided.
+ * time, which feeds `timeEfficiencyRatio` and therefore the score.
+ *
+ * **D8 has since been answered** (2026-10-01, standing authorization), and it
+ * answered the same way for practice and simulation - a new attempt, never a
+ * resume - while adding one thing Assessment does *not* get: the learner may
+ * carry their draft into the new attempt. `mayContinueFromDraft` is what keeps
+ * Assessment out of that, and the test below now asserts it directly.
  *
  * Why a retake does not undermine exam integrity: D2 means the learner can see
  * no performance information at all during an active Assessment, so there is
@@ -107,7 +112,7 @@ describe("D6: an interrupted Assessment may be retaken as a new attempt", () => 
     expect(old?.mode).toBe("assessment");
   });
 
-  it("does not offer an in-place resume, because that would decide D8", async () => {
+  it("does not offer an in-place resume, nor the draft carry-forward D8 gave practice", async () => {
     await sessionRepository.save(interruptedAssessment());
     useEntitlementStore.getState().setSubscription(PRO);
     render(<Dashboard />);
@@ -115,6 +120,10 @@ describe("D6: an interrupted Assessment may be retaken as a new attempt", () => 
     await screen.findByRole("button", { name: "Start a new attempt" });
     expect(screen.queryByRole("button", { name: /^Resume/ })).toBeNull();
     expect(screen.queryByRole("button", { name: /continue where/i })).toBeNull();
+    // D8 added "Continue from your draft" for practice and simulation. An
+    // Assessment must not get it: carrying the draft forward would be a resume
+    // in all but name, which is what D6 refused.
+    expect(screen.queryByRole("button", { name: "Continue from your draft" })).toBeNull();
   });
 
   it("still honours D1: a tier that may not start an Assessment is refused, and the record survives", async () => {

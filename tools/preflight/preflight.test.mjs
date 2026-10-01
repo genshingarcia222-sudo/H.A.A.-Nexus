@@ -137,6 +137,30 @@ test("treats a missing version as a problem rather than as agreement", () => {
   assert.ok(r.problems.some((p) => /Cargo\.toml: no version declared/.test(p)));
 });
 
+test("rejects a version the release policy cannot ship, even when every source agrees", () => {
+  // D16 added this rule to a check that previously only compared strings. Four
+  // files agreeing on "1.0" passes parity and still cannot be bundled, because
+  // the installer's version field has no representation for it.
+  const r = parseVersionParity([
+    { label: "a", file: "package.json", version: "1.0" },
+    { label: "b", file: "apps/desktop/src-tauri/Cargo.toml", version: "1.0" }
+  ]);
+  assert.equal(r.agree, false, "agreement on an unshippable version is not agreement");
+  assert.equal(r.policyFormat, false);
+  assert.equal(r.problems.length, 2);
+  assert.ok(r.problems.every((p) => /not a releasable version/.test(p)), r.problems.join("; "));
+});
+
+test("admits a pre-release version, which the policy allows on the NSIS channel", () => {
+  const r = parseVersionParity([
+    { label: "a", file: "package.json", version: "0.2.0-rc.1" },
+    { label: "b", file: "apps/desktop/src-tauri/Cargo.toml", version: "0.2.0-rc.1" }
+  ]);
+  assert.equal(r.agree, true);
+  assert.equal(r.policyFormat, true);
+  assert.deepEqual(r.problems, []);
+});
+
 test("reads the [package] version and not a dependency's version", () => {
   const toml = [
     "[package]",

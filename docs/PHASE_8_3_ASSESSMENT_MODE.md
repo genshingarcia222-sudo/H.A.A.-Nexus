@@ -435,19 +435,19 @@ one "critical documentation error", and "Contradictory" in the note comparison.
 
 </details>
 
-#### D8 — May an interrupted practice or simulation attempt be resumed? — **NOT AUTHORIZED**
+#### D8 — May an interrupted practice or simulation attempt be resumed? — **ANSWERED 2026-10-01**
 
 - **Evidence examined:** Architecture Package §20 ("on app launch, any session with `status = in_progress` and no `completed_at` is surfaced as *Resume interrupted session?*"), §10 (autosave so "interrupted sessions must not lose work"), §30 acceptance ("recovery from a forced interruption"). The Dashboard already surfaces interrupted sessions and offers a fresh attempt; the draft is already persisted, so no work is lost on disk.
 - **Why insufficient:** the architecture states that interrupted sessions are *surfaced* and that drafts are *saved*, but not what resuming does to the attempt itself. Restoring a draft into a running attempt would carry prior work into a newly timed session, and elapsed time feeds `timeEfficiencyRatio`, which feeds the score. Whether a resumed attempt is the same attempt, and how its time is accounted, is scoring policy.
 - **Current state:** unchanged — interrupted sessions are surfaced, the draft remains persisted and recoverable from the database, and the learner is offered a new attempt.
-- **Decision required:** whether an interrupted practice/simulation attempt may be resumed, and if so how its elapsed time and attempt identity are treated. Assessment is explicitly excluded here; that is D6.
+- **Answered 2026-10-01 under the owner's standing authorization** (not an owner decision): **never resumed in place.** The learner may carry the draft into a *new* attempt, and the time already measured on that draft is carried with it, so a continued attempt is scored on the work and on the time the work took. The gap while the application was closed is excluded, because nothing measured it. The interrupted record becomes `abandoned`, is kept, and carries no evaluation. Assessment is excluded by `mayContinueFromDraft`, which keeps D6 intact. Full record in `docs/DECISION_REGISTER.md` D8.
 
-#### D9 — What happens when evaluation itself fails? — **NOT AUTHORIZED**
+#### D9 — What happens when evaluation itself fails? — **ANSWERED 2026-10-01**
 
 - **Evidence examined:** `SessionStatus` already includes `evaluation_failed` (`simulation-engine/types.ts`), and the SQLite `status` CHECK accepts it — now proven by test. Nothing produces it. `sessionStore.submit` calls `evaluateAttempt` outside its try/catch, so a throw would reject the promise `handleSubmit` awaits: the session stays `in_progress`, nothing is saved, and the learner sees no response to pressing Submit. Architecture Package §28 lists a simulated *write* failure as a required fixture, but not an evaluation failure.
 - **Why insufficient:** the status exists, but what the learner is told, whether the attempt may be retried, and whether a failed evaluation still counts as an attempt are all learner-facing policy. Encoding any of them — including "silently do nothing", which is today's behaviour — would be inventing a rule.
 - **Current state:** unchanged and untested. Deterministic evaluation over validated content makes a throw unlikely, which is why this is recorded rather than treated as a live defect.
-- **Decision required:** what a learner sees when evaluation fails, and what happens to the attempt.
+- **Answered 2026-10-01 under the owner's standing authorization** (not an owner decision): treated exactly as a failed save already is under Architecture Package §28. The attempt is recorded `evaluation_failed` with its draft and timings, a "Not scored" notice says so, "Try scoring again" re-runs evaluation on the attempt's own recorded time, and the attempt counts toward nothing until it is actually scored. `mayRevealPerformance` and `mayAccessReferenceMaterial` both still test for `completed`, so an assessment whose evaluation failed reveals nothing and stays closed-book. Full record in `docs/DECISION_REGISTER.md` D9.
 
 #### D10 - What persists a web learner's progress? - **NOT AUTHORIZED**
 
@@ -504,6 +504,6 @@ closed a limitation reported at every checkpoint from D1 onward: D4's
 closed-book boundary, D5's separate assessment population and D7's contradiction
 grading have each now been confirmed in a live Assessment, not only by tests.
 
-D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D8 (practice/simulation resume, with A6 as its engineering half), D9 (evaluation failure) and D10 (web persistence).
+D1, D3, D4, D5 and D6 are all decided: Assessment is reachable, runs closed-book, gives the full results experience on submission, counts as its own population, and may be retaken if interrupted. **Every Phase 8.3 Assessment decision is now resolved.** What remains open is outside Assessment mode: D10 (web persistence). **D8 was answered on 2026-10-01** under the owner's standing authorization - a new attempt that may carry the draft and its measured time, never a resume - and it left A6 open and still unnecessary.
 
 > **Correction.** This sentence previously listed **D7** among what remains open. D7 was resolved on 2026-09-20 — the decision is recorded as **RESOLVED** earlier in this document, and the paragraph immediately above already relies on its contradiction grading as implemented and confirmed in a live Assessment. Listing it as open was stale text contradicting the rest of the document, not a change of policy. No other entry in this list changed.

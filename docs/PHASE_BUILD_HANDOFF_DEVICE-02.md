@@ -6,14 +6,43 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-09-26-003
-phase: "Phase 9 - Packaging & Release Hardening (OPEN, fully decision-blocked)"
-lane: C-02 - independent audit, documentation and validation tooling
+control_version: P9-2026-10-01-001
+phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A and P9-D satisfied; P9-B/C/E blocked on D13 and D14)"
+lane: KB-01 - Knowledgebase feature lane (C-02 audit lane COMPLETE)
 baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: 2556d1e  # PR #19 integrated; lane C-02 COMPLETE
+current_checkpoint: feat/knowledgebase-expansion (PR #21, deliberately unmerged)
 nexus_task: none held by DEVICE-02; claim one before mutating (nexus-sync claim)
 session: attach to S-phases-building, then register your own lane session
 ```
+
+## Exact next action at control version P9-2026-10-01-001
+
+**Next action.** Unchanged: the Knowledgebase lane
+(`feat/knowledgebase-expansion`, PR #21), which **stays unmerged** - its own
+integration gate is unsatisfied and **D18** (which content contract the runtime
+ingests) comes first.
+
+**What arrived on `main` that touches your branch mechanically**, none of it a
+change to your architecture:
+
+1. `package.json` `scripts` - `main` now appends four `version:*` entries after
+   `nexus-sync:test`, where your branch appends nine `kb:*` entries. A textual
+   conflict on merge, and a union resolution: keep both sets. Control §10(H).
+2. `tools/preflight/preflight.mjs` imports `tools/release/version.mjs` for the
+   one definition of a releasable version, and `versionParity` gained a
+   `policyFormat` field. `tools/preflight/**` moved to DEVICE-01's owned list
+   after checking that your branch changes nothing in it. If you have unpushed
+   preflight work, say so rather than merging over it.
+3. **CI now exists** (`.github/workflows/ci.yml`) and runs on every pull request,
+   so PR #21 will be checked by it. It has never been validated on a hosted
+   runner - if it fails on your PR, read the failure before assuming your branch
+   caused it.
+
+**Three decisions closed since your last handoff**, all under the owner's
+*standing* authorization rather than by the owner personally, and all labelled as
+such: **D16** (`docs/RELEASE_POLICY.md`), **D8** (interrupted attempts are
+continued, never resumed) and **D9** (a failed evaluation is visible and
+retryable). **D10 was deliberately not closed** and remains externally blocked.
 
 ## Why this lane is documentation work right now
 
