@@ -86,6 +86,73 @@ to fill with invented work.
 
 ---
 
+## Knowledgebase: O1 Measured — the Two Record Contracts Are 54 Fields Apart (2026-10-02)
+
+**DEVICE-02, lane KB-01, on `feat/knowledgebase-expansion`. Tooling and a review
+record only. No corpus record changed, no runtime code changed, no decision
+resolved.**
+
+The Knowledgebase lane has been blocked on **O1 / D18** — which of two record
+contracts survives — and the queue described that question without ever
+measuring it. `npm run kb:divergence` now measures it, so the decision can be
+made from numbers.
+
+**What was measured.** Both contracts, against all 432 authored records:
+
+| | Contract A — authoring, this branch | Contract B — runtime, on `main` since D15 |
+| --- | --- | --- |
+| Source | `knowledge-corpus/schema/kb-record.schema.json` | `packages/nexus-core/src/knowledge-corpus/` + `question-bank/` |
+| Shape | one flat record type, `recordType` discriminator | four typed families: KNOWLEDGE / ITEM / CONTEXT / CONCEPT |
+| Fields | 54 declared, all 54 populated | 54 across the family union |
+| Names in common | 11 | 11 |
+| Names with no counterpart | 43 | 43 |
+
+**Three findings that change what O1 is.** It is not a schema-file deletion:
+
+1. The models disagree about what a record *is*. B expresses an assessment item
+   as an extension of the **Training question bank** (`AssessmentItemObjectSchema`
+   extends `TrainingQuestionObjectSchema`), so B's item lineage is D12's bank,
+   not this corpus.
+2. B's schemas are `.strict()` — 33 of them — so an unmapped key is a validation
+   error, not tolerated extra detail. **39 of the 43 unmapped keys appear on all
+   432 records**; only `correctChoiceIds` (318), `expectedOutput` (114),
+   `canonicalOrder` (16) and `steps` (16) are partial.
+3. Neither direction is free. A declares nothing the corpus leaves unused, and 43
+   of B's fields — `family`, `kind`, `statement`, `questionId`,
+   `targetSegmentIds` among them — are supplied by no record, so adopting B means
+   authoring them.
+
+So O1 is a 54-field remodelling of 432 records whichever way it goes, and every
+further batch multiplies the same cost. **O1 / D18 remains open; nothing here
+answers it.**
+
+**The tool had to be fixed twice before its numbers could be trusted**, and both
+bugs inflated the divergence:
+
+- `nexus-core` declares no build (`main` points at `src/index.ts`), so a
+  zero-dependency tool cannot import the Zod schemas and must read them. The
+  first reader dropped every field behind a `/** … */` or `//` comment — which
+  is nearly every field in these files — losing `questionId`, `domain`,
+  `question` and `rationale`. Comments are now stripped, string literals intact,
+  and the case is a regression test.
+- `CaseContextSchema` is a `discriminatedUnion`, not an object literal, and was
+  reported as a **missing** schema. Unions now resolve to the union of their
+  members' fields.
+
+A third correction was caught by re-measuring rather than by a test: the review
+record first said 38 of 43 keys appear on all records. It is 39.
+
+**Verified.** `npm run kb:verify` (manifest check, validate, privacy scan, and
+now three test suites) exits 0: kb-validate **52/52**, kb-privacy-scan **19/19**,
+kb-schema-divergence **19/19**. Corpus unchanged at 432 records across 57 files,
+manifest matching 70 checksummed files, privacy verdict CLEAR.
+
+**Not verified, and not claimed.** The measurement is name-level: it compares
+declared field names, not Zod's runtime behaviour, because the schemas cannot be
+executed from a zero-dependency tool. The tool's header says so. No `cargo test`,
+`tauri build`, or Windows figure is involved. `.nexus/` was not written — see the
+handoff for why.
+
 ## CI Is Green, and It Found Two Real Defects Getting There (2026-10-01)
 
 Run **36793771261** at `df5dae9` passed both jobs on hosted runners, reproducing
@@ -591,6 +658,104 @@ blocked, 4 resolved. No test was deleted, weakened or skipped.
 
 ---
 
+## Knowledgebase Workstream — Batch KB-002, Difficulty Rebalance and QA Hardening (2026-09-27)
+
+**Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
+`main` at `6c92a30`. Not merged. No application, Rust, bundler or `.nexus`
+behaviour changed, and no file outside `knowledge-corpus/` and
+`tools/knowledge-corpus/` was touched.** No loader reads the corpus, nothing under
+`content/` changed, no entitlement or Assessment logic was altered, and no other
+device's branch was modified. The PHASES BUILDING workstream is untouched: no phase
+task was claimed and no owner decision was resolved.
+
+**Base note, added on merging.** This entry was written against `main` at
+`6c92a30`. DEVICE-01 resolved **D15** the same day and merged `main` into this
+branch at `9b08a0c`; KB-002 was then merged on top. The batch's own content and
+tooling are unaffected by that merge — it touched no file under
+`knowledge-corpus/` or `tools/knowledge-corpus/` — and the corpus figures above
+were re-verified after it.
+
+**Corpus: 324 → 432 records. 0 approved, before and after.** Batch KB-002 adds 108
+records. KB-001's 324 are byte-identical and a test now asserts it.
+
+**A latent bug that would have cloned the corpus was found and fixed.**
+`generateBatch` walked every template regardless of `--batch`, so
+`kb-generate.mjs --batch KB-002` produced 324 records whose content was
+byte-identical to KB-001 under fresh ids — verified, 324 of 324 matching prompt
+hashes. A per-batch QA run could not have caught it, because duplicate detection is
+corpus-wide. Templates are now selected by the batch stamped in their own
+`templateId`, and an unregistered batch throws rather than silently inheriting
+KB-001's families. Left alone, the next batch would have doubled the corpus with
+duplicates that passed their own QA.
+
+**The difficulty skew recorded in KB-001 was redressed by adding records, not by
+relabelling them.** 30 new template families declare a narrowed operator set —
+`BASE`, `LATE_CLUE`, `BURIED_CLUE` preserve the difficulty band; `CLUE_REMOVED`
+raises it exactly one — so EASY and MODERATE mass became reachable for the first
+time. EASY 2.8% → 14.6%; HARD 59.3% → 44.4%. HARD remains 14 points above its
+target and **cannot** be brought down by this method: it is a fixed 192 records, so
+its share falls only as other bands grow, which needs a corpus of about 640.
+`knowledge-corpus/GAP_ANALYSIS.md` §3.1a records that arithmetic rather than
+leaving a future batch to promise it cheaply.
+
+**A PHI / PII / secret scan now exists, because there was none.** Charter section
+XXXIII and STOP GATE 9 require one before a batch is review-ready, and no such tool
+was in the pipeline. `tools/knowledge-corpus/kb-privacy-scan.mjs` proves provenance
+— every identity traces to a declared synthetic pool, every MRN is a reserved
+`SYN-####`, every synthetic token matches a declared convention — and pattern-matches
+ten classes of contact detail and credential. 19 tests plant violations and assert
+detection; a scanner never shown to fail proves nothing. It also documents what it
+cannot prove: that an invented name belongs to nobody real. Corpus verdict: CLEAR,
+0 findings across 432 records.
+
+**Two QA defects were found by planting them.** `REF-INTEGRITY` validated
+`record.trapTypes` but never `choices[].trapType`, so an unregistered trap label
+rode into the corpus reading as taxonomy; closing it was non-breaking, as all 890
+pre-existing choice-level values were already registered. The generator also
+misreported its own work, printing the size of the operator registry rather than the
+operators a batch used.
+
+**Persona pools are now scoped per batch.** `pick` indexes modulo pool length, so
+appending one persona to a shared pool re-casts every record already generated from
+it — which would have rewritten 324 records awaiting review. KB-001's pools are
+frozen with a test asserting their sizes; KB-002 draws from its own cohort, roughly
+doubling every pool.
+
+**Safety and privacy content is reachable at low difficulty for the first time.**
+Previously the only route to those competencies was through operators that force
+HARD, which is structurally why KB-001 had no EASY safety content. A template may
+now declare `safetyBaseline` or `privacyBaseline`, carrying identical weight:
+`escalationRequired`, the hard-failure conditions and `SAFETY-PRECEDENCE` all apply.
+KB-D03 safety rose 24 → 35, KB-D06 orders and referrals 24 → 35, KB-D09 insurance
+24 → 35 — the three thinnest axes that are not source-blocked.
+
+**A false premise in the previous batch's analysis was corrected rather than built
+on.** `GAP_ANALYSIS.md` §3.4 stated that the schema supports packet pinning and the
+corpus simply did not use it. It does not: `packet` is `additionalProperties: false`
+with no `packetRef`, and the record schema's required fields make a standalone
+`CHART_PACKET` unrepresentable. The shared-component refactor KB-002 was assigned is
+therefore a **schema change**, needing a component schema, an optional `packetRef`, a
+version bump and migration notes — STOP GATE 20 and 31. It was not bundled into a
+content batch, which is what those gates exist to prevent; it is now KB-003's first
+item and blocker B6.
+
+**Source discipline: KB-002 adds no `EXTERNAL_AUTHORITY` records at all.** The
+source-verification backlog is unchanged at KB-001's 24. KB-D07 coding is still the
+corpus's thinnest axis at 12 records and was deliberately not expanded — writing
+more would have produced records at `candidate_needs_source_verification` and no
+more usable content (STOP GATE 4). Where a family needs a rule to reason from, the
+rule is a stated given of the synthetic scenario, never a claim about a real payer,
+regulator or organisation.
+
+**Still true, and still the binding constraint: 432 records written, 0 approved.**
+No machine-reachable path to an approved state exists and the validator enforces it.
+KB-002 moved that ratio in the wrong direction by 108 records, which is the honest
+cost of expanding a corpus nobody has reviewed. Generation is not the constraint;
+review is. The branch remains unmerged and governance-blocked per
+`knowledge-corpus/INTEGRATION_BLOCKERS.md`.
+
+---
+
 ## D15 Resolved — `feat/training-question-bank` Merged (2026-09-27)
 
 **Owner decision D15, 2026-09-27: merge.** The escalation had been outstanding
@@ -638,6 +803,93 @@ the only two files both branches touch. Both resolve under the control document'
 production-eligible**; Training still runs on the synthetic preview bank; the
 exposure ledger is still not written to; Phase 8 is not closed; D8, D9, D10,
 D13, D14, D16 and A2/A6/A7/A9/A12 all remain open.
+
+---
+
+## Knowledgebase Workstream — Corpus Infrastructure and Pilot Batch KB-001 (2026-09-26)
+
+**Content and tooling only, on `feat/knowledgebase-expansion`, based directly on
+`main` at `6c92a30`. Not merged. No application, Rust, bundler or `.nexus`
+behaviour changed.** The only file touched outside the two new directories is
+`package.json`, which gains five `kb:*` scripts. No loader reads the new corpus,
+nothing under `content/` changed, no entitlement or Assessment logic was altered,
+and no other device's branch was modified.
+
+**The declared source archive is absent, and that is recorded rather than worked
+around.** Neither `nexus_knowledgebase_materials_v1.md` nor
+`Nexus_Knowledgebase_Archive_v1.0.pdf` exists in the repository or in the
+session's filesystem; both were searched for by name and by pattern. The 400 seed
+records they describe are therefore **not** in this corpus, and no part of them
+was reconstructed from conversational memory — which the repository's own
+authority order ranks last and does not treat as project state.
+`knowledge-corpus/source/SOURCE_RECONCILIATION_v1.md` states what could not be
+reconciled and what would unblock it.
+
+**The repository already had a Knowledgebase architecture, and it was left
+alone.** `origin/feat/training-question-bank` carries ~2,700 lines of
+`packages/nexus-core/src/knowledge-corpus/` under owner decision **D12** —
+schema, validation, quality tiers, a review log, deliverability and a
+deterministic build. It is not on `main`, so this branch could not import it, and
+it belongs to another lane, so it was not modified. What was built instead is
+deliberately shaped to reconcile with it: the same lifecycle vocabulary, the same
+`machine:<agent-id>` provenance rule, the same authority classes, the same
+`synthetic: true` literal, the same 50-word excerpt cap, and the same computed
+(never stored) temporal state. **Which of the two schemas survives is an owner
+decision**, recorded as the first item in
+`knowledge-corpus/INTEGRATION_BLOCKERS.md`.
+
+**The existing corpus was measured, not assumed:** 42 candidate items across
+three artifacts (Pilot Batch 001 r2 and r3, Scribe Batch 002), **0 approved, 0
+source-verified**, and every one of the 42 a four-option single-best-answer
+question with no partial credit. That last finding set the batch's direction,
+because the workstream's stated objective is that the Knowledgebase must not
+become a question bank.
+
+**Batch KB-001: 324 records, QA PASS, 0 approved.** 27 template families × 12
+operators — one base case and eleven counterfactual mutations. Each operator
+rewrites the evidence so the *defensible behaviour changes*, and the option that
+was correct in the base case is carried into the mutation as an explained
+distractor. All 27 task types, all 20 modules and all 12 KB-D competency axes are
+represented; `taskType: MCQ` is 12 of 324 (3.7%) against a 30% enforced ceiling;
+297 records are variants with resolving lineage; 0 exact duplicates and 0
+superficial variants. Generation is deterministic — no clock, no randomness — so a
+failed batch is rerunnable without duplicating an accepted record.
+
+**Nothing claims more than it has.** 300 records are `SELF_CONTAINED`, at
+`candidate`, their gold behaviour settled by the synthetic packet inside the
+record. 24 are `EXTERNAL_AUTHORITY`, held at
+`candidate_needs_source_verification` with `locatorConfidence: NONE`, because **no
+source was retrieved or opened in this workstream**. All 13 source-registry refs
+were transcribed from batch artifacts already in the repository, each naming the
+artifact it came from; two Joint Commission entries were reclassified from
+`SECONDARY` to `PROFESSIONAL_BODY`, with the note that an accrediting body's
+standards are not federal regulation. `ASSESSMENT_CLOSED_BOOK` is on **zero**
+records, and the generator cannot assign it.
+
+**The validator is the trust anchor, so it is tested by rule name** — 45 tests in
+`tools/knowledge-corpus/kb-validate.test.mjs`, covering 24 named policy rules plus
+four contract assertions over the generator: determinism, the machine ceiling, the
+Assessment boundary, and that every packet declares itself synthetic. Removing a
+rule fails a test that names it.
+
+**Four defects were found and fixed during the batch; three by the validator and
+one by reading a record.** Colliding packet-line refs (15 records); `CLUE_REMOVED`
+leaving no decisive line and no packet-grounded criterion (27 records); two
+operators overstating their difficulty band, corrected so 54 records moved down one
+band; and two records whose distractor restated the correct answer — for which a
+**new rule `CHOICE-COLLISION` was added** so it cannot recur silently.
+
+**The residual imbalance is reported, not relabelled.** Difficulty is 59.3% HARD
+against 2.8% EASY, because six of the eleven mutations genuinely add a
+contradiction or a competing priority. Competency spread runs 12 to 96, and the two
+thinnest axes — KB-D10 privacy and KB-D07 coding — are exactly the two that cannot
+be expanded without a human opening a source. Corpus layer 2 (reusable knowledge
+rules and terminology objects) does not exist yet for the same reason.
+`knowledge-corpus/GAP_ANALYSIS.md` measures all of it and sequences KB-002 to KB-005.
+
+**Generation is not this corpus's constraint; review is.** 324 records written, 0
+approved, and no machine-reachable path to an approved state. Reaching 10,000
+records does not change that ratio — only registered reviewers do.
 
 ---
 

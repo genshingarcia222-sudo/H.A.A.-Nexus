@@ -1,0 +1,28 @@
+{
+  "registryId": "KB-REG-MODULES",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section IX (owner-supplied, 2026-09-26)",
+  "note": "Module identifiers M01-M20 are carried verbatim from the charter. They are authoring/coverage axes, not runtime tiers, and nothing in the application parses them.",
+  "modules": [
+    { "id": "M01", "title": "Nexus operating principles", "sourceDependence": "INTERNAL", "note": "Platform-internal doctrine; authority is the repository, not an external body." },
+    { "id": "M02", "title": "Patient identity and context", "sourceDependence": "MIXED" },
+    { "id": "M03", "title": "Call handling and probing", "sourceDependence": "MIXED" },
+    { "id": "M04", "title": "SOAP and documentation", "sourceDependence": "MIXED" },
+    { "id": "M05", "title": "Clinical terminology", "sourceDependence": "EXTERNAL" },
+    { "id": "M06", "title": "Referral and fax packets", "sourceDependence": "MIXED" },
+    { "id": "M07", "title": "Radiology and diagnostic orders", "sourceDependence": "EXTERNAL" },
+    { "id": "M08", "title": "ICD-10-CM support", "sourceDependence": "EXTERNAL", "note": "Every record must carry codingVersion; see registries/coding-versions.json." },
+    { "id": "M09", "title": "Medication and refill workflow", "sourceDependence": "EXTERNAL" },
+    { "id": "M10", "title": "Lab/imaging results workflow", "sourceDependence": "MIXED" },
+    { "id": "M11", "title": "Insurance/admin workflows", "sourceDependence": "EXTERNAL", "note": "Payer-specific behaviour must set payerSpecific=true and must never be generalised." },
+    { "id": "M12", "title": "HIPAA/privacy/security", "sourceDependence": "EXTERNAL", "note": "Interpretation requires primary regulation or official guidance." },
+    { "id": "M13", "title": "Handoffs and TeamSTEPPS", "sourceDependence": "EXTERNAL" },
+    { "id": "M14", "title": "Error taxonomy", "sourceDependence": "INTERNAL" },
+    { "id": "M15", "title": "Audit and QA", "sourceDependence": "INTERNAL" },
+    { "id": "M16", "title": "Dynamic question generation", "sourceDependence": "INTERNAL" },
+    { "id": "M17", "title": "KB-D competency decision matrix", "sourceDependence": "INTERNAL", "note": "Charter section IV: this is the archive's D01-D12 competency matrix, renamed KB-D01..KB-D12. It is NOT repository decision D12." },
+    { "id": "M18", "title": "Realistic Premium architecture", "sourceDependence": "INTERNAL" },
+    { "id": "M19", "title": "Feedback and remediation", "sourceDependence": "INTERNAL" },
+    { "id": "M20", "title": "Version and source governance", "sourceDependence": "INTERNAL" }
+  ]
+}

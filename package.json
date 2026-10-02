@@ -19,7 +19,18 @@
     "version:show": "node tools/release/version.mjs",
     "version:check": "node tools/release/version.mjs check",
     "version:set": "node tools/release/version.mjs set",
-    "version:test": "node tools/release/version.test.mjs"
+    "version:test": "node tools/release/version.test.mjs",
+    "kb:generate": "node tools/knowledge-corpus/kb-generate.mjs",
+    "kb:validate": "node tools/knowledge-corpus/kb-validate.mjs",
+    "kb:privacy": "node tools/knowledge-corpus/kb-privacy-scan.mjs",
+    "kb:scorecard": "node tools/knowledge-corpus/kb-scorecard.mjs",
+    "kb:manifest": "node tools/knowledge-corpus/kb-manifest.mjs",
+    "kb:manifest:check": "node tools/knowledge-corpus/kb-manifest.mjs --check",
+    "kb:test": "node tools/knowledge-corpus/kb-validate.test.mjs",
+    "kb:test:privacy": "node tools/knowledge-corpus/kb-privacy-scan.test.mjs",
+    "kb:divergence": "node tools/knowledge-corpus/kb-schema-divergence.mjs",
+    "kb:test:divergence": "node tools/knowledge-corpus/kb-schema-divergence.test.mjs",
+    "kb:verify": "npm run kb:manifest:check && npm run kb:validate && npm run kb:privacy && npm run kb:test && npm run kb:test:privacy && npm run kb:test:divergence"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

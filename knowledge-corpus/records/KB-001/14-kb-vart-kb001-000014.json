@@ -1,0 +1,2353 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000014",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-COMM-KB001-000157",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "M. Okonjo sent the result to Dr. Ngozi Brandtsen on 2026-11-05 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Ngozi Brandtsen opened it. Dr. Ngozi Brandtsen has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "A result for Corrin Vasquez-Lund was sent onward three days ago. Establish whether the loop is closed.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct: a loop closes on a named person's acceptance, not on a delivery receipt."
+        },
+        {
+          "id": "b",
+          "text": "Treat the loop as closed: the message was delivered and the recipient is responsible for their own inbox.",
+          "why": "Delivery to an inbox nobody is reading is the condition this case describes, not a defence against it.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Resend the message to Dr. Ngozi Brandtsen marked urgent.",
+          "why": "The recipient is out of the office. A second copy in the same unread inbox changes nothing.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Contact the patient now with the result so they are not left waiting.",
+          "why": "No clinician has reviewed it. Releasing an unreviewed result is both outside scope and premature.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Delivered is not acknowledged, and the loop is open. State that there is no acknowledgement and that the named recipient has been absent since the message was sent — so the delivery receipt evidences nothing about review. Re-route to the covering clinician rather than resending to the same absent inbox, obtain an explicit acknowledgement from a named person, record who accepted it and when, and close the loop with the patient once a clinician has acted. Escalate if no acknowledgement is obtained promptly.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Distinguishes delivery from acknowledgement.",
+          "credit": 0.25,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Re-routes to the covering clinician rather than resending to the absent inbox.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records an explicit acknowledgement from a named person.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient once a clinician has acted.",
+          "credit": 0.25,
+          "evidenceRef": "P3"
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "2fcb551334141ae6",
+        "scenarioFingerprint": "0d320da29ec9f327",
+        "competencyFingerprint": "590ed1d6562b0e7f",
+        "evidenceLayoutFingerprint": "b78cd949db662f2f",
+        "answerPatternFingerprint": "364b0f17e7edf856"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000158",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "R. Skibinski sent the result to Dr. Rurik Vandeveer on 2026-12-08 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Rurik Vandeveer opened it. Dr. Rurik Vandeveer has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "A result for Delphine Achterberg was sent onward three days ago. Establish whether the loop is closed. Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct: a loop closes on a named person's acceptance, not on a delivery receipt."
+        },
+        {
+          "id": "c",
+          "text": "Treat the loop as closed: the message was delivered and the recipient is responsible for their own inbox.",
+          "why": "Delivery to an inbox nobody is reading is the condition this case describes, not a defence against it.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Resend the message to Dr. Rurik Vandeveer marked urgent.",
+          "why": "The recipient is out of the office. A second copy in the same unread inbox changes nothing.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Delivered is not acknowledged, and the loop is open. State that there is no acknowledgement and that the named recipient has been absent since the message was sent — so the delivery receipt evidences nothing about review. Re-route to the covering clinician rather than resending to the same absent inbox, obtain an explicit acknowledgement from a named person, record who accepted it and when, and close the loop with the patient once a clinician has acted. Escalate if no acknowledgement is obtained promptly.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Distinguishes delivery from acknowledgement.",
+          "credit": 0.25,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Re-routes to the covering clinician rather than resending to the absent inbox.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records an explicit acknowledgement from a named person.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient once a clinician has acted.",
+          "credit": 0.25,
+          "evidenceRef": "P3"
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "56dd3d18fc1d080a",
+        "scenarioFingerprint": "5f665e215938faea",
+        "competencyFingerprint": "590ed1d6562b0e7f",
+        "evidenceLayoutFingerprint": "640b1e7b930550bf",
+        "answerPatternFingerprint": "36c0c0969a4fe6f3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000159",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Saoirse Mbeki-Lantz opened it. Dr. Saoirse Mbeki-Lantz has been out of the office since the day it was sent. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "P1",
+            "text": "T. Alvarado-Ng sent the result to Dr. Saoirse Mbeki-Lantz on 2027-01-14 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "A result for Emeka Solberg was sent onward three days ago. Establish whether the loop is closed. Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Treat the loop as closed: the message was delivered and the recipient is responsible for their own inbox.",
+          "why": "Delivery to an inbox nobody is reading is the condition this case describes, not a defence against it.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct: a loop closes on a named person's acceptance, not on a delivery receipt."
+        },
+        {
+          "id": "d",
+          "text": "Resend the message to Dr. Saoirse Mbeki-Lantz marked urgent.",
+          "why": "The recipient is out of the office. A second copy in the same unread inbox changes nothing.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Delivered is not acknowledged, and the loop is open. State that there is no acknowledgement and that the named recipient has been absent since the message was sent — so the delivery receipt evidences nothing about review. Re-route to the covering clinician rather than resending to the same absent inbox, obtain an explicit acknowledgement from a named person, record who accepted it and when, and close the loop with the patient once a clinician has acted. Escalate if no acknowledgement is obtained promptly.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Distinguishes delivery from acknowledgement.",
+          "credit": 0.25,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Re-routes to the covering clinician rather than resending to the absent inbox.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records an explicit acknowledgement from a named person.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient once a clinician has acted.",
+          "credit": 0.25,
+          "evidenceRef": "P3"
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "85c027537122bd89",
+        "scenarioFingerprint": "2036dfcf32bf534a",
+        "competencyFingerprint": "590ed1d6562b0e7f",
+        "evidenceLayoutFingerprint": "fb2617dde78eb750",
+        "answerPatternFingerprint": "cbd763eb963a7472"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000160",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "L. Haverford sent the result to NP Caius Ostrowski on 2027-02-23 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A result for Fenella Quintanilla was sent onward three days ago. Establish whether the loop is closed. If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Treat the loop as closed: the message was delivered and the recipient is responsible for their own inbox.",
+          "why": "Delivery to an inbox nobody is reading is the condition this case describes, not a defence against it.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that who is covering for the absent clinician and has accepted the result is not in the record, request it from NP Caius Ostrowski, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (who is covering for the absent clinician and has accepted the result), name NP Caius Ostrowski as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"who is covering for the absent clinician and has accepted the result\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "P1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "f7789d7f8644b96c",
+        "scenarioFingerprint": "9935acfcf85a2b40",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "1c0a5dd6d538590f",
+        "answerPatternFingerprint": "426848f7e2777c8c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000161",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__CONTRADICTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#CONTRADICTION"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "D. Eluwande sent the result to PA Yolanda Trevisani on 2026-02-09 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that PA Yolanda Trevisani opened it. PA Yolanda Trevisani has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2026-02-09: states the opposite of the entry at P2 — \"the clinician acknowledged the message on the day it was sent\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A result for Gideon Marchetti-Oyelaran was sent onward three days ago. Establish whether the loop is closed. Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Surface both entries, state that neither is marked as an amendment, and route the resolution to PA Yolanda Trevisani.",
+          "why": "Correct: an unexplained contradiction is escalated with both sides named, never resolved by whoever noticed it."
+        },
+        {
+          "id": "b",
+          "text": "Take the later entry, since the most recent documentation reflects the current state of the chart.",
+          "why": "Recency is not authority. Without an amendment or a stated reason, a later entry may be the error rather than the correction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "c",
+          "text": "Reconcile the two entries into one consistent summary so downstream readers are not confused.",
+          "why": "That deletes the conflict instead of resolving it, and the reader who most needs to see it never will.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: a second entry contradicts the decisive one and neither is plainly authoritative, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (P2 and OP-X1), state that neither is marked as an amendment of the other, name PA Yolanda Trevisani as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to PA Yolanda Trevisani instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "PA Yolanda Trevisani",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "00b14378b80b4227",
+        "scenarioFingerprint": "ddfdce39a2a8bc11",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "85a45575732d1f7f",
+        "answerPatternFingerprint": "691eed2ec60f7ff2"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000162",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__SAFETY_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#SAFETY_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "P. Kirchmayer sent the result to Dr. Imani Farrokhzad on 2026-03-17 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Imani Farrokhzad opened it. Dr. Imani Farrokhzad has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"I've been feeling much worse since that test and nobody has called me.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A result for Halina Berkovits was sent onward three days ago. Establish whether the loop is closed. Something the patient said while this was being handled has not been written down anywhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Finish the administrative task first so the record is complete, then add a note about what the patient said.",
+          "why": "Ordering the routine task ahead of a volunteered red flag is the failure this case exists to teach. The note may sit unread.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Hand the volunteered statement to a clinician now, confirm acceptance, then resume the administrative task.",
+          "why": "Correct: recognition, documentation, routing and closing the loop come before routine completion."
+        },
+        {
+          "id": "c",
+          "text": "Reassure the patient that the symptom is common and unlikely to be serious, and offer the next routine appointment.",
+          "why": "That is a clinical judgment, and it is outside a support role's authorised scope however reasonable it sounds.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: a red flag appears alongside the administrative task, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Imani Farrokhzad or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "Dr. Imani Farrokhzad",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "14fdc96c6a13fb71",
+        "scenarioFingerprint": "742390be050b532c",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "b4c9d3b324887080",
+        "answerPatternFingerprint": "0026e306997fff10"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000163",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__WRONG_RECIPIENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#WRONG_RECIPIENT"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "M. Okonjo sent the result to Dr. Teodoro Haakonsen on 2026-05-04 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Teodoro Haakonsen opened it. Dr. Teodoro Haakonsen has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A result for Ignatius Nwachukwu was sent onward three days ago. Establish whether the loop is closed. The destination on the request and the destination in the chart are not the same.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send to both destinations so the material certainly reaches the right one.",
+          "why": "Sending twice doubles the disclosure and guarantees one of them is unauthorised.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Send to the destination on the cover sheet, since the requester knows where the material should go.",
+          "why": "The requester's cover sheet is not the authorised destination, and material sent to the wrong recipient cannot be unsent.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "c",
+          "text": "Hold the transmission, confirm the authorised destination against the chart, then send only the minimum necessary.",
+          "why": "Correct: an unconfirmed destination is a disclosure risk, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "d",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: the destination on the request does not match the destination in the chart, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with Dr. Teodoro Haakonsen or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "Dr. Teodoro Haakonsen",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "be460d47f6099209",
+        "scenarioFingerprint": "9eb76c6fbcb270c3",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "c343c97269455158",
+        "answerPatternFingerprint": "82ba32cd1601d5e1"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000164",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#IDENTITY_NEAR_MATCH"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Jovana Petrakis-Hume, MRN SYN-3807, DOB 1990-10-16; and Jovana Petrakis-Hume, MRN SYN-3808, DOB 1990-10-24. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "P1",
+            "text": "R. Skibinski sent the result to Dr. Ngozi Brandtsen on 2026-06-22 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Ngozi Brandtsen opened it. Dr. Ngozi Brandtsen has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A result for Jovana Petrakis-Hume was sent onward three days ago. Establish whether the loop is closed. The name on the request matches two different patients.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: two records match on name and differ on identifier, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Use the record whose demographics are the closest fit to the request.",
+          "why": "Closeness is exactly what produces wrong-patient events. A near match is the hazard, not the resolution.",
+          "trapType": "TRAP_NEAREST_NAME_MATCH"
+        },
+        {
+          "id": "c",
+          "text": "Use the more recently active record, since that is the one the request most likely concerns.",
+          "why": "Recent activity is not identification, and a wrong-patient filing is a hard failure however likely the guess was.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Hold the task and confirm MRN and date of birth against the request before anything attaches to a patient.",
+          "why": "Correct: two independent identifiers precede any action, and a near match is not a match."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "d3271fc9ab38120e",
+        "scenarioFingerprint": "7f4842bcbf3f280d",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "c394161198777af6",
+        "answerPatternFingerprint": "00c121fab68a6b50"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000165",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#OWNERSHIP_AMBIGUOUS"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "T. Alvarado-Ng sent the result to Dr. Rurik Vandeveer on 2026-08-13 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Rurik Vandeveer opened it. Dr. Rurik Vandeveer has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "A result for Kwabena Lindqvist was sent onward three days ago. Establish whether the loop is closed. Two handoff notes each assume the other person did it, and nobody has.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Name a single owner, get explicit acknowledgement, and record the acceptance with a deadline.",
+          "why": "Correct: a handoff closes on acknowledgement by a named owner, not on a note being written."
+        },
+        {
+          "id": "b",
+          "text": "Re-send the item to the shared queue so whoever picks it up next can action it.",
+          "why": "A shared queue has no owner, which is the condition that produced the four-day gap.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Note in the chart that the handoff was documented by both parties and move on.",
+          "why": "Both notes exist and the work is still undone. Documentation of a handoff is not completion of one.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: two people each recorded that the other would take it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "910b6497375fa907",
+        "scenarioFingerprint": "c7a5157a72272a5e",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "00f45a4395d94555",
+        "answerPatternFingerprint": "3ac4334d88a6aebc"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000166",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__STALE_PREREQUISITE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#STALE_PREREQUISITE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "L. Haverford sent the result to Dr. Saoirse Mbeki-Lantz on 2026-09-01 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that Dr. Saoirse Mbeki-Lantz opened it. Dr. Saoirse Mbeki-Lantz has been out of the office since the day it was sent.",
+            "section": "Thread",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The covering clinician's assignment for this absence is recorded as valid through 2026-09-22. The action this task sets up is scheduled for 2026-09-29, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "A result for Lorelai Abubakar-Stern was sent onward three days ago. Establish whether the loop is closed. The system shows this as ready to proceed.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Proceed, since the system shows the item as ready and the prerequisite was valid when it was obtained.",
+          "why": "It was valid when obtained and is not valid on the date that matters. A ready flag is a display, not a date comparison.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Hold the action, state that the prerequisite expires before the scheduled date, and get it renewed first.",
+          "why": "Correct: a ready indicator is not a check that the prerequisite still covers the date."
+        },
+        {
+          "id": "c",
+          "text": "Proceed and renew the prerequisite retroactively afterwards if anyone asks.",
+          "why": "Retroactive cover is not cover, and it puts the patient at the front of a cancellation.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: a prerequisite the task depends on expired before the scheduled date, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The covering clinician's assignment for this absence expires on 2026-09-22 and the action falls on 2026-09-29, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "Dr. Saoirse Mbeki-Lantz",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "b612a750a7ba81de",
+        "scenarioFingerprint": "b615fff87d3b5257",
+        "competencyFingerprint": "74c2fb8aace48067",
+        "evidenceLayoutFingerprint": "9a3f674d92d0a48f",
+        "answerPatternFingerprint": "1f4657424c977e36"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000167",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__PROVENANCE_STRIPPED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#PROVENANCE_STRIPPED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "D. Eluwande sent the result to NP Caius Ostrowski on 2026-11-05 with the subject \"please review\".",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "P3",
+            "text": "No action has been recorded on the result. The patient has not been contacted.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "The message shows as delivered. There is no reply, no acknowledgement, and no record that NP Caius Ostrowski opened it. NP Caius Ostrowski has been out of the office since the day it was sent. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "A result for Arden Kowalczyk was sent onward three days ago. Establish whether the loop is closed. The fact you need is in the record three times and attributed nowhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: the deciding fact is present but nobody is recorded as having said it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Rely on it: it appears consistently in three separate notes, which is stronger than a single entry.",
+          "why": "The three notes are copies of each other, not three observations. Consistency between copies says nothing.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "c",
+          "text": "Trace the fact to its originating author and note before relying on it, and mark it unverified until then.",
+          "why": "Correct: provenance is what makes a carried-forward fact usable, and repetition is not provenance."
+        },
+        {
+          "id": "d",
+          "text": "Treat the loop as closed: the message was delivered and the recipient is responsible for their own inbox.",
+          "why": "Delivery to an inbox nobody is reading is the condition this case describes, not a defence against it.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "4fea15595c265744",
+        "scenarioFingerprint": "d73cb999c00cb52c",
+        "competencyFingerprint": "37336d37418ed763",
+        "evidenceLayoutFingerprint": "4c8510fae1185c8c",
+        "answerPatternFingerprint": "b7dd9d98647ba91d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB001-000168",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M13",
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "UNACKNOWLEDGED_CRITICAL_MESSAGE__MULTI_STAGE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop communication",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000014#MULTI_STAGE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2026-12-08, walk-in at the front desk: the task opens as described — A result for Bassey Oduya was sent onward three days ago. Establish whether the loop is closed. P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: The message shows as delivered. There is no reply, no acknowledgement, and no record that PA Yolanda Trevisani opened it. PA Yolanda Trevisani has been out of the office since the day it was sent. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2027-01-05",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "The result sat unreviewed for three days while the patient was told it was in hand. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2027-01-05",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "A result for Bassey Oduya was sent onward three days ago. Establish whether the loop is closed. Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Re-route to the covering clinician, obtain a named acknowledgement, record it, and then close the loop with the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: a multi-stage encounter where the deciding clue arrives after ownership has moved, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Apply the new fact and update the record to the correct end state, without reciting the intermediate stages.",
+          "why": "The end state is right and the history is gone. Audit reconstruction is the point: the routing failure becomes invisible and repeats.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "c",
+          "text": "Return the item to the original opener's inbox, since the deciding message went to them.",
+          "why": "They are off rota for the week. Routing to an unattended inbox is what already delayed this by two days.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Reconstruct the stages, apply the late fact, name the current owner, and correct the patient's expectation.",
+          "why": "Correct: a late fact delivered to a former owner is a routing failure, and the audit trail has to show it."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB001-000157",
+      "variantOf": "KB-COMM-KB001-000157",
+      "templateId": "KB-VART-KB001-000014",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB001-000157"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_SILENT_RECONCILIATION"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "PA Yolanda Trevisani",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "c97ea328dbe8b5d4",
+        "scenarioFingerprint": "8bdb27644241b60f",
+        "competencyFingerprint": "413524f0b11f8fa1",
+        "evidenceLayoutFingerprint": "447c3b6c926918b2",
+        "answerPatternFingerprint": "241d45552303e963"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

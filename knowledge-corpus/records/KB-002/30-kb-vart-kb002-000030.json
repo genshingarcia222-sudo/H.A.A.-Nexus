@@ -1,0 +1,584 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000030",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000106",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MCQ",
+      "scenarioType": "SCOPE_OF_A_PERMITTED_DISCLOSURE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Disclosure scope",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000030"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000030#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "AD1",
+            "text": "A valid authorisation, signed by the patient, requests the records relating to the 2026-09-01 knee injury for an insurance claim.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "AD2",
+            "text": "The chart holds the 2026-09-01 encounter, an unrelated mental-health episode from two years earlier, and a full problem list.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "AD3",
+            "text": "the rule stated for this scenario releases only the records the authorisation identifies, and treats sending more than was asked for as a disclosure failure even when the authorisation is valid",
+            "section": "Release rule",
+            "decisive": true
+          },
+          {
+            "ref": "AD4",
+            "text": "The authorisation names no date range beyond the 2026-09-01 injury.",
+            "section": "Request",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Marbury Heights Clinic — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "An authorised request for Fenella Quintanilla's records (MRN SYN-2914) has arrived. What is released?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Only the 2026-09-01 knee-injury records, with the release and the withholdings recorded.",
+          "why": "Correct: a valid authorisation still bounds the disclosure to what it identifies."
+        },
+        {
+          "id": "b",
+          "text": "The knee-injury records plus the full problem list, so the insurer can see the clinical context.",
+          "why": "The problem list is not identified by the authorisation, and context is not a ground for widening a disclosure.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "c",
+          "text": "The complete chart, since the patient signed a valid authorisation for their records.",
+          "why": "Validity and scope are different questions. The authorisation names the knee injury.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "d",
+          "text": "Nothing, until the requester confirms a date range in writing.",
+          "why": "The authorisation identifies the injury, which bounds the release. Refusing a proper request is its own failure.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Release the 2026-09-01 knee-injury records only. Exclude the earlier mental-health episode and the full problem list: the authorisation identifies neither, and under the stated rule sending them is a disclosure failure even though the authorisation is valid. Record precisely what was released and what was withheld, so the scope of the disclosure is auditable. If the requester needs more, they obtain a further authorisation; do not broaden the release to save them a second request.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Releases only the identified encounter records, citing the stated scope rule.",
+          "credit": 0.34,
+          "evidenceRef": "AD3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Withholds the unrelated episode and the full problem list.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records what was released and what was withheld.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000030",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "89f0176965e9a68e",
+        "scenarioFingerprint": "4e865e7ed96795ac",
+        "competencyFingerprint": "75342a0fe247ad8d",
+        "evidenceLayoutFingerprint": "d8574feda7c145aa",
+        "answerPatternFingerprint": "c9c2bb94507149f8"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000107",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MCQ",
+      "scenarioType": "SCOPE_OF_A_PERMITTED_DISCLOSURE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Disclosure scope",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000030"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000030#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "AD1",
+            "text": "A valid authorisation, signed by the patient, requests the records relating to the 2026-11-05 knee injury for an insurance claim.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "AD2",
+            "text": "The chart holds the 2026-11-05 encounter, an unrelated mental-health episode from two years earlier, and a full problem list.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "AD4",
+            "text": "The authorisation names no date range beyond the 2026-11-05 injury.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "AD3",
+            "text": "the rule stated for this scenario releases only the records the authorisation identifies, and treats sending more than was asked for as a disclosure failure even when the authorisation is valid",
+            "section": "Release rule",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "An authorised request for Gideon Marchetti-Oyelaran's records (MRN SYN-6073) has arrived. What is released? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Only the 2026-11-05 knee-injury records, with the release and the withholdings recorded.",
+          "why": "Correct: a valid authorisation still bounds the disclosure to what it identifies."
+        },
+        {
+          "id": "c",
+          "text": "The knee-injury records plus the full problem list, so the insurer can see the clinical context.",
+          "why": "The problem list is not identified by the authorisation, and context is not a ground for widening a disclosure.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "d",
+          "text": "The complete chart, since the patient signed a valid authorisation for their records.",
+          "why": "Validity and scope are different questions. The authorisation names the knee injury.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Release the 2026-11-05 knee-injury records only. Exclude the earlier mental-health episode and the full problem list: the authorisation identifies neither, and under the stated rule sending them is a disclosure failure even though the authorisation is valid. Record precisely what was released and what was withheld, so the scope of the disclosure is auditable. If the requester needs more, they obtain a further authorisation; do not broaden the release to save them a second request.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Releases only the identified encounter records, citing the stated scope rule.",
+          "credit": 0.34,
+          "evidenceRef": "AD3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Withholds the unrelated episode and the full problem list.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records what was released and what was withheld.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000106",
+      "variantOf": "KB-QUES-KB002-000106",
+      "templateId": "KB-VART-KB002-000030",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000106"
+      ],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "664dfc68de88419b",
+        "scenarioFingerprint": "73cbcab3970402e2",
+        "competencyFingerprint": "75342a0fe247ad8d",
+        "evidenceLayoutFingerprint": "81f26ef16fca1264",
+        "answerPatternFingerprint": "c7021d1e1dceb77e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000108",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MCQ",
+      "scenarioType": "SCOPE_OF_A_PERMITTED_DISCLOSURE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Disclosure scope",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000030"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000030#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "AD3",
+            "text": "Routine reconciliation note from R. Skibinski: demographics confirmed, card image legible, and — the rule stated for this scenario releases only the records the authorisation identifies, and treats sending more than was asked for as a disclosure failure even when the authorisation is valid — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "R. Skibinski",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "AD1",
+            "text": "A valid authorisation, signed by the patient, requests the records relating to the 2026-12-08 knee injury for an insurance claim.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "AD2",
+            "text": "The chart holds the 2026-12-08 encounter, an unrelated mental-health episode from two years earlier, and a full problem list.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "AD4",
+            "text": "The authorisation names no date range beyond the 2026-12-08 injury.",
+            "section": "Request",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "An authorised request for Halina Berkovits's records (MRN SYN-1528) has arrived. What is released? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The knee-injury records plus the full problem list, so the insurer can see the clinical context.",
+          "why": "The problem list is not identified by the authorisation, and context is not a ground for widening a disclosure.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Only the 2026-12-08 knee-injury records, with the release and the withholdings recorded.",
+          "why": "Correct: a valid authorisation still bounds the disclosure to what it identifies."
+        },
+        {
+          "id": "d",
+          "text": "The complete chart, since the patient signed a valid authorisation for their records.",
+          "why": "Validity and scope are different questions. The authorisation names the knee injury.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Release the 2026-12-08 knee-injury records only. Exclude the earlier mental-health episode and the full problem list: the authorisation identifies neither, and under the stated rule sending them is a disclosure failure even though the authorisation is valid. Record precisely what was released and what was withheld, so the scope of the disclosure is auditable. If the requester needs more, they obtain a further authorisation; do not broaden the release to save them a second request.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Releases only the identified encounter records, citing the stated scope rule.",
+          "credit": 0.34,
+          "evidenceRef": "AD3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Withholds the unrelated episode and the full problem list.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records what was released and what was withheld.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000106",
+      "variantOf": "KB-QUES-KB002-000106",
+      "templateId": "KB-VART-KB002-000030",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000106"
+      ],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "862fc62d3322849a",
+        "scenarioFingerprint": "33bdb51e45e679a4",
+        "competencyFingerprint": "75342a0fe247ad8d",
+        "evidenceLayoutFingerprint": "8380a0d248ffce99",
+        "answerPatternFingerprint": "f864d31928e11371"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

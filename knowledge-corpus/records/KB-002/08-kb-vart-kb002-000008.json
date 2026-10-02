@@ -1,0 +1,769 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000008",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-COMM-KB002-000029",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "EASY",
+      "taskType": "PRIVACY_JUDGMENT",
+      "scenarioType": "CALLER_AUTHORITY_UNESTABLISHED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Privacy and disclosure boundaries",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000008"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000008#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "V1",
+            "text": "Caller states they are Marisol Ekwueme-Trask's adult child, gives the patient's name and date of birth correctly, and says the patient asked them to ring.",
+            "section": "Call",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "V2",
+            "text": "the chart holds no authorisation naming this caller, and the practice's stated rule for this scenario is that knowing a patient's details identifies a caller but never establishes their authority to receive information",
+            "section": "Chart",
+            "decisive": true
+          },
+          {
+            "ref": "V3",
+            "text": "A result from 2027-01-14 is on file and has been reviewed by Dr. Rurik Vandeveer.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Marisol Ekwueme-Trask",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "A caller asks A. Nwosu-Ferrand for the result of Marisol Ekwueme-Trask's recent test. What may be disclosed on this call?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Withhold everything about the result, explain that no authorisation names this caller, and offer the routes that would make disclosure proper.",
+          "why": "Correct: identity was established, authority was not, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "b",
+          "text": "Confirm a result is on file and say Dr. Rurik Vandeveer has reviewed it, without giving the value.",
+          "why": "That the test happened and has been reviewed is itself information about the patient, and no authority exists to give it.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "c",
+          "text": "Disclose the result: the caller answered both identifiers correctly and says the patient asked them to call.",
+          "why": "Correct identifiers identify the caller; they are not an authorisation. The patient's reported request is unverified.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "d",
+          "text": "Tell the caller the practice never discusses results by telephone and end the call.",
+          "why": "The channel is not the obstacle, and a false general rule strands a request that a proper authorisation would answer.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Disclose nothing about the result, including whether one exists. Explain that no authorisation naming the caller is on file and that correct patient details do not establish authority. Offer the routes that do: the patient calling themselves, or an authorisation being added to the chart. Record the request, what was withheld and why. Do not confirm that a result is available, and do not disclose on the strength of the caller's relationship or the patient's reported request.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Withholds the result and the existence of a result, citing the absent authorisation.",
+          "credit": 0.34,
+          "evidenceRef": "V2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Distinguishes identifying the caller from establishing their authority.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Offers a route that would make disclosure proper, and records the request and the refusal.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000008",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "fddff7fd2065d4d2",
+        "scenarioFingerprint": "e35a2a77daec5906",
+        "competencyFingerprint": "414956ae56793562",
+        "evidenceLayoutFingerprint": "5830aa9b7be923ad",
+        "answerPatternFingerprint": "a1ebead674b449a2"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000030",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "EASY",
+      "taskType": "PRIVACY_JUDGMENT",
+      "scenarioType": "CALLER_AUTHORITY_UNESTABLISHED__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Privacy and disclosure boundaries",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000008"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000008#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "V1",
+            "text": "Caller states they are Nikolai Adebayo-Frisk's adult child, gives the patient's name and date of birth correctly, and says the patient asked them to ring.",
+            "section": "Call",
+            "recordedBy": "B. Tkachenko",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "V3",
+            "text": "A result from 2027-02-23 is on file and has been reviewed by Dr. Saoirse Mbeki-Lantz.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "V2",
+            "text": "the chart holds no authorisation naming this caller, and the practice's stated rule for this scenario is that knowing a patient's details identifies a caller but never establishes their authority to receive information",
+            "section": "Chart",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Nikolai Adebayo-Frisk",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A caller asks B. Tkachenko for the result of Nikolai Adebayo-Frisk's recent test. What may be disclosed on this call? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Withhold everything about the result, explain that no authorisation names this caller, and offer the routes that would make disclosure proper.",
+          "why": "Correct: identity was established, authority was not, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "c",
+          "text": "Confirm a result is on file and say Dr. Saoirse Mbeki-Lantz has reviewed it, without giving the value.",
+          "why": "That the test happened and has been reviewed is itself information about the patient, and no authority exists to give it.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "d",
+          "text": "Disclose the result: the caller answered both identifiers correctly and says the patient asked them to call.",
+          "why": "Correct identifiers identify the caller; they are not an authorisation. The patient's reported request is unverified.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Disclose nothing about the result, including whether one exists. Explain that no authorisation naming the caller is on file and that correct patient details do not establish authority. Offer the routes that do: the patient calling themselves, or an authorisation being added to the chart. Record the request, what was withheld and why. Do not confirm that a result is available, and do not disclose on the strength of the caller's relationship or the patient's reported request.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Withholds the result and the existence of a result, citing the absent authorisation.",
+          "credit": 0.34,
+          "evidenceRef": "V2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Distinguishes identifying the caller from establishing their authority.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Offers a route that would make disclosure proper, and records the request and the refusal.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000029",
+      "variantOf": "KB-COMM-KB002-000029",
+      "templateId": "KB-VART-KB002-000008",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000029"
+      ],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "B. Tkachenko",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "32268de91bdfec11",
+        "scenarioFingerprint": "f8b4334936410320",
+        "competencyFingerprint": "414956ae56793562",
+        "evidenceLayoutFingerprint": "f9b2cfed513696e5",
+        "answerPatternFingerprint": "da0a085ae967f9cb"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000031",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "EASY",
+      "taskType": "PRIVACY_JUDGMENT",
+      "scenarioType": "CALLER_AUTHORITY_UNESTABLISHED__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Privacy and disclosure boundaries",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000008"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000008#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound telephone call. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "V2",
+            "text": "Routine reconciliation note from C. Oyedepo-Mansur: demographics confirmed, card image legible, and — the chart holds no authorisation naming this caller, and the practice's stated rule for this scenario is that knowing a patient's details identifies a caller but never establishes their authority to receive information — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "V1",
+            "text": "Caller states they are Odalys Mwangi-Bergström's adult child, gives the patient's name and date of birth correctly, and says the patient asked them to ring.",
+            "section": "Call",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "V3",
+            "text": "A result from 2026-02-09 is on file and has been reviewed by NP Caius Ostrowski.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Odalys Mwangi-Bergström",
+        "encounterLabel": "Willowbank Primary Care — inbound telephone call",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A caller asks C. Oyedepo-Mansur for the result of Odalys Mwangi-Bergström's recent test. What may be disclosed on this call? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Confirm a result is on file and say NP Caius Ostrowski has reviewed it, without giving the value.",
+          "why": "That the test happened and has been reviewed is itself information about the patient, and no authority exists to give it.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Withhold everything about the result, explain that no authorisation names this caller, and offer the routes that would make disclosure proper.",
+          "why": "Correct: identity was established, authority was not, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "d",
+          "text": "Disclose the result: the caller answered both identifiers correctly and says the patient asked them to call.",
+          "why": "Correct identifiers identify the caller; they are not an authorisation. The patient's reported request is unverified.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Disclose nothing about the result, including whether one exists. Explain that no authorisation naming the caller is on file and that correct patient details do not establish authority. Offer the routes that do: the patient calling themselves, or an authorisation being added to the chart. Record the request, what was withheld and why. Do not confirm that a result is available, and do not disclose on the strength of the caller's relationship or the patient's reported request.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Withholds the result and the existence of a result, citing the absent authorisation.",
+          "credit": 0.34,
+          "evidenceRef": "V2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Distinguishes identifying the caller from establishing their authority.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Offers a route that would make disclosure proper, and records the request and the refusal.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000029",
+      "variantOf": "KB-COMM-KB002-000029",
+      "templateId": "KB-VART-KB002-000008",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000029"
+      ],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "05cae92671daca49",
+        "scenarioFingerprint": "7dbea64db94968c7",
+        "competencyFingerprint": "414956ae56793562",
+        "evidenceLayoutFingerprint": "b93ce690bcbe3935",
+        "answerPatternFingerprint": "80198f29a99e2240"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000032",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M12"
+      ],
+      "competencyIds": [
+        "KB-D10"
+      ],
+      "sourceCompetencyIds": [
+        "D10"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "PRIVACY_JUDGMENT",
+      "scenarioType": "CALLER_AUTHORITY_UNESTABLISHED__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Privacy and disclosure boundaries",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000008"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000008#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "V1",
+            "text": "Caller states they are Peregrine Oyelude's adult child, gives the patient's name and date of birth correctly, and says the patient asked them to ring.",
+            "section": "Call",
+            "recordedBy": "E. Villaseñor-Bak",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "V3",
+            "text": "A result from 2026-03-17 is on file and has been reviewed by PA Yolanda Trevisani.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Peregrine Oyelude",
+        "encounterLabel": "Ashcombe Multispecialty Group — patient portal message",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A caller asks E. Villaseñor-Bak for the result of Peregrine Oyelude's recent test. What may be disclosed on this call? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Confirm a result is on file and say PA Yolanda Trevisani has reviewed it, without giving the value.",
+          "why": "That the test happened and has been reviewed is itself information about the patient, and no authority exists to give it.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Withhold everything about the result, explain that no authorisation names this caller, and offer the routes that would make disclosure proper.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that whether any authorisation on file names this caller is not in the record, request it from PA Yolanda Trevisani, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether any authorisation on file names this caller), name PA Yolanda Trevisani as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether any authorisation on file names this caller\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "V1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: HIPAA, privacy, security, and minimum necessary. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000029",
+      "variantOf": "KB-COMM-KB002-000029",
+      "templateId": "KB-VART-KB002-000008",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000029"
+      ],
+      "errorTargets": [
+        "KB-ERR-PRIVACY-FAILURE",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-MINIMUM-NECESSARY",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_HELPFUL_OVERDISCLOSURE",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "front-desk coordinator",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "aab43daccdfacb34",
+        "scenarioFingerprint": "274be4e4ef159f8a",
+        "competencyFingerprint": "908bf7fbea09ccab",
+        "evidenceLayoutFingerprint": "ce5527a87e55fcdd",
+        "answerPatternFingerprint": "e9f813e1f2114e14"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

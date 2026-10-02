@@ -1,0 +1,741 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000005",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000017",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "EASY",
+      "taskType": "INSURANCE_VERIFICATION",
+      "scenarioType": "ELIGIBILITY_FIELD_MISSING",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Insurance and administrative workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000005#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INSURANCE_ARTIFACT",
+        "lines": [
+          {
+            "ref": "I1",
+            "text": "Thornwood Regional Care, plan SYN-TRC-23, subscriber name and date of birth match the chart, and the card image on file is current.",
+            "section": "Coverage",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "I2",
+            "text": "the group number field on the eligibility response is blank, and the plan's stated verification requirement for this scenario treats a coverage check without a group number as unverified",
+            "section": "Coverage",
+            "decisive": true
+          },
+          {
+            "ref": "I3",
+            "text": "The 2026-12-03 visit with Dr. Anwuli Steensgaard is already booked.",
+            "section": "Schedule",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "C. Oyedepo-Mansur is verifying coverage for Arden Kowalczyk-Reyes (MRN SYN-4418) ahead of the 2026-12-03 visit. Can verification be recorded as complete?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Obtain the group number, re-run the check, and record verification only once it returns populated.",
+          "why": "Correct: the stated requirement is explicit, and a re-run is what makes the record true."
+        },
+        {
+          "id": "b",
+          "text": "Record verification complete and note that the group number is outstanding.",
+          "why": "That records a status the check does not support. A caveat in a comment field does not change a verified flag.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "c",
+          "text": "Copy the group number from the patient's prior encounter, where the same plan is on file.",
+          "why": "A prior group number is not this response's group number; plans re-issue them, which is why the field is checked.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Cancel the 2026-12-03 visit until coverage is verified.",
+          "why": "Nothing here requires cancelling a booked visit; the task is to complete a verification, not to withdraw care.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not record verification as complete. State that the group number is blank and that the plan's stated requirement for this scenario makes the check unverified without it. Obtain the group number from the patient or the payer, re-run the check, and record verification only once it returns populated. Say that the booked visit does not change the answer. Do not infer the group number from a prior encounter, and do not record verification as complete with a note that one field is outstanding.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the blank group number and the stated requirement that makes the check unverified.",
+          "credit": 0.34,
+          "evidenceRef": "I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Holds verification open rather than recording it complete with a caveat.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Names how the missing field will be obtained and that the check will be re-run.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000005",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-PRESENT",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "fe5599b87151c808",
+        "scenarioFingerprint": "adfe6fb07ed57fe5",
+        "competencyFingerprint": "9e2a178d03b0dafc",
+        "evidenceLayoutFingerprint": "021f2d7afa7c03be",
+        "answerPatternFingerprint": "c861dc161268b43e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000018",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "EASY",
+      "taskType": "INSURANCE_VERIFICATION",
+      "scenarioType": "ELIGIBILITY_FIELD_MISSING__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Insurance and administrative workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000005#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INSURANCE_ARTIFACT",
+        "lines": [
+          {
+            "ref": "I1",
+            "text": "Kestrel Public Option, plan SYN-KPO-31, subscriber name and date of birth match the chart, and the card image on file is current.",
+            "section": "Coverage",
+            "recordedBy": "E. Villaseñor-Bak",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "I3",
+            "text": "The 2027-01-05 visit with Dr. Basim Oyeleke-Nyström is already booked.",
+            "section": "Schedule",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "I2",
+            "text": "the group number field on the eligibility response is blank, and the plan's stated verification requirement for this scenario treats a coverage check without a group number as unverified",
+            "section": "Coverage",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "E. Villaseñor-Bak is verifying coverage for Bassey Oduya (MRN SYN-7290) ahead of the 2027-01-05 visit. Can verification be recorded as complete? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Obtain the group number, re-run the check, and record verification only once it returns populated.",
+          "why": "Correct: the stated requirement is explicit, and a re-run is what makes the record true."
+        },
+        {
+          "id": "c",
+          "text": "Record verification complete and note that the group number is outstanding.",
+          "why": "That records a status the check does not support. A caveat in a comment field does not change a verified flag.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Copy the group number from the patient's prior encounter, where the same plan is on file.",
+          "why": "A prior group number is not this response's group number; plans re-issue them, which is why the field is checked.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not record verification as complete. State that the group number is blank and that the plan's stated requirement for this scenario makes the check unverified without it. Obtain the group number from the patient or the payer, re-run the check, and record verification only once it returns populated. Say that the booked visit does not change the answer. Do not infer the group number from a prior encounter, and do not record verification as complete with a note that one field is outstanding.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the blank group number and the stated requirement that makes the check unverified.",
+          "credit": 0.34,
+          "evidenceRef": "I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Holds verification open rather than recording it complete with a caveat.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Names how the missing field will be obtained and that the check will be re-run.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000017",
+      "variantOf": "KB-WFLW-KB002-000017",
+      "templateId": "KB-VART-KB002-000005",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000017"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-LATE",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "e5ced15046354c5b",
+        "scenarioFingerprint": "f2988869c118593e",
+        "competencyFingerprint": "9e2a178d03b0dafc",
+        "evidenceLayoutFingerprint": "3b7fd6ab9abb217f",
+        "answerPatternFingerprint": "d639df41c620d307"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000019",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "EASY",
+      "taskType": "INSURANCE_VERIFICATION",
+      "scenarioType": "ELIGIBILITY_FIELD_MISSING__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Insurance and administrative workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000005#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INSURANCE_ARTIFACT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound telephone call. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "I2",
+            "text": "Routine reconciliation note from F. Adegboyega: demographics confirmed, card image legible, and — the group number field on the eligibility response is blank, and the plan's stated verification requirement for this scenario treats a coverage check without a group number as unverified — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "I1",
+            "text": "Meridian Health Plan, plan SYN-MRD-01, subscriber name and date of birth match the chart, and the card image on file is current.",
+            "section": "Coverage",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "I3",
+            "text": "The 2027-02-11 visit with Dr. Coralie Abimbola-Wexler is already booked.",
+            "section": "Schedule",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "F. Adegboyega is verifying coverage for Corrin Vasquez-Lund (MRN SYN-3355) ahead of the 2027-02-11 visit. Can verification be recorded as complete? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Record verification complete and note that the group number is outstanding.",
+          "why": "That records a status the check does not support. A caveat in a comment field does not change a verified flag.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Obtain the group number, re-run the check, and record verification only once it returns populated.",
+          "why": "Correct: the stated requirement is explicit, and a re-run is what makes the record true."
+        },
+        {
+          "id": "d",
+          "text": "Copy the group number from the patient's prior encounter, where the same plan is on file.",
+          "why": "A prior group number is not this response's group number; plans re-issue them, which is why the field is checked.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not record verification as complete. State that the group number is blank and that the plan's stated requirement for this scenario makes the check unverified without it. Obtain the group number from the patient or the payer, re-run the check, and record verification only once it returns populated. Say that the booked visit does not change the answer. Do not infer the group number from a prior encounter, and do not record verification as complete with a note that one field is outstanding.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the blank group number and the stated requirement that makes the check unverified.",
+          "credit": 0.34,
+          "evidenceRef": "I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Holds verification open rather than recording it complete with a caveat.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Names how the missing field will be obtained and that the check will be re-run.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000017",
+      "variantOf": "KB-WFLW-KB002-000017",
+      "templateId": "KB-VART-KB002-000005",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000017"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-CONCEALED",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "2f36294bdeebf8f4",
+        "scenarioFingerprint": "2c032cacf97a1d69",
+        "competencyFingerprint": "9e2a178d03b0dafc",
+        "evidenceLayoutFingerprint": "3c505feebc62324c",
+        "answerPatternFingerprint": "1b6781c42d69bc33"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000020",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09"
+      ],
+      "sourceCompetencyIds": [
+        "D09"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "INSURANCE_VERIFICATION",
+      "scenarioType": "ELIGIBILITY_FIELD_MISSING__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Insurance and administrative workflow",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000005"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000005#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INSURANCE_ARTIFACT",
+        "lines": [
+          {
+            "ref": "I1",
+            "text": "Quarry State Mutual, plan SYN-QSM-04, subscriber name and date of birth match the chart, and the card image on file is current.",
+            "section": "Coverage",
+            "recordedBy": "G. Hallgrimsdottir",
+            "recordedOn": "2027-02-23",
+            "decisive": true
+          },
+          {
+            "ref": "I3",
+            "text": "The 2027-03-23 visit with Dr. Dmitri Ogunsanya-Holt is already booked.",
+            "section": "Schedule",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "G. Hallgrimsdottir is verifying coverage for Delphine Achterberg (MRN SYN-8102) ahead of the 2027-03-23 visit. Can verification be recorded as complete? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Record verification complete and note that the group number is outstanding.",
+          "why": "That records a status the check does not support. A caveat in a comment field does not change a verified flag.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Obtain the group number, re-run the check, and record verification only once it returns populated.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that the group number on the current eligibility response is not in the record, request it from Dr. Dmitri Ogunsanya-Holt, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (the group number on the current eligibility response), name Dr. Dmitri Ogunsanya-Holt as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"the group number on the current eligibility response\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "I1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000017",
+      "variantOf": "KB-WFLW-KB002-000017",
+      "templateId": "KB-VART-KB002-000005",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000017"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "patient access representative",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "db5e44965a2abbe9",
+        "scenarioFingerprint": "e849331f838c2fca",
+        "competencyFingerprint": "dbddc183cf434387",
+        "evidenceLayoutFingerprint": "78d13d387f17d1c1",
+        "answerPatternFingerprint": "73eae251c2080231"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

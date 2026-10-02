@@ -1,0 +1,20 @@
+{
+  "registryId": "KB-REG-COMPETENCIES",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section VIII (owner-supplied, 2026-09-26)",
+  "namingCollisionNote": "The source archive numbers these axes D01-D12. The repository already uses 'D12' for an unrelated owner decision (the Knowledge Base architecture decision recorded in docs/DECISION_REGISTER.md). Per charter section IV these axes are addressed as KB-D01..KB-D12 everywhere in this workstream, while each record preserves sourceCompetencyId for traceability back to the archive. Repository decision D12 is untouched.",
+  "competencies": [
+    { "id": "KB-D01", "sourceCompetencyId": "D01", "title": "Patient identity and encounter context", "selfContainedEvidence": true },
+    { "id": "KB-D02", "sourceCompetencyId": "D02", "title": "Clinical intent and task interpretation", "selfContainedEvidence": true },
+    { "id": "KB-D03", "sourceCompetencyId": "D03", "title": "Safety, red flags, and escalation", "selfContainedEvidence": false, "note": "Recognition/escalation/routing behaviour may be assessed from the record's own packet; any claim about a clinical threshold requires an external authority." },
+    { "id": "KB-D04", "sourceCompetencyId": "D04", "title": "Pertinent chart extraction", "selfContainedEvidence": true },
+    { "id": "KB-D05", "sourceCompetencyId": "D05", "title": "SOAP and clinical documentation", "selfContainedEvidence": true },
+    { "id": "KB-D06", "sourceCompetencyId": "D06", "title": "Orders, referrals, and fax workflows", "selfContainedEvidence": false },
+    { "id": "KB-D07", "sourceCompetencyId": "D07", "title": "ICD-10-CM coding support", "selfContainedEvidence": false, "note": "Always source-dependent and always version-bound." },
+    { "id": "KB-D08", "sourceCompetencyId": "D08", "title": "Medication, laboratory, and imaging workflow", "selfContainedEvidence": false },
+    { "id": "KB-D09", "sourceCompetencyId": "D09", "title": "Insurance, authorization, and administrative workflow", "selfContainedEvidence": false },
+    { "id": "KB-D10", "sourceCompetencyId": "D10", "title": "HIPAA, privacy, security, and minimum necessary", "selfContainedEvidence": false, "note": "Charter section XVI: HIPAA is never reduced to 'never disclose'. Identity, authorization, permitted purpose, minimum necessary and channel safeguards are distinct, and each interpretation needs authority." },
+    { "id": "KB-D11", "sourceCompetencyId": "D11", "title": "Communication, calls, and closed-loop coordination", "selfContainedEvidence": true },
+    { "id": "KB-D12", "sourceCompetencyId": "D12", "title": "Contradiction detection, auditability, and error control", "selfContainedEvidence": true }
+  ]
+}

@@ -1,0 +1,588 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000029",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000103",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D08"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "ORDERING_CLINICIAN_UNAVAILABLE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Result routing under absent ownership",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000029"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000029#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "AC1",
+            "text": "Result flagged by the laboratory for same-day clinician review, ordered by NP Gustavo Ihejirika.",
+            "section": "Result",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "AC2",
+            "text": "NP Gustavo Ihejirika is away until after 2026-06-01; a duty clinician is named on the rota for today.",
+            "section": "Staffing",
+            "decisive": false
+          },
+          {
+            "ref": "AC3",
+            "text": "the stated workflow for this scenario routes a same-day result to the named duty clinician when the ordering clinician is unavailable, and requires the ordering clinician to be copied for continuity rather than skipped",
+            "section": "Workflow",
+            "decisive": true
+          },
+          {
+            "ref": "AC4",
+            "text": "The ordering clinician's own queue is not monitored while they are away.",
+            "section": "Queue",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Bellrock Community Health Center — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A result for Corrin Vasquez-Lund (MRN SYN-3355) needs review today, and the ordering clinician is away. Where does it go?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send it to NP Gustavo Ihejirika's queue, since they ordered it and own the result.",
+          "why": "That queue is unmonitored while they are away, so a same-day result would sit unread.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Send it to today's named duty clinician, copy NP Gustavo Ihejirika, and confirm acceptance.",
+          "why": "Correct: it meets the same-day requirement and preserves continuity for the ordering clinician."
+        },
+        {
+          "id": "c",
+          "text": "Hold it until NP Gustavo Ihejirika returns after 2026-06-01, then route it as normal.",
+          "why": "It discards the same-day requirement entirely in favour of preserving ownership.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "d",
+          "text": "Send it to the duty clinician only, leaving NP Gustavo Ihejirika to find it on return.",
+          "why": "The review happens but continuity is broken, and the workflow requires the ordering clinician be copied.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Route it to the named duty clinician for today's review, and copy NP Gustavo Ihejirika so the ordering clinician still sees it on return. Confirm the duty clinician has it rather than assuming, and record who holds it and when it was accepted. Say why the ordering clinician's own queue is the wrong destination: it is unmonitored, so a same-day result sent there is a same-day result nobody reads. Do not hold it until they return, and do not send it to a general inbox.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Routes to the named duty clinician and copies the ordering clinician, per the stated workflow.",
+          "credit": 0.34,
+          "evidenceRef": "AC3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Explains that the ordering clinician's queue is unmonitored and therefore unsafe for a same-day item.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms acceptance and records who holds it.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Communication, calls, and closed-loop coordination; Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000029",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "f915466f87ce3494",
+        "scenarioFingerprint": "e2ef99d2cc46cbd6",
+        "competencyFingerprint": "d46c765d83d45149",
+        "evidenceLayoutFingerprint": "c29362817b5c5c45",
+        "answerPatternFingerprint": "a5c3ae74560b6b60"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000104",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D08"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "ORDERING_CLINICIAN_UNAVAILABLE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Result routing under absent ownership",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000029"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000029#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "AC1",
+            "text": "Result flagged by the laboratory for same-day clinician review, ordered by PA Hyacinth Obuya-Lindfors.",
+            "section": "Result",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "AC2",
+            "text": "PA Hyacinth Obuya-Lindfors is away until after 2026-07-20; a duty clinician is named on the rota for today.",
+            "section": "Staffing",
+            "decisive": false
+          },
+          {
+            "ref": "AC4",
+            "text": "The ordering clinician's own queue is not monitored while they are away.",
+            "section": "Queue",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "AC3",
+            "text": "the stated workflow for this scenario routes a same-day result to the named duty clinician when the ordering clinician is unavailable, and requires the ordering clinician to be copied for continuity rather than skipped",
+            "section": "Workflow",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Thornfield Medical Partners — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A result for Delphine Achterberg (MRN SYN-8102) needs review today, and the ordering clinician is away. Where does it go? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send it to PA Hyacinth Obuya-Lindfors's queue, since they ordered it and own the result.",
+          "why": "That queue is unmonitored while they are away, so a same-day result would sit unread.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "Send it to today's named duty clinician, copy PA Hyacinth Obuya-Lindfors, and confirm acceptance.",
+          "why": "Correct: it meets the same-day requirement and preserves continuity for the ordering clinician."
+        },
+        {
+          "id": "d",
+          "text": "Hold it until PA Hyacinth Obuya-Lindfors returns after 2026-07-20, then route it as normal.",
+          "why": "It discards the same-day requirement entirely in favour of preserving ownership.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Route it to the named duty clinician for today's review, and copy PA Hyacinth Obuya-Lindfors so the ordering clinician still sees it on return. Confirm the duty clinician has it rather than assuming, and record who holds it and when it was accepted. Say why the ordering clinician's own queue is the wrong destination: it is unmonitored, so a same-day result sent there is a same-day result nobody reads. Do not hold it until they return, and do not send it to a general inbox.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Routes to the named duty clinician and copies the ordering clinician, per the stated workflow.",
+          "credit": 0.34,
+          "evidenceRef": "AC3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Explains that the ordering clinician's queue is unmonitored and therefore unsafe for a same-day item.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms acceptance and records who holds it.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000103",
+      "variantOf": "KB-WFLW-KB002-000103",
+      "templateId": "KB-VART-KB002-000029",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000103"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "925026c10b6b6760",
+        "scenarioFingerprint": "3dda3e9a5c53d690",
+        "competencyFingerprint": "d46c765d83d45149",
+        "evidenceLayoutFingerprint": "b38687a1b5d93892",
+        "answerPatternFingerprint": "32631f09131e7c2b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000105",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11",
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D11",
+        "D08"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "ORDERING_CLINICIAN_UNAVAILABLE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Result routing under absent ownership",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000029"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000029#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "AC3",
+            "text": "Routine reconciliation note from H. Ezeagwula-Roth: demographics confirmed, card image legible, and — the stated workflow for this scenario routes a same-day result to the named duty clinician when the ordering clinician is unavailable, and requires the ordering clinician to be copied for continuity rather than skipped — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "AC1",
+            "text": "Result flagged by the laboratory for same-day clinician review, ordered by CNM Isolde Babatunde-Reyes.",
+            "section": "Result",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "AC2",
+            "text": "CNM Isolde Babatunde-Reyes is away until after 2026-09-10; a duty clinician is named on the rota for today.",
+            "section": "Staffing",
+            "decisive": false
+          },
+          {
+            "ref": "AC4",
+            "text": "The ordering clinician's own queue is not monitored while they are away.",
+            "section": "Queue",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Quietwater Family Health — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "A result for Emeka Solberg (MRN SYN-5647) needs review today, and the ordering clinician is away. Where does it go? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold it until CNM Isolde Babatunde-Reyes returns after 2026-09-10, then route it as normal.",
+          "why": "It discards the same-day requirement entirely in favour of preserving ownership.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Send it to CNM Isolde Babatunde-Reyes's queue, since they ordered it and own the result.",
+          "why": "That queue is unmonitored while they are away, so a same-day result would sit unread.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Send it to today's named duty clinician, copy CNM Isolde Babatunde-Reyes, and confirm acceptance.",
+          "why": "Correct: it meets the same-day requirement and preserves continuity for the ordering clinician."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Route it to the named duty clinician for today's review, and copy CNM Isolde Babatunde-Reyes so the ordering clinician still sees it on return. Confirm the duty clinician has it rather than assuming, and record who holds it and when it was accepted. Say why the ordering clinician's own queue is the wrong destination: it is unmonitored, so a same-day result sent there is a same-day result nobody reads. Do not hold it until they return, and do not send it to a general inbox.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Routes to the named duty clinician and copies the ordering clinician, per the stated workflow.",
+          "credit": 0.34,
+          "evidenceRef": "AC3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Explains that the ordering clinician's queue is unmonitored and therefore unsafe for a same-day item.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms acceptance and records who holds it.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination; Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000103",
+      "variantOf": "KB-WFLW-KB002-000103",
+      "templateId": "KB-VART-KB002-000029",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000103"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "e0a60b6fa96cced1",
+        "scenarioFingerprint": "721f280d5bdca46e",
+        "competencyFingerprint": "d46c765d83d45149",
+        "evidenceLayoutFingerprint": "0ebd5b34669a77e3",
+        "answerPatternFingerprint": "4fb9f3a9e4577e55"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

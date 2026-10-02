@@ -1,0 +1,515 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000027",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-SCEN-KB002-000097",
+      "recordType": "SCENARIO",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M18"
+      ],
+      "competencyIds": [
+        "KB-D02",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D02",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "DELAYED_CLUE_REASONING",
+      "scenarioType": "MEANING_CHANGES_LATE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Delayed-clue reasoning",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000027"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000027#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "AA1",
+            "text": "Patient rings asking for a repeat of an anti-inflammatory for a long-standing shoulder problem.",
+            "section": "Call",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "AA2",
+            "text": "They confirm the shoulder is no worse than usual and they are not asking to be seen.",
+            "section": "Call",
+            "decisive": false
+          },
+          {
+            "ref": "AA3",
+            "text": "at the end they mention in passing that they have been taking the same medication from a second source for a fortnight because the first prescription ran out, which turns a repeat request into a question about how much they have actually been taking",
+            "section": "Call",
+            "decisive": true
+          },
+          {
+            "ref": "AA4",
+            "text": "The medication list shows one active anti-inflammatory and no second supply.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Yevgenia Olatunji-Kvist",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "Work through this call with Yevgenia Olatunji-Kvist (MRN SYN-6418) in order. What does the last statement change?",
+      "goldBehavior": "Re-read the request in light of the final statement. It is no longer a repeat: the patient may have been taking more than the record shows, from a source the chart does not know about. Probe for what the second supply is, its strength and how much has been taken, then route it to Dr. Anwuli Steensgaard as a medication reconciliation rather than issuing a repeat. Update nothing on the list from the patient's account alone. Do not process the repeat because the first two statements supported it, and do not dismiss the second supply as duplication of a known medication.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Recognises that the final statement changes the nature of the request.",
+          "credit": 0.25,
+          "evidenceRef": "AA3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Probes for the second supply's identity, strength and quantity taken.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it as a reconciliation to the clinician rather than issuing a repeat.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Does not amend the medication list from the patient's account alone.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Clinical intent and task interpretation; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000027",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-FAILURE-TO-PROBE"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "835c098f4891e489",
+        "scenarioFingerprint": "b6bb31ff97ce616f",
+        "competencyFingerprint": "caee561cd9b845f2",
+        "evidenceLayoutFingerprint": "0f37feb4c062e498",
+        "answerPatternFingerprint": "1c2b0a54efbd6cba"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-SCEN-KB002-000098",
+      "recordType": "SCENARIO",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M18"
+      ],
+      "competencyIds": [
+        "KB-D02",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D02",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "DELAYED_CLUE_REASONING",
+      "scenarioType": "MEANING_CHANGES_LATE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Delayed-clue reasoning",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000027"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000027#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "AA1",
+            "text": "Patient rings asking for a repeat of an anti-inflammatory for a long-standing shoulder problem.",
+            "section": "Call",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "AA2",
+            "text": "They confirm the shoulder is no worse than usual and they are not asking to be seen.",
+            "section": "Call",
+            "decisive": false
+          },
+          {
+            "ref": "AA4",
+            "text": "The medication list shows one active anti-inflammatory and no second supply.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "AA3",
+            "text": "at the end they mention in passing that they have been taking the same medication from a second source for a fortnight because the first prescription ran out, which turns a repeat request into a question about how much they have actually been taking",
+            "section": "Call",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Zacharias Ndlovu-Persson",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "Work through this call with Zacharias Ndlovu-Persson (MRN SYN-3541) in order. What does the last statement change? Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Re-read the request in light of the final statement. It is no longer a repeat: the patient may have been taking more than the record shows, from a source the chart does not know about. Probe for what the second supply is, its strength and how much has been taken, then route it to Dr. Basim Oyeleke-Nyström as a medication reconciliation rather than issuing a repeat. Update nothing on the list from the patient's account alone. Do not process the repeat because the first two statements supported it, and do not dismiss the second supply as duplication of a known medication.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Recognises that the final statement changes the nature of the request.",
+          "credit": 0.25,
+          "evidenceRef": "AA3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Probes for the second supply's identity, strength and quantity taken.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it as a reconciliation to the clinician rather than issuing a repeat.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Does not amend the medication list from the patient's account alone.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-SCEN-KB002-000097",
+      "variantOf": "KB-SCEN-KB002-000097",
+      "templateId": "KB-VART-KB002-000027",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-SCEN-KB002-000097"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "P. Kirchmayer",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "c44e4a42afdbaaac",
+        "scenarioFingerprint": "40d63396dbc47766",
+        "competencyFingerprint": "caee561cd9b845f2",
+        "evidenceLayoutFingerprint": "98ca0a0cb9a3971d",
+        "answerPatternFingerprint": "4b52e9104e473b23"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-SCEN-KB002-000099",
+      "recordType": "SCENARIO",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M18"
+      ],
+      "competencyIds": [
+        "KB-D02",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D02",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "DELAYED_CLUE_REASONING",
+      "scenarioType": "MEANING_CHANGES_LATE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Delayed-clue reasoning",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000027"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000027#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "AA3",
+            "text": "Routine reconciliation note from A. Nwosu-Ferrand: demographics confirmed, card image legible, and — at the end they mention in passing that they have been taking the same medication from a second source for a fortnight because the first prescription ran out, which turns a repeat request into a question about how much they have actually been taking — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "AA1",
+            "text": "Patient rings asking for a repeat of an anti-inflammatory for a long-standing shoulder problem.",
+            "section": "Call",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "AA2",
+            "text": "They confirm the shoulder is no worse than usual and they are not asking to be seen.",
+            "section": "Call",
+            "decisive": false
+          },
+          {
+            "ref": "AA4",
+            "text": "The medication list shows one active anti-inflammatory and no second supply.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Anneliese Chukwuemeka-Rho",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "Work through this call with Anneliese Chukwuemeka-Rho (MRN SYN-7095) in order. What does the last statement change? Nothing in this record is labelled as important.",
+      "goldBehavior": "Re-read the request in light of the final statement. It is no longer a repeat: the patient may have been taking more than the record shows, from a source the chart does not know about. Probe for what the second supply is, its strength and how much has been taken, then route it to Dr. Coralie Abimbola-Wexler as a medication reconciliation rather than issuing a repeat. Update nothing on the list from the patient's account alone. Do not process the repeat because the first two statements supported it, and do not dismiss the second supply as duplication of a known medication.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Recognises that the final statement changes the nature of the request.",
+          "credit": 0.25,
+          "evidenceRef": "AA3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Probes for the second supply's identity, strength and quantity taken.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it as a reconciliation to the clinician rather than issuing a repeat.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Does not amend the medication list from the patient's account alone.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-SCEN-KB002-000097",
+      "variantOf": "KB-SCEN-KB002-000097",
+      "templateId": "KB-VART-KB002-000027",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-SCEN-KB002-000097"
+      ],
+      "errorTargets": [
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-FAILURE-TO-PROBE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "d2688dd4f60ef253",
+        "scenarioFingerprint": "fe4a321a0c205564",
+        "competencyFingerprint": "caee561cd9b845f2",
+        "evidenceLayoutFingerprint": "258ff1617926e0a0",
+        "answerPatternFingerprint": "2d9d98c5f2bf27d4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

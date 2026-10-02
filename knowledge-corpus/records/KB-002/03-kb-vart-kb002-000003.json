@@ -1,0 +1,760 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000003",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000009",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "RESULT_DESTINATION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Laboratory and imaging results workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000003"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000003#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "R1",
+            "text": "Basic metabolic panel, collected 2027-01-14, all values inside the reporting range with no flags.",
+            "section": "Result",
+            "decisive": false
+          },
+          {
+            "ref": "R2",
+            "text": "Report header names the ordering clinician as CNM Isolde Babatunde-Reyes (Midwifery).",
+            "section": "Result",
+            "decisive": false
+          },
+          {
+            "ref": "R3",
+            "text": "the workflow stated for this scenario routes every result, flagged or not, to the ordering clinician's own queue for review before any patient is told anything, and the coordinator's task is delivery and confirmation rather than interpretation",
+            "section": "Practice workflow",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Ulyana Sørensen-Adeyemi",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "A result has landed in the shared results queue for Ulyana Sørensen-Adeyemi (MRN SYN-1394), behind two older items for other patients. Where does it go, and what closes the loop?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send it to CNM Isolde Babatunde-Reyes's review queue, confirm receipt, and record the delivery against the 2027-01-14 encounter without messaging the patient.",
+          "why": "Correct: the stated workflow makes no exception for unflagged results, and confirmation is what closes the loop."
+        },
+        {
+          "id": "b",
+          "text": "Release the result to the patient portal with a note that everything is within range, and copy CNM Isolde Babatunde-Reyes.",
+          "why": "\"Within range\" is an interpretation, and the workflow requires clinician review before the patient is told anything.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "c",
+          "text": "Send it to the general clinical inbox so whoever is on next can action it.",
+          "why": "A general inbox names no owner, and the workflow names the ordering clinician specifically.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Work the two older items ahead of this one, since the queue is ordered by arrival.",
+          "why": "Queue position is not a priority signal, and nothing here says the older items outrank this one.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Route the result to CNM Isolde Babatunde-Reyes's own review queue, because that is where the stated workflow sends every result regardless of whether anything is flagged. Confirm it arrived rather than assuming the send succeeded, and record the delivery and the confirmation against the 2027-01-14 encounter. Do not tell Ulyana Sørensen-Adeyemi the panel is normal, and do not close the item on the strength of the values looking unremarkable — reviewing them is not this role's task.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Routes to the ordering clinician's queue and cites the workflow that requires it for every result.",
+          "credit": 0.34,
+          "evidenceRef": "R3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Confirms arrival rather than assuming the send completed, and records the confirmation.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Withholds any statement to the patient about what the values mean.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Medication, laboratory, and imaging workflow; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000003",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "a109705ac0cbe249",
+        "scenarioFingerprint": "6465f7852bf42b7c",
+        "competencyFingerprint": "0b5a468bcf7d9215",
+        "evidenceLayoutFingerprint": "1a4ddd67e8bb6b10",
+        "answerPatternFingerprint": "135475053207b3bb"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000010",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "RESULT_DESTINATION__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Laboratory and imaging results workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000003"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000003#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "R1",
+            "text": "Basic metabolic panel, collected 2027-02-23, all values inside the reporting range with no flags.",
+            "section": "Result",
+            "decisive": false
+          },
+          {
+            "ref": "R2",
+            "text": "Report header names the ordering clinician as Dr. Imani Farrokhzad (Internal Medicine).",
+            "section": "Result",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "R3",
+            "text": "the workflow stated for this scenario routes every result, flagged or not, to the ordering clinician's own queue for review before any patient is told anything, and the coordinator's task is delivery and confirmation rather than interpretation",
+            "section": "Practice workflow",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Vikram Oyinlola-Haugen",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A result has landed in the shared results queue for Vikram Oyinlola-Haugen (MRN SYN-8250), behind two older items for other patients. Where does it go, and what closes the loop? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Send it to Dr. Imani Farrokhzad's review queue, confirm receipt, and record the delivery against the 2027-02-23 encounter without messaging the patient.",
+          "why": "Correct: the stated workflow makes no exception for unflagged results, and confirmation is what closes the loop."
+        },
+        {
+          "id": "c",
+          "text": "Release the result to the patient portal with a note that everything is within range, and copy Dr. Imani Farrokhzad.",
+          "why": "\"Within range\" is an interpretation, and the workflow requires clinician review before the patient is told anything.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Send it to the general clinical inbox so whoever is on next can action it.",
+          "why": "A general inbox names no owner, and the workflow names the ordering clinician specifically.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Route the result to Dr. Imani Farrokhzad's own review queue, because that is where the stated workflow sends every result regardless of whether anything is flagged. Confirm it arrived rather than assuming the send succeeded, and record the delivery and the confirmation against the 2027-02-23 encounter. Do not tell Vikram Oyinlola-Haugen the panel is normal, and do not close the item on the strength of the values looking unremarkable — reviewing them is not this role's task.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Routes to the ordering clinician's queue and cites the workflow that requires it for every result.",
+          "credit": 0.34,
+          "evidenceRef": "R3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Confirms arrival rather than assuming the send completed, and records the confirmation.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Withholds any statement to the patient about what the values mean.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000009",
+      "variantOf": "KB-WFLW-KB002-000009",
+      "templateId": "KB-VART-KB002-000003",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000009"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "df8587205d7f041a",
+        "scenarioFingerprint": "91facd2b53bea387",
+        "competencyFingerprint": "0b5a468bcf7d9215",
+        "evidenceLayoutFingerprint": "6e611d1515bdea2e",
+        "answerPatternFingerprint": "d852224f24e92c59"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000011",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "RESULT_DESTINATION__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Laboratory and imaging results workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000003"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000003#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "R3",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the workflow stated for this scenario routes every result, flagged or not, to the ordering clinician's own queue for review before any patient is told anything, and the coordinator's task is delivery and confirmation rather than interpretation — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "R1",
+            "text": "Basic metabolic panel, collected 2026-02-09, all values inside the reporting range with no flags.",
+            "section": "Result",
+            "decisive": false
+          },
+          {
+            "ref": "R2",
+            "text": "Report header names the ordering clinician as Dr. Teodoro Haakonsen (Family Medicine).",
+            "section": "Result",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Wilhelmina Acheampong",
+        "encounterLabel": "Willowbank Primary Care — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A result has landed in the shared results queue for Wilhelmina Acheampong (MRN SYN-5827), behind two older items for other patients. Where does it go, and what closes the loop? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Release the result to the patient portal with a note that everything is within range, and copy Dr. Teodoro Haakonsen.",
+          "why": "\"Within range\" is an interpretation, and the workflow requires clinician review before the patient is told anything.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Send it to Dr. Teodoro Haakonsen's review queue, confirm receipt, and record the delivery against the 2026-02-09 encounter without messaging the patient.",
+          "why": "Correct: the stated workflow makes no exception for unflagged results, and confirmation is what closes the loop."
+        },
+        {
+          "id": "d",
+          "text": "Send it to the general clinical inbox so whoever is on next can action it.",
+          "why": "A general inbox names no owner, and the workflow names the ordering clinician specifically.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Route the result to Dr. Teodoro Haakonsen's own review queue, because that is where the stated workflow sends every result regardless of whether anything is flagged. Confirm it arrived rather than assuming the send succeeded, and record the delivery and the confirmation against the 2026-02-09 encounter. Do not tell Wilhelmina Acheampong the panel is normal, and do not close the item on the strength of the values looking unremarkable — reviewing them is not this role's task.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Routes to the ordering clinician's queue and cites the workflow that requires it for every result.",
+          "credit": 0.34,
+          "evidenceRef": "R3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Confirms arrival rather than assuming the send completed, and records the confirmation.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Withholds any statement to the patient about what the values mean.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000009",
+      "variantOf": "KB-WFLW-KB002-000009",
+      "templateId": "KB-VART-KB002-000003",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000009"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "af6bbef1f86eecec",
+        "scenarioFingerprint": "97ad331d0ef99fb5",
+        "competencyFingerprint": "0b5a468bcf7d9215",
+        "evidenceLayoutFingerprint": "1625eedcbdb0c21a",
+        "answerPatternFingerprint": "cc5640c7ee492b77"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000012",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M10"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "RESULT_ROUTING",
+      "scenarioType": "RESULT_DESTINATION__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Laboratory and imaging results workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000003"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000003#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "R1",
+            "text": "Basic metabolic panel, collected 2026-03-17, all values inside the reporting range with no flags.",
+            "section": "Result",
+            "decisive": true
+          },
+          {
+            "ref": "R2",
+            "text": "Report header names the ordering clinician as Dr. Ngozi Brandtsen (Cardiology).",
+            "section": "Result",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Xavier Rautenbach-Ejiofor",
+        "encounterLabel": "Ashcombe Multispecialty Group — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A result has landed in the shared results queue for Xavier Rautenbach-Ejiofor (MRN SYN-2963), behind two older items for other patients. Where does it go, and what closes the loop? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Release the result to the patient portal with a note that everything is within range, and copy Dr. Ngozi Brandtsen.",
+          "why": "\"Within range\" is an interpretation, and the workflow requires clinician review before the patient is told anything.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Send it to Dr. Ngozi Brandtsen's review queue, confirm receipt, and record the delivery against the 2026-03-17 encounter without messaging the patient.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which clinician ordered the panel and therefore owns its review is not in the record, request it from Dr. Ngozi Brandtsen, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which clinician ordered the panel and therefore owns its review), name Dr. Ngozi Brandtsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which clinician ordered the panel and therefore owns its review\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "R1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000009",
+      "variantOf": "KB-WFLW-KB002-000009",
+      "templateId": "KB-VART-KB002-000003",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000009"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "bb9884ba989e9af0",
+        "scenarioFingerprint": "d02992deb1e2dd9b",
+        "competencyFingerprint": "d46c765d83d45149",
+        "evidenceLayoutFingerprint": "8dc64924e74c7471",
+        "answerPatternFingerprint": "86dedfd51bd4d703"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

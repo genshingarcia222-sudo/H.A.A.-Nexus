@@ -1,0 +1,21 @@
+{
+  "registryId": "KB-REG-LIFECYCLE",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section XXII (owner-supplied, 2026-09-26)",
+  "principle": "Generated content is never authoritative automatically. Machine activity can move a record no higher than candidate_needs_source_verification for external-authority content, or candidate for self-contained content.",
+  "states": [
+    { "id": "draft", "ordinal": 0, "machineReachable": true },
+    { "id": "candidate", "ordinal": 1, "machineReachable": true, "note": "Highest state a machine may assign, and only to a record whose evidenceBasis is SELF_CONTAINED." },
+    { "id": "candidate_needs_source_verification", "ordinal": 1, "machineReachable": true, "note": "Charter section XIV. The state every EXTERNAL_AUTHORITY record generated without a verified source must carry." },
+    { "id": "pending_review", "ordinal": 2, "machineReachable": true },
+    { "id": "human_reviewed", "ordinal": 3, "machineReachable": false, "requiresRegisteredReviewer": true },
+    { "id": "source_verified", "ordinal": 4, "machineReachable": false, "requiresRegisteredReviewer": true, "requiresOpenedSource": true },
+    { "id": "approved_for_training", "ordinal": 5, "machineReachable": false, "requiresRegisteredReviewer": true },
+    { "id": "approved_for_generation", "ordinal": 5, "machineReachable": false, "requiresRegisteredReviewer": true },
+    { "id": "deprecated", "ordinal": -1, "machineReachable": false },
+    { "id": "superseded", "ordinal": -1, "machineReachable": false },
+    { "id": "rejected", "ordinal": -1, "machineReachable": true }
+  ],
+  "provenanceClasses": ["AI_GENERATED", "AI_ASSISTED", "HUMAN_AUTHORED", "HUMAN_REVIEWED", "SOURCE_VERIFIED", "PRODUCTION_APPROVED"],
+  "reviewerRule": "A machine identity cannot be a registered reviewer and cannot record a review. authoredBy for machine-generated content must be 'machine:<agent-id>'."
+}
