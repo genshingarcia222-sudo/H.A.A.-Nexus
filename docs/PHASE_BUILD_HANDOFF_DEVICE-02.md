@@ -6,16 +6,16 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-10-01-001
+control_version: P9-2026-10-02-001
 phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A and P9-D satisfied; P9-B/C/E blocked on D13 and D14)"
-lane: KB-01 - Knowledgebase feature lane (C-02 audit lane COMPLETE)
-baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: feat/knowledgebase-expansion (PR #21, deliberately unmerged)
+lane: KB-01 - Knowledgebase feature lane (C-02 audit lane COMPLETE and integrated)
+baseline_sha: 0c09e361ddaa46b0634859a220e049a9c5096758   # baseline B-006
+current_checkpoint: feat/knowledgebase-expansion (PR #21, deliberately unmerged, 10 ahead / 0 behind main, CLEAN, blocked on D18)
 nexus_task: none held by DEVICE-02; claim one before mutating (nexus-sync claim)
 session: attach to S-phases-building, then register your own lane session
 ```
 
-## Exact next action at control version P9-2026-10-01-001
+## Exact next action at control version P9-2026-10-02-001
 
 **Next action.** Unchanged: the Knowledgebase lane
 (`feat/knowledgebase-expansion`, PR #21), which **stays unmerged** - its own
@@ -33,10 +33,15 @@ change to your architecture:
    `policyFormat` field. `tools/preflight/**` moved to DEVICE-01's owned list
    after checking that your branch changes nothing in it. If you have unpushed
    preflight work, say so rather than merging over it.
-3. **CI now exists** (`.github/workflows/ci.yml`) and runs on every pull request,
-   so PR #21 will be checked by it. It has never been validated on a hosted
-   runner - if it fails on your PR, read the failure before assuming your branch
-   caused it.
+3. **CI exists and is now VERIFIED** (`.github/workflows/ci.yml`), and runs on
+   every pull request, so PR #21 is checked by it. It is green on your branch:
+   run `36822607147` at `9e58995`, and run `36825852812` at `dbb7c12` for PR #22.
+   The gates themselves were proven on hosted runners by run `36793771261`
+   (`df5dae9`), which reproduced every baseline B-006 figure off DEVICE-01,
+   including `cargo test` 70/70 on `windows-latest`. **That is the figure this
+   device could not measure** - you may now cite the run id instead of writing
+   `NOT VERIFIED ON DEVICE-02`, because a named hosted run is evidence and a
+   badge is not.
 
 **Three decisions closed since your last handoff**, all under the owner's
 *standing* authorization rather than by the owner personally, and all labelled as
@@ -44,55 +49,104 @@ such: **D16** (`docs/RELEASE_POLICY.md`), **D8** (interrupted attempts are
 continued, never resumed) and **D9** (a failed evaluation is visible and
 retryable). **D10 was deliberately not closed** and remains externally blocked.
 
-## Why this lane is documentation work right now
+## Why this lane is blocked rather than busy
 
-Phase 9's five items are all gated on open owner decisions (control document §2),
-and the decision register records that no substantive engineering work remains
-that does not depend on one of them. So this lane does not implement Phase 9. It
-corrects statements the repository has outgrown — each one already listed as a
-known issue in `.nexus/CURRENT_STATE.md`, so none of it is invented work.
+Phase 9's P9-A and P9-D are satisfied; P9-B, P9-C and P9-E are gated on D13 and
+D14 (control document §2), and the decision register records that no substantive
+engineering work remains that does not depend on an open decision. So this lane
+does not implement Phase 9 either.
 
-## Assigned work — C-02 documentation-accuracy sweep
+**And KB-01 itself is blocked on D18.** That is the important sentence in this
+file. Until D18 names which content contract the runtime ingests, every further
+KB record is authored against a schema that may not be the one selected, so
+*adding records is the one activity that increases risk while looking like
+progress.* The rework exposure is already 324 records.
 
-1. **`README.md` test counts.** It quotes 279 nexus-core + 144 desktop tests.
-   Re-measure on `main` and correct. (`main` at `894a425` measured 390 + 228 on
-   DEVICE-01; measure again rather than copying that.)
-2. **`README.md` `tauri dev` contradiction.** One place says it "has not been
-   launched end-to-end yet"; its own Rust/Tauri section records verified runtime
-   IPC. The later, verified statement is the true one.
-3. **`docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`** carries two statements that
-   are no longer true: packaging "unverified" — a full `tauri build` and both
-   installers were produced on DEVICE-01 at `894a425`, 9.78 MB exe / 3.61 MB MSI
-   / 2.54 MB NSIS — and the Content Security Policy line, which describes a real
-   policy now.
-4. **`docs/PHASE_8_3_ASSESSMENT_MODE.md` §5** still reads as though **D7** were
-   open. D7 was answered on 2026-09-20 and the register records it as resolved.
+## Assigned work
 
-Each correction cites its evidence, and none may turn a claim into a stronger one.
-Corrections are additive to the record: do not delete the history of what was
-previously believed where a document keeps it deliberately.
+1. **Hold PR #21.** It is `MERGEABLE` / `CLEAN`, 10 ahead and 0 behind `main`,
+   CI-green, and marked *do not merge*. Keep it that way. If `main` advances and
+   it conflicts, merge `main` into the branch and resolve under control §10 -
+   `CHANGELOG.md` by §10(G), `package.json` `scripts` by §10(H) as a union of
+   both sets.
+2. **Dispose of PR #22 inside this lane.** It targets
+   `feat/knowledgebase-expansion`, not `main`, so DEVICE-01 does not integrate
+   it; it is yours to merge or close.
+3. **Record your own state through `nexus-sync`.** The C-02 sweep was delivered
+   without a `claim`, so DEVICE-01 had to reconcile
+   `.nexus/DEVICE_REGISTRY.md` from commit evidence and left your `status` as
+   `UNKNOWN` rather than assert a self-report on your behalf. Any state-writing
+   command (`claim`, `heartbeat`, `release`) puts that record back in your hands.
+4. **Audit, which is this device's standing role.** Independently re-verify
+   `main` at baseline **B-006** (`0c09e36`) against your own run, and audit the
+   reconciliation DEVICE-01 made at this control version: the claim is that
+   §§2-8 of the control document now match the repository, and that the
+   superseded rows are preserved in §3a rather than deleted. Disagreeing with it
+   in a PR is a legitimate use of this lane.
+
+5. **`README.md`'s test counts have gone stale again — and this one is ungated.**
+   Found by DEVICE-01 on 2026-10-02 and left for this lane because `README.md`
+   is yours. Line 157 reads *"Every package's tests (390 nexus-core + 228
+   desktop = 618)"*; measured on `main` the same day it is **804 nexus-core +
+   330 desktop = 1134** (66 and 33 files). Line 40 says `cargo test` is green
+   with **55 tests**; it is **70/70**. The 390 + 228 figures were *correct* when
+   the C-02 sweep wrote them — the D15 merge then added the Training question
+   run, the D12 corpus module and the delivery layer, and nothing re-measured.
+
+   So this is not a repeat of a closed defect; it is the same figure going stale
+   a second time for a structural reason, which is worth saying in the fix: a
+   hand-maintained count in prose drifts every time the suite grows. CI now
+   prints all of these on every push (run `36819449371` at `9416bf8`), so cite a
+   measurement and consider whether the README should quote exact counts at all
+   or point at the gate that measures them. `cargo test` is the one figure this
+   device cannot run — take it from the Windows job of a named CI run rather
+   than from DEVICE-01's word.
+
+**Do not author more KB records to fill the wait.** If the lane feels idle, that
+is D18 being visible, and the correct output is to say so rather than to add
+rework. Item 5 above is the one piece of ungated work this lane has.
+
+## C-02 documentation-accuracy sweep — COMPLETE, do not redo
+
+All four items were authored here and integrated by DEVICE-01 as PR #18
+(`b1ef49d`) and PR #19 (`2556d1e`): the `README.md` test counts, the `tauri dev`
+contradiction, the Phase 7 audit's packaging and CSP statements, and the D7
+listing in `docs/PHASE_8_3_ASSESSMENT_MODE.md` §5. They are listed here as a
+closed record because an earlier revision of this file still assigned them, and
+a device recovering from Git alone would have redone finished work.
+
+Each correction cited its evidence and turned no claim into a stronger one.
+Corrections are additive to the record: the history of what was previously
+believed survives where each document keeps it deliberately.
 
 ## Prohibited work
 
-- Resolving or narrowing **any** decision — D8, D9, D10, D13, D14, D15, D16, A2,
+- Resolving or narrowing **any** open decision — D10, D13, D14, D17, D18, A2,
   A6, A7, A9, A12. Recording a *constraint* on a decision, as PR #16 did, is
-  allowed; proposing an answer is not.
+  allowed; proposing an answer is not. **D18 above all**: do not answer it by
+  deleting either content contract, by writing an adapter or shim between them
+  (that would be a third contract), or by letting a merge imply it. D8, D9, D15
+  and D16 have since been resolved and have left this list.
 - Touching DEVICE-01's owned files: `apps/desktop/**`, `packages/**`,
   `CHANGELOG.md` beyond this lane's own entry,
   `docs/PHASE_9_DEVICE01_VALIDATION.md`, `docs/DECISION_REGISTER.md` outside a
   reviewed constraint note, `docs/PHASES_BUILDING_CONTROL.md`, `.nexus/**`.
-- Merging PR #3 or any PR into `main`. DEVICE-01 integrates.
+- Merging **any PR into `main`**, PR #21 above all. DEVICE-01 integrates.
+  (PR #3 was merged by the owner's D15 decision at `c384ac5` and is history.)
+  PR #22 is the exception that proves the rule: it targets this lane's own
+  branch, not `main`.
 - Recording a Windows, Rust or installer figure this device cannot measure.
   `cargo test` fails here at `gdk-sys` and WiX/NSIS cannot run; write
-  `NOT VERIFIED ON DEVICE-02` and leave DEVICE-01's figure standing.
+  `NOT VERIFIED ON DEVICE-02` and leave DEVICE-01's figure standing - or cite a
+  named CI run, which is measurement rather than trust.
 - Starting Phase 10, closing Phase 8, weakening tests, `git add -A`,
   force-pushing, or rewriting published history.
 
 ## Dependency requirements
 
-None for the sweep above — it depends on no decision, which is exactly why it is
-assigned. Any Phase 9 item proper stays blocked until its decision is recorded in
-`docs/DECISION_REGISTER.md`.
+**D18 blocks the whole of KB-01**, which is why items 1-4 above are holding,
+auditing and recording rather than building. Any Phase 9 item proper stays
+blocked until its decision is recorded in `docs/DECISION_REGISTER.md`.
 
 ## Validation requirements
 
@@ -118,13 +172,21 @@ PR, and let DEVICE-01 integrate it against the control document's §9 gate. If
 `main` advances and the PR conflicts, resolve it under §10 — for `CHANGELOG.md`
 that means every entry from both sides, newest first, no text edited.
 
-## Exact next action
+## First commands of the session
 
-`node tools/nexus-sync/nexus-sync.mjs start` - which now prints the session
-registry, so the PHASES BUILDING session is visible here without anyone sending
-it to you. Attach to it with `nexus-sync session register --name "PHASES
-BUILDING"` (attaching, not duplicating), confirm this control version, claim
-a task (`nexus-sync claim --task-id P9-003 --name "C-02 documentation-accuracy
-sweep"`), then do item 1 and item 2 in one PR, measuring the counts on this
-device. Do not begin any Phase 9 implementation item, and do not wait on
-DEVICE-01 — this lane shares no file with it.
+`node tools/nexus-sync/nexus-sync.mjs start` - which prints the session registry,
+so the PHASES BUILDING session is visible here without anyone sending it to you.
+Attach with `nexus-sync session register --name "PHASES BUILDING"` (attaching,
+not duplicating) and **confirm this control version is `P9-2026-10-02-001`**; if
+your instructions name an older one, diagnose read-only and reconcile before
+editing anything.
+
+Then `nexus-sync claim` a task before mutating, and do the assigned work above:
+hold PR #21, dispose of PR #22, put your own registry record back in your hands,
+and audit `main` at B-006 and this control version's reconciliation. Begin no
+Phase 9 implementation item, author no further KB records while D18 is open, and
+do not wait on DEVICE-01 - this lane shares no implementation file with it.
+
+*An earlier revision of this file ended by telling this device to claim P9-003
+and redo items 1 and 2 of the C-02 sweep, which had already been integrated. That
+instruction is withdrawn, and it is recorded here rather than silently removed.*

@@ -6,16 +6,16 @@ changes them. Read `docs/PHASES_BUILDING_CONTROL.md` first — it is the authori
 and this file is derived from it.
 
 ```yaml handoff
-control_version: P9-2026-10-01-001
+control_version: P9-2026-10-02-001
 phase: "Phase 9 - Packaging & Release Hardening (OPEN; P9-A and P9-D satisfied; P9-B/C/E blocked on D13 and D14)"
-lane: C-01 - integration coordination and decision closure under standing authorization
-baseline_sha: 045b1e1e0fa3eb5a70ed196da16a604be903d01c
-current_checkpoint: see .nexus/CURRENT_STATE.md  # PR #3 was merged at c384ac5 (D15)
-nexus_task: P9-005 - D16 release and version policy (see .nexus/ACTIVE_TASK.md for live status)
+lane: C-01 - integration coordination and control-plane integrity; the decisions standing authorization could close are closed
+baseline_sha: 0c09e361ddaa46b0634859a220e049a9c5096758   # baseline B-006
+current_checkpoint: see .nexus/CURRENT_STATE.md  # PR #3 merged at c384ac5 (D15); D16 at fba3544; D8/D9 at 0c09e36
+nexus_task: see .nexus/ACTIVE_TASK.md for the live task, owner and status - this file never names it
 session: S-phases-building (register/attach it at every session start)
 ```
 
-## Exact next action at control version P9-2026-10-01-001
+## Exact next action at control version P9-2026-10-02-001
 
 **Next action: there is none that is ungated.** CI is green — run 36793771261 at
 `df5dae9` passed both jobs on hosted runners and reproduced every baseline B-006
@@ -43,19 +43,25 @@ the tag is the owner's.
 1. **Integration coordination.** DEVICE-01 is the integration coordinator. Review
    every DEVICE-02 PR against the control document's §9 gate, integrate it, and
    verify the suites on the merged result rather than on the branch.
-2. **Keep PR #3 mergeable, without merging it.** `main` advancing is what breaks
-   it. When that happens: merge `main` into `feat/training-question-bank`,
-   reconcile `CHANGELOG.md` by §10(G) — every entry from both sides, newest first,
-   no text edited, heading count verified — then run the full suite on the merged
-   tree and push the branch.
-3. **Keep `.nexus` accurate.** `CURRENT_STATE.md` "Pending work" still describes
-   `feat/training-question-bank` as 18 commits ahead of `865d31e` with tip
-   `5bcf9f9`. The measured state is 41 commits ahead of the merge base with tip
-   `f4de3dc`, and PR #3 is `CLEAN`. Correct it through the normal
-   `nexus-sync`-governed flow.
-4. **Hold the Phase 9 items** until an owner decision lands. P9-A and P9-B are
-   not implementable, and that is recorded as D15 and D13 rather than as a held
-   task.
+   The only PR open against `main` is **#21, which must not be merged** — it is
+   held on D18. **#22** targets `feat/knowledgebase-expansion` and belongs to
+   DEVICE-02; DEVICE-01 does not integrate it.
+2. **Keep the control plane and `.nexus` true to the repository.** This replaces
+   the old "keep PR #3 mergeable without merging it", which the repository has
+   outgrown: PR #3 was **merged** at `c384ac5` when the owner resolved D15, and
+   `082fa95` is an ancestor of `main`. The live duty is the one
+   `P9-2026-10-02-001` was issued to discharge — when `main` advances past what
+   the control document's §§2–8 and `.nexus` describe, re-measure and reconcile
+   them, and say in §12 what changed. The top of the authority order is allowed
+   to be terse; it is not allowed to be wrong.
+3. **Keep the baseline and the measured suite current.** `B-006` at `0c09e36`.
+   Re-measure on this device after any substantive merge, and record the figures
+   only this device can produce — `cargo test`, `cargo fmt --check`, `tauri
+   build`, installer inspection. CI reproduces the cross-platform half on hosted
+   runners, so read the run id, never the badge.
+4. **Hold the Phase 9 items** until an owner decision lands. P9-A and P9-D are
+   **done**; P9-B, P9-C and P9-E are not implementable, and that is recorded as
+   D13 and D14 rather than as a held task.
 5. **Keep the session registry current.** `nexus-sync session register --name
    "PHASES BUILDING"` attaches this device (it never duplicates), and
    `session update --id S-phases-building --next "..."` records where the work
@@ -63,17 +69,20 @@ the tag is the owner's.
 
 ## Prohibited work
 
-- **Merging PR #3.** That is **D15**, an open owner decision, whatever the merge
-  button now says.
-- **Implementing P9-A on `main`.** The specification forbids it before D15, and
-  the fix already exists at `de2c2d1` on the branch.
+- **Merging PR #21**, or answering **D18** by merging, deleting or bridging
+  either content contract. A bridge would be a third contract. DEVICE-02's lane
+  is blocked on D18 and tidying the tree is not a reason to unblock it.
+- **Cutting a release or creating a tag.** `docs/RELEASE_POLICY.md` §6 refuses a
+  stable release at `0.1.0` — unsigned, empty bundle metadata, placeholder
+  licence — and the tag is the owner's.
 - **P9-B / P9-E:** no `certificateThumbprint`, `digestAlgorithm`, `timestampUrl`,
   `signCommand`, `publisher` or `copyright`. D13 has named no identity, and
   `LICENSE.md` holds a placeholder rather than a legal entity.
 - **P9-C:** no `tauri-plugin-updater` dependency and no `plugins.updater` block.
   D14 is open and entangled with D10.
-- **P9-D's policy half:** no tagging scheme, channel policy or release checklist.
-  That is D16 itself. The enforcement half is already merged.
+- **Re-opening P9-D.** It is satisfied: `docs/RELEASE_POLICY.md` is the policy
+  half (D16, standing authorization) and parity enforcement is merged. Changing
+  the policy is a new decision, not maintenance of this one.
 - Closing Phase 8, starting Phase 10, editing DEVICE-02's owned files, weakening
   tests, `git add -A`, force-pushing, rewriting published history, or recording
   verification that was not performed.

@@ -14,7 +14,7 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
   commit that carries the record sits on top of it and touches only `.nexus/`.
 - Values that cannot be verified are written `NOT VERIFIED`.
 - **Phase-development assignments are not here.** They live in
-  `docs/PHASES_BUILDING_CONTROL.md` (control version `P9-2026-09-26-001`) with a
+  `docs/PHASES_BUILDING_CONTROL.md` (control version `P9-2026-10-02-001`) with a
   per-device handoff in `docs/PHASE_BUILD_HANDOFF_DEVICE-0X.md`. That document
   carries no ownership: this file and `ACTIVE_TASK.md` remain the operational
   state, changed only through `nexus-sync`.
@@ -22,21 +22,21 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
 ```yaml nexus-state
 project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
-active_branch: nexus/sync-bootstrap (tracks origin/main; publishes with HEAD:main per N-002)
-current_phase: "Phase 9 - Packaging & Release Hardening (P9-A satisfied; P9-B/C/D-policy/E decision-blocked; Phase 8 is NOT closed)"
-current_milestone: "D16, D8 and D9 all resolved 2026-10-01 under the owner STANDING AUTHORIZATION (none of them owner decisions; each labelled in the register, ledger and changelog). P9-D is SATISFIED so Phase 9 has P9-A and P9-D done with P9-B/C/E blocked on D13 and D14. Phase 8.3 decision group COMPLETE (D1, D3-D9). Phase 8 still open: roadmap steps 3-8 unstarted and D10 blocks step 4. Control plane at P9-2026-10-01-001. DEVICE-02 owns the Knowledgebase lane (PR #21, not merged, D18 first)"
-baseline_commit: 0c09e361ddaa46b0634859a220e049a9c5096758
-last_verified_commit: 0c09e361ddaa46b0634859a220e049a9c5096758
-last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-01, DEVICE-01, baseline B-006)"
-last_verified_build: "PASS - pnpm -r build (2026-10-01, DEVICE-01, baseline B-006); cargo build --release measured 10,278,912 B at B-005"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-01, DEVICE-01, baseline B-006)"
-last_verified_rust: "PASS - cargo test 70/70 and cargo fmt --check clean, rustc 1.98.1 (2026-10-01, DEVICE-01, baseline B-006)"
-active_task: P9-008
+active_branch: main (publishes to main; the historical nexus/sync-bootstrap checkout is 106 behind and is not used)
+current_phase: "Phase 9 - Packaging & Release Hardening (P9-A and P9-D satisfied; P9-B/C/E decision-blocked on D13 and D14; Phase 8 is NOT closed)"
+current_milestone: "D16, D8 and D9 all resolved 2026-10-01 under the owner STANDING AUTHORIZATION (none of them owner decisions; each labelled in the register, ledger and changelog). P9-D is SATISFIED so Phase 9 has P9-A and P9-D done with P9-B/C/E blocked on D13 and D14. Phase 8.3 decision group COMPLETE (D1, D3-D9). Phase 8 still open: roadmap steps 3-8 unstarted and D10 blocks step 4. Control plane at P9-2026-10-02-001 (reconciliation audit; no decision resolved). DEVICE-02 owns the Knowledgebase lane (PR #21, not merged, D18 first)"
+baseline_commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
+last_verified_commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
+last_verified_tests: "PASS - nexus-core 804/804 (66 files), desktop 330/330 (33 files), preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-02, DEVICE-01, baseline B-007)"
+last_verified_build: "PASS - pnpm -r build (2026-10-02, DEVICE-01, baseline B-007); cargo build --release measured 10,278,912 B at B-005"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-02, DEVICE-01, baseline B-007)"
+last_verified_rust: "PASS - cargo test 70/70, cargo fmt --check clean, cargo clippy --all-targets zero warnings, rustc 1.98.1 (2026-10-02, DEVICE-01, baseline B-007)"
+active_task: P9-009
 task_owner: DEVICE-01
 task_status: COMPLETE
-last_successful_sync: 2026-10-01T00:07:25.606Z
+last_successful_sync: 2026-10-02T11:35:24.245Z
 last_sync_device: DEVICE-01
-last_sync_commit: a83a9d3cd82954ae12d11fc6ea2b7f53a92e953e
+last_sync_commit: b0732790e66d064ba5b2508a9980e1af891b14ae
 sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```
@@ -45,19 +45,32 @@ recovery_status: "none - no recovery in progress"
 
 Product and engineering work, with the canonical record for each:
 
-- **Phase 9 decisions D13, D14 and D16.** Three open owner decisions; D15 was
-  resolved on 2026-09-27 as a merge and P9-A is satisfied. See
-  `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` §5. D13 (code-signing
-  identity) needs a credential; D14 (update-feed location) is entangled with
-  D10 and prevents Phase 9 closing before D10 is decided; D16 (release/version
-  policy) has no external dependency. Phase 9 items requiring a built or installed Windows
-  artifact must be implemented on DEVICE-01 — DEVICE-02 cannot run WiX/NSIS or
-  `cargo test` (§6 of that document).
-- **D8** (practice/simulation resume, with A6 as its engineering half) and
-  **D9** (evaluation-failure behaviour). Both are open owner decisions. See
-  `docs/PHASE_8_3_ASSESSMENT_MODE.md` §3.
+- **Phase 9 decisions D13 and D14.** Two open owner decisions. **D15** was
+  resolved 2026-09-27 as a merge (P9-A satisfied) and **D16** was resolved
+  2026-10-01 under the owner's standing authorization (`docs/RELEASE_POLICY.md`,
+  P9-D satisfied) — neither is open any more. See
+  `docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` §5. D13 (code-signing identity)
+  needs a purchased credential; D14 (update-feed location) is entangled with D10
+  and prevents Phase 9 closing before D10 is decided. Phase 9 items requiring a
+  built or installed Windows artifact must be implemented on DEVICE-01 —
+  DEVICE-02 cannot run WiX/NSIS or `cargo test` (§6 of that document).
+- **D8 and D9 are RESOLVED** (2026-10-01, standing authorization, `0c09e36`):
+  an interrupted attempt is continued rather than resumed, and a failed
+  evaluation is visible, retryable and free. **A6** remains as accepted Phase 7
+  debt. See `docs/PHASE_8_3_ASSESSMENT_MODE.md` §3.
 - **D10** (what persists a web learner's progress). This blocks roadmap step 4
-  (web deployment), and therefore step 5 (PayMongo). See `docs/DECISION_REGISTER.md`.
+  (web deployment), and therefore step 5 (PayMongo), and **D14** behind it. Its
+  unblocked half is delivered: the learner-state classification, the named
+  external blocker and a labelled recommendation are in
+  `docs/DECISION_REGISTER.md`. Closing it needs a provider account and an
+  account model that do not exist.
+- **D17** (may a learner study before retaking an interrupted Assessment) and
+  **D18** (which content contract the runtime ingests). Both are open owner
+  decisions. D18 blocks the whole of DEVICE-02's Knowledgebase lane and is the
+  one to answer first: 324 KB records are authored against a schema it may not
+  select. D17 would change D4's scope or D6's retake rule, and a
+  characterization test pins today's behaviour so whoever decides it sees the
+  current expectation fail and reads why.
 - **A2, A7, A9, A12.** These are accepted Phase 7 debt awaiting decisions or content. See
   `docs/DECISION_REGISTER.md`.
 - **`feat/training-question-bank` is MERGED** (D15, owner decision 2026-09-27;
@@ -111,3 +124,19 @@ Product and engineering work, with the canonical record for each:
   readable.
 - `pnpm` is not on PATH on DEVICE-01. `npx --yes pnpm@9 <cmd>` is the working
   form there.
+- **Hand-maintained test counts in prose go stale every time the suite grows.**
+  `README.md` line 157 quotes 390 nexus-core + 228 desktop = 618 and line 40
+  quotes `cargo test` 55; measured 2026-10-02 they are 804 + 330 = 1134 and
+  70/70. Those figures were correct when the C-02 sweep wrote them - the D15
+  merge then grew the suites and nothing re-measured. This is the *second* time
+  the same sentence has drifted, so the fix worth making is structural rather
+  than arithmetic. `README.md` is DEVICE-02-owned and the item is assigned in
+  `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md`; DEVICE-01 did not edit it.
+- **The control plane itself drifted, and ranked above the register while it
+  did** (found and reconciled 2026-10-02 at `P9-2026-10-02-001`). The lesson
+  recorded with it: the evidence documents - this file, `BASELINE.md`,
+  `docs/PHASES_BUILDING_LEDGER.md` - stayed correct, because every row in them
+  carries a command or a commit. The instruction documents drifted, because
+  prose asserting a decision's state has nothing to check it against. When a
+  decision changes state, the instruction documents are the ones to go and
+  correct.

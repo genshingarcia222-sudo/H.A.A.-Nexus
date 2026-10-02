@@ -7,7 +7,7 @@ One rule governs every row: a status is only as good as the command or commit in
 its evidence column. "Verified" means it was run on a named device against a
 named commit. Anything else says so.
 
-**Control version:** `P9-2026-10-01-001` · **Ledger updated:** 2026-10-01 ·
+**Control version:** `P9-2026-10-02-001` · **Ledger updated:** 2026-10-02 ·
 **Canonical `main`:** see `.nexus/CURRENT_STATE.md`, which `nexus-sync` re-checks
 against the remote on every read.
 
@@ -59,7 +59,7 @@ not actually performed on a Windows machine.**
 | Packaging produces artifacts | `tauri build` at `894a425`: 9.78 MB exe, 3.61 MB MSI, 2.54 MB NSIS setup |
 | Release builds are windowed | PE `Subsystem` 2 measured on a build of the branch that is now `main` |
 | Cross-platform path handling | `app_data_dir().join("haa-nexus.sqlite")` with `create_dir_all`; tests use `std::env::temp_dir()`. No hardcoded POSIX path in shipped code |
-| Tooling runs on Windows | preflight **25/25**, nexus-sync **81/81**, both zero-dependency Node with explicit CRLF handling |
+| Tooling runs on Windows | preflight **27/27**, release `version` **25/25**, nexus-sync **81/81**, all zero-dependency Node with explicit CRLF handling. Re-measured 2026-10-02 |
 | Web/desktop parity of the closed-book boundary | Exercised live in the browser preview on 2026-09-27 as well as in jsdom |
 | Release binary size, three profiles | `cargo build --release --offline` run three times on identical source, rustc 1.98.1; the default figure reproduced exactly on a fourth run |
 | A failed evaluation is visible and retryable | The evaluator was deliberately broken in the dev server on 2026-10-01: the "Not scored" notice rendered, Submit was disabled, the draft stayed on screen; the file was restored and checksum-verified byte-identical |
@@ -129,7 +129,9 @@ minutes; deleting the file is the whole of turning it off.
 | Branch / PR | State | Note |
 |---|---|---|
 | `feat/training-question-bank` (PR #3) | **MERGED** `c384ac5` | D15, owner decision 2026-09-27 |
-| `feat/knowledgebase-expansion` (PR #21) | **OPEN, do not merge** | DEVICE-02's lane; its own integration gate is unsatisfied and **D18** comes first |
+| `feat/knowledgebase-expansion` (PR #21) | **OPEN, do not merge** | DEVICE-02's lane; its own integration gate is unsatisfied and **D18** comes first. 10 ahead / 0 behind `main`, `MERGEABLE` / `CLEAN`, CI green (run `36822607147` at `9e58995`) |
+| PR #22 | **OPEN, inside DEVICE-02's lane** | Targets `feat/knowledgebase-expansion`, not `main`, so it is not a DEVICE-01 integration. CI green (run `36825852812` at `dbb7c12`) |
+| `claude/device01-phase9`, `claude/device02-phase9`, `claude/device02-phase9-d16-caveat`, `claude/device02-c02-*` | **fully merged** | `git rev-list --left-right --count main...<branch>` returns `0` on the branch side for each, 2026-10-02. They carry nothing `main` lacks |
 | PR #18, #19 (C-02 sweep) | **MERGED** `b1ef49d`, `2556d1e` | Documentation accuracy |
 | Overlap between the two live lanes | `CHANGELOG.md`, `.gitattributes`, and now `package.json` `scripts` | All mechanical. Both lanes append to the same `scripts` block after `nexus-sync:test` — `main` four `version:*`, PR #21 nine `kb:*`. Union resolution, §10(G) and §10(H) |
 | Any release tag | **none exists** | `docs/RELEASE_POLICY.md` §6 refuses a stable release while P9-B and P9-E are blocked |
@@ -139,3 +141,38 @@ minutes; deleting the file is the whole of turning it off.
 Add a row when a phase item changes state, and put the command or commit that
 proves it in the evidence column. If a row cannot be given evidence, it does not
 belong here — it belongs in `docs/DECISION_REGISTER.md` as an open question.
+
+## 7. Reconciliation at `P9-2026-10-02-001`
+
+This ledger was already current; `docs/PHASES_BUILDING_CONTROL.md` §§2–8 were
+not, and §1 ranks that document above the register, so the authoritative
+instruction set disagreed with the evidence collected here. The audit that found
+it, and what it measured, is recorded in the control document's §3, §3a and §12.
+
+Measured on `main` on 2026-10-02, DEVICE-01, rustc 1.98.1, Node 24.21.0:
+nexus-core **804/804** (66 files), desktop **330/330** (33 files), preflight
+**27/27**, release `version` **25/25**, nexus-sync **81/81**, `pnpm -r typecheck`
+clean, `pnpm -r build` clean, `cargo fmt --check` clean, `cargo test --offline`
+**70/70**, `cargo clippy --all-targets` **zero warnings**.
+Preflight: 18 decisions recorded, 10 blocked, version parity `yes`, releasable
+format `yes`. CI green on the tip, run `36819449371` at `9416bf8`.
+
+No decision was resolved and no Phase 9 item implemented by that reconciliation.
+
+**Two defects it did find.** One in code: `cargo clippy --all-targets` reported
+`empty_line_after_doc_comments` at `apps/desktop/src-tauri/src/db/delivery.rs:13`
+— a module-level doc block written as `///` with a trailing blank line, so
+rustdoc attached it to a private helper it does not describe. Converted to `//!`
+module docs; clippy now reports zero warnings. One in documentation, left to its
+owner: `README.md` quotes 390 + 228 = 618 tests and `cargo test` 55, against a
+measured 804 + 330 = 1134 and 70/70. Those figures were correct when the C-02
+sweep wrote them and the D15 merge outgrew them. `README.md` is DEVICE-02-owned,
+so it is assigned in `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md` rather than edited
+here.
+
+**Which documents drifted, and which did not.** Worth recording as a property of
+the system rather than as an incident: the documents that stayed correct are the
+ones where every row carries a command or a commit — this ledger,
+`.nexus/BASELINE.md`, `.nexus/CURRENT_STATE.md`'s measured fields. The ones that
+drifted are the ones that assert a decision's state in prose. Evidence formats
+resist rot; instruction formats do not.
