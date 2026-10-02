@@ -31,9 +31,9 @@ last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 27/2
 last_verified_build: "PASS - pnpm -r build (2026-10-01, DEVICE-01, baseline B-006); cargo build --release measured 10,278,912 B at B-005"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-01, DEVICE-01, baseline B-006)"
 last_verified_rust: "PASS - cargo test 70/70 and cargo fmt --check clean, rustc 1.98.1 (2026-10-01, DEVICE-01, baseline B-006)"
-active_task: P9-008
+active_task: P9-009
 task_owner: DEVICE-01
-task_status: COMPLETE
+task_status: ACTIVE
 last_successful_sync: 2026-10-01T00:07:25.606Z
 last_sync_device: DEVICE-01
 last_sync_commit: a83a9d3cd82954ae12d11fc6ea2b7f53a92e953e

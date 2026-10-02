@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-008
-task_name: "CI gates, and the D10 persistence boundary analysis"
+task_id: P9-009
+task_name: "Control-plane and milestone reconciliation audit"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-09-30T23:50:28.277Z
-last_update: 2026-10-01T05:22:45.293Z
+status: ACTIVE
+started_at: 2026-10-02T11:14:03.750Z
+last_update: 2026-10-02T11:14:03.750Z
 stale_after_hours: 12
-expected_scope: "Two items. (1) Establish CI: a GitHub Actions workflow running the release gates that exist today, per master control prompt section 30. It has never been executed by Actions, so it is recorded as AWAITING ENVIRONMENT VALIDATION, not as verified. (2) D10: deliver the unblocked half - classify every piece of learner state as temporary, device-local, account-bound, cloud or derived, name the exact external blocker, and record a labelled recommendation. D10 is NOT resolved: cloud persistence needs a provider account and an account model that do not exist."
-affected_areas: ".github/, docs/, CHANGELOG.md, .nexus/"
+expected_scope: "Reconcile the top of the authority order against repository evidence. docs/PHASES_BUILDING_CONTROL.md sections 2-8, docs/PHASE_BUILD_HANDOFF_DEVICE-01.md and the .nexus/CURRENT_STATE.md prose still describe D8, D9, D15 and D16 as open and PR #3 as unmerged, which the repository disproves (082fa95 is an ancestor of main; RELEASE_POLICY.md exists; the register and ledger record all four resolved). Control-plane integrity only: resolve no decision, implement no Phase 9 item, touch no DEVICE-02 file. Plus repository-wide regression validation on HEAD."
+affected_areas: "docs/PHASES_BUILDING_CONTROL.md,docs/PHASE_BUILD_HANDOFF_DEVICE-01.md,docs/PHASES_BUILDING_LEDGER.md,CHANGELOG.md,.nexus/"
 branch: main
-claim_commit: 67f037b9972298c00381bc61933d753b25656241
-last_commit: 6c86f32ded8a215666b9c0f34e308659856a1330
+claim_commit: 9416bf8a1c56736eff254155faf90ccc3752f1ba
+last_commit: 9416bf8a1c56736eff254155faf90ccc3752f1ba
 handoff_required: no
 handoff_to: none
-next_action: "No ungated engineering work remains in the DEVICE-01 lane. Every remaining blocker is an owner decision: D18 first (it alone blocks DEVICE-02's Knowledgebase lane and PR #21), then D10 (needs a provider account and an account model; blocks D14 and roadmap steps 4-5), D13 (signing identity; blocks P9-B and P9-E), D17 (would change D4's scope or D6's retake rule). Do not cut a release: RELEASE_POLICY section 6 refuses a stable one at 0.1.0 and the tag is the owner's. CI is green and runs on every push and PR - read the run, not the badge."
+next_action: "Reconcile the stale sections, then record the measured suite on HEAD."
 ```
 
 ## Ownership history
@@ -98,3 +98,4 @@ Timestamps are UTC.
 | 2026-09-30T23:54:16.491Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | CI created (.github/workflows/ci.yml) running the release-policy gates; AWAITING ENVIRONMENT VALIDATION - no hosted runner has executed it, and the Windows job is the uncertain part. D10 NOT resolved and closing it declined: cloud persistence needs a provider account and an account model that do not exist, and browser-local would contradict the Business Model Spec. Delivered the unblocked half - the learner-state classification, the competency-accumulator and entitlement consequences, and a labelled recommendation. |
 | 2026-10-01T05:22:27.623Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | complete |
 | 2026-10-01T05:22:45.293Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | Finalization verified for the 2026-10-01 cycle: origin/main 61540b1, tree clean, control plane P9-2026-10-01-001, D16/D8/D9 recorded RESOLVED and independently classified so by preflight, D10 still classified blocked, CI run 36793771261 at df5dae9 recorded as evidence in six places, DEVICE-02's record untouched (UNKNOWN / NOT VERIFIED from its own commit trailer). The only gap was this record's own next_action, which read 'not recorded'. |
+| 2026-10-02T11:14:03.750Z | CLAIM | DEVICE-01 | P9-009 | claimed |
