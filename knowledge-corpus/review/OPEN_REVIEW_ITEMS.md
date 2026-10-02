@@ -68,10 +68,56 @@ registry entry governs every coding record the corpus will ever hold.
 
 | # | Decision | Why it blocks |
 | --- | --- | --- |
-| O1 | Which schema survives — this branch's `knowledge-corpus/schema/kb-record.schema.json` or the D12 Zod schema at `packages/nexus-core/src/knowledge-corpus/`, on `main` since D15's merge `c384ac5`? | Two implementations of one contract. D15 put one of them on `main` and explicitly did not choose it; records will have to be migrated to whichever wins |
+| O1 | Which schema survives — this branch's `knowledge-corpus/schema/kb-record.schema.json` or the D12 Zod schema at `packages/nexus-core/src/knowledge-corpus/`, on `main` since D15's merge `c384ac5`? | Two implementations of one contract. D15 put one of them on `main` and explicitly did not choose it; records will have to be migrated to whichever wins. **Measured below.** |
 | O2 | Who is a registered reviewer, and what qualifies someone to verify a privacy or a coding locator? | No review can be recorded until reviewers are registered |
 | O3 | Does the archive v1.0 source set still exist, and can it be supplied? | 400 seed records and the whole of corpus layer 1 are absent. See `source/SOURCE_RECONCILIATION_v1.md` |
 | O4 | Is the advisory mapping from the five archive difficulty bands to the repository's 6-level authoring scale accepted, rejected, or replaced? | `repositoryLevelHint` is currently advisory and unconsumed. Ingestion needs a real answer |
+
+### O1, measured
+
+`npm run kb:divergence` measures the two contracts instead of describing them.
+Re-run it rather than trusting these figures: they are a snapshot of a tool whose
+output moves with the schemas.
+
+As of this commit, against all 432 authored records:
+
+| | Contract A (this branch, authoring) | Contract B (`main`, runtime) |
+| --- | --- | --- |
+| File | `knowledge-corpus/schema/kb-record.schema.json` | `packages/nexus-core/src/knowledge-corpus/` + `question-bank/` |
+| Shape | one flat record type, `recordType` discriminator | four typed families: KNOWLEDGE / ITEM / CONTEXT / CONCEPT |
+| Fields | 54 declared, **all 54 populated** by the corpus | 54 across the family union |
+| Field names in common | **11** | **11** |
+| Field names with no counterpart | **43** | **43** |
+
+The eleven shared names are `choices`, `contentStatus`, `domain`, `evidence`,
+`flags`, `id`, `provenance`, `rationale`, `reviewStatus`, `revision`,
+`verification`.
+
+**Why this is a migration and not a rename.** Three findings, each from the tool:
+
+1. **The models disagree about what a record *is*.** A is one record type that
+   carries its own prompt, packet, choices and gold behaviour. B splits the same
+   material across families and expresses an assessment item as an extension of
+   the **Training question bank** schema (`AssessmentItemObjectSchema` extends
+   `TrainingQuestionObjectSchema`), so B's item lineage is D12's question bank,
+   not this corpus. The two were designed from different starting points.
+2. **B's schemas are `.strict()` — 33 of them.** An unrecognised key is a
+   validation error, not an ignored extra. So the 43 unmapped keys are not
+   "additional detail B would tolerate": every record carrying one fails until
+   that key has a home. **39 of the 43 appear on all 432 records**; only four are
+   partial — `correctChoiceIds` (318), `expectedOutput` (114), `canonicalOrder`
+   (16) and `steps` (16).
+3. **Nothing is free in either direction.** A declares no property the corpus
+   leaves unused, so no part of A can be dropped as dead weight; and 43 of B's
+   fields — including `family`, `kind`, `statement`, `questionId`,
+   `targetSegmentIds` — are supplied by no record, so adopting B means authoring
+   them, not just moving what exists.
+
+**This measurement does not choose.** It does not say which contract is better,
+and the direction of migration is still O1. What it establishes is that O1 is a
+54-field remodelling of 432 records in either direction, not a schema-file
+deletion — so it should be decided before more batches are authored, because
+every further record multiplies the same cost.
 
 ## 6. Known defects found and fixed during this batch — closed, recorded
 

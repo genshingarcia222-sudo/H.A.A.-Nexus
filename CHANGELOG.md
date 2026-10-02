@@ -11,6 +11,73 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Knowledgebase: O1 Measured — the Two Record Contracts Are 54 Fields Apart (2026-10-02)
+
+**DEVICE-02, lane KB-01, on `feat/knowledgebase-expansion`. Tooling and a review
+record only. No corpus record changed, no runtime code changed, no decision
+resolved.**
+
+The Knowledgebase lane has been blocked on **O1 / D18** — which of two record
+contracts survives — and the queue described that question without ever
+measuring it. `npm run kb:divergence` now measures it, so the decision can be
+made from numbers.
+
+**What was measured.** Both contracts, against all 432 authored records:
+
+| | Contract A — authoring, this branch | Contract B — runtime, on `main` since D15 |
+| --- | --- | --- |
+| Source | `knowledge-corpus/schema/kb-record.schema.json` | `packages/nexus-core/src/knowledge-corpus/` + `question-bank/` |
+| Shape | one flat record type, `recordType` discriminator | four typed families: KNOWLEDGE / ITEM / CONTEXT / CONCEPT |
+| Fields | 54 declared, all 54 populated | 54 across the family union |
+| Names in common | 11 | 11 |
+| Names with no counterpart | 43 | 43 |
+
+**Three findings that change what O1 is.** It is not a schema-file deletion:
+
+1. The models disagree about what a record *is*. B expresses an assessment item
+   as an extension of the **Training question bank** (`AssessmentItemObjectSchema`
+   extends `TrainingQuestionObjectSchema`), so B's item lineage is D12's bank,
+   not this corpus.
+2. B's schemas are `.strict()` — 33 of them — so an unmapped key is a validation
+   error, not tolerated extra detail. **39 of the 43 unmapped keys appear on all
+   432 records**; only `correctChoiceIds` (318), `expectedOutput` (114),
+   `canonicalOrder` (16) and `steps` (16) are partial.
+3. Neither direction is free. A declares nothing the corpus leaves unused, and 43
+   of B's fields — `family`, `kind`, `statement`, `questionId`,
+   `targetSegmentIds` among them — are supplied by no record, so adopting B means
+   authoring them.
+
+So O1 is a 54-field remodelling of 432 records whichever way it goes, and every
+further batch multiplies the same cost. **O1 / D18 remains open; nothing here
+answers it.**
+
+**The tool had to be fixed twice before its numbers could be trusted**, and both
+bugs inflated the divergence:
+
+- `nexus-core` declares no build (`main` points at `src/index.ts`), so a
+  zero-dependency tool cannot import the Zod schemas and must read them. The
+  first reader dropped every field behind a `/** … */` or `//` comment — which
+  is nearly every field in these files — losing `questionId`, `domain`,
+  `question` and `rationale`. Comments are now stripped, string literals intact,
+  and the case is a regression test.
+- `CaseContextSchema` is a `discriminatedUnion`, not an object literal, and was
+  reported as a **missing** schema. Unions now resolve to the union of their
+  members' fields.
+
+A third correction was caught by re-measuring rather than by a test: the review
+record first said 38 of 43 keys appear on all records. It is 39.
+
+**Verified.** `npm run kb:verify` (manifest check, validate, privacy scan, and
+now three test suites) exits 0: kb-validate **52/52**, kb-privacy-scan **19/19**,
+kb-schema-divergence **19/19**. Corpus unchanged at 432 records across 57 files,
+manifest matching 70 checksummed files, privacy verdict CLEAR.
+
+**Not verified, and not claimed.** The measurement is name-level: it compares
+declared field names, not Zod's runtime behaviour, because the schemas cannot be
+executed from a zero-dependency tool. The tool's header says so. No `cargo test`,
+`tauri build`, or Windows figure is involved. `.nexus/` was not written — see the
+handoff for why.
+
 ## CI Is Green, and It Found Two Real Defects Getting There (2026-10-01)
 
 Run **36793771261** at `df5dae9` passed both jobs on hosted runners, reproducing
