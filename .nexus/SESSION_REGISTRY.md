@@ -71,19 +71,19 @@ Consequences, in order of how often they matter:
 ```yaml nexus-state
 registry_version: 1
 S-phases-building.DEVICE-01.attached_at: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen: 2026-10-01T00:07:19.519Z
-S-phases-building.DEVICE-01.last_seen_commit: 31be272bbe7f6e467dce1a84dd46baa2867c4f9b
+S-phases-building.DEVICE-01.last_seen: 2026-10-02T11:35:00.945Z
+S-phases-building.DEVICE-01.last_seen_commit: 5af0b18c7c1c4c8eaae7e4812dcd9dd34c92050e
 S-phases-building.name: "PHASES BUILDING"
 S-phases-building.role: "orchestrator: authoritative phase plan, task partition, integration and conflict policy"
 S-phases-building.status: ACTIVE
-S-phases-building.control_version: P9-2026-10-01-001
+S-phases-building.control_version: P9-2026-10-02-001
 S-phases-building.branch: main
-S-phases-building.next_action: "DEVICE-01: D16, D8, D9 closed under standing authorization; CI created and VERIFIED green (run 36793771261 at df5dae9, both jobs, reproducing B-006 off-device). No ungated engineering work remains in this lane. Every remaining blocker is owner-gated: D10 (provider account + account model) which blocks D14, D13 (signing identity), D17, D18. DEVICE-02: Knowledgebase lane unchanged, PR #21 held pending D18; note package.json scripts conflicts mechanically with main, and CI now runs on every PR."
+S-phases-building.next_action: "DEVICE-01: control plane reconciled to the repository at P9-2026-10-02-001 - sections 2-8 of PHASES_BUILDING_CONTROL, sections 4-9 of the Phase 9 spec, both handoffs and CURRENT_STATE prose had still been asserting D8/D9/D15/D16 open and PR #3 unmerged. No decision resolved. Superseded evidence preserved in the new section 3a. Open set is now D18, D10, D13, D17 (order D18 -> D10 -> D13 -> D17, D14 after D10) - all owner-gated, so DEVICE-01 again has no ungated engineering work. Baseline B-007 at f48a1fc; clippy now zero warnings. DEVICE-02: your handoff now has ONE ungated item - README.md test counts are stale again (quotes 390+228=618 and cargo test 55; measured 804+330=1134 and 70/70), yours to fix because README is yours. Otherwise hold PR #21 pending D18, dispose of PR #22 in your own lane, and put your DEVICE_REGISTRY record back in your hands with any state-writing nexus-sync command."
 S-phases-building.created_by: DEVICE-01
 S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
-S-phases-building.updated_at: 2026-10-01T00:07:19.519Z
-S-phases-building.revision: 7
+S-phases-building.updated_at: 2026-10-02T11:35:00.945Z
+S-phases-building.revision: 8
 S-phases-building.DEVICE-02.attached_at: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen_commit: d162b6d36f1b11873b6d60359d281fcac55b426d
@@ -105,3 +105,4 @@ it replaced. Timestamps are UTC.
 | 2026-09-30T23:25:17.163Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 5 |
 | 2026-09-30T23:54:22.595Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 6 |
 | 2026-10-01T00:07:19.519Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 7 |
+| 2026-10-02T11:35:00.945Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 8 |
