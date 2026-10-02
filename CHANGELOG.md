@@ -11,6 +11,70 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## The Control Plane Was Telling Both Devices the Opposite of What the Repository Holds (2026-10-02)
+
+A reconciliation audit, `P9-2026-10-02-001`. **No decision was resolved, no
+Phase 9 item implemented, no assignment changed, and nothing DEVICE-02 owns was
+touched.** What changed is that the top of the authority order had drifted behind
+the evidence.
+
+`docs/PHASES_BUILDING_CONTROL.md` §1 ranks that document **above**
+`docs/DECISION_REGISTER.md`, and the whole point of it is that either device can
+recover its correct instructions from Git alone. Its §§2-8 still said:
+
+- **D16 blocks P9-D's policy half** - resolved at `fba3544`; `docs/RELEASE_POLICY.md` is that policy half and P9-D is satisfied.
+- **D8 and D9 are open** - both resolved 2026-10-01 at `0c09e36`.
+- **D15 "now has complete measured inputs, and is still open"** - resolved by the owner 2026-09-27 and executed as merge `c384ac5`.
+- **`de2c2d1` is not an ancestor of `main`** - `git merge-base --is-ancestor` says it is, via that merge.
+- **DEVICE-01's standing duty is to keep PR #3 mergeable *without merging it*** - PR #3 is **MERGED**; `082fa95` is an ancestor of `main`.
+- **Phase 9 is "specified and fully decision-blocked"** - two of its five items are satisfied.
+- Its §3 opened "Every line below was measured in the session that issued this document" while carrying rows measured two control versions earlier against `045b1e1` and baseline **B-002**.
+
+`docs/PHASES_BUILDING_LEDGER.md` - the *evidence* document - was correct
+throughout. So was `.nexus/`. The defect was confined to the instruction
+documents, which is the worse place for it: a device obeying §1 would have
+believed the register was subordinate to a stale table.
+
+**The DEVICE-02 handoff was the sharpest case.** It carried two mutually
+contradictory "exact next action" sections. The top correctly said: hold PR #21,
+D18 first. The bottom told the device to claim `P9-003` and redo items 1 and 2 of
+the C-02 documentation sweep - work authored on DEVICE-02 and integrated weeks
+earlier as PR #18 and PR #19. A recovering session following the file to its end
+would have redone finished work. That instruction is now withdrawn *and the
+withdrawal recorded in place*, not silently deleted.
+
+**What the reconciliation preserves rather than overwrites.** The superseded §3
+table is kept verbatim as a new **§3a**, row by row, against what is true now.
+A control plane that quietly rewrites its own evidence cannot be audited, and
+"five of these rows the repository has since outgrown" is itself a finding worth
+keeping.
+
+**§5's open set is now D18, D10, D13, D17**, in the recommended order
+**D18 → D10 → D13 → D17**, with D14 after D10. D18 is first because it alone
+unblocks an entire lane, and because every KB record authored before it is
+answered is written against a schema that may not be the one ingested - 324
+records of exposure, the largest single piece of rework risk in the repository.
+The prohibition lists drop D8, D9, D15, D16 and PR #3, and gain PR #21,
+*bridging the two content contracts* (a bridge would be a third contract), and
+cutting a release.
+
+**Measured on `main`, DEVICE-01, 2026-10-02**, rustc 1.98.1, Node 24.21.0:
+nexus-core **804/804** (66 files), desktop **330/330** (33 files), preflight
+**27/27**, release `version` **25/25**, nexus-sync **81/81**, `pnpm -r typecheck`
+clean, `pnpm -r build` clean, `cargo fmt --check` clean, `cargo test --offline`
+**70/70**, `cargo clippy --all-targets` exit 0. Preflight: 18 decisions recorded,
+10 blocked (D10, A2, A9, A6, A7, A12, D13, D14, D17, D18), version parity `yes`,
+releasable format `yes`. CI green on the tip: run `36819449371` at `9416bf8`.
+Every DEVICE-02 lane branch except the Knowledgebase one is fully merged;
+`origin/feat/knowledgebase-expansion` is 10 ahead and 0 behind, `CLEAN`, and
+**stays unmerged**.
+
+**Still true, and still the whole of what remains:** no ungated engineering work
+exists in either lane. That is a finding about the decision boundary, not a gap
+to fill with invented work.
+
+---
+
 ## CI Is Green, and It Found Two Real Defects Getting There (2026-10-01)
 
 Run **36793771261** at `df5dae9` passed both jobs on hosted runners, reproducing
