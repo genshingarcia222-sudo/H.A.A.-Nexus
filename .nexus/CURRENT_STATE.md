@@ -25,12 +25,12 @@ repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: main (publishes to main; the historical nexus/sync-bootstrap checkout is 106 behind and is not used)
 current_phase: "Phase 9 - Packaging & Release Hardening (P9-A and P9-D satisfied; P9-B/C/E decision-blocked on D13 and D14; Phase 8 is NOT closed)"
 current_milestone: "D16, D8 and D9 all resolved 2026-10-01 under the owner STANDING AUTHORIZATION (none of them owner decisions; each labelled in the register, ledger and changelog). P9-D is SATISFIED so Phase 9 has P9-A and P9-D done with P9-B/C/E blocked on D13 and D14. Phase 8.3 decision group COMPLETE (D1, D3-D9). Phase 8 still open: roadmap steps 3-8 unstarted and D10 blocks step 4. Control plane at P9-2026-10-02-001 (reconciliation audit; no decision resolved). DEVICE-02 owns the Knowledgebase lane (PR #21, not merged, D18 first)"
-baseline_commit: 0c09e361ddaa46b0634859a220e049a9c5096758
-last_verified_commit: 0c09e361ddaa46b0634859a220e049a9c5096758
-last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-01, DEVICE-01, baseline B-006)"
-last_verified_build: "PASS - pnpm -r build (2026-10-01, DEVICE-01, baseline B-006); cargo build --release measured 10,278,912 B at B-005"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-01, DEVICE-01, baseline B-006)"
-last_verified_rust: "PASS - cargo test 70/70 and cargo fmt --check clean, rustc 1.98.1 (2026-10-01, DEVICE-01, baseline B-006)"
+baseline_commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
+last_verified_commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
+last_verified_tests: "PASS - nexus-core 804/804 (66 files), desktop 330/330 (33 files), preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-02, DEVICE-01, baseline B-007)"
+last_verified_build: "PASS - pnpm -r build (2026-10-02, DEVICE-01, baseline B-007); cargo build --release measured 10,278,912 B at B-005"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-02, DEVICE-01, baseline B-007)"
+last_verified_rust: "PASS - cargo test 70/70, cargo fmt --check clean, cargo clippy --all-targets zero warnings, rustc 1.98.1 (2026-10-02, DEVICE-01, baseline B-007)"
 active_task: P9-009
 task_owner: DEVICE-01
 task_status: ACTIVE

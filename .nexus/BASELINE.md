@@ -14,19 +14,57 @@ Earlier checkpoints, from before this file existed, are recorded in
 preserved there, not copied here.
 
 ```yaml nexus-state
-commit: 0c09e361ddaa46b0634859a220e049a9c5096758
+commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
 branch: main
-timestamp: 2026-10-01T07:55:00Z
+timestamp: 2026-10-02T11:45:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 27/27, nexus-sync 81/81, release version tool 25/25"
+tests: "PASS - nexus-core 804/804 (66 files), desktop 330/330 (33 files), preflight 27/27, nexus-sync 81/81, release version tool 25/25"
 build: "PASS - pnpm -r build"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
-rust: "PASS - cargo test 70/70 and cargo fmt --check clean; rustc 1.98.1, rustfmt 1.9.0-stable"
-audit_status: "Phase 7 closed PASS WITH CONDITIONS; Phase 8.3 decision group COMPLETE (D1, D3-D9 all resolved); D15 executed (c384ac5); D16, D8 and D9 resolved 2026-10-01 under the owner STANDING AUTHORIZATION; P9-A and P9-D both SATISFIED"
-known_conditions: "D10, D13, D14, D17, D18 open; A2, A6, A7, A9, A12 open; Phase 9 P9-B/C/E blocked on D13 and D14 (D14 needs D10); Phase 8 not closed - roadmap steps 3-8 unstarted, D10 blocks step 4; tauri build not re-run since the D15 merge; no CI exists; no release tag and the policy refuses a stable one at 0.1.0; feat/knowledgebase-expansion (PR #21) deliberately unmerged pending D18"
+rust: "PASS - cargo test --offline 70/70, cargo fmt --check clean, cargo clippy --all-targets ZERO warnings; rustc 1.98.1, cargo 1.98.1"
+audit_status: "Phase 7 closed PASS WITH CONDITIONS; Phase 8.3 decision group COMPLETE (D1, D3-D9 all resolved); D15 executed (c384ac5); D16, D8 and D9 resolved 2026-10-01 under the owner STANDING AUTHORIZATION; P9-A and P9-D both SATISFIED; control plane reconciled to the repository at P9-2026-10-02-001 - no decision resolved by that audit"
+known_conditions: "D10, D13, D14, D17, D18 open (recommended order D18 -> D10 -> D13 -> D17, D14 after D10); A2, A6, A7, A9, A12 open; Phase 9 P9-B/C/E blocked on D13 and D14; Phase 8 not closed - roadmap steps 3-8 unstarted, D10 blocks step 4; tauri build not re-run since the D15 merge, so P9-A's clean-machine verification is still owed; no release tag and the policy refuses a stable one at 0.1.0; feat/knowledgebase-expansion (PR #21) deliberately unmerged pending D18; README.md test counts stale (390+228 vs measured 804+330) - DEVICE-02-owned, assigned in its handoff"
 ```
 
 ## History
+
+### B-007 — control plane reconciled to the repository; clippy clean — `f48a1fc` — 2026-10-02 — DEVICE-01
+
+The tree at `f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec`, on `main`, working tree
+clean, verified in full on DEVICE-01 against the release gates in
+`docs/RELEASE_POLICY.md` §7.
+
+| Check | Command | Result |
+|---|---|---|
+| Version | `node tools/release/version.mjs check` | six declarations at `0.1.0`, format releasable |
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **804/804** (66 files), desktop **330/330** (33 files) |
+| Preflight tool | `node tools/preflight/preflight.test.mjs` | **27/27** |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; 18 decisions recorded, **10 blocked**, 7 resolved |
+| Sync tool | `node tools/nexus-sync/nexus-sync.test.mjs` | **81/81** |
+| Release tool | `node tools/release/version.test.mjs` | **25/25** |
+| Typecheck | `npx --yes pnpm@9 -r typecheck` | clean |
+| Build | `npx --yes pnpm@9 -r build` | clean |
+| Rust | `cargo test --offline` | **70/70**, rustc 1.98.1 |
+| Rust format | `cargo fmt --check` | clean |
+| Rust lint | `cargo clippy --offline --all-targets` | **zero warnings** — new at this baseline; B-006 carried one |
+
+**No test count moved from B-006.** That is the point of this baseline: the work
+it records was a documentation reconciliation plus a one-item lint fix, and a
+changed count would have meant something unintended happened.
+
+**What changed since B-006.** `docs/PHASES_BUILDING_CONTROL.md` §§2–8,
+`docs/PHASE_9_PACKAGING_RELEASE_HARDENING.md` §§4–9, both phase-build handoffs
+and `.nexus/CURRENT_STATE.md`'s prose were reconciled against measured
+repository state at control version `P9-2026-10-02-001`; they had still been
+asserting that D8, D9, D15 and D16 were open and that PR #3 was unmerged. One
+code change: `apps/desktop/src-tauri/src/db/delivery.rs`'s module documentation
+was converted from a misattached `///` block to `//!` module docs, which is what
+took clippy to zero.
+
+**Not verified at this baseline, and not claimed:** no `tauri build` and no
+installer inspection were performed, so P9-A's clean-machine criterion and every
+P9-B/P9-E artifact figure still stand on B-005's measurements. CI reproduces the
+cross-platform gates but builds no installers.
 
 ### B-006 — D8 and D9 closed; Phase 8.3's decision group complete — `0c09e36` — 2026-10-01 — DEVICE-01
 
