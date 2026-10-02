@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P9-009
 task_name: "Control-plane and milestone reconciliation audit"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-10-02T11:14:03.750Z
-last_update: 2026-10-02T11:14:03.750Z
+last_update: 2026-10-02T11:35:15.187Z
 stale_after_hours: 12
 expected_scope: "Reconcile the top of the authority order against repository evidence. docs/PHASES_BUILDING_CONTROL.md sections 2-8, docs/PHASE_BUILD_HANDOFF_DEVICE-01.md and the .nexus/CURRENT_STATE.md prose still describe D8, D9, D15 and D16 as open and PR #3 as unmerged, which the repository disproves (082fa95 is an ancestor of main; RELEASE_POLICY.md exists; the register and ledger record all four resolved). Control-plane integrity only: resolve no decision, implement no Phase 9 item, touch no DEVICE-02 file. Plus repository-wide regression validation on HEAD."
 affected_areas: "docs/PHASES_BUILDING_CONTROL.md,docs/PHASE_BUILD_HANDOFF_DEVICE-01.md,docs/PHASES_BUILDING_LEDGER.md,CHANGELOG.md,.nexus/"
 branch: main
 claim_commit: 9416bf8a1c56736eff254155faf90ccc3752f1ba
-last_commit: 9416bf8a1c56736eff254155faf90ccc3752f1ba
+last_commit: 6bb482ae38ae9cda46d18e2ca5a56497cb275590
 handoff_required: no
 handoff_to: none
-next_action: "Reconcile the stale sections, then record the measured suite on HEAD."
+next_action: "No ungated engineering work remains in the DEVICE-01 lane, for the second session running, and the reconciliation confirmed that rather than assuming it. Every remaining blocker is owner-gated: D18 first (it alone unblocks DEVICE-02's whole lane and 324 KB records are exposed to it), then D10 (needs a provider account and an account model), D13 (a purchased signing identity), D17 (changes D4's scope or D6's retake rule); D14 follows D10. Do not cut a release: RELEASE_POLICY section 6 refuses a stable one at 0.1.0 and the tag is the owner's. Do not merge PR #21. The one piece of ungated work in the repository is README.md's stale test counts, which is DEVICE-02's file and is assigned in its handoff. Standing DEVICE-01 duty: when main advances past what the control plane and .nexus describe, re-measure and reconcile - the documents that drift are the ones asserting a decision's state in prose, not the ones carrying a command or a commit per row."
 ```
 
 ## Ownership history
@@ -99,3 +99,4 @@ Timestamps are UTC.
 | 2026-10-01T05:22:27.623Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | complete |
 | 2026-10-01T05:22:45.293Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | Finalization verified for the 2026-10-01 cycle: origin/main 61540b1, tree clean, control plane P9-2026-10-01-001, D16/D8/D9 recorded RESOLVED and independently classified so by preflight, D10 still classified blocked, CI run 36793771261 at df5dae9 recorded as evidence in six places, DEVICE-02's record untouched (UNKNOWN / NOT VERIFIED from its own commit trailer). The only gap was this record's own next_action, which read 'not recorded'. |
 | 2026-10-02T11:14:03.750Z | CLAIM | DEVICE-01 | P9-009 | claimed |
+| 2026-10-02T11:35:15.187Z | RELEASE COMPLETE | DEVICE-01 | P9-009 | complete |
