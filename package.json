@@ -28,7 +28,9 @@
     "kb:manifest:check": "node tools/knowledge-corpus/kb-manifest.mjs --check",
     "kb:test": "node tools/knowledge-corpus/kb-validate.test.mjs",
     "kb:test:privacy": "node tools/knowledge-corpus/kb-privacy-scan.test.mjs",
-    "kb:verify": "npm run kb:manifest:check && npm run kb:validate && npm run kb:privacy && npm run kb:test && npm run kb:test:privacy"
+    "kb:divergence": "node tools/knowledge-corpus/kb-schema-divergence.mjs",
+    "kb:test:divergence": "node tools/knowledge-corpus/kb-schema-divergence.test.mjs",
+    "kb:verify": "npm run kb:manifest:check && npm run kb:validate && npm run kb:privacy && npm run kb:test && npm run kb:test:privacy && npm run kb:test:divergence"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
