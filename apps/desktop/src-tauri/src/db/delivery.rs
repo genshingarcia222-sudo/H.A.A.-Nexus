@@ -1,16 +1,16 @@
+//! The exposure ledger's storage layer (D12 work package 8).
+//!
+//! Append-only, and the API is the enforcement: there is `append`, there is
+//! `record_answer`, and there is no update or delete. The table's own
+//! constraints repeat the same rules, so a caller that bypassed this module
+//! would still be refused by SQLite.
+//!
+//! Nothing here decides anything about selection. Rows are written after a
+//! decision has been made and read back so a later session can prefer what a
+//! learner has not seen.
+
 use super::models::{DeliveryEventDto, SelectionTraceDto};
 use rusqlite::{params, Connection};
-
-/// The exposure ledger's storage layer (D12 work package 8).
-///
-/// Append-only, and the API is the enforcement: there is `append`, there is
-/// `record_answer`, and there is no update or delete. The table's own
-/// constraints repeat the same rules, so a caller that bypassed this module
-/// would still be refused by SQLite.
-///
-/// Nothing here decides anything about selection. Rows are written after a
-/// decision has been made and read back so a later session can prefer what a
-/// learner has not seen.
 
 fn row_to_event(row: &rusqlite::Row) -> rusqlite::Result<DeliveryEventDto> {
     let jurisdictions_json: String = row.get("jurisdictions")?;
