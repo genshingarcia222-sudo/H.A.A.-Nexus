@@ -75,16 +75,19 @@ Five items, each with the evidence that establishes it.
 absent on `main` at `7e304a1`. A Windows release build therefore opens a console
 window behind the app.
 
-**Do not fix this on `main` yet.** The unmerged branch
-`origin/feat/training-question-bank` has tip commit `de2c2d1`
-*"fix(desktop): release builds are windowed, not console"*, which by its subject
-addresses exactly this. Implementing it independently on `main` would create a
-conflicting change in `main.rs` when that branch is merged, and merging it is an
-**escalated owner decision** (`.nexus/CURRENT_STATE.md` "Pending work"; decision
-N-007). Resolve **D15** first.
+~~**Do not fix this on `main` yet.**~~ **SATISFIED 2026-09-27.** The instruction
+above was to leave `main.rs` alone until **D15** chose between merging
+`origin/feat/training-question-bank` — whose tip `de2c2d1` was
+*"fix(desktop): release builds are windowed, not console"* — and reimplementing
+the attribute, because doing both would have conflicted in `main.rs`. The owner
+resolved D15 by merging (`c384ac5`), so the attribute arrived on `main` at
+`main.rs:8` with its guard test in the 70-test Rust suite. Nothing is left to
+reimplement.
 
-**Effort if reimplemented:** one attribute line. **Verification:** a Windows
-release build showing no console window — DEVICE-01 only.
+**Verification still owed:** a Windows release build showing no console window on
+a clean machine — DEVICE-01 only. The attribute is the mechanism and the guard
+test proves it is present, but `tauri build` has not been re-run since the merge.
+Nothing in that merge touches the bundler configuration.
 
 ### P9-B — Installer signing is absent
 
@@ -158,12 +161,20 @@ authorization.
 |---|---|---|---|
 | **D13** | What code-signing identity signs the installers — an OV/EV certificate, Azure Trusted Signing, or a self-signed certificate for an internal pilot only? | P9-B, P9-E | Costs money, requires legal identity, and determines whether public distribution is possible at all |
 | **D14** | Where does the update feed live — GitHub Releases, or first-party hosting? | P9-C | Intersects Phase 10 cloud architecture and **D10** (web persistence). Choosing first-party hosting pre-commits Phase 10 infrastructure |
-| **D15** | Is `origin/feat/training-question-bank` merged, or is its `windows_subsystem` fix reimplemented on `main`? | P9-A | The branch also carries the Training question run (M23), Pilot 001 r3 and open decision **D12**. Merging was already escalated and is undecided |
+| ~~**D15**~~ | ~~Is `origin/feat/training-question-bank` merged, or is its `windows_subsystem` fix reimplemented on `main`?~~ **RESOLVED 2026-09-27 by the owner: merge.** Executed as `c384ac5` | ~~P9-A~~ nothing | Was: the branch also carried the Training question run (M23), Pilot 001 r3 and then-open decision **D12**, so merging imported a product decision |
 | ~~**D16**~~ | ~~What is the release/version policy?~~ **RESOLVED 2026-10-01** under the owner's standing authorization: `docs/RELEASE_POLICY.md` | ~~P9-D~~ nothing | Was: no repository document established it |
 
 **D14 has a dependency worth stating plainly:** it is entangled with **D10**,
 which is itself open and already blocks commercialization roadmap steps 4 and 5.
 Phase 9 cannot fully close before D10 is decided.
+
+**Two decisions opened after this table was written**, neither of them a Phase 9
+item but both recorded here so the table is not read as the whole open set:
+**D17** (may a learner study before retaking an interrupted Assessment) and
+**D18** (which content contract the runtime ingests, which blocks DEVICE-02's
+Knowledgebase lane entirely). The canonical list is
+`docs/DECISION_REGISTER.md`, and `docs/PHASES_BUILDING_CONTROL.md` §5 records
+the recommended order: **D18 → D10 → D13 → D17**, with D14 after D10.
 
 ## 6. Device capability constraint
 
@@ -192,8 +203,11 @@ would still not produce or validate a Windows bundle. It is not proposed here.
 
 Phase 9 closes when all hold:
 
-1. **P9-A** resolved — a Windows release build opens no console window, verified
-   on DEVICE-01, by whichever route **D15** selects.
+1. **P9-A** resolved — **the mechanism is SATISFIED** (D15 merged at `c384ac5`;
+   attribute at `main.rs:8` plus a guard test). The criterion is not fully
+   discharged until a Windows release build of the *current* `main` is produced
+   on DEVICE-01 and seen to open no console window; `tauri build` has not been
+   re-run since the merge.
 2. **P9-B** resolved — MSI and NSIS are signed with the identity **D13**
    names, and a signed installer has been run on a clean Windows machine without
    a SmartScreen block attributable to signing.
@@ -208,15 +222,20 @@ Phase 9 closes when all hold:
 5. **P9-E** resolved — bundle metadata and the installer-visible license are
    populated and consistent with the commercial licensing decision.
 6. The baseline is re-verified on DEVICE-01 at the closing commit, appended to
-   `.nexus/BASELINE.md`, and no test count has regressed from B-002.
+   `.nexus/BASELINE.md`, and no test count has regressed from the latest recorded
+   baseline — **B-006** at `0c09e36`: nexus-core 804, desktop 330, preflight 27,
+   release `version` 25, nexus-sync 81, `cargo test` 70. (This criterion named
+   B-002 when it was written; it means "the current baseline", not that one.)
 7. `CHANGELOG.md` records what was verified and what was not, per
    `.nexus/SYNC_PROTOCOL.md`.
 
 ## 8. What Phase 9 must not do
 
 - **Not close Phase 8.** Commercialization roadmap steps 3–8 are unstarted and
-  **D8, D9, D10** are open. Phase 9 is packaging; it does not advance
-  entitlements, assessment, web deployment or PayMongo.
+  **D10** is open. (**D8** and **D9** were resolved 2026-10-01 under the owner's
+  standing authorization, completing Phase 8.3's decision group D1 and D3–D9;
+  that closes the decisions, not the phase.) Phase 9 is packaging; it does not
+  advance entitlements, assessment, web deployment or PayMongo.
 - **Not begin Phase 10.** Cloud/API architecture is Phase 10 (Architecture
   Package §22). D14 *touches* it and must not be used as a route into
   implementing it.
@@ -231,13 +250,21 @@ Phase 9 closes when all hold:
 
 ## 9. Recommended first increment
 
-Once the owner resolves the decisions in §5, the cheapest ordering is:
+The first two steps of this ordering are **done**, and are kept rather than
+deleted so the sequence stays readable:
 
-1. **D15**, because it determines whether P9-A is a merge or a code change,
-   and the branch decision has been outstanding since 2026-09-21.
-2. **D16** and **P9-D**, which need no credential and no external service.
-3. **D13**, then P9-B and P9-E, which share the signing identity.
-4. **D14**, then P9-C — last, because it is the item entangled with D10.
+1. ~~**D15**, because it determines whether P9-A is a merge or a code change~~ —
+   **DONE** 2026-09-27, resolved as a merge (`c384ac5`). P9-A's mechanism landed
+   with it.
+2. ~~**D16** and **P9-D**, which need no credential and no external service~~ —
+   **DONE** 2026-10-01 under the standing authorization
+   (`docs/RELEASE_POLICY.md`, `tools/release/version.mjs`). P9-D satisfied.
+3. **D13**, then P9-B and P9-E, which share the signing identity. ← *next for
+   Phase 9*
+4. **D14**, then P9-C — last, because it is the item entangled with D10, so
+   **D10 comes before it**.
 
 Nothing in this ordering may start before its decision is recorded in
-`docs/DECISION_REGISTER.md`.
+`docs/DECISION_REGISTER.md`. Note that the project-wide order in
+`docs/PHASES_BUILDING_CONTROL.md` §5 puts **D18** ahead of all of these, because
+it unblocks a whole lane rather than one packaging item.

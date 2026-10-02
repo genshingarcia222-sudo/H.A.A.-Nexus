@@ -153,9 +153,26 @@ Measured on `main` on 2026-10-02, DEVICE-01, rustc 1.98.1, Node 24.21.0:
 nexus-core **804/804** (66 files), desktop **330/330** (33 files), preflight
 **27/27**, release `version` **25/25**, nexus-sync **81/81**, `pnpm -r typecheck`
 clean, `pnpm -r build` clean, `cargo fmt --check` clean, `cargo test --offline`
-**70/70**, `cargo clippy --all-targets` exit 0 with one
-`empty_line_after_doc_comments` style warning at `src/db/delivery.rs:13`.
+**70/70**, `cargo clippy --all-targets` **zero warnings**.
 Preflight: 18 decisions recorded, 10 blocked, version parity `yes`, releasable
 format `yes`. CI green on the tip, run `36819449371` at `9416bf8`.
 
 No decision was resolved and no Phase 9 item implemented by that reconciliation.
+
+**Two defects it did find.** One in code: `cargo clippy --all-targets` reported
+`empty_line_after_doc_comments` at `apps/desktop/src-tauri/src/db/delivery.rs:13`
+— a module-level doc block written as `///` with a trailing blank line, so
+rustdoc attached it to a private helper it does not describe. Converted to `//!`
+module docs; clippy now reports zero warnings. One in documentation, left to its
+owner: `README.md` quotes 390 + 228 = 618 tests and `cargo test` 55, against a
+measured 804 + 330 = 1134 and 70/70. Those figures were correct when the C-02
+sweep wrote them and the D15 merge outgrew them. `README.md` is DEVICE-02-owned,
+so it is assigned in `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md` rather than edited
+here.
+
+**Which documents drifted, and which did not.** Worth recording as a property of
+the system rather than as an incident: the documents that stayed correct are the
+ones where every row carries a command or a commit — this ledger,
+`.nexus/BASELINE.md`, `.nexus/CURRENT_STATE.md`'s measured fields. The ones that
+drifted are the ones that assert a decision's state in prose. Evidence formats
+resist rot; instruction formats do not.

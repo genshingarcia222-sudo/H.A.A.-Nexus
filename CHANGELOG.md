@@ -62,12 +62,23 @@ cutting a release.
 nexus-core **804/804** (66 files), desktop **330/330** (33 files), preflight
 **27/27**, release `version` **25/25**, nexus-sync **81/81**, `pnpm -r typecheck`
 clean, `pnpm -r build` clean, `cargo fmt --check` clean, `cargo test --offline`
-**70/70**, `cargo clippy --all-targets` exit 0. Preflight: 18 decisions recorded,
+**70/70**. Preflight: 18 decisions recorded,
 10 blocked (D10, A2, A9, A6, A7, A12, D13, D14, D17, D18), version parity `yes`,
 releasable format `yes`. CI green on the tip: run `36819449371` at `9416bf8`.
 Every DEVICE-02 lane branch except the Knowledgebase one is fully merged;
 `origin/feat/knowledgebase-expansion` is 10 ahead and 0 behind, `CLEAN`, and
 **stays unmerged**.
+
+**The audit found one real code defect, and it is fixed.** `cargo clippy
+--all-targets` reported `empty_line_after_doc_comments` at
+`apps/desktop/src-tauri/src/db/delivery.rs:13`. Not a formatting nit: the block
+documents the *module* - "Append-only, and the API is the enforcement: there is
+`append`, there is `record_answer`" - but was written as `///` followed by a
+blank line, so rustdoc attached all of it to `row_to_event`, a private
+row-mapping helper it describes nothing about, and the module had no
+documentation at all. Converted to `//!` module docs above the `use` statements,
+this directory's own convention. No text and no code changed. Clippy now reports
+**zero warnings**.
 
 **Still true, and still the whole of what remains:** no ungated engineering work
 exists in either lane. That is a finding about the decision boundary, not a gap

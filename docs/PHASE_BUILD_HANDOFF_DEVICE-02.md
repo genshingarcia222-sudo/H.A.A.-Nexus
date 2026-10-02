@@ -84,9 +84,27 @@ progress.* The rework exposure is already 324 records.
    superseded rows are preserved in §3a rather than deleted. Disagreeing with it
    in a PR is a legitimate use of this lane.
 
+5. **`README.md`'s test counts have gone stale again — and this one is ungated.**
+   Found by DEVICE-01 on 2026-10-02 and left for this lane because `README.md`
+   is yours. Line 157 reads *"Every package's tests (390 nexus-core + 228
+   desktop = 618)"*; measured on `main` the same day it is **804 nexus-core +
+   330 desktop = 1134** (66 and 33 files). Line 40 says `cargo test` is green
+   with **55 tests**; it is **70/70**. The 390 + 228 figures were *correct* when
+   the C-02 sweep wrote them — the D15 merge then added the Training question
+   run, the D12 corpus module and the delivery layer, and nothing re-measured.
+
+   So this is not a repeat of a closed defect; it is the same figure going stale
+   a second time for a structural reason, which is worth saying in the fix: a
+   hand-maintained count in prose drifts every time the suite grows. CI now
+   prints all of these on every push (run `36819449371` at `9416bf8`), so cite a
+   measurement and consider whether the README should quote exact counts at all
+   or point at the gate that measures them. `cargo test` is the one figure this
+   device cannot run — take it from the Windows job of a named CI run rather
+   than from DEVICE-01's word.
+
 **Do not author more KB records to fill the wait.** If the lane feels idle, that
 is D18 being visible, and the correct output is to say so rather than to add
-rework.
+rework. Item 5 above is the one piece of ungated work this lane has.
 
 ## C-02 documentation-accuracy sweep — COMPLETE, do not redo
 

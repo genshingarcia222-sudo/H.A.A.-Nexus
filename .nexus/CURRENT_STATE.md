@@ -124,3 +124,19 @@ Product and engineering work, with the canonical record for each:
   readable.
 - `pnpm` is not on PATH on DEVICE-01. `npx --yes pnpm@9 <cmd>` is the working
   form there.
+- **Hand-maintained test counts in prose go stale every time the suite grows.**
+  `README.md` line 157 quotes 390 nexus-core + 228 desktop = 618 and line 40
+  quotes `cargo test` 55; measured 2026-10-02 they are 804 + 330 = 1134 and
+  70/70. Those figures were correct when the C-02 sweep wrote them - the D15
+  merge then grew the suites and nothing re-measured. This is the *second* time
+  the same sentence has drifted, so the fix worth making is structural rather
+  than arithmetic. `README.md` is DEVICE-02-owned and the item is assigned in
+  `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md`; DEVICE-01 did not edit it.
+- **The control plane itself drifted, and ranked above the register while it
+  did** (found and reconciled 2026-10-02 at `P9-2026-10-02-001`). The lesson
+  recorded with it: the evidence documents - this file, `BASELINE.md`,
+  `docs/PHASES_BUILDING_LEDGER.md` - stayed correct, because every row in them
+  carries a command or a commit. The instruction documents drifted, because
+  prose asserting a decision's state has nothing to check it against. When a
+  decision changes state, the instruction documents are the ones to go and
+  correct.
