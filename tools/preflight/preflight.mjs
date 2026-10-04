@@ -179,19 +179,28 @@ function countArrayEntries(source, marker) {
 }
 
 /**
- * The A2 mismatch, measured rather than remembered: the module registry
- * declares one set of competency domains and the evaluator scores another.
+ * A2 is closed (2026-10-04). There is no longer a mismatch to measure, because
+ * there is no longer a second list: `competencyDomains` was removed from
+ * `NexusModule`, and the domains live once in nexus-core as
+ * `COMPETENCY_DOMAINS`, guarded by `satisfies` against `ScoringWeights`.
+ *
+ * The check is kept rather than deleted, for the reason A9's was: a check that
+ * quietly disappears reads as "the problem went away". It now reports the one
+ * source and fails if a competing declaration reappears.
  */
 export function competencyReadiness() {
   const modules = path.join(REPO_ROOT, "apps/desktop/src/modules.ts");
-  const store = path.join(REPO_ROOT, "apps/desktop/src/store/sessionStore.ts");
+  const types = path.join(REPO_ROOT, "packages/nexus-core/src/scenario-engine/types.ts");
   const registry = existsSync(modules) ? countArrayEntries(readFileSync(modules, "utf8"), "competencyDomains") : null;
-  const evaluator = existsSync(store) ? countArrayEntries(readFileSync(store, "utf8"), "COMPETENCY_DOMAINS") : null;
-  return {
-    registryDomains: registry,
-    evaluatorDomains: evaluator,
-    matches: registry !== null && registry === evaluator
-  };
+  const canonical = existsSync(types) ? countArrayEntries(readFileSync(types, "utf8"), "COMPETENCY_DOMAINS") : null;
+  const problems = [];
+  if (registry !== null) {
+    problems.push(`apps/desktop/src/modules.ts declares competencyDomains again (${registry} entries) - A2 removed it`);
+  }
+  if (canonical === null) {
+    problems.push("packages/nexus-core/src/scenario-engine/types.ts no longer exports COMPETENCY_DOMAINS");
+  }
+  return { registryDomains: registry, canonicalDomains: canonical, singleSource: problems.length === 0, problems };
 }
 
 // --- scenario schema version (A9) ------------------------------------------
@@ -390,10 +399,10 @@ function render(r) {
   for (const p of r.scenarios.problems) lines.push(`  PROBLEM               ${p}`);
 
   lines.push("");
-  lines.push("COMPETENCY (A2)");
-  lines.push(`  registry domains      ${r.competency.registryDomains ?? "unknown"}`);
-  lines.push(`  evaluator domains     ${r.competency.evaluatorDomains ?? "unknown"}`);
-  lines.push(`  agree                 ${yn(r.competency.matches)}`);
+  lines.push("COMPETENCY (A2 - closed 2026-10-04)");
+  lines.push(`  canonical domains     ${r.competency.canonicalDomains ?? "unknown"}  (nexus-core COMPETENCY_DOMAINS, the only declaration)`);
+  lines.push(`  single source         ${yn(r.competency.singleSource)}`);
+  for (const p of r.competency.problems) lines.push(`  PROBLEM               ${p}`);
 
   lines.push("");
   lines.push("SCENARIO SCHEMA VERSION (A9 - closed 2026-10-04)");

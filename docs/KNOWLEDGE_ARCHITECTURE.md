@@ -158,8 +158,10 @@ Three of these are load-bearing for decisions already taken:
 
 - **`accessClasses`** is how a record would ever be marked
   `ASSESSMENT_CLOSED_BOOK`. It is on **zero** records today and the generator
-  cannot assign it. Until B models it, D4's closed-book boundary has no
-  record-level expression at all — see §6.
+  cannot assign it. **Dispositioned 2026-10-04 (see §6.2): it is not migrated and
+  not modelled**, because D4 blocks surfaces rather than records and nothing
+  requires a subset rule. Dropping it from the migration is therefore a decision,
+  not an oversight — and it is the one class-(c) field deliberately left behind.
 - **`jurisdictions`** and **`effectiveFrom/To`** are what make a coding or
   regulatory statement safe to show. §5 depends on them.
 - **`clinicianJudgmentRequired`** and **`escalationRequired`** are safety
@@ -253,10 +255,40 @@ this document as a guarantee:
    held by absence rather than by a check. When a loader is written, it needs a
    source-classification gate so that `docs/` and `.nexus/` can never be a
    retrieval source.
-2. **`accessClasses` has no home in B**, so no record can yet be marked
-   closed-book. D4 is enforced at the *route* (`ReferenceGate`) and by the
-   source-scanning invariant in `closedBookBoundary.test.tsx`, which is why the
-   boundary holds today — but a Knowledge Corpus browser (§L) must not be built
-   before the record-level expression exists, or D4 would depend on routing alone.
+2. **`accessClasses` has no home in B — and the gap is narrower than §3 first
+   recorded.** Determined 2026-10-04; the earlier statement here was too strong
+   and is corrected below.
+
+   **B already has the seam.** `eligibility.ts` keeps two predicates
+   deliberately apart: `isProductionEligible` is static ("is this record
+   finished and verified?") and `isDeliverable(record, DeliveryRequest)` is
+   relative to a request, where `DeliveryRequest` already carries `asOf`,
+   `jurisdictions` and `temporalMode`. What it has no notion of is the *mode the
+   request comes from* — whether a learner is mid-Assessment. That, not "B has
+   no access model", is the actual gap.
+
+   **D4 as decided does not need a record-level expression.** D4 blocks
+   *surfaces*: Knowledge Base off, Training off, direct route access blocked,
+   no tier exception. It contains no concept of some records being
+   assessment-safe and others not. A Knowledge Corpus browser therefore ships
+   under D4 the same way `/knowledge-base` already does — as a gated route
+   behind `ReferenceGate`, with the source-scanning invariant catching any
+   component that reads corpus content outside one. **The previous claim that a
+   browser "must not be built before the record-level expression exists" was
+   wrong**, and would have blocked §L behind work nothing requires.
+
+   **What `accessClasses` would actually be for** is a question nobody has
+   asked: *may a subset of corpus content be shown during an Assessment?* That
+   is a new product decision — it would narrow D4 — and DEVICE-02 reached the
+   same conclusion independently, recording `ASSESSMENT_CLOSED_BOOK` as
+   "deliberately unclaimed ... an owner decision, not a generator default", with
+   the class on zero of its 432 records.
+
+   **Disposition: no schema change, and no new decision entry opened.** Building
+   an access-class model now would be the speculative access-control schema this
+   work is explicitly forbidden to invent, for a requirement that does not exist.
+   If the subset question is ever asked, the answer belongs on `DeliveryRequest`
+   as a mode dimension plus a matching record field — and it reopens D4, which is
+   an owner decision.
 3. **The 432 records are still written against a retired contract.** They are not
    wrong, they are not lost, and they are not yet migrated.

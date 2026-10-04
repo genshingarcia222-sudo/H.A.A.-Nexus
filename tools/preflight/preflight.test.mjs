@@ -241,10 +241,16 @@ test("the shipped decision register parses without problems", () => {
   assert.ok(entries.length >= 7, `expected the register to record at least 7 decisions, saw ${entries.length}`);
 });
 
-test("measures the A2 mismatch rather than assuming it", () => {
+test("A2: the competency domains have exactly one declaration", () => {
+  // A2 was two lists that could not be reconciled by use, because nothing
+  // read the registry's. The field is gone and the domains are exported once
+  // from nexus-core. This asserts the single source, and fails if a competing
+  // declaration reappears in the module registry.
   const c = collect().competency;
-  assert.equal(typeof c.registryDomains, "number");
-  assert.equal(typeof c.evaluatorDomains, "number");
+  assert.equal(c.registryDomains, null, "modules.ts declares competencyDomains again");
+  assert.equal(typeof c.canonicalDomains, "number");
+  assert.equal(c.singleSource, true);
+  assert.deepEqual(c.problems, []);
 });
 
 test("reports no secret values anywhere in a full report", () => {

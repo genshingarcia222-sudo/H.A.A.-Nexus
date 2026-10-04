@@ -5,7 +5,6 @@ const liveScribing: NexusModule<string> = {
   id: "live-scribing",
   title: "Live Scribing",
   workspaceComponent: "LiveScribingWorkspace", // stand-in for a React component in this test
-  competencyDomains: ["HPI", "ROS", "Terminology"]
 };
 
 describe("ModuleRegistry", () => {

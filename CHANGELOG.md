@@ -11,6 +11,77 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## A2 Resolved, A7 Deliberately Deferred, and the accessClasses Gap Narrowed (2026-10-04)
+
+All three **CLAUDE-RECOMMENDED UNDER THE OWNER'S STANDING AUTHORIZATION**. None
+is an owner decision.
+
+**A2 was never a disagreement about which domains are right - it was two lists.**
+The registry declared 12 section-level labels, the evaluator scored 7 categories,
+and **nothing read the registry's**, so the drift could only be caught by someone
+noticing. Re-measured before deciding: `competencyDomains` appeared in exactly
+four places and not one was product logic.
+
+Re-measuring also found a **third** copy the register had never recorded: the 7
+were written out again as a private array in the desktop session store, because a
+TypeScript type cannot be iterated at runtime. Deleting the dead field alone would
+have left the duplication that caused A2 intact. So the field is removed from
+`NexusModule`, and `COMPETENCY_DOMAINS` is exported once from nexus-core as
+`as const satisfies readonly (keyof ScoringWeights)[]` - a domain that is not a
+scoring weight is now a compile error - with the desktop store importing it.
+Three tests cover what the compiler cannot: that the list is *complete* rather
+than a valid subset, that it has no duplicates, and what the seven are. Mutation
+check: dropping one domain fails the completeness test; file restored
+byte-identical.
+
+Preflight's A2 check was **kept and inverted**, as A9's was: it no longer measures
+a mismatch, because there is no second list to mismatch - it reports the single
+source and fails if a competing declaration reappears.
+
+**A2 did not adopt per-section competency.** Architecture §5/§21 describe
+section-level domains; implementing them would change what competency means, what
+a learner is shown, and would migrate every stored `CompetencyRecord`. A2 removed
+the field that pretended that change had already been made.
+
+**A7 is deferred, and the deferral is now written down** rather than left as
+silence a later session could mistake for an oversight. No source defines what a
+competency trend should change about guidance - which direction matters, over
+what window, whether it reorders recommendations or annotates them - and
+inventing a weighting would silently change what learners are told to do next.
+The entry stays **blocked**, because the product question is real and unanswered,
+with the unblocking condition named.
+
+**The accessClasses gap is narrower than the previous session recorded, and that
+statement is corrected.** Contract B already has the seam: `eligibility.ts` keeps
+`isProductionEligible` (static) apart from `isDeliverable(record,
+DeliveryRequest)` (relative to a request), and `DeliveryRequest` already carries
+`asOf`, `jurisdictions` and `temporalMode`. What it lacks is a notion of the
+*mode a request comes from*.
+
+More importantly: **D4 does not need a record-level expression.** D4 blocks
+surfaces - Knowledge Base off, Training off, direct route access blocked - and
+contains no concept of some records being assessment-safe. A Knowledge Corpus
+browser ships under D4 as a gated route, exactly as `/knowledge-base` already
+does. The earlier claim that a browser "must not be built before the record-level
+expression exists" **was wrong** and would have blocked that work behind
+something nothing requires.
+
+What `accessClasses` would be for is a question nobody has asked - may a *subset*
+of corpus content be shown during an Assessment? - which would narrow D4 and is
+an owner decision. DEVICE-02 reached the same conclusion independently, recording
+`ASSESSMENT_CLOSED_BOOK` as "deliberately unclaimed" on zero of its 432 records.
+**Disposition: no schema change, no new decision entry, and `accessClasses` is
+the one class-(c) field deliberately left behind by the migration map** - a
+decision, not an oversight.
+
+**Validation.** Targeted, as the session's budget state required: nexus-core
+**807/807** (67 files, +3), desktop **330/330** (33 files), typecheck clean,
+build clean, preflight **30/30** with the run exiting 0 and the register now
+reporting 18 decisions - **10 resolved, 1 superseded, 6 blocked**. The Rust suite
+was not re-run: no Rust file was touched.
+
+---
+
 ## A9 Resolved and A6 Closed as Superseded (2026-10-04)
 
 Both **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING

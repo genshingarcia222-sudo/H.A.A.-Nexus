@@ -10,8 +10,24 @@ export interface NexusModule<TWorkspaceComponent = unknown> {
   id: string;
   title: string;
   workspaceComponent: TWorkspaceComponent;
-  competencyDomains: string[];
 }
+
+/**
+ * `competencyDomains` used to sit on this interface and was removed by A2
+ * (2026-10-04). It declared 12 section-level labels while the evaluator scored
+ * 7 categories, and nothing read it, so the two could never be reconciled by
+ * use - only by someone noticing.
+ *
+ * The domains a competency record is actually keyed by are exported once, as
+ * `COMPETENCY_DOMAINS` in the scenario engine, guarded by `satisfies` against
+ * `ScoringWeights` so they cannot drift again. A module does not re-declare
+ * them: a second copy is what A2 was.
+ *
+ * Per-section competency (Architecture Package §5's example, §21's list) would
+ * be a change to what competency *means* and what a learner is shown, and would
+ * need a migration of every stored `CompetencyRecord`. A2 did not make that
+ * change; it removed the field that pretended it had already been made.
+ */
 
 /**
  * `scenarioSchemaVersion` used to sit on this interface and was removed by A9

@@ -8,20 +8,6 @@ const liveScribingModule: NexusModule<ComponentType> = {
   id: "live-scribing",
   title: "Live Scribing",
   workspaceComponent: LiveScribing,
-  competencyDomains: [
-    "Chief Complaint",
-    "HPI",
-    "ROS",
-    "Physical Examination",
-    "Terminology",
-    "Accuracy",
-    "Completeness",
-    "Relevance",
-    "Pertinent Positives/Negatives",
-    "Assessment",
-    "Plan",
-    "Time Efficiency"
-  ]
 };
 
 moduleRegistry.register(liveScribingModule);

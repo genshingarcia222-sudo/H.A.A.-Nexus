@@ -85,6 +85,35 @@ export interface ScoringWeights {
   timeEfficiency: number;
 }
 
+/**
+ * The competency domains, in one place (A2, 2026-10-04).
+ *
+ * These are the categories the evaluator actually produces and the keys every
+ * `CompetencyRecord` is stored under. They were previously written out a second
+ * time as a private array in the desktop store, because a TypeScript type
+ * cannot be iterated at runtime - and a second copy is how A2 happened: the
+ * module registry declared **12** section-level domains while the evaluator
+ * scored these **7**, and nothing reconciled them because nothing read the 12.
+ *
+ * `satisfies` is what makes this list unable to drift. Adding a key to
+ * `ScoringWeights` without adding it here, or the reverse, fails to compile.
+ * The 12 section labels remain what they always were - a description of what
+ * the Live Scribing module covers, in the Architecture Package - and are
+ * deliberately not a code contract.
+ */
+export const COMPETENCY_DOMAINS = [
+  "accuracy",
+  "completeness",
+  "terminology",
+  "relevance",
+  "structure",
+  "pertinentPosNeg",
+  "timeEfficiency"
+] as const satisfies readonly (keyof ScoringWeights)[];
+
+/** A domain a competency record can be keyed by. */
+export type CompetencyDomain = (typeof COMPETENCY_DOMAINS)[number];
+
 export const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
   accuracy: 0.25,
   completeness: 0.2,

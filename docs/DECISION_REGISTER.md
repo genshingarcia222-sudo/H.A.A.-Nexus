@@ -340,37 +340,59 @@ pre-commit the decision.
 
 ---
 
-## A2 — The module registry declares 12 competency domains; the evaluator produces 7
+## A2 — The module registry declares 12 competency domains; the evaluator produces 7 — **RESOLVED**
 
-**Blocked work:** making the registry honest, in either direction.
+**Resolved** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**. Not an owner decision.
 
-**Current behaviour, verified:** `apps/desktop/src/modules.ts` declares 12
-human-readable domains ("Chief Complaint", "HPI", "ROS", …). The evaluator
-scores **7** category domains (`accuracy`, `completeness`, `terminology`,
-`relevance`, `structure`, `pertinentPosNeg`, `timeEfficiency`), and those are
-what `submit` folds into competency. Nothing reads `competencyDomains` — it is
-declared and unused.
-
-**Evidence examined:** Architecture Package §5 specifies `NexusModule` with
-`competencyDomains: string[]` and the example `["HPI", "ROS", "Terminology", …]`
-— i.e. the architecture describes *section-level* domains, while the evaluator
-implements *category-level* scoring. Architecture §21 lists per-section domains
-individually.
-
-**Options:**
-
-| Option | Consequence |
+| | |
 |---|---|
-| Align the registry to the evaluator's 7 | Field becomes truthful immediately; contradicts the §5 example and drops the section-level model from the contract |
-| Implement per-section scoring (7 → 12) | Matches §5/§21; changes what competency *means* and what learners see, and needs a competency migration |
-| Remove the field from `NexusModule` | Removes dead data; changes a documented architecture contract |
+| **Decision** | A2 — the 12-against-7 competency-domain mismatch |
+| **Selected value** | **Remove and replace.** `competencyDomains` is gone from `NexusModule`; the domains are exported once from `nexus-core` as `COMPETENCY_DOMAINS`, guarded against `ScoringWeights` |
+| **Rejected alternatives** | aligning the registry's list to 7 (keeps a second copy); implementing 12-domain scoring (changes what competency means, needs a migration of every stored record); leaving it inert |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
 
-**Why this is not mine to pick:** options 2 and 3 change either grading
-semantics or a documented contract; option 1 silently retires the
-section-level model the architecture describes.
+**A2 was never a disagreement about which domains are right. It was two lists.**
+The registry declared 12 section-level labels; the evaluator scored 7 categories;
+**nothing read the registry's**, so the drift could not be caught by use — only
+by someone noticing. Measured again before deciding: `competencyDomains` was
+referenced in exactly four places, and not one of them was product logic — the
+interface, the desktop module that set it, one test fixture, and the preflight
+check that existed to report the mismatch.
 
-**Unblocked:** nothing needed — the field is inert, so there is no defect to
-fix while the question is open.
+**A third copy, which the entry had not recorded.** The 7 were *also* written out
+by hand as a private `COMPETENCY_DOMAINS` array in
+`apps/desktop/src/store/sessionStore.ts`, because a TypeScript type cannot be
+iterated at runtime. So the repository held three representations of one idea:
+12 dead labels, 7 in a desktop-local const, and the `ScoringWeights` keys in
+`nexus-core`. Deleting the dead field alone would have left the duplication that
+caused A2 intact.
+
+**What was done.** The field is removed from `NexusModule`, from
+`apps/desktop/src/modules.ts` and from the registry fixture.
+`COMPETENCY_DOMAINS` and `CompetencyDomain` are exported from
+`packages/nexus-core/src/scenario-engine/types.ts`, declared
+`as const satisfies readonly (keyof ScoringWeights)[]` so a domain that is not a
+scoring weight is a **compile error**, and the desktop store imports them instead
+of re-declaring them. Three tests cover what the compiler cannot — that the list
+is *complete* rather than a valid subset, that it has no duplicates, and what the
+seven actually are. Verified by mutation: dropping one domain fails the
+completeness test, and the file was restored byte-identical.
+
+**Preflight's check was kept, not deleted**, for the reason A9's was: a check
+that quietly disappears reads as "the problem went away". It no longer measures a
+mismatch, because there is no second list to mismatch; it reports the single
+source and fails if a competing declaration reappears.
+
+**What this decision did NOT do.** It did not adopt per-section competency.
+Architecture Package §5's example and §21's list describe section-level domains,
+and implementing them would change what competency *means*, what a learner is
+shown, and would require migrating every stored `CompetencyRecord`. That remains
+a product decision nobody has taken. **A2 removed the field that pretended it had
+already been taken**; the 12 labels stay what they always were — a description of
+what the Live Scribing module covers, in the Architecture Package, not a code
+contract.
 
 ---
 
@@ -454,18 +476,44 @@ means reopening one of those first.
 
 ---
 
-## A7 — Recommendations ignore competency trends
+## A7 — Recommendations ignore competency trends — **DEFERRED, DELIBERATELY**
 
-**Current behaviour, verified:** `recommendation-engine` contains no reference
-to `CompetencyRecord` or competency at all; recommendations are driven by
-error frequency from session history.
+**Dispositioned** on 2026-10-04 by **DEVICE-01 under the owner's standing
+decision authority**: **intentionally deferred, with no implementation.** This is
+a recorded choice, not an oversight, and it is written down so a later session
+does not read the silence as something forgotten.
 
-**Blocked because:** what a learner is told to do next is product behaviour.
-Weighting recommendations by competency trend changes the guidance learners
-receive, and no source defines that weighting.
+| | |
+|---|---|
+| **Decision** | A7 — whether competency trends should weight recommendations |
+| **Selected value** | **Keep the existing deterministic error-frequency behaviour unchanged.** No weighting model is introduced |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED UNDER STANDING AUTHORIZATION**, as a deferral |
+| **Status** | OPEN as a product question; CLOSED as an engineering task until evidence exists |
 
-**Unblocked:** nothing pending — the current rules are deterministic and
-tested.
+**Blocked because:** no source defines what a competency trend should change
+about guidance, and inventing one would silently alter what learners are told to
+do next. The deferral is deliberate and recorded; the entry stays blocked rather
+than closed, because the product question is real and unanswered.
+
+**Why nothing was built.** The register's own measured evidence is that
+`recommendation-engine` contains no reference to `CompetencyRecord` or to
+competency at all, and that **no source defines a weighting**. What a learner is
+told to do next is product behaviour. Any formula chosen here — how much a
+downward trend outweighs a raw error count, over what window, with what
+floor — would be invented, and it would silently change the guidance learners
+receive. Inventing it to retire a debt label is precisely what the standing
+authorization does not cover.
+
+**Why that is not a cost today.** The current rules are deterministic, tested,
+and derived from the learner's own attempt history, so recommendations are
+already personal. The debt is an *enhancement* that has never been specified, not
+a defect.
+
+**What would resolve it.** A product statement of what a competency trend should
+change about guidance — at minimum: which trend direction matters, over how many
+attempts, and whether it reorders recommendations or only annotates them. With
+that, the implementation is small and testable deterministically. Without it,
+A7 stays here.
 
 ---
 
