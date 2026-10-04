@@ -838,39 +838,80 @@ sees the current expectation fail and reads why.
 
 ---
 
-## D18 — Which content contract does the runtime ingest?
+## D18 — Which content contract does the runtime ingest? — **RESOLVED**
 
-**Blocked work:** every consumer of Knowledgebase content — loader, indexing,
-retrieval, the migration path for records already authored, and the corpus half
-of Phase 10 planning.
+**Resolved** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**, acting on the owner's master resolution instruction. Not an owner
+decision. The architecture is `docs/KNOWLEDGE_ARCHITECTURE.md`.
 
-**Two implementations of one contract now exist**, and D15 put one of them on
-`main` without retiring the other:
+| | |
+|---|---|
+| **Decision** | D18 — the canonical runtime-ingestion contract |
+| **Selected value** | **Contract B** — the D12 Zod model in `packages/nexus-core/src/knowledge-corpus/` |
+| **Rejected alternatives** | the KB JSON Schema (`kb-record.schema.json`); merging both behind an adapter; a third intermediate contract; deleting either side |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED. Migration **NOT EXECUTED** — see below |
 
-| Implementation | Location | Holds |
+### O1 — the measurement, which is evidence and not a decision
+
+`tools/knowledge-corpus/kb-schema-divergence.mjs` on
+`origin/feat/knowledgebase-expansion`, run on DEVICE-01 2026-10-04 at `96ab675`.
+Its own closing line is `O1 / D18 remains OPEN. Nothing here resolves it.` — it
+measures, and D18 is what decides.
+
+| | Contract A | Contract B |
 |---|---|---|
-| **D12's model** | `packages/nexus-core/src/knowledge-corpus/` (Zod, ~2,700 lines: schema, ids, validate, item, quality, review, temporal, conflict, eligibility, build) — **on `main` since `c384ac5`** | 42 candidate items as fixtures, 0 human-verified |
-| **The KB corpus** | `knowledge-corpus/schema/kb-record.schema.json` plus `tools/knowledge-corpus/` (24 policy rules) — on `origin/feat/knowledgebase-expansion`, PR #21, **not merged** | 324 KB-001 records, 0 approved |
+| Shape | one flat record type, discriminated by `recordType` | four typed families, 33 `strict()` schemas |
+| Fields | 54 declared, 23 required | 54 across the family union |
+| Records | **432** (KB-001 324 + KB-002 108), 0 approved | 42 candidate fixtures, 0 human-verified |
+| On `main` | no (PR #21) | yes, since `c384ac5` |
 
-They were deliberately aligned — same lifecycle vocabulary, the same
-`machine:<agent-id>` provenance rule, the same authority classes, the same
-`synthetic: true` literal, the same computed-not-stored temporal state — but
-alignment is not the same as being one system. DEVICE-02 recorded this as the
-blocker that comes before all of its others, in
-`knowledge-corpus/INTEGRATION_BLOCKERS.md`, and it is restated here because the
-canonical register is where both devices look.
+**Field-name overlap: 11 of 54.** The 11 are the entire governance spine — `id`,
+`provenance`, `revision`, `reviewStatus`, `verification`, `contentStatus`,
+`evidence`, `flags`, `domain`, `rationale`, `choices`. The two lanes never built
+rival governance models; they agree on identity, provenance, lifecycle and
+review, and disagree **only about the content model**.
 
-**Why neither device may answer it.** DEVICE-02 owns the Knowledgebase feature
-lane; answering it for them would mean editing their architecture. DEVICE-01 owns
-integration; answering it by merging or by deleting would decide the same
-question silently. **Until it is answered, every record in the KB corpus is
-written against a schema that may not be the one ingested** — the largest single
-piece of rework risk currently in the repository.
+### Why B
 
-**What is deliberately not being done meanwhile.** No loader reads either corpus.
-No adapter, translation layer or shim was written to "bridge" them: a bridge
-would be a third contract, and it would make the decision harder rather than
-easier.
+1. **D12 is an owner decision and B is its implementation.** Choosing A would
+   overturn D12; a session may not overturn an owner decision under standing
+   authorization. Choosing B operationalises it.
+2. **Only B has a runtime.** DEVICE-02's own `INTEGRATION_BLOCKERS.md` records,
+   for its own corpus: storage model **open**, ingestion **open** ("No loader
+   reads `knowledge-corpus/`. Deliberate"), indexing **open**, retrieval **open**
+   ("No selector"). B carries `build.ts`, `eligibility.ts`, `temporal.ts`,
+   `conflict.ts`, `references.ts`, `pilot-conversion.ts`. A contract with no
+   ingestion path cannot be the ingestion contract.
+3. **`main` outranks an unmerged branch** in the authority order.
+4. **B already models what the next phase needs.** `codingReference` exists with
+   `effectiveFrom`/`effectiveTo` cross-validated against `applicability`
+   (`item.ts:229-243`); A has only `codingVersion`, a flat string.
+5. **`strict()` is what makes the layer boundary enforceable.** A flat 54-field
+   record cannot express that an ITEM may not carry CONTEXT fields.
+
+### What was NOT done, and must not be read as done
+
+- **The 432 records are NOT migrated.** They remain on the branch, written
+  against the retired contract. What was produced is the field-level **migration
+  map** (`docs/KNOWLEDGE_ARCHITECTURE.md` §3), classifying all 43 unmapped A-keys
+  into rename, structural lift, semantic gap, and authoring-only.
+- **PR #21 is NOT merged.** D18 being answered is a precondition for that work,
+  not a substitute for it.
+- **No adapter, bridge or third contract was written.**
+- **A's tooling is not discarded**: the privacy scan, duplicate detection,
+  manifest and scorecard are gates, not contracts, and retarget to B.
+
+### Three findings the map surfaces, which are open questions and not answers
+
+- **`correctChoiceIds` (array, 318 records) vs `correctChoiceId` (singular).** A
+  semantic difference, not a rename. Whether multi-select items exist is unanswered.
+- **`accessClasses` has no home in B**, so no record can yet be marked
+  `ASSESSMENT_CLOSED_BOOK`. It is on zero records today. **D4 is currently
+  enforced at the route and by the source-scanning invariant, not at the record**,
+  and a Knowledge Corpus browser must not ship before that is fixed.
+- **Variant lineage is 5 A-fields to 3 B-fields across 375 of the 432 records** —
+  the highest-volume lift and the one most likely to lose information.
 
 ---
 

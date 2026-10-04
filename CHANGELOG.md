@@ -11,6 +11,83 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D18 Resolved — One Canonical Content Contract (2026-10-04)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,
+on the owner's master resolution instruction. Not an owner decision. The
+architecture is the new `docs/KNOWLEDGE_ARCHITECTURE.md`.
+
+**The measurement reframed the decision.** O1
+(`kb-schema-divergence.mjs`, run at `96ab675`) reports field-name overlap of
+**11 of 54** between the two contracts - and the 11 are the entire governance
+spine: `id`, `provenance`, `revision`, `reviewStatus`, `verification`,
+`contentStatus`, `evidence`, `flags`, `domain`, `rationale`, `choices`. The two
+lanes never built rival governance models. They agree on identity, provenance,
+lifecycle and review, and disagree **only about the content model**. O1's own
+closing line is "O1 / D18 remains OPEN. Nothing here resolves it" - it measures;
+D18 decides.
+
+**The canonical runtime-ingestion contract is Contract B**, the D12 Zod model in
+`packages/nexus-core/src/knowledge-corpus/`. Four reasons, all from evidence:
+D12 is an owner decision and B is its implementation, so choosing A would
+overturn an owner decision under standing authorization; **only B has a
+runtime** - DEVICE-02's own `INTEGRATION_BLOCKERS.md` records its corpus's
+storage model, ingestion, indexing and retrieval all **open**, with "No loader
+reads `knowledge-corpus/`. Deliberate", while B carries `build`, `eligibility`,
+`temporal`, `conflict`, `references` and `pilot-conversion`; `main` outranks an
+unmerged branch; and B already carries the versioned `codingReference` that
+ICD-10-CM needs, cross-validated against `applicability` in `item.ts`, where A
+has only a flat `codingVersion` string.
+
+**What was NOT done, and must not be read as done.** The 432 records are **not
+migrated**. PR #21 is **not merged**. No adapter, bridge or third contract was
+written. What was produced instead is the field-level **migration map**: all 43
+unmapped A-keys classified into rename, structural lift, semantic gap, and
+authoring-only-metadata-that-must-never-enter-the-runtime-contract.
+
+**Three findings the map surfaces as questions, not answers.**
+`correctChoiceIds` (array, 318 records) against B's singular `correctChoiceId`
+is a semantic difference, not a rename. Variant lineage is 5 A-fields to 3
+B-fields across **375 of 432** records - the highest-volume lift and the likeliest
+to lose information. And **`accessClasses` has no home in B at all**, so no record
+can yet be marked `ASSESSMENT_CLOSED_BOOK`; D4 is held today by the route gate and
+the source-scanning invariant, not at the record, and a Knowledge Corpus browser
+must not ship before that is fixed.
+
+### Stale control-plane facts reconciled
+
+- **A defect in how device activity is detected.** DEVICE-02's registry record
+  said 2026-09-26. It has been active twice since - three trailered commits on
+  2026-10-01, and `96ab675` on 2026-10-02 which carries **no `Nexus-Device:`
+  trailer at all**. Staleness evidence #2 reads that trailer on `origin/main`;
+  `96ab675` is on a branch and untrailered, so `nexus-sync start` reported
+  DEVICE-02 idle for 184 hours while it had committed 43 hours earlier. The
+  evidence fields are reconciled from the remote; `status` stays `UNKNOWN` and
+  `last_successful_sync` stays `NOT VERIFIED`, because both are self-reports and
+  DEVICE-02 has still never run a state-writing command. **The detection defect
+  is recorded, not fixed** - widening it changes `SYNC_PROTOCOL`'s takeover
+  semantics, which is a protocol decision. Until then, do not take over a
+  DEVICE-02 task on staleness evidence alone.
+- **CLAUDE.md told every session that Analytics was a placeholder.**
+  `Analytics.tsx` computes both populations from real records through
+  `computeAnalytics`. The instruction outlived the fact and has been corrected in
+  place, with the reason it was ever written.
+- **README** described Phase 8.3 as "in progress ... learners cannot start an
+  assessment session yet" and quoted `390 + 228 = 618` tests and `cargo test`
+  55. All false. Rather than substituting today's numbers - which is how it went
+  stale the last two times - it now points at `.nexus/BASELINE.md` and CI for
+  every count.
+- **PR #21 is 13 ahead / 1 behind** `main` (it was recorded as 10 / 0).
+
+**Validation.** No source file was touched this session: `git diff` confirms the
+tree is identical to baseline **B-007** outside documentation and `.nexus`, so
+the suites were not re-run to prove a documentation change. The gates the change
+*can* affect were run: preflight **27/27** with the run exiting 0 and the register
+now reporting 18 decisions, **8 resolved, 9 blocked**; release tool **25/25**;
+version parity across all six declarations; nexus-sync **81/81**.
+
+---
+
 ## The Control Plane Was Telling Both Devices the Opposite of What the Repository Holds (2026-10-02)
 
 A reconciliation audit, `P9-2026-10-02-001`. **No decision was resolved, no
