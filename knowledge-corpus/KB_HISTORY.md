@@ -2,6 +2,70 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-10-04 — a sibling session's work found stranded in an open PR against this lane
+
+**Found during a routine watch of PR #21, not by anything that pointed at it.**
+A branch `claude/dazzling-hawking-8wl6yu` entered this container's view on a
+`git fetch`. It is the push target of **PR #22**, open since 2026-10-01 and
+untouched since 2026-10-01T06:39Z, authored by a third DEVICE-02 session
+(`session_01SQF8NPEQkjwbqaBd1MS3Pc`). Its base is
+`feat/knowledgebase-expansion` — **this lane** — not `main`.
+
+### What it actually contains, measured not read off the PR body
+
+Merge base with this branch is `9e58995`. Against that base the whole diff is
+**93 insertions in `CHANGELOG.md` and nothing else**: exactly one `##` entry,
+"Knowledgebase Conflict Reconciliation — Two Independent Resolutions, Compared
+and Converged (2026-10-01)". No record, registry, schema, tool, package,
+workspace or Rust file. `git merge-tree` against this branch's head `35ca619`
+reports **CLEAN**; taking it would move the changelog from 84 headings to 85.
+
+The three commits it carries — `fa5a040`, `640b600`, `dbb7c12` — are already
+named as DEVICE-02 activity evidence in `.nexus/DEVICE_REGISTRY.md` on `main`
+by DEVICE-01's 2026-10-04 reconciliation. So the *commits* are accounted for;
+the **entry's content is recorded nowhere in this lane**, which is what this
+entry exists to fix.
+
+### Its CI claims were verified against the API rather than repeated
+
+The entry asserts two runs. Both checked directly, both `conclusion: success`,
+both belonging to PR #22:
+
+| Run | Head | Result |
+|---|---|---|
+| `36821096497` | `fa5a040` | success — both jobs |
+| `36821384469` | `640b600` | success — both jobs |
+
+The `cargo test` 70/70 and `cargo fmt --check` figures inside the entry are
+therefore CI-measured on that branch's tree. They are **not** measurements of
+this branch's head, and nothing here restates them as such.
+
+### What is stale inside it, and why that is not a defect
+
+The entry says "D18 is untouched, and it is still what blocks the merge to
+`main`." That was true on 2026-10-01 and was made false by `ac8cae2` on
+2026-10-04. As a **dated** changelog entry it is a historical record, not a
+present claim — but it must not be read without its date, and a reader who
+reaches it should go to the 2026-10-04 D18 entry above it.
+
+### What was done about it, and what was deliberately not
+
+**Not merged, not closed, not modified, and the branch not touched.** PR #22 is
+another session's pull request. Taking it into this lane is an outward action
+this session holds no authorization for, and the charter forbids discarding
+another session's work just as firmly as it forbids appropriating it. So it is
+**recorded here and raised as O7**, and the decision is the owner's.
+
+The reason this is recorded at all rather than only reported: conversational
+memory ranks last in this repository's authority order. A finding that lives
+only in a chat reply is lost at the next reset, and this one took a
+fetch-and-measure cycle to find.
+
+### Corpus
+
+**Untouched.** 432 records, QA 0 errors / 0 warnings, privacy CLEAR, 0 approved,
+70 checksums identical. No record, registry, schema or tool changed by this entry.
+
 ## 2026-10-04 — D18 resolved the contract question; this lane's records reconciled
 
 **Branch:** `feat/knowledgebase-expansion`. `main` advanced 15 commits to

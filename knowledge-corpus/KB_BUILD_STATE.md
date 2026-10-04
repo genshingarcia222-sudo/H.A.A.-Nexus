@@ -85,6 +85,15 @@ Nothing in this lane has been migrated. The 432 records are unchanged and still
 validate against the retired contract, which is the correct state until the
 migration is designed — see B7.
 
+**One thing is waiting that is not this lane's to decide.** PR #22 is open against
+this branch — not against `main` — carrying a single `CHANGELOG.md` entry from a
+third DEVICE-02 session that recorded a real coordination failure on 2026-10-01.
+It merges CLEAN and touches no record, schema, registry or tool. It is **O7** in
+`review/OPEN_REVIEW_ITEMS.md`; this session did not merge, close or modify another
+session's pull request. A reset session should check whether it is still open
+before doing anything else with the changelog, because taking it later costs more
+the further this branch moves.
+
 ## KNOWN BLOCKERS
 
 | # | Blocker | Blocks | Changed since KB-001? |
