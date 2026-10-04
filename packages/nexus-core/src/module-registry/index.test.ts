@@ -4,7 +4,6 @@ import { ModuleRegistry, type NexusModule } from "./index.js";
 const liveScribing: NexusModule<string> = {
   id: "live-scribing",
   title: "Live Scribing",
-  scenarioSchemaVersion: "1.0",
   workspaceComponent: "LiveScribingWorkspace", // stand-in for a React component in this test
   competencyDomains: ["HPI", "ROS", "Terminology"]
 };

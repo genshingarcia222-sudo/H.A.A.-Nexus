@@ -11,6 +11,54 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## A9 Resolved and A6 Closed as Superseded (2026-10-04)
+
+Both **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING
+AUTHORIZATION**. Neither is an owner decision.
+
+**A9 - the dead scenario schema version.** `scenarioSchemaVersion` had read
+`"0.0.0-unbuilt"` since Phase 1 and was consulted by exactly one thing: the
+preflight check that existed to report it was a placeholder. The register had
+already established that writing any value there would be fabricating a
+compatibility claim. What settles it is that the compatibility it purported to
+provide **already exists in three enforced mechanisms**: the Zod gate in
+`scenario/validate.ts` rejects a scenario that does not match the domain model;
+each scenario declares its own content `version`, persisted on
+`SessionRecord.scenarioVersion` so a past attempt names what it was scored
+against; and the content-hash gate (A3, cleared) stops a released scenario being
+edited without a version bump. The field is removed from `NexusModule`, from the
+desktop module and from the registry fixture.
+
+The preflight check was **kept rather than deleted**, and now asserts the
+opposite thing - that the field has not come back - because a check quietly
+disappearing reads as "the problem went away". A test fails if it returns.
+
+**A6 - exact mid-transcript resume.** Closed as superseded, with **no code
+written**. A6 was never independent: its own entry called it "the engineering
+half of D8". D8 answered it on 2026-10-01 in the direction that removes the
+work - an interrupted attempt is never resumed in place, so no transcript
+position is restored and a persisted `revealedCount` would have nothing to do.
+Building it now purely to retire an old label would be the speculative
+infrastructure the A6 entry itself warned against, and would create exactly the
+defect A9 was closed for having: a field written by nothing and read by nothing.
+
+**Preflight learned a third outcome.** A6 is neither resolved nor blocked, and
+the register parser had no way to say so - it reported "A6: neither blocked nor
+resolved" as a malformed record. A decision can stop being a decision, so
+`superseded` is now a status of its own, checked before the other two so that
+"resolved" wording inside a superseded entry cannot reclassify it. Counting A6
+as resolved would have overstated what was built.
+
+The register now reports **18 decisions: 9 resolved, 1 superseded, 7 blocked**,
+and the run exits 0.
+
+**Validation.** nexus-core **804/804** (66 files), desktop **330/330** (33
+files), typecheck clean, build clean, preflight **30/30** (was 28; three new
+tests - two for the superseded status, one asserting the removed field stays
+removed). No test was deleted or weakened.
+
+---
+
 ## D18 Resolved — One Canonical Content Contract (2026-10-04)
 
 **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,

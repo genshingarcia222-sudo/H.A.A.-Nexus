@@ -52,6 +52,15 @@ export function repoState() {
 // --- decision register -----------------------------------------------------
 
 const RESOLVED_MARKERS = [/\*\*resolved\b/i, /\*\*implemented\b/i, /^decision:/im];
+/**
+ * A decision can also stop being a decision. A6 was closed on 2026-10-04 not by
+ * being answered but because D8 removed the question, and that is a third
+ * outcome: nothing was implemented and nothing is blocked. Reporting it as
+ * "resolved" would overstate what was built; reporting it as "blocked" would be
+ * false. Checked before the other two, so the heading wins over any wording in
+ * the body.
+ */
+const SUPERSEDED_MARKERS = [/\*\*closed as superseded\b/i, /\*\*superseded\b/i];
 const BLOCKED_MARKERS = [/\*\*blocked work:\*\*/i, /\*\*blocked because:\*\*/i, /\*\*decision required/i, /^\*\*options/im];
 
 /**
@@ -73,21 +82,23 @@ export function parseRegister(markdown) {
     const id = idMatch[1].replace(/\s+/g, "");
     const body = section.slice(heading.length);
 
-    const resolved = RESOLVED_MARKERS.some((re) => re.test(body));
-    const blocked = BLOCKED_MARKERS.some((re) => re.test(body));
+    const superseded = SUPERSEDED_MARKERS.some((re) => re.test(body));
+    const resolved = !superseded && RESOLVED_MARKERS.some((re) => re.test(body));
+    const blocked = !superseded && BLOCKED_MARKERS.some((re) => re.test(body));
 
     // A range heading (D3–D9) is a pointer to another document, not a decision
     // record of its own, so it is not required to carry blocker evidence.
     const isRange = /[–-]/.test(idMatch[1]) && !/^[DA]\d+$/.test(id);
 
-    if (!resolved && !blocked && !isRange) {
+    if (!resolved && !blocked && !superseded && !isRange) {
       problems.push(`${id}: neither blocked nor resolved - no blocker, options or decision recorded`);
     }
     if (resolved && blocked) {
       problems.push(`${id}: marked both resolved and blocked`);
     }
 
-    entries.push({ id, heading, status: resolved ? "resolved" : isRange ? "pointer" : "blocked" });
+    const status = superseded ? "superseded" : resolved ? "resolved" : isRange ? "pointer" : "blocked";
+    entries.push({ id, heading, status });
   }
 
   const seen = new Set();
@@ -185,12 +196,20 @@ export function competencyReadiness() {
 
 // --- scenario schema version (A9) ------------------------------------------
 
+/**
+ * A9 is closed (2026-10-04): `scenarioSchemaVersion` was removed rather than
+ * given an invented value, so there is no longer a placeholder to report.
+ *
+ * This still reports, because a silent disappearance would read as "the problem
+ * went away". It now asserts the opposite thing: that the field has *not* come
+ * back without the compatibility policy A9 required.
+ */
 export function schemaVersionReadiness() {
   const modules = path.join(REPO_ROOT, "apps/desktop/src/modules.ts");
-  if (!existsSync(modules)) return { declared: null, placeholder: false };
+  if (!existsSync(modules)) return { declared: null, placeholder: false, resolved: true };
   const match = /scenarioSchemaVersion:\s*"([^"]+)"/.exec(readFileSync(modules, "utf8"));
   const declared = match ? match[1] : null;
-  return { declared, placeholder: declared === "0.0.0-unbuilt" };
+  return { declared, placeholder: declared === "0.0.0-unbuilt", resolved: declared === null };
 }
 
 // --- providers -------------------------------------------------------------
@@ -354,9 +373,11 @@ function render(r) {
   lines.push("DECISIONS");
   const blocked = r.decisions.entries.filter((e) => e.status === "blocked");
   const resolved = r.decisions.entries.filter((e) => e.status === "resolved");
+  const superseded = r.decisions.entries.filter((e) => e.status === "superseded");
   lines.push(`  recorded              ${r.decisions.entries.length}`);
   lines.push(`  blocked               ${blocked.length}${blocked.length ? `  (${blocked.map((e) => e.id).join(", ")})` : ""}`);
   lines.push(`  resolved              ${resolved.length}${resolved.length ? `  (${resolved.map((e) => e.id).join(", ")})` : ""}`);
+  lines.push(`  superseded            ${superseded.length}${superseded.length ? `  (${superseded.map((e) => e.id).join(", ")})` : ""}`);
   for (const p of r.decisions.problems) lines.push(`  PROBLEM               ${p}`);
 
   lines.push("");
@@ -375,9 +396,11 @@ function render(r) {
   lines.push(`  agree                 ${yn(r.competency.matches)}`);
 
   lines.push("");
-  lines.push("SCENARIO SCHEMA VERSION (A9)");
-  lines.push(`  declared              ${r.schemaVersion.declared ?? "none"}`);
-  lines.push(`  placeholder           ${yn(r.schemaVersion.placeholder)}`);
+  lines.push("SCENARIO SCHEMA VERSION (A9 - closed 2026-10-04)");
+  lines.push(`  declared              ${r.schemaVersion.declared ?? "none (field removed)"}`);
+  if (!r.schemaVersion.resolved) {
+    lines.push(`  PROBLEM               the field is back as "${r.schemaVersion.declared}" - A9 requires a compatibility policy with it`);
+  }
 
   lines.push("");
   lines.push("VERSION PARITY (P9-D)");

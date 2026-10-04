@@ -38,7 +38,9 @@ against the remote on every read.
 | **D13** | Code-signing identity | P9-B, P9-E | Purchase or designate a certificate |
 | **D14** | Update-feed location | P9-C | Decide, after D10 |
 | **D17** | May a learner study before retaking an interrupted Assessment? | The scope of the closed-book window | Decide whether the window extends past an attempt |
-| **A2, A6, A7, A9, A12** | Accepted Phase 7 debt | Various | See the register |
+| **A2, A7, A12** | Accepted Phase 7 debt still open | Various | See the register |
+| ~~A9~~ | ~~Scenario schema version~~ **RESOLVED 2026-10-04** - the dead field was removed rather than given an invented value | — | — |
+| ~~A6~~ | ~~Exact mid-transcript resume~~ **CLOSED AS SUPERSEDED 2026-10-04** by D8 - no code written | — | — |
 
 Resolved and implemented: **D1, D2, D3, D4, D5, D6, D7, D11, D12, D15, D18**, and
 **D16**, **D8**, **D9** and **D18** - the decisions closed under the owner's *standing* authorization

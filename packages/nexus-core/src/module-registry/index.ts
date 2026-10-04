@@ -9,10 +9,29 @@
 export interface NexusModule<TWorkspaceComponent = unknown> {
   id: string;
   title: string;
-  scenarioSchemaVersion: string;
   workspaceComponent: TWorkspaceComponent;
   competencyDomains: string[];
 }
+
+/**
+ * `scenarioSchemaVersion` used to sit on this interface and was removed by A9
+ * (2026-10-04). It had been `"0.0.0-unbuilt"` since Phase 1, nothing ever read
+ * it, and any value written there would have been a compatibility claim no
+ * source defines.
+ *
+ * Scenario compatibility is real, it just never lived here. It is carried by
+ * three mechanisms that are all enforced: the Zod gate in
+ * `scenario/validate.ts` rejects a scenario that does not match the domain
+ * model; each scenario file declares its own content `version`, which is
+ * persisted on `SessionRecord.scenarioVersion` so a past attempt names the
+ * content it was scored against; and the content-hash gate (Phase 7 debt A3,
+ * cleared) stops a released scenario being edited without a version bump.
+ *
+ * If a *schema* version is ever needed - a breaking change to the scenario
+ * shape itself - it comes back with a policy saying when it increments, what a
+ * mismatch does at load time, and what happens to sessions recorded under the
+ * old shape. Re-adding the field without that policy is what A9 refused.
+ */
 
 export class ModuleRegistry<TWorkspaceComponent = unknown> {
   private readonly modules = new Map<string, NexusModule<TWorkspaceComponent>>();

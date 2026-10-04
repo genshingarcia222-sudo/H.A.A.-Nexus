@@ -374,65 +374,83 @@ fix while the question is open.
 
 ---
 
-## A9 — Scenarios have no schema-version concept
+## A9 — Scenarios have no schema-version concept — **RESOLVED**
 
-**Current behaviour, verified:** `modules.ts` carries
-`scenarioSchemaVersion: "0.0.0-unbuilt"` with a comment saying the real engine
-arrives in Phase 2 (long since shipped). There is **no** canonical scenario
-*schema* version anywhere in `nexus-core` — scenario files carry a per-scenario
-content `version` ("1.0"), which is a different thing. Nothing reads the field.
+**Resolved** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**. Not an owner decision.
 
-**Trace:** scenario JSON → Zod `validate.ts` → `Scenario` domain model →
-`SessionRecord.scenarioVersion` (content version, persisted) → replay via
-content hash. Compatibility today rests on the **content hash gate** (A3,
-cleared): a released scenario cannot be edited without a version bump.
-
-**Options:**
-
-| Option | Consequence |
+| | |
 |---|---|
-| Leave as is | The field stays dead and visibly stale |
-| Introduce a real schema version | Needs a policy: when it increments, what a mismatch does at load time, and how old persisted sessions are treated |
-| Remove the field from `NexusModule` | Same contract change as A2 option 3 |
+| **Decision** | A9 — the dead `scenarioSchemaVersion` field |
+| **Selected value** | **Remove the field.** `NexusModule` no longer declares it |
+| **Rejected alternatives** | leaving `"0.0.0-unbuilt"` in place; writing `"1.0"` or any other value |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
 
-**Why it is blocked:** writing any value there is a claim about compatibility
-policy that no source defines; inventing "1.0" would be fabricating a fact.
+**Why removal rather than a version.** The register already recorded why a value
+could not be invented: any number written there is a compatibility claim no
+source defines. What makes removal the answer rather than a dodge is that the
+compatibility it purported to provide **already exists, in three enforced
+mechanisms, none of which is this field**:
+
+| Mechanism | What it guarantees |
+|---|---|
+| the Zod gate in `scenario/validate.ts` | a scenario that does not match the domain model is rejected at load |
+| each scenario's own content `version` | persisted on `SessionRecord.scenarioVersion`, so a past attempt names the content it was scored against |
+| the content-hash gate (A3, cleared) | a released scenario cannot be edited without a version bump |
+
+The field was read by exactly one thing: the preflight check that existed to
+report it was a placeholder. Nothing in the application ever consulted it.
+
+**What was changed.** `scenarioSchemaVersion` is gone from `NexusModule`, from
+`apps/desktop/src/modules.ts` and from the registry fixture. The preflight check
+was **kept, not deleted**, and now asserts the opposite thing — that the field
+has not come back — because a check disappearing reads as "the problem went
+away". A test fails if it returns.
+
+**What would bring it back.** A breaking change to the scenario *shape* itself.
+It returns with a policy saying when it increments, what a mismatch does at load
+time, and what happens to sessions recorded under the old shape. Re-adding it
+without that policy is precisely what A9 refused.
 
 ---
 
-## A6 — Exact mid-transcript resume is not implemented
+## A6 — Exact mid-transcript resume is not implemented — **CLOSED AS SUPERSEDED**
 
-**Blocked work:** persisting transcript reveal position and restoring an
-interrupted attempt in place. **Blocked because:** resuming changes elapsed
-time, which feeds `timeEfficiencyRatio` and therefore the score, so attempt
-identity and time accounting are product decisions — this is the engineering
-half of **D8**, and Assessment resume is separately blocked by **D6**.
+**Closed** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**, as superseded by **D8**. Not an owner decision, and **no code was
+written**.
 
-**Current behaviour, verified:** `revealedCount` is **not** part of
-`SessionRecord` — it appears nowhere in the persistence types or the IPC
-fixtures. Drafts, flags, timings and status are persisted; transcript position
-is not. Interrupted sessions are surfaced on the Dashboard and the learner is
-offered a fresh attempt.
+| | |
+|---|---|
+| **Decision** | A6 — whether to persist transcript reveal position and restore an attempt in place |
+| **Selected value** | **Closed as superseded and unnecessary.** No reveal-position persistence is added |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | CLOSED. Not "resolved by implementing"; resolved by the question going away |
 
-**Evidence:** Architecture §20 ("surfaced as *Resume interrupted session?*") and
-§10 (autosave so "interrupted sessions must not lose work"). Neither says what
-resuming does to the attempt.
+**A6 was never an independent debt.** Its own entry said so: "this is the
+engineering half of **D8**", blocked because resuming changes elapsed time, which
+feeds `timeEfficiencyRatio` and therefore the score.
 
-**Dependency:** this is the engineering half of **D8**. Resuming changes
-elapsed time, which feeds `timeEfficiencyRatio`, which feeds the score — so
-attempt identity and time accounting are product decisions, not
-implementation details. Assessment resume is separately blocked by **D6**.
+**D8 answered it on 2026-10-01, and answered it in the direction that removes the
+work.** An interrupted attempt is never resumed in place; the learner may carry
+the draft into a *new* attempt along with the time already measured on it. No
+position in a transcript is restored, because no attempt is restored. Practice
+reveals the whole transcript at the start, and a continued simulation attempt
+begins revealing again — so there is nothing for a persisted `revealedCount` to
+do.
 
-**Unblocked:** adding `revealedCount` to the record is a small, decision-free
-schema addition **only if** resume is authorized; doing it first would be
-speculative infrastructure.
+**Why this is a closure and not a deferral.** The A6 entry already stated the
+test: adding `revealedCount` to the record is decision-free "**only if** resume
+is authorized; doing it first would be speculative infrastructure." Resume was
+not authorized. Building the persistence now, purely to retire an old debt label,
+would be exactly the speculative infrastructure the entry warned against — a
+field written by nothing and read by nothing, which is the defect **A9** was
+closed for having.
 
-**D8 was answered on 2026-10-01 and did not authorize it.** The decision is that
-an interrupted attempt is never resumed in place - a new attempt may carry the
-draft and the measured time, and nothing restores a position in the transcript.
-Practice reveals the whole transcript at the start, and a continued simulation
-attempt begins revealing again. So A6 stays open, and persisting `revealedCount`
-would still be infrastructure nothing reads.
+**What would reopen it.** An authorized in-place resume for any mode. D6 refuses
+it for Assessment and D8 refuses it for practice and simulation, so reopening A6
+means reopening one of those first.
 
 ---
 

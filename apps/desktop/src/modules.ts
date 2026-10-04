@@ -7,7 +7,6 @@ export const moduleRegistry = new ModuleRegistry<ComponentType>();
 const liveScribingModule: NexusModule<ComponentType> = {
   id: "live-scribing",
   title: "Live Scribing",
-  scenarioSchemaVersion: "0.0.0-unbuilt", // real scenario engine arrives Phase 2
   workspaceComponent: LiveScribing,
   competencyDomains: [
     "Chief Complaint",
