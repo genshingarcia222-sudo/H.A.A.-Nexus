@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P10-001
-task_name: "D18 resolution: one canonical content contract, and the migration map"
+task_id: P10-002
+task_name: "A9 and A6: close two pieces of accepted Phase 7 debt"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-10-04T06:58:40.405Z
-last_update: 2026-10-04T07:05:45.406Z
+status: ACTIVE
+started_at: 2026-10-04T07:05:50.860Z
+last_update: 2026-10-04T07:05:50.860Z
 stale_after_hours: 12
-expected_scope: "Resolve D18/O1 under the owner's master resolution instruction: determine ONE canonical runtime-ingestion contract from the O1 measurement, record it with its reasoning and label, record O1 beside it as measurement not decision, and produce the field-level A-to-B migration map that makes the 432-record migration executable and reviewable. Does not merge PR #21. Does not author KB records. Does not modify DEVICE-02's branch."
-affected_areas: "docs/, .nexus/, CHANGELOG.md"
+expected_scope: "A9: scenarioSchemaVersion is read by nothing but the preflight check reporting it dead; real compatibility is the Zod validate gate, the per-scenario content version and the content-hash gate. Remove the field rather than invent a compatibility claim. A6: D8 answered what A6 was blocked behind, so close it as superseded without adding reveal-position persistence."
+affected_areas: "packages/nexus-core/, apps/desktop/, tools/preflight/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: afb7c2d6a857801dc99bb171c56a4b7c01182cda
-last_commit: ac8cae24ae636131cc50b906de5e879b57418e30
+claim_commit: c1f407c77efa19029af6bdb643e5fae85b2a9cac
+last_commit: c1f407c77efa19029af6bdb643e5fae85b2a9cac
 handoff_required: no
 handoff_to: none
-next_action: "A9 and A6 closure, then D17 and A2; D10/D13/D14 remain externally blocked and ICD-10 ingestion is specified but unbuilt."
+next_action: "not recorded"
 ```
 
 ## Ownership history
@@ -102,3 +102,4 @@ Timestamps are UTC.
 | 2026-10-02T11:35:15.187Z | RELEASE COMPLETE | DEVICE-01 | P9-009 | complete |
 | 2026-10-04T06:58:40.405Z | CLAIM | DEVICE-01 | P10-001 | claimed |
 | 2026-10-04T07:05:45.406Z | RELEASE COMPLETE | DEVICE-01 | P10-001 | D18 resolved under standing authorization: contract B canonical, migration map produced, 432 records NOT migrated and PR #21 NOT merged. Stale control-plane facts reconciled and a device-activity detection defect recorded. Commit ac8cae2. |
+| 2026-10-04T07:05:50.860Z | CLAIM | DEVICE-01 | P10-002 | claimed |
