@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P10-001
 task_name: "D18 resolution: one canonical content contract, and the migration map"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-10-04T06:58:40.405Z
-last_update: 2026-10-04T06:58:40.405Z
+last_update: 2026-10-04T07:05:45.406Z
 stale_after_hours: 12
 expected_scope: "Resolve D18/O1 under the owner's master resolution instruction: determine ONE canonical runtime-ingestion contract from the O1 measurement, record it with its reasoning and label, record O1 beside it as measurement not decision, and produce the field-level A-to-B migration map that makes the 432-record migration executable and reviewable. Does not merge PR #21. Does not author KB records. Does not modify DEVICE-02's branch."
 affected_areas: "docs/, .nexus/, CHANGELOG.md"
 branch: main
 claim_commit: afb7c2d6a857801dc99bb171c56a4b7c01182cda
-last_commit: afb7c2d6a857801dc99bb171c56a4b7c01182cda
+last_commit: ac8cae24ae636131cc50b906de5e879b57418e30
 handoff_required: no
 handoff_to: none
-next_action: "not recorded"
+next_action: "A9 and A6 closure, then D17 and A2; D10/D13/D14 remain externally blocked and ICD-10 ingestion is specified but unbuilt."
 ```
 
 ## Ownership history
@@ -101,3 +101,4 @@ Timestamps are UTC.
 | 2026-10-02T11:14:03.750Z | CLAIM | DEVICE-01 | P9-009 | claimed |
 | 2026-10-02T11:35:15.187Z | RELEASE COMPLETE | DEVICE-01 | P9-009 | complete |
 | 2026-10-04T06:58:40.405Z | CLAIM | DEVICE-01 | P10-001 | claimed |
+| 2026-10-04T07:05:45.406Z | RELEASE COMPLETE | DEVICE-01 | P10-001 | D18 resolved under standing authorization: contract B canonical, migration map produced, 432 records NOT migrated and PR #21 NOT merged. Stale control-plane facts reconciled and a device-activity detection defect recorded. Commit ac8cae2. |
