@@ -11,6 +11,202 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## A2 Resolved, A7 Deliberately Deferred, and the accessClasses Gap Narrowed (2026-10-04)
+
+All three **CLAUDE-RECOMMENDED UNDER THE OWNER'S STANDING AUTHORIZATION**. None
+is an owner decision.
+
+**A2 was never a disagreement about which domains are right - it was two lists.**
+The registry declared 12 section-level labels, the evaluator scored 7 categories,
+and **nothing read the registry's**, so the drift could only be caught by someone
+noticing. Re-measured before deciding: `competencyDomains` appeared in exactly
+four places and not one was product logic.
+
+Re-measuring also found a **third** copy the register had never recorded: the 7
+were written out again as a private array in the desktop session store, because a
+TypeScript type cannot be iterated at runtime. Deleting the dead field alone would
+have left the duplication that caused A2 intact. So the field is removed from
+`NexusModule`, and `COMPETENCY_DOMAINS` is exported once from nexus-core as
+`as const satisfies readonly (keyof ScoringWeights)[]` - a domain that is not a
+scoring weight is now a compile error - with the desktop store importing it.
+Three tests cover what the compiler cannot: that the list is *complete* rather
+than a valid subset, that it has no duplicates, and what the seven are. Mutation
+check: dropping one domain fails the completeness test; file restored
+byte-identical.
+
+Preflight's A2 check was **kept and inverted**, as A9's was: it no longer measures
+a mismatch, because there is no second list to mismatch - it reports the single
+source and fails if a competing declaration reappears.
+
+**A2 did not adopt per-section competency.** Architecture §5/§21 describe
+section-level domains; implementing them would change what competency means, what
+a learner is shown, and would migrate every stored `CompetencyRecord`. A2 removed
+the field that pretended that change had already been made.
+
+**A7 is deferred, and the deferral is now written down** rather than left as
+silence a later session could mistake for an oversight. No source defines what a
+competency trend should change about guidance - which direction matters, over
+what window, whether it reorders recommendations or annotates them - and
+inventing a weighting would silently change what learners are told to do next.
+The entry stays **blocked**, because the product question is real and unanswered,
+with the unblocking condition named.
+
+**The accessClasses gap is narrower than the previous session recorded, and that
+statement is corrected.** Contract B already has the seam: `eligibility.ts` keeps
+`isProductionEligible` (static) apart from `isDeliverable(record,
+DeliveryRequest)` (relative to a request), and `DeliveryRequest` already carries
+`asOf`, `jurisdictions` and `temporalMode`. What it lacks is a notion of the
+*mode a request comes from*.
+
+More importantly: **D4 does not need a record-level expression.** D4 blocks
+surfaces - Knowledge Base off, Training off, direct route access blocked - and
+contains no concept of some records being assessment-safe. A Knowledge Corpus
+browser ships under D4 as a gated route, exactly as `/knowledge-base` already
+does. The earlier claim that a browser "must not be built before the record-level
+expression exists" **was wrong** and would have blocked that work behind
+something nothing requires.
+
+What `accessClasses` would be for is a question nobody has asked - may a *subset*
+of corpus content be shown during an Assessment? - which would narrow D4 and is
+an owner decision. DEVICE-02 reached the same conclusion independently, recording
+`ASSESSMENT_CLOSED_BOOK` as "deliberately unclaimed" on zero of its 432 records.
+**Disposition: no schema change, no new decision entry, and `accessClasses` is
+the one class-(c) field deliberately left behind by the migration map** - a
+decision, not an oversight.
+
+**Validation.** Targeted, as the session's budget state required: nexus-core
+**807/807** (67 files, +3), desktop **330/330** (33 files), typecheck clean,
+build clean, preflight **30/30** with the run exiting 0 and the register now
+reporting 18 decisions - **10 resolved, 1 superseded, 6 blocked**. The Rust suite
+was not re-run: no Rust file was touched.
+
+---
+
+## A9 Resolved and A6 Closed as Superseded (2026-10-04)
+
+Both **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING
+AUTHORIZATION**. Neither is an owner decision.
+
+**A9 - the dead scenario schema version.** `scenarioSchemaVersion` had read
+`"0.0.0-unbuilt"` since Phase 1 and was consulted by exactly one thing: the
+preflight check that existed to report it was a placeholder. The register had
+already established that writing any value there would be fabricating a
+compatibility claim. What settles it is that the compatibility it purported to
+provide **already exists in three enforced mechanisms**: the Zod gate in
+`scenario/validate.ts` rejects a scenario that does not match the domain model;
+each scenario declares its own content `version`, persisted on
+`SessionRecord.scenarioVersion` so a past attempt names what it was scored
+against; and the content-hash gate (A3, cleared) stops a released scenario being
+edited without a version bump. The field is removed from `NexusModule`, from the
+desktop module and from the registry fixture.
+
+The preflight check was **kept rather than deleted**, and now asserts the
+opposite thing - that the field has not come back - because a check quietly
+disappearing reads as "the problem went away". A test fails if it returns.
+
+**A6 - exact mid-transcript resume.** Closed as superseded, with **no code
+written**. A6 was never independent: its own entry called it "the engineering
+half of D8". D8 answered it on 2026-10-01 in the direction that removes the
+work - an interrupted attempt is never resumed in place, so no transcript
+position is restored and a persisted `revealedCount` would have nothing to do.
+Building it now purely to retire an old label would be the speculative
+infrastructure the A6 entry itself warned against, and would create exactly the
+defect A9 was closed for having: a field written by nothing and read by nothing.
+
+**Preflight learned a third outcome.** A6 is neither resolved nor blocked, and
+the register parser had no way to say so - it reported "A6: neither blocked nor
+resolved" as a malformed record. A decision can stop being a decision, so
+`superseded` is now a status of its own, checked before the other two so that
+"resolved" wording inside a superseded entry cannot reclassify it. Counting A6
+as resolved would have overstated what was built.
+
+The register now reports **18 decisions: 9 resolved, 1 superseded, 7 blocked**,
+and the run exits 0.
+
+**Validation.** nexus-core **804/804** (66 files), desktop **330/330** (33
+files), typecheck clean, build clean, preflight **30/30** (was 28; three new
+tests - two for the superseded status, one asserting the removed field stays
+removed). No test was deleted or weakened.
+
+---
+
+## D18 Resolved — One Canonical Content Contract (2026-10-04)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER THE OWNER'S STANDING AUTHORIZATION**,
+on the owner's master resolution instruction. Not an owner decision. The
+architecture is the new `docs/KNOWLEDGE_ARCHITECTURE.md`.
+
+**The measurement reframed the decision.** O1
+(`kb-schema-divergence.mjs`, run at `96ab675`) reports field-name overlap of
+**11 of 54** between the two contracts - and the 11 are the entire governance
+spine: `id`, `provenance`, `revision`, `reviewStatus`, `verification`,
+`contentStatus`, `evidence`, `flags`, `domain`, `rationale`, `choices`. The two
+lanes never built rival governance models. They agree on identity, provenance,
+lifecycle and review, and disagree **only about the content model**. O1's own
+closing line is "O1 / D18 remains OPEN. Nothing here resolves it" - it measures;
+D18 decides.
+
+**The canonical runtime-ingestion contract is Contract B**, the D12 Zod model in
+`packages/nexus-core/src/knowledge-corpus/`. Four reasons, all from evidence:
+D12 is an owner decision and B is its implementation, so choosing A would
+overturn an owner decision under standing authorization; **only B has a
+runtime** - DEVICE-02's own `INTEGRATION_BLOCKERS.md` records its corpus's
+storage model, ingestion, indexing and retrieval all **open**, with "No loader
+reads `knowledge-corpus/`. Deliberate", while B carries `build`, `eligibility`,
+`temporal`, `conflict`, `references` and `pilot-conversion`; `main` outranks an
+unmerged branch; and B already carries the versioned `codingReference` that
+ICD-10-CM needs, cross-validated against `applicability` in `item.ts`, where A
+has only a flat `codingVersion` string.
+
+**What was NOT done, and must not be read as done.** The 432 records are **not
+migrated**. PR #21 is **not merged**. No adapter, bridge or third contract was
+written. What was produced instead is the field-level **migration map**: all 43
+unmapped A-keys classified into rename, structural lift, semantic gap, and
+authoring-only-metadata-that-must-never-enter-the-runtime-contract.
+
+**Three findings the map surfaces as questions, not answers.**
+`correctChoiceIds` (array, 318 records) against B's singular `correctChoiceId`
+is a semantic difference, not a rename. Variant lineage is 5 A-fields to 3
+B-fields across **375 of 432** records - the highest-volume lift and the likeliest
+to lose information. And **`accessClasses` has no home in B at all**, so no record
+can yet be marked `ASSESSMENT_CLOSED_BOOK`; D4 is held today by the route gate and
+the source-scanning invariant, not at the record, and a Knowledge Corpus browser
+must not ship before that is fixed.
+
+### Stale control-plane facts reconciled
+
+- **A defect in how device activity is detected.** DEVICE-02's registry record
+  said 2026-09-26. It has been active twice since - three trailered commits on
+  2026-10-01, and `96ab675` on 2026-10-02 which carries **no `Nexus-Device:`
+  trailer at all**. Staleness evidence #2 reads that trailer on `origin/main`;
+  `96ab675` is on a branch and untrailered, so `nexus-sync start` reported
+  DEVICE-02 idle for 184 hours while it had committed 43 hours earlier. The
+  evidence fields are reconciled from the remote; `status` stays `UNKNOWN` and
+  `last_successful_sync` stays `NOT VERIFIED`, because both are self-reports and
+  DEVICE-02 has still never run a state-writing command. **The detection defect
+  is recorded, not fixed** - widening it changes `SYNC_PROTOCOL`'s takeover
+  semantics, which is a protocol decision. Until then, do not take over a
+  DEVICE-02 task on staleness evidence alone.
+- **CLAUDE.md told every session that Analytics was a placeholder.**
+  `Analytics.tsx` computes both populations from real records through
+  `computeAnalytics`. The instruction outlived the fact and has been corrected in
+  place, with the reason it was ever written.
+- **README** described Phase 8.3 as "in progress ... learners cannot start an
+  assessment session yet" and quoted `390 + 228 = 618` tests and `cargo test`
+  55. All false. Rather than substituting today's numbers - which is how it went
+  stale the last two times - it now points at `.nexus/BASELINE.md` and CI for
+  every count.
+- **PR #21 is 13 ahead / 1 behind** `main` (it was recorded as 10 / 0).
+
+**Validation.** No source file was touched this session: `git diff` confirms the
+tree is identical to baseline **B-007** outside documentation and `.nexus`, so
+the suites were not re-run to prove a documentation change. The gates the change
+*can* affect were run: preflight **27/27** with the run exiting 0 and the register
+now reporting 18 decisions, **8 resolved, 9 blocked**; release tool **25/25**;
+version parity across all six declarations; nexus-sync **81/81**.
+
+---
+
 ## The Control Plane Was Telling Both Devices the Opposite of What the Repository Holds (2026-10-02)
 
 A reconciliation audit, `P9-2026-10-02-001`. **No decision was resolved, no

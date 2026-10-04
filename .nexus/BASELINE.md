@@ -14,19 +14,48 @@ Earlier checkpoints, from before this file existed, are recorded in
 preserved there, not copied here.
 
 ```yaml nexus-state
-commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
+commit: ff3a12d7b795956025c2882cb2a66b8dc681ce65
 branch: main
-timestamp: 2026-10-02T11:45:00Z
+timestamp: 2026-10-04T07:25:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 804/804 (66 files), desktop 330/330 (33 files), preflight 27/27, nexus-sync 81/81, release version tool 25/25"
+tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 30/30, nexus-sync 81/81, release tool 25/25"
 build: "PASS - pnpm -r build"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
-rust: "PASS - cargo test --offline 70/70, cargo fmt --check clean, cargo clippy --all-targets ZERO warnings; rustc 1.98.1, cargo 1.98.1"
-audit_status: "Phase 7 closed PASS WITH CONDITIONS; Phase 8.3 decision group COMPLETE (D1, D3-D9 all resolved); D15 executed (c384ac5); D16, D8 and D9 resolved 2026-10-01 under the owner STANDING AUTHORIZATION; P9-A and P9-D both SATISFIED; control plane reconciled to the repository at P9-2026-10-02-001 - no decision resolved by that audit"
-known_conditions: "D10, D13, D14, D17, D18 open (recommended order D18 -> D10 -> D13 -> D17, D14 after D10); A2, A6, A7, A9, A12 open; Phase 9 P9-B/C/E blocked on D13 and D14; Phase 8 not closed - roadmap steps 3-8 unstarted, D10 blocks step 4; tauri build not re-run since the D15 merge, so P9-A's clean-machine verification is still owed; no release tag and the policy refuses a stable one at 0.1.0; feat/knowledgebase-expansion (PR #21) deliberately unmerged pending D18; README.md test counts stale (390+228 vs measured 804+330) - DEVICE-02-owned, assigned in its handoff"
+rust: "PASS - cargo test 70/70, cargo fmt --check clean, cargo clippy 0 warnings; rustc 1.98.1"
+audit_status: "Phase 7 closed; Phase 8.3 decision group COMPLETE; D15 executed; D16/D8/D9 resolved 2026-10-01 and D18/A9 resolved and A6 superseded 2026-10-04, all under the owner STANDING AUTHORIZATION; P9-A and P9-D SATISFIED. D18 names contract B canonical - the 432 KB records are NOT migrated and PR #21 is NOT merged"
+known_conditions: "D10, D13, D14, D17, A2, A7, A12 open; Phase 9 P9-B/C/E blocked on D13 and D14; Phase 8 not closed - roadmap steps 3-8 unstarted and D10 blocks step 4; ICD-10-CM ingestion specified in docs/KNOWLEDGE_ARCHITECTURE.md section 5 and NOT BUILT (CMS reachable, nothing retrieved); 432 KB records not migrated to contract B; Pilot Batch 001 0 of 12 human-verified; tauri build not re-run since the D15 merge; no release tag; a device-activity detection defect is recorded in DEVICE_REGISTRY"
 ```
 
 ## History
+
+### B-008 — D18 resolved; A9 and A6 closed — `ff3a12d` — 2026-10-04 — DEVICE-01
+
+The tree at `ff3a12d7b795956025c2882cb2a66b8dc681ce65`, on `main`, verified on DEVICE-01.
+
+| Check | Command | Result |
+|---|---|---|
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **804/804** (66 files), desktop **330/330** (33 files) |
+| Preflight tool | `node tools/preflight/preflight.test.mjs` | **30/30** (was 27) |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; 18 decisions, **9 resolved, 1 superseded, 7 blocked** |
+| Sync tool | `node tools/nexus-sync/nexus-sync.test.mjs` | **81/81** |
+| Release tool | `node tools/release/version.test.mjs` | **25/25** |
+| Typecheck | `npx --yes pnpm@9 -r typecheck` | clean |
+| Build | `npx --yes pnpm@9 -r build` | clean |
+| Rust | `cargo test --offline` | **70/70** |
+| Rust format | `cargo fmt --check` | clean |
+| Rust lint | `cargo clippy --offline --all-targets` | **0 warnings, 0 errors** |
+
+**Movement from B-007.** Application test counts are unchanged at 804 and 330:
+D18 was a decision and a document, and A9/A6 removed dead code rather than adding
+behaviour. Preflight 27 → **30**: two tests for the new `superseded` status and
+one asserting the removed `scenarioSchemaVersion` field stays removed. The
+register gained a third outcome, so its counts now read 9 / 1 / 7 rather than a
+two-way split.
+
+**What this baseline does not cover.** `tauri build` has still not been re-run
+since the D15 merge, so no installer exists at this commit. The 432 KB records
+are **not** migrated to the canonical contract and PR #21 is **not** merged.
+No ICD-10-CM file has been retrieved.
 
 ### B-007 — control plane reconciled to the repository; clippy clean — `f48a1fc` — 2026-10-02 — DEVICE-01
 

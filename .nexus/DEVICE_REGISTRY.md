@@ -37,14 +37,14 @@ particular physical device.
 DEVICE-01.role: primary-implementation
 DEVICE-01.status: ACTIVE
 DEVICE-01.ownership: none
-DEVICE-01.latest_known_commit: b0732790e66d064ba5b2508a9980e1af891b14ae
-DEVICE-01.latest_activity: 2026-10-02T11:35:24.245Z
-DEVICE-01.last_successful_sync: 2026-10-02T11:35:24.245Z
+DEVICE-01.latest_known_commit: 549d50b0425f6c8a411657db53194099507bd1a6
+DEVICE-01.latest_activity: 2026-10-04T07:42:52.995Z
+DEVICE-01.last_successful_sync: 2026-10-04T07:42:52.995Z
 DEVICE-02.role: secondary-verification-audit
 DEVICE-02.status: UNKNOWN
 DEVICE-02.ownership: none
-DEVICE-02.latest_known_commit: 78318ca6a4a976cd0e0057c4c6dc33eeb39c5029
-DEVICE-02.latest_activity: 2026-09-26T15:09:01Z
+DEVICE-02.latest_known_commit: 96ab675ad1f19ef4d6a41c8b52ba4ab65baa0f3c
+DEVICE-02.latest_activity: 2026-10-02T17:16:13Z
 DEVICE-02.last_successful_sync: NOT VERIFIED
 ```
 
@@ -66,6 +66,38 @@ state-writing `nexus-sync` command since 2026-09-26T00:47 - it delivered the
 sweep through pull requests instead of a `claim`. DEVICE-01 will not assert a
 self-report on another device's behalf. Its next `claim`, `heartbeat` or
 `release` replaces this with its own.
+
+## Reconciliation, 2026-10-04 (DEVICE-01) — and a defect in how activity is detected
+
+DEVICE-02's evidence fields said 2026-09-26 at `78318ca`. **It has been active
+twice since**, and the registry could not see either:
+
+| Evidence | When | Carries `Nexus-Device: DEVICE-02`? |
+|---|---|---|
+| `fa5a040`, `640b600`, `dbb7c12` — merging `origin/main` into the Knowledgebase lane | 2026-10-01 | yes |
+| `96ab675` — "Merge main into feat/knowledgebase-expansion: CHANGELOG only" | 2026-10-02T17:16:13Z | **no** |
+
+The evidence fields are updated to `96ab675` / 2026-10-02T17:16:13Z, read from
+the remote and not from any report.
+
+**The defect this exposes.** `SYNC_PROTOCOL` staleness evidence #2 is "a commit
+on `origin/main` carrying the trailer `Nexus-Device: <owner>`". `96ab675` is on
+`origin/feat/knowledgebase-expansion`, not `main`, **and carries no trailer at
+all** — its author is the generic `Claude`. So DEVICE-02's most recent work is
+invisible to `nexus-sync start`, which reported it idle for 184 hours while it
+had committed 43 hours earlier. A device that works only on a branch and omits
+the trailer cannot be seen by the staleness rule, and the rule will report it
+takeover-eligible.
+
+This is recorded, not fixed. Fixing it means either widening evidence #2 to
+branch commits or requiring the trailer on every device commit, and both change
+`SYNC_PROTOCOL`'s takeover semantics — which is a protocol decision, not a
+reconciliation. **Until then, do not take over a DEVICE-02 task on staleness
+evidence alone; check `origin/feat/knowledgebase-expansion` first.**
+
+`status` stays `UNKNOWN` and `last_successful_sync` stays `NOT VERIFIED`. Both
+are self-reports, DEVICE-02 has still never run a state-writing `nexus-sync`
+command, and DEVICE-01 will not assert one on its behalf.
 
 ## History before this registry
 

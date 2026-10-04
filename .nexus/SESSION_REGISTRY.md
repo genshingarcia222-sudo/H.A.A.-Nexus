@@ -71,19 +71,19 @@ Consequences, in order of how often they matter:
 ```yaml nexus-state
 registry_version: 1
 S-phases-building.DEVICE-01.attached_at: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen: 2026-10-02T11:35:00.945Z
-S-phases-building.DEVICE-01.last_seen_commit: 5af0b18c7c1c4c8eaae7e4812dcd9dd34c92050e
+S-phases-building.DEVICE-01.last_seen: 2026-10-04T07:42:47.779Z
+S-phases-building.DEVICE-01.last_seen_commit: e0889963f2291a1d17fc4da9603778636e9f6013
 S-phases-building.name: "PHASES BUILDING"
 S-phases-building.role: "orchestrator: authoritative phase plan, task partition, integration and conflict policy"
 S-phases-building.status: ACTIVE
 S-phases-building.control_version: P9-2026-10-02-001
 S-phases-building.branch: main
-S-phases-building.next_action: "DEVICE-01: control plane reconciled to the repository at P9-2026-10-02-001 - sections 2-8 of PHASES_BUILDING_CONTROL, sections 4-9 of the Phase 9 spec, both handoffs and CURRENT_STATE prose had still been asserting D8/D9/D15/D16 open and PR #3 unmerged. No decision resolved. Superseded evidence preserved in the new section 3a. Open set is now D18, D10, D13, D17 (order D18 -> D10 -> D13 -> D17, D14 after D10) - all owner-gated, so DEVICE-01 again has no ungated engineering work. Baseline B-007 at f48a1fc; clippy now zero warnings. DEVICE-02: your handoff now has ONE ungated item - README.md test counts are stale again (quotes 390+228=618 and cargo test 55; measured 804+330=1134 and 70/70), yours to fix because README is yours. Otherwise hold PR #21 pending D18, dispose of PR #22 in your own lane, and put your DEVICE_REGISTRY record back in your hands with any state-writing nexus-sync command."
+S-phases-building.next_action: "A2 RESOLVED and A7 deferred 2026-10-04 under standing authorization; the accessClasses/D4 gap dispositioned - no schema change needed, and a Knowledge Corpus browser is NOT blocked behind a record-level access model (D4 blocks surfaces, not records; the earlier claim was wrong and is corrected in docs/KNOWLEDGE_ARCHITECTURE.md). D17 NOT started: the session reached the closure band. Remaining: D17 (cheap), then the 432-record migration and CMS ICD-10 ingestion behind the GREEN-only entry gate. D10, D13, D14 owner-gated; A12 and Pilot 001 need human review."
 S-phases-building.created_by: DEVICE-01
 S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
-S-phases-building.updated_at: 2026-10-02T11:35:00.945Z
-S-phases-building.revision: 8
+S-phases-building.updated_at: 2026-10-04T07:42:47.779Z
+S-phases-building.revision: 10
 S-phases-building.DEVICE-02.attached_at: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen_commit: d162b6d36f1b11873b6d60359d281fcac55b426d
@@ -106,3 +106,5 @@ it replaced. Timestamps are UTC.
 | 2026-09-30T23:54:22.595Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 6 |
 | 2026-10-01T00:07:19.519Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 7 |
 | 2026-10-02T11:35:00.945Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 8 |
+| 2026-10-04T07:14:54.806Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 9 |
+| 2026-10-04T07:42:47.779Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 10 |

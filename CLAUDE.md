@@ -42,7 +42,7 @@ When implementing a specific phase, read its related tests and source modules be
 ## Phase roadmap — mandatory interpretation
 
 - **Phase 7 is the Pre-Commercialization Audit & Stabilization Gate.** It is an audit/verification phase, not an Analytics implementation phase.
-- The repository contains an Analytics route placeholder; do not assume production analytics is implemented. Analytics readiness and data requirements are audited during Phase 7. Do not redefine Phase 7 as Analytics.
+- **Analytics is implemented, and this line used to say the opposite.** `apps/desktop/src/routes/Analytics.tsx` computes both populations through `computeAnalytics` from real `SessionRecord`/`CompetencyRecord` data (D5 keeps Assessment and Practice separate); there is no separate analytics store and nothing is faked. What was true during Phase 7 — a route placeholder pending audit — stopped being true and the instruction outlived the fact. Still do not redefine Phase 7 as Analytics: Phase 7 is closed and was never an Analytics implementation phase.
 - **Phase 8 begins commercialization implementation** only after Phase 7 closes.
 - Read `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md` before performing Phase 7 work.
 

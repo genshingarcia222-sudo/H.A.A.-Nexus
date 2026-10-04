@@ -187,6 +187,35 @@ test("returns null rather than guessing when there is no [package] table", () =>
   assert.equal(parseCargoPackageVersion('[dependencies]\nserde = { version = "1" }\n'), null);
 });
 
+test("A6: a superseded decision is counted as neither resolved nor blocked", () => {
+  // A decision can stop being a decision. D8 removed the question A6 was
+  // blocked behind, so nothing was implemented and nothing is blocked -
+  // counting it as resolved would overstate what was built. The marker is
+  // read from the body, as every other status marker is.
+  const md = ["## A6 - Something", "**Closed as superseded.** D8 removed the question."].join("\n\n");
+  const { entries, problems } = parseRegister(md);
+  assert.equal(entries[0].status, "superseded");
+  assert.deepEqual(problems, []);
+});
+
+test("superseded wins over resolved wording in the same entry", () => {
+  const md = ["## A6 - Something", "**Closed as superseded** by D8. **Resolved** appears here too."].join("\n\n");
+  const { entries } = parseRegister(md);
+  assert.equal(entries[0].status, "superseded", "resolved wording must not reclassify a superseded entry");
+});
+
+test("A9: the scenario schema version field is gone, and its absence is what closed A9", () => {
+  // A9 refused to invent a compatibility claim and removed the field instead of
+  // giving it a value. `resolved` is the assertion; `declared === null` is the
+  // evidence. The check was kept rather than deleted so that the field coming
+  // back - without the load-time policy A9 required - is caught rather than
+  // silently accepted.
+  const r = collect().schemaVersion;
+  assert.equal(r.declared, null, "scenarioSchemaVersion is back in apps/desktop/src/modules.ts");
+  assert.equal(r.resolved, true);
+  assert.equal(r.placeholder, false);
+});
+
 console.log("\nagainst the real repository");
 
 test("collects a report whose sections are all present", () => {
@@ -212,10 +241,16 @@ test("the shipped decision register parses without problems", () => {
   assert.ok(entries.length >= 7, `expected the register to record at least 7 decisions, saw ${entries.length}`);
 });
 
-test("measures the A2 mismatch rather than assuming it", () => {
+test("A2: the competency domains have exactly one declaration", () => {
+  // A2 was two lists that could not be reconciled by use, because nothing
+  // read the registry's. The field is gone and the domains are exported once
+  // from nexus-core. This asserts the single source, and fails if a competing
+  // declaration reappears in the module registry.
   const c = collect().competency;
-  assert.equal(typeof c.registryDomains, "number");
-  assert.equal(typeof c.evaluatorDomains, "number");
+  assert.equal(c.registryDomains, null, "modules.ts declares competencyDomains again");
+  assert.equal(typeof c.canonicalDomains, "number");
+  assert.equal(c.singleSource, true);
+  assert.deepEqual(c.problems, []);
 });
 
 test("reports no secret values anywhere in a full report", () => {

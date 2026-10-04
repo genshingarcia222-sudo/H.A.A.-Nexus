@@ -4,6 +4,7 @@ import {
   pauseSession,
   resumeSession,
   completeSession,
+  COMPETENCY_DOMAINS,
   evaluationSucceeded,
   failEvaluation,
   addFlag,
@@ -130,16 +131,6 @@ function toSessionRecord(
     evaluation: mayRevealPerformance(session) ? result : null
   };
 }
-
-const COMPETENCY_DOMAINS = [
-  "accuracy",
-  "completeness",
-  "terminology",
-  "relevance",
-  "structure",
-  "pertinentPosNeg",
-  "timeEfficiency"
-] as const;
 
 export const useSessionStore = create<SessionState>((set, get) => ({
   scenario: null,

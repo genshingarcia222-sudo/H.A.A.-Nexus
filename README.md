@@ -9,7 +9,7 @@ never a separate patch). This README covers only how to run what exists so far.
 **Proprietary software — see `LICENSE.md`.** This is not open source; every
 `package.json` in this workspace is marked `"license": "UNLICENSED"`.
 
-## Status: Phase 8.3 (Assessment Mode) in progress — blocked on product decisions
+## Status: Phase 8 open · Phase 9 open · Phase 8.3 complete
 
 Every open decision that currently blocks work — with the evidence and the
 options the architecture supports — is collected in
@@ -23,10 +23,20 @@ only — never key values).
 Phase 7 (the Pre-Commercialization Audit & Stabilization Gate) closed as PASS
 WITH CONDITIONS; its evidence and disposition are recorded in
 `docs/PHASE_7_PRE_COMMERCIALIZATION_AUDIT.md`. Phase 8.1 (Entitlement Domain
-Model), Phase 8.2 (ScenarioLibrary Entitlement Gating) and Phase 8.2.1
-(Database Migration Infrastructure) are complete. Phase 8.3 (Assessment Mode)
-is in progress: the domain rule and database migration exist, but learners
-cannot start an assessment session yet.
+Model), Phase 8.2 (ScenarioLibrary Entitlement Gating), Phase 8.2.1 (Database
+Migration Infrastructure) and **Phase 8.3 (Assessment Mode)** are complete:
+every decision in the 8.3 group — D1 and D3 through D9 — is resolved, Assessment
+has a learner entry point and tier gating (D1 = Pro), and it runs closed-book
+(D4). **Phase 8 as a whole is still open**: commercialization roadmap steps 3-8
+are unstarted and **D10** blocks web persistence.
+
+**Phase 9** (Packaging & Release Hardening) is open with P9-A and P9-D satisfied;
+P9-B, P9-C and P9-E are blocked on **D13** and **D14**. Phase 10 has not started.
+
+**Current counts are not repeated here**, because every figure in this file that
+was repeated by hand has gone stale at least once. `.nexus/BASELINE.md` carries
+the latest measured baseline with the command that produced each number, and
+`.github/workflows/ci.yml` re-measures them on every push.
 
 | Component | Status |
 |---|---|
@@ -37,13 +47,13 @@ cannot start an assessment session yet.
 | `packages/nexus-core/recommendation-engine` (deterministic error-frequency rules) | **Implemented** — unit tested, typechecked |
 | `packages/nexus-core/analytics-engine` (overall performance, trend, weak/strong areas, error trends, scenario progress) | **Implemented** — 14 unit tests; every figure computed from real `SessionRecord`/`CompetencyRecord` data, no separate analytics store |
 | Real content: 2 scenarios, 4 terminology entries, 3 lessons | **Implemented** — all pass schema validation and cross-reference checks (recommendation-engine's lesson IDs are confirmed to actually exist in shipped content) |
-| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets` clean and `cargo test` green (55 tests) on Rust 1.98.1. See "Rust/Tauri verification" below |
+| Rust backend (DB connection, session/profile/competency queries, Tauri commands) | **Implemented and compiled** — `cargo check --all-targets`, `cargo fmt --check` and `cargo clippy` clean, `cargo test` green on Rust 1.98.1. Count in `.nexus/BASELINE.md`. See "Rust/Tauri verification" below |
 | Desktop: Knowledge Base (search), Training (lesson browser + knowledge checks), Analytics, Submission Summary (real scoring + recommendations) | **Implemented** — unit/integration tested, typechecked, production build verified |
 | App icons (`src-tauri/icons/`) | **Implemented** — full icon set generated from a brand source image via `tauri icon` |
 | Exact mid-transcript resume after interruption | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | Recommendation engine factoring in competency-record trends (not just error frequency) | **Not implemented (honestly scoped out — see CHANGELOG)** |
 | Migration runner / `schema_version` tracking | **Implemented (Phase 8.2.1)** — numbered, transactional migrations recorded in `application_metadata['schema_version']`; clears Phase 7 condition C1. Schema is at version 2 (`002_assessment_mode.sql`, Phase 8.3) |
-| Assessment (no-pause) mode | **In progress (Phase 8.3)** — `assessment` mode and its no-pause rule enforced in the session machine; migration 002 allows it in SQLite (schema version 2); the simulator workspace hides Pause/Resume and keeps progressive reveal for it; the live-feedback boundary is enforced as state (no evaluation revealed or persisted before an assessment is submitted). **No UI entry point or entitlement gating yet** — which tier includes it is an open product decision; see `docs/PHASE_8_3_ASSESSMENT_MODE.md` |
+| Assessment (no-pause) mode | **Complete (Phase 8.3)** — `assessment` mode and its no-pause rule enforced in the session machine; migration 002 allows it in SQLite (schema version 2); the simulator workspace hides Pause/Resume and keeps progressive reveal; the live-feedback boundary is enforced as state. **The learner entry point and tier gating exist** (D1 = Pro), it runs closed-book (D4), results are separated by population (D5), an interrupted attempt is retaken (D6) and a failed evaluation is retryable (D9). See `docs/PHASE_8_3_ASSESSMENT_MODE.md` |
 | Entitlement domain model (tier ladder, capability matrix, pure resolver) | **Implemented (Phase 8.1)** — 53 unit tests. Pure domain logic; consumed by scenario gating |
 | Scenario entitlement gating (library lock states + start enforcement) | **Implemented (Phase 8.2)** — locked scenarios stay visible; every start path refused below the UI. Subscription state is a Free-only placeholder (see Phase 8 progress) |
 | Commercialization (subscription persistence, billing, payments, paywall/score-detail gating, web deployment, auth) | **Not started** — later Phase 8 increments |
@@ -62,7 +72,7 @@ cargo 1.98.1 (797e8a9bc 2026-08-05)
 ```
 
 - `cargo check --all-targets` — **clean**, no errors, no warnings.
-- `cargo test` — **55 passed, 0 failed.** Real-file SQLite (not `:memory:`).
+- `cargo test` — **green, count in `.nexus/BASELINE.md`.** Real-file SQLite (not `:memory:`).
   14 persistence tests (Phase 7) cover table integrity, WAL + foreign-key
   pragmas, restart idempotency, autosave of an in-progress draft with no
   evaluation yet, autosave survival across a restart, autosave-then-submit
@@ -154,7 +164,8 @@ This repo pins its package manager via `packageManager` in the root
 ```bash
 pnpm install
 
-# Every package's tests (390 nexus-core + 228 desktop = 618).
+# Every package's tests. For the current counts see .nexus/BASELINE.md;
+# repeating them here is what made this file wrong before.
 # nexus-core covers scenario/terminology/lesson schema validation, content
 # hashing, versioning, the in-memory repositories, session state machine,
 # the full evaluation engine, the competency engine, the analytics engine, the entitlement resolver,

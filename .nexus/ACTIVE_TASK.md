@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-009
-task_name: "Control-plane and milestone reconciliation audit"
+task_id: P10-003
+task_name: "A2 resolution, and truthful dispositions for the accessClasses gap, D17 and A7"
 owner: DEVICE-01
 status: COMPLETE
-started_at: 2026-10-02T11:14:03.750Z
-last_update: 2026-10-02T11:35:15.187Z
+started_at: 2026-10-04T07:36:07.530Z
+last_update: 2026-10-04T07:41:57.621Z
 stale_after_hours: 12
-expected_scope: "Reconcile the top of the authority order against repository evidence. docs/PHASES_BUILDING_CONTROL.md sections 2-8, docs/PHASE_BUILD_HANDOFF_DEVICE-01.md and the .nexus/CURRENT_STATE.md prose still describe D8, D9, D15 and D16 as open and PR #3 as unmerged, which the repository disproves (082fa95 is an ancestor of main; RELEASE_POLICY.md exists; the register and ledger record all four resolved). Control-plane integrity only: resolve no decision, implement no Phase 9 item, touch no DEVICE-02 file. Plus repository-wide regression validation on HEAD."
-affected_areas: "docs/PHASES_BUILDING_CONTROL.md,docs/PHASE_BUILD_HANDOFF_DEVICE-01.md,docs/PHASES_BUILDING_LEDGER.md,CHANGELOG.md,.nexus/"
+expected_scope: "Cheap, decision-critical work only, under a YELLOW budget state. A2: resolve by removing the dead competencyDomains field and replacing the duplicated domain list with one exported source in nexus-core, guarded at type level so it cannot drift from CategoryScores again. Then truthful dispositions for the accessClasses/D4 gap, D17 and A7 as far as evidence safely allows. Expensive operations - the 432-record migration and CMS ICD-10 ingestion - are gated out: section 10 requires GREEN and the session is in the caution band."
+affected_areas: "packages/nexus-core/, apps/desktop/, tools/preflight/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: 9416bf8a1c56736eff254155faf90ccc3752f1ba
-last_commit: 6bb482ae38ae9cda46d18e2ca5a56497cb275590
+claim_commit: 5ba1c8bd908d774ac2b41c97fb4874658dba14fa
+last_commit: bfbdc4d3c56b8f5749f24e1442c33f9d21eeb30f
 handoff_required: no
 handoff_to: none
-next_action: "No ungated engineering work remains in the DEVICE-01 lane, for the second session running, and the reconciliation confirmed that rather than assuming it. Every remaining blocker is owner-gated: D18 first (it alone unblocks DEVICE-02's whole lane and 324 KB records are exposed to it), then D10 (needs a provider account and an account model), D13 (a purchased signing identity), D17 (changes D4's scope or D6's retake rule); D14 follows D10. Do not cut a release: RELEASE_POLICY section 6 refuses a stable one at 0.1.0 and the tag is the owner's. Do not merge PR #21. The one piece of ungated work in the repository is README.md's stale test counts, which is DEVICE-02's file and is assigned in its handoff. Standing DEVICE-01 duty: when main advances past what the control plane and .nexus describe, re-measure and reconcile - the documents that drift are the ones asserting a decision's state in prose, not the ones carrying a command or a commit per row."
+next_action: "D17 is the remaining cheap decision and was not started. Then the two expensive units behind the entry gate: the 432-record migration and CMS ICD-10-CM ingestion, neither of which may begin outside a GREEN state with enough headroom to reach a verification boundary. D10, D13, D14 stay owner-gated; A12 and Pilot Batch 001 need human clinical review."
 ```
 
 ## Ownership history
@@ -100,3 +100,9 @@ Timestamps are UTC.
 | 2026-10-01T05:22:45.293Z | RELEASE COMPLETE | DEVICE-01 | P9-008 | Finalization verified for the 2026-10-01 cycle: origin/main 61540b1, tree clean, control plane P9-2026-10-01-001, D16/D8/D9 recorded RESOLVED and independently classified so by preflight, D10 still classified blocked, CI run 36793771261 at df5dae9 recorded as evidence in six places, DEVICE-02's record untouched (UNKNOWN / NOT VERIFIED from its own commit trailer). The only gap was this record's own next_action, which read 'not recorded'. |
 | 2026-10-02T11:14:03.750Z | CLAIM | DEVICE-01 | P9-009 | claimed |
 | 2026-10-02T11:35:15.187Z | RELEASE COMPLETE | DEVICE-01 | P9-009 | complete |
+| 2026-10-04T06:58:40.405Z | CLAIM | DEVICE-01 | P10-001 | claimed |
+| 2026-10-04T07:05:45.406Z | RELEASE COMPLETE | DEVICE-01 | P10-001 | D18 resolved under standing authorization: contract B canonical, migration map produced, 432 records NOT migrated and PR #21 NOT merged. Stale control-plane facts reconciled and a device-activity detection defect recorded. Commit ac8cae2. |
+| 2026-10-04T07:05:50.860Z | CLAIM | DEVICE-01 | P10-002 | claimed |
+| 2026-10-04T07:14:49.218Z | RELEASE COMPLETE | DEVICE-01 | P10-002 | A9 resolved by removing the dead scenarioSchemaVersion field (compatibility already carried by the Zod gate, the per-scenario content version and the content-hash gate); A6 closed as superseded by D8 with no code written; preflight learned a third outcome, superseded, because A6 is neither resolved nor blocked. Baseline B-008 at ff3a12d. nexus-core 804/804, desktop 330/330, preflight 30/30, cargo 70/70 with clippy clean. |
+| 2026-10-04T07:36:07.530Z | CLAIM | DEVICE-01 | P10-003 | claimed |
+| 2026-10-04T07:41:57.621Z | RELEASE COMPLETE | DEVICE-01 | P10-003 | A2 resolved: the dead competencyDomains field removed and a third, previously unrecorded duplicate of the domain list eliminated - the domains now live once in nexus-core, compile-guarded against ScoringWeights. A7 deferred with its unblocking condition named and a truthful blocker marker. The accessClasses/D4 gap dispositioned: no schema change needed, and the previous session's claim that a corpus browser must wait for a record-level access model is corrected as wrong. D17 NOT started - the session reached the closure band. Expensive operations never eligible: section 10 requires GREEN. |

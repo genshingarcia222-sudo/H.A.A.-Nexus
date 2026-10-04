@@ -7,7 +7,7 @@ One rule governs every row: a status is only as good as the command or commit in
 its evidence column. "Verified" means it was run on a named device against a
 named commit. Anything else says so.
 
-**Control version:** `P9-2026-10-02-001` · **Ledger updated:** 2026-10-02 ·
+**Control version:** `P9-2026-10-02-001` · **Knowledge architecture:** `docs/KNOWLEDGE_ARCHITECTURE.md` (D18, 2026-10-04) · **Ledger updated:** 2026-10-04 ·
 **Canonical `main`:** see `.nexus/CURRENT_STATE.md`, which `nexus-sync` re-checks
 against the remote on every read.
 
@@ -38,11 +38,13 @@ against the remote on every read.
 | **D13** | Code-signing identity | P9-B, P9-E | Purchase or designate a certificate |
 | **D14** | Update-feed location | P9-C | Decide, after D10 |
 | **D17** | May a learner study before retaking an interrupted Assessment? | The scope of the closed-book window | Decide whether the window extends past an attempt |
-| **D18** | Which content contract does the runtime ingest | Every Knowledgebase consumer | Choose D12's Zod model or the KB JSON Schema |
-| **A2, A6, A7, A9, A12** | Accepted Phase 7 debt | Various | See the register |
+| **A7, A12** | Accepted Phase 7 debt still open | A7: guidance behaviour; A12: paid-tier content depth | A7 needs a product statement of what a competency trend should change; A12 needs human clinical authoring |
+| ~~A2~~ | ~~12 registry domains vs 7 evaluator domains~~ **RESOLVED 2026-10-04** - the dead field removed and the domains exported once from nexus-core, guarded against ScoringWeights | — | — |
+| ~~A9~~ | ~~Scenario schema version~~ **RESOLVED 2026-10-04** - the dead field was removed rather than given an invented value | — | — |
+| ~~A6~~ | ~~Exact mid-transcript resume~~ **CLOSED AS SUPERSEDED 2026-10-04** by D8 - no code written | — | — |
 
-Resolved and implemented: **D1, D2, D3, D4, D5, D6, D7, D11, D12, D15**, and
-**D16**, **D8** and **D9** - the first decisions closed under the owner's *standing* authorization
+Resolved and implemented: **D1, D2, D3, D4, D5, D6, D7, D11, D12, D15, D18, A2, A9**, and
+**D16**, **D8**, **D9** and **D18** - the decisions closed under the owner's *standing* authorization
 rather than by the owner personally. The record distinguishes the two
 deliberately: see `docs/RELEASE_POLICY.md` and the D16 entry in the register.
 
@@ -129,7 +131,7 @@ minutes; deleting the file is the whole of turning it off.
 | Branch / PR | State | Note |
 |---|---|---|
 | `feat/training-question-bank` (PR #3) | **MERGED** `c384ac5` | D15, owner decision 2026-09-27 |
-| `feat/knowledgebase-expansion` (PR #21) | **OPEN, do not merge** | DEVICE-02's lane; its own integration gate is unsatisfied and **D18** comes first. 10 ahead / 0 behind `main`, `MERGEABLE` / `CLEAN`, CI green (run `36822607147` at `9e58995`) |
+| `feat/knowledgebase-expansion` (PR #21) | **OPEN, still do not merge** | **13 ahead / 1 behind** `main` at `96ab675` (measured 2026-10-04; it was 10/0 when last recorded). **D18 is now resolved** — contract B is canonical — but the gate stays shut until the 432 records are migrated to B and re-validated. Answering D18 is a precondition for that work, not a substitute for it |
 | PR #22 | **OPEN, inside DEVICE-02's lane** | Targets `feat/knowledgebase-expansion`, not `main`, so it is not a DEVICE-01 integration. CI green (run `36825852812` at `dbb7c12`) |
 | `claude/device01-phase9`, `claude/device02-phase9`, `claude/device02-phase9-d16-caveat`, `claude/device02-c02-*` | **fully merged** | `git rev-list --left-right --count main...<branch>` returns `0` on the branch side for each, 2026-10-02. They carry nothing `main` lacks |
 | PR #18, #19 (C-02 sweep) | **MERGED** `b1ef49d`, `2556d1e` | Documentation accuracy |

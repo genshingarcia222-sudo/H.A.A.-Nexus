@@ -340,114 +340,180 @@ pre-commit the decision.
 
 ---
 
-## A2 — The module registry declares 12 competency domains; the evaluator produces 7
+## A2 — The module registry declares 12 competency domains; the evaluator produces 7 — **RESOLVED**
 
-**Blocked work:** making the registry honest, in either direction.
+**Resolved** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**. Not an owner decision.
 
-**Current behaviour, verified:** `apps/desktop/src/modules.ts` declares 12
-human-readable domains ("Chief Complaint", "HPI", "ROS", …). The evaluator
-scores **7** category domains (`accuracy`, `completeness`, `terminology`,
-`relevance`, `structure`, `pertinentPosNeg`, `timeEfficiency`), and those are
-what `submit` folds into competency. Nothing reads `competencyDomains` — it is
-declared and unused.
-
-**Evidence examined:** Architecture Package §5 specifies `NexusModule` with
-`competencyDomains: string[]` and the example `["HPI", "ROS", "Terminology", …]`
-— i.e. the architecture describes *section-level* domains, while the evaluator
-implements *category-level* scoring. Architecture §21 lists per-section domains
-individually.
-
-**Options:**
-
-| Option | Consequence |
+| | |
 |---|---|
-| Align the registry to the evaluator's 7 | Field becomes truthful immediately; contradicts the §5 example and drops the section-level model from the contract |
-| Implement per-section scoring (7 → 12) | Matches §5/§21; changes what competency *means* and what learners see, and needs a competency migration |
-| Remove the field from `NexusModule` | Removes dead data; changes a documented architecture contract |
+| **Decision** | A2 — the 12-against-7 competency-domain mismatch |
+| **Selected value** | **Remove and replace.** `competencyDomains` is gone from `NexusModule`; the domains are exported once from `nexus-core` as `COMPETENCY_DOMAINS`, guarded against `ScoringWeights` |
+| **Rejected alternatives** | aligning the registry's list to 7 (keeps a second copy); implementing 12-domain scoring (changes what competency means, needs a migration of every stored record); leaving it inert |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
 
-**Why this is not mine to pick:** options 2 and 3 change either grading
-semantics or a documented contract; option 1 silently retires the
-section-level model the architecture describes.
+**A2 was never a disagreement about which domains are right. It was two lists.**
+The registry declared 12 section-level labels; the evaluator scored 7 categories;
+**nothing read the registry's**, so the drift could not be caught by use — only
+by someone noticing. Measured again before deciding: `competencyDomains` was
+referenced in exactly four places, and not one of them was product logic — the
+interface, the desktop module that set it, one test fixture, and the preflight
+check that existed to report the mismatch.
 
-**Unblocked:** nothing needed — the field is inert, so there is no defect to
-fix while the question is open.
+**A third copy, which the entry had not recorded.** The 7 were *also* written out
+by hand as a private `COMPETENCY_DOMAINS` array in
+`apps/desktop/src/store/sessionStore.ts`, because a TypeScript type cannot be
+iterated at runtime. So the repository held three representations of one idea:
+12 dead labels, 7 in a desktop-local const, and the `ScoringWeights` keys in
+`nexus-core`. Deleting the dead field alone would have left the duplication that
+caused A2 intact.
+
+**What was done.** The field is removed from `NexusModule`, from
+`apps/desktop/src/modules.ts` and from the registry fixture.
+`COMPETENCY_DOMAINS` and `CompetencyDomain` are exported from
+`packages/nexus-core/src/scenario-engine/types.ts`, declared
+`as const satisfies readonly (keyof ScoringWeights)[]` so a domain that is not a
+scoring weight is a **compile error**, and the desktop store imports them instead
+of re-declaring them. Three tests cover what the compiler cannot — that the list
+is *complete* rather than a valid subset, that it has no duplicates, and what the
+seven actually are. Verified by mutation: dropping one domain fails the
+completeness test, and the file was restored byte-identical.
+
+**Preflight's check was kept, not deleted**, for the reason A9's was: a check
+that quietly disappears reads as "the problem went away". It no longer measures a
+mismatch, because there is no second list to mismatch; it reports the single
+source and fails if a competing declaration reappears.
+
+**What this decision did NOT do.** It did not adopt per-section competency.
+Architecture Package §5's example and §21's list describe section-level domains,
+and implementing them would change what competency *means*, what a learner is
+shown, and would require migrating every stored `CompetencyRecord`. That remains
+a product decision nobody has taken. **A2 removed the field that pretended it had
+already been taken**; the 12 labels stay what they always were — a description of
+what the Live Scribing module covers, in the Architecture Package, not a code
+contract.
 
 ---
 
-## A9 — Scenarios have no schema-version concept
+## A9 — Scenarios have no schema-version concept — **RESOLVED**
 
-**Current behaviour, verified:** `modules.ts` carries
-`scenarioSchemaVersion: "0.0.0-unbuilt"` with a comment saying the real engine
-arrives in Phase 2 (long since shipped). There is **no** canonical scenario
-*schema* version anywhere in `nexus-core` — scenario files carry a per-scenario
-content `version` ("1.0"), which is a different thing. Nothing reads the field.
+**Resolved** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**. Not an owner decision.
 
-**Trace:** scenario JSON → Zod `validate.ts` → `Scenario` domain model →
-`SessionRecord.scenarioVersion` (content version, persisted) → replay via
-content hash. Compatibility today rests on the **content hash gate** (A3,
-cleared): a released scenario cannot be edited without a version bump.
-
-**Options:**
-
-| Option | Consequence |
+| | |
 |---|---|
-| Leave as is | The field stays dead and visibly stale |
-| Introduce a real schema version | Needs a policy: when it increments, what a mismatch does at load time, and how old persisted sessions are treated |
-| Remove the field from `NexusModule` | Same contract change as A2 option 3 |
+| **Decision** | A9 — the dead `scenarioSchemaVersion` field |
+| **Selected value** | **Remove the field.** `NexusModule` no longer declares it |
+| **Rejected alternatives** | leaving `"0.0.0-unbuilt"` in place; writing `"1.0"` or any other value |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED and implemented |
 
-**Why it is blocked:** writing any value there is a claim about compatibility
-policy that no source defines; inventing "1.0" would be fabricating a fact.
+**Why removal rather than a version.** The register already recorded why a value
+could not be invented: any number written there is a compatibility claim no
+source defines. What makes removal the answer rather than a dodge is that the
+compatibility it purported to provide **already exists, in three enforced
+mechanisms, none of which is this field**:
 
----
+| Mechanism | What it guarantees |
+|---|---|
+| the Zod gate in `scenario/validate.ts` | a scenario that does not match the domain model is rejected at load |
+| each scenario's own content `version` | persisted on `SessionRecord.scenarioVersion`, so a past attempt names the content it was scored against |
+| the content-hash gate (A3, cleared) | a released scenario cannot be edited without a version bump |
 
-## A6 — Exact mid-transcript resume is not implemented
+The field was read by exactly one thing: the preflight check that existed to
+report it was a placeholder. Nothing in the application ever consulted it.
 
-**Blocked work:** persisting transcript reveal position and restoring an
-interrupted attempt in place. **Blocked because:** resuming changes elapsed
-time, which feeds `timeEfficiencyRatio` and therefore the score, so attempt
-identity and time accounting are product decisions — this is the engineering
-half of **D8**, and Assessment resume is separately blocked by **D6**.
+**What was changed.** `scenarioSchemaVersion` is gone from `NexusModule`, from
+`apps/desktop/src/modules.ts` and from the registry fixture. The preflight check
+was **kept, not deleted**, and now asserts the opposite thing — that the field
+has not come back — because a check disappearing reads as "the problem went
+away". A test fails if it returns.
 
-**Current behaviour, verified:** `revealedCount` is **not** part of
-`SessionRecord` — it appears nowhere in the persistence types or the IPC
-fixtures. Drafts, flags, timings and status are persisted; transcript position
-is not. Interrupted sessions are surfaced on the Dashboard and the learner is
-offered a fresh attempt.
-
-**Evidence:** Architecture §20 ("surfaced as *Resume interrupted session?*") and
-§10 (autosave so "interrupted sessions must not lose work"). Neither says what
-resuming does to the attempt.
-
-**Dependency:** this is the engineering half of **D8**. Resuming changes
-elapsed time, which feeds `timeEfficiencyRatio`, which feeds the score — so
-attempt identity and time accounting are product decisions, not
-implementation details. Assessment resume is separately blocked by **D6**.
-
-**Unblocked:** adding `revealedCount` to the record is a small, decision-free
-schema addition **only if** resume is authorized; doing it first would be
-speculative infrastructure.
-
-**D8 was answered on 2026-10-01 and did not authorize it.** The decision is that
-an interrupted attempt is never resumed in place - a new attempt may carry the
-draft and the measured time, and nothing restores a position in the transcript.
-Practice reveals the whole transcript at the start, and a continued simulation
-attempt begins revealing again. So A6 stays open, and persisting `revealedCount`
-would still be infrastructure nothing reads.
+**What would bring it back.** A breaking change to the scenario *shape* itself.
+It returns with a policy saying when it increments, what a mismatch does at load
+time, and what happens to sessions recorded under the old shape. Re-adding it
+without that policy is precisely what A9 refused.
 
 ---
 
-## A7 — Recommendations ignore competency trends
+## A6 — Exact mid-transcript resume is not implemented — **CLOSED AS SUPERSEDED**
 
-**Current behaviour, verified:** `recommendation-engine` contains no reference
-to `CompetencyRecord` or competency at all; recommendations are driven by
-error frequency from session history.
+**Closed** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**, as superseded by **D8**. Not an owner decision, and **no code was
+written**.
 
-**Blocked because:** what a learner is told to do next is product behaviour.
-Weighting recommendations by competency trend changes the guidance learners
-receive, and no source defines that weighting.
+| | |
+|---|---|
+| **Decision** | A6 — whether to persist transcript reveal position and restore an attempt in place |
+| **Selected value** | **Closed as superseded and unnecessary.** No reveal-position persistence is added |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | CLOSED. Not "resolved by implementing"; resolved by the question going away |
 
-**Unblocked:** nothing pending — the current rules are deterministic and
-tested.
+**A6 was never an independent debt.** Its own entry said so: "this is the
+engineering half of **D8**", blocked because resuming changes elapsed time, which
+feeds `timeEfficiencyRatio` and therefore the score.
+
+**D8 answered it on 2026-10-01, and answered it in the direction that removes the
+work.** An interrupted attempt is never resumed in place; the learner may carry
+the draft into a *new* attempt along with the time already measured on it. No
+position in a transcript is restored, because no attempt is restored. Practice
+reveals the whole transcript at the start, and a continued simulation attempt
+begins revealing again — so there is nothing for a persisted `revealedCount` to
+do.
+
+**Why this is a closure and not a deferral.** The A6 entry already stated the
+test: adding `revealedCount` to the record is decision-free "**only if** resume
+is authorized; doing it first would be speculative infrastructure." Resume was
+not authorized. Building the persistence now, purely to retire an old debt label,
+would be exactly the speculative infrastructure the entry warned against — a
+field written by nothing and read by nothing, which is the defect **A9** was
+closed for having.
+
+**What would reopen it.** An authorized in-place resume for any mode. D6 refuses
+it for Assessment and D8 refuses it for practice and simulation, so reopening A6
+means reopening one of those first.
+
+---
+
+## A7 — Recommendations ignore competency trends — **DEFERRED, DELIBERATELY**
+
+**Dispositioned** on 2026-10-04 by **DEVICE-01 under the owner's standing
+decision authority**: **intentionally deferred, with no implementation.** This is
+a recorded choice, not an oversight, and it is written down so a later session
+does not read the silence as something forgotten.
+
+| | |
+|---|---|
+| **Decision** | A7 — whether competency trends should weight recommendations |
+| **Selected value** | **Keep the existing deterministic error-frequency behaviour unchanged.** No weighting model is introduced |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED UNDER STANDING AUTHORIZATION**, as a deferral |
+| **Status** | OPEN as a product question; CLOSED as an engineering task until evidence exists |
+
+**Blocked because:** no source defines what a competency trend should change
+about guidance, and inventing one would silently alter what learners are told to
+do next. The deferral is deliberate and recorded; the entry stays blocked rather
+than closed, because the product question is real and unanswered.
+
+**Why nothing was built.** The register's own measured evidence is that
+`recommendation-engine` contains no reference to `CompetencyRecord` or to
+competency at all, and that **no source defines a weighting**. What a learner is
+told to do next is product behaviour. Any formula chosen here — how much a
+downward trend outweighs a raw error count, over what window, with what
+floor — would be invented, and it would silently change the guidance learners
+receive. Inventing it to retire a debt label is precisely what the standing
+authorization does not cover.
+
+**Why that is not a cost today.** The current rules are deterministic, tested,
+and derived from the learner's own attempt history, so recommendations are
+already personal. The debt is an *enhancement* that has never been specified, not
+a defect.
+
+**What would resolve it.** A product statement of what a competency trend should
+change about guidance — at minimum: which trend direction matters, over how many
+attempts, and whether it reorders recommendations or only annotates them. With
+that, the implementation is small and testable deterministically. Without it,
+A7 stays here.
 
 ---
 
@@ -838,39 +904,80 @@ sees the current expectation fail and reads why.
 
 ---
 
-## D18 — Which content contract does the runtime ingest?
+## D18 — Which content contract does the runtime ingest? — **RESOLVED**
 
-**Blocked work:** every consumer of Knowledgebase content — loader, indexing,
-retrieval, the migration path for records already authored, and the corpus half
-of Phase 10 planning.
+**Resolved** on 2026-10-04 by **DEVICE-01 under the owner's standing decision
+authority**, acting on the owner's master resolution instruction. Not an owner
+decision. The architecture is `docs/KNOWLEDGE_ARCHITECTURE.md`.
 
-**Two implementations of one contract now exist**, and D15 put one of them on
-`main` without retiring the other:
+| | |
+|---|---|
+| **Decision** | D18 — the canonical runtime-ingestion contract |
+| **Selected value** | **Contract B** — the D12 Zod model in `packages/nexus-core/src/knowledge-corpus/` |
+| **Rejected alternatives** | the KB JSON Schema (`kb-record.schema.json`); merging both behind an adapter; a third intermediate contract; deleting either side |
+| **Owner-authorized** | NO — **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION** |
+| **Status** | RESOLVED. Migration **NOT EXECUTED** — see below |
 
-| Implementation | Location | Holds |
+### O1 — the measurement, which is evidence and not a decision
+
+`tools/knowledge-corpus/kb-schema-divergence.mjs` on
+`origin/feat/knowledgebase-expansion`, run on DEVICE-01 2026-10-04 at `96ab675`.
+Its own closing line is `O1 / D18 remains OPEN. Nothing here resolves it.` — it
+measures, and D18 is what decides.
+
+| | Contract A | Contract B |
 |---|---|---|
-| **D12's model** | `packages/nexus-core/src/knowledge-corpus/` (Zod, ~2,700 lines: schema, ids, validate, item, quality, review, temporal, conflict, eligibility, build) — **on `main` since `c384ac5`** | 42 candidate items as fixtures, 0 human-verified |
-| **The KB corpus** | `knowledge-corpus/schema/kb-record.schema.json` plus `tools/knowledge-corpus/` (24 policy rules) — on `origin/feat/knowledgebase-expansion`, PR #21, **not merged** | 324 KB-001 records, 0 approved |
+| Shape | one flat record type, discriminated by `recordType` | four typed families, 33 `strict()` schemas |
+| Fields | 54 declared, 23 required | 54 across the family union |
+| Records | **432** (KB-001 324 + KB-002 108), 0 approved | 42 candidate fixtures, 0 human-verified |
+| On `main` | no (PR #21) | yes, since `c384ac5` |
 
-They were deliberately aligned — same lifecycle vocabulary, the same
-`machine:<agent-id>` provenance rule, the same authority classes, the same
-`synthetic: true` literal, the same computed-not-stored temporal state — but
-alignment is not the same as being one system. DEVICE-02 recorded this as the
-blocker that comes before all of its others, in
-`knowledge-corpus/INTEGRATION_BLOCKERS.md`, and it is restated here because the
-canonical register is where both devices look.
+**Field-name overlap: 11 of 54.** The 11 are the entire governance spine — `id`,
+`provenance`, `revision`, `reviewStatus`, `verification`, `contentStatus`,
+`evidence`, `flags`, `domain`, `rationale`, `choices`. The two lanes never built
+rival governance models; they agree on identity, provenance, lifecycle and
+review, and disagree **only about the content model**.
 
-**Why neither device may answer it.** DEVICE-02 owns the Knowledgebase feature
-lane; answering it for them would mean editing their architecture. DEVICE-01 owns
-integration; answering it by merging or by deleting would decide the same
-question silently. **Until it is answered, every record in the KB corpus is
-written against a schema that may not be the one ingested** — the largest single
-piece of rework risk currently in the repository.
+### Why B
 
-**What is deliberately not being done meanwhile.** No loader reads either corpus.
-No adapter, translation layer or shim was written to "bridge" them: a bridge
-would be a third contract, and it would make the decision harder rather than
-easier.
+1. **D12 is an owner decision and B is its implementation.** Choosing A would
+   overturn D12; a session may not overturn an owner decision under standing
+   authorization. Choosing B operationalises it.
+2. **Only B has a runtime.** DEVICE-02's own `INTEGRATION_BLOCKERS.md` records,
+   for its own corpus: storage model **open**, ingestion **open** ("No loader
+   reads `knowledge-corpus/`. Deliberate"), indexing **open**, retrieval **open**
+   ("No selector"). B carries `build.ts`, `eligibility.ts`, `temporal.ts`,
+   `conflict.ts`, `references.ts`, `pilot-conversion.ts`. A contract with no
+   ingestion path cannot be the ingestion contract.
+3. **`main` outranks an unmerged branch** in the authority order.
+4. **B already models what the next phase needs.** `codingReference` exists with
+   `effectiveFrom`/`effectiveTo` cross-validated against `applicability`
+   (`item.ts:229-243`); A has only `codingVersion`, a flat string.
+5. **`strict()` is what makes the layer boundary enforceable.** A flat 54-field
+   record cannot express that an ITEM may not carry CONTEXT fields.
+
+### What was NOT done, and must not be read as done
+
+- **The 432 records are NOT migrated.** They remain on the branch, written
+  against the retired contract. What was produced is the field-level **migration
+  map** (`docs/KNOWLEDGE_ARCHITECTURE.md` §3), classifying all 43 unmapped A-keys
+  into rename, structural lift, semantic gap, and authoring-only.
+- **PR #21 is NOT merged.** D18 being answered is a precondition for that work,
+  not a substitute for it.
+- **No adapter, bridge or third contract was written.**
+- **A's tooling is not discarded**: the privacy scan, duplicate detection,
+  manifest and scorecard are gates, not contracts, and retarget to B.
+
+### Three findings the map surfaces, which are open questions and not answers
+
+- **`correctChoiceIds` (array, 318 records) vs `correctChoiceId` (singular).** A
+  semantic difference, not a rename. Whether multi-select items exist is unanswered.
+- **`accessClasses` has no home in B**, so no record can yet be marked
+  `ASSESSMENT_CLOSED_BOOK`. It is on zero records today. **D4 is currently
+  enforced at the route and by the source-scanning invariant, not at the record**,
+  and a Knowledge Corpus browser must not ship before that is fixed.
+- **Variant lineage is 5 A-fields to 3 B-fields across 375 of the 432 records** —
+  the highest-volume lift and the one most likely to lose information.
 
 ---
 

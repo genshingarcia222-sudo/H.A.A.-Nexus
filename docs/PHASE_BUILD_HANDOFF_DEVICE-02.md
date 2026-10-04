@@ -15,39 +15,60 @@ nexus_task: none held by DEVICE-02; claim one before mutating (nexus-sync claim)
 session: attach to S-phases-building, then register your own lane session
 ```
 
-## Exact next action at control version P9-2026-10-02-001
+## Exact next action at 2026-10-04 (after D18)
 
-**Next action.** Unchanged: the Knowledgebase lane
-(`feat/knowledgebase-expansion`, PR #21), which **stays unmerged** - its own
-integration gate is unsatisfied and **D18** (which content contract the runtime
-ingests) comes first.
+**D18 is resolved, and it went against this lane's schema. Read this before
+authoring anything else.**
 
-**What arrived on `main` that touches your branch mechanically**, none of it a
-change to your architecture:
+The canonical runtime-ingestion contract is **B** — the D12 Zod model in
+`packages/nexus-core/src/knowledge-corpus/`. `knowledge-corpus/schema/kb-record.schema.json`
+is **retired as a contract**. The reasoning, the measurement and the full
+field-level migration map are in `docs/KNOWLEDGE_ARCHITECTURE.md`.
 
-1. `package.json` `scripts` - `main` now appends four `version:*` entries after
-   `nexus-sync:test`, where your branch appends nine `kb:*` entries. A textual
-   conflict on merge, and a union resolution: keep both sets. Control §10(H).
-2. `tools/preflight/preflight.mjs` imports `tools/release/version.mjs` for the
-   one definition of a releasable version, and `versionParity` gained a
-   `policyFormat` field. `tools/preflight/**` moved to DEVICE-01's owned list
-   after checking that your branch changes nothing in it. If you have unpushed
-   preflight work, say so rather than merging over it.
-3. **CI exists and is now VERIFIED** (`.github/workflows/ci.yml`), and runs on
-   every pull request, so PR #21 is checked by it. It is green on your branch:
-   run `36822607147` at `9e58995`, and run `36825852812` at `dbb7c12` for PR #22.
-   The gates themselves were proven on hosted runners by run `36793771261`
-   (`df5dae9`), which reproduced every baseline B-006 figure off DEVICE-01,
-   including `cargo test` 70/70 on `windows-latest`. **That is the figure this
-   device could not measure** - you may now cite the run id instead of writing
-   `NOT VERIFIED ON DEVICE-02`, because a named hosted run is evidence and a
-   badge is not.
+**This is not a judgement on the work.** O1 measured the overlap at 11 of 54
+field names, and those 11 are the entire governance spine — identity, provenance,
+revision, review, verification, lifecycle. The two lanes agreed on governance and
+differed only on the content model. B was chosen because D12 is an owner decision
+and B implements it, because `main` outranks an unmerged branch, and above all
+because **only B has a runtime**: your own `INTEGRATION_BLOCKERS.md` records this
+corpus's storage, ingestion, indexing and retrieval as open.
 
-**Three decisions closed since your last handoff**, all under the owner's
-*standing* authorization rather than by the owner personally, and all labelled as
-such: **D16** (`docs/RELEASE_POLICY.md`), **D8** (interrupted attempts are
-continued, never resumed) and **D9** (a failed evaluation is visible and
-retryable). **D10 was deliberately not closed** and remains externally blocked.
+**Your tooling is not retired.** `kb-privacy-scan`, fingerprint duplicate
+detection, `kb-manifest`, `kb-scorecard` and the 24 policy rules are gates, not
+contracts. They retarget to B-shaped records and lose nothing.
+
+**Do not author more KB records.** 432 are already exposed to the migration; more
+only increases it.
+
+**PR #21 stays unmerged** until the records are migrated to B and re-validated.
+
+**Three things in your records that the map could not resolve**, and that you
+know the content better than anyone else does:
+
+1. `correctChoiceIds` is an array on 318 records; B has a singular
+   `correctChoiceId`. Do multi-select items genuinely exist, or is the array
+   always length 1?
+2. Variant lineage is 5 of your fields (`variantOf`, `parentId`, `templateId`,
+   `mutationTypes`, `variantLineage`) to 3 of B's, across 375 records. Which
+   distinctions must survive?
+3. `accessClasses` has no home in B. It is on zero records and your generator
+   cannot assign it. Until B models it, no record can be marked
+   `ASSESSMENT_CLOSED_BOOK`.
+
+**One thing about your own visibility.** `96ab675` (2026-10-02) carries **no
+`Nexus-Device:` trailer**, and staleness detection reads that trailer on
+`origin/main`. So `nexus-sync start` reported you idle for 184 hours while you
+had committed 43 hours earlier. Your registry record is reconciled from commit
+evidence, but `status` stays `UNKNOWN` because that column is a self-report and
+DEVICE-01 will not write one for you. **Any state-writing `nexus-sync` command
+puts it back in your hands**, and adding the trailer to branch commits makes your
+work visible to the protocol.
+
+**Still yours and still ungated:** `README.md`'s stale figures — now corrected by
+DEVICE-01 under the owner's explicit §P instruction to reconcile stale facts, and
+rewritten to point at `.nexus/BASELINE.md` and CI instead of repeating counts, so
+it cannot go stale the same way a fourth time. Say so if you disagree with that
+override.
 
 ## Why this lane is blocked rather than busy
 
