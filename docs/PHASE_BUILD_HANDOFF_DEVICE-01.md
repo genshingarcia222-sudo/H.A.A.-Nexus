@@ -30,9 +30,21 @@ is sized to reach a commit on its own.
 |---|---|---|---|
 | 1 | **ICD-10-CM ingestion from CMS** | the largest unbuilt requirement, and `codingReference` in B is already its shape. CMS is reachable (HTTP 200, 2026-10-04); **nothing has been retrieved** | large — do not start below ~20 points of session headroom |
 | 2 | **Migrate the 432 KB records to contract B** | unblocked by D18, blocks PR #21. Follow the map; classes (a) and (b) are mechanical, class (c) needs a decision per field | large |
-| 3 | **A2** — 12 registry domains vs 7 evaluator domains | inert debt; `competencyDomains` is declared and unused, the sibling of the field A9 just removed. §M authorises "remove/replace" | small |
-| 4 | **A7** — competency trends in recommendations | likeliest honest outcome is a recorded deferral: no source defines a weighting model | small |
-| 5 | **D17** | changes D4's scope or D6's retake rule — a real product decision, pinned today by a characterization test | medium |
+| 3 | **D17** | the only cheap decision left. Changes D4's scope or D6's retake rule, pinned today by a characterization test. **Not started 2026-10-04** - the session reached the closure band first, and opening a product decision there risks leaving it half-made | medium |
+
+**A2, A7 and the accessClasses question are closed as of 2026-10-04.** A2
+resolved - the dead field removed, and a third previously unrecorded copy of the
+domain list eliminated, so the domains now live once in nexus-core and are
+compile-guarded. A7 deferred, with its unblocking condition named and a truthful
+blocker marker so it reads as a choice rather than an oversight.
+
+**The accessClasses disposition changes planning, so read it before sizing any
+corpus work:** no schema change is needed, and **a Knowledge Corpus browser is no
+longer blocked behind a record-level access model**. D4 blocks surfaces, not
+records, so a browser ships as a gated route exactly as `/knowledge-base` does.
+The previous statement to the contrary in `docs/KNOWLEDGE_ARCHITECTURE.md` was
+wrong and is corrected there. `accessClasses` is the one class-(c) field the
+migration map deliberately leaves behind.
 
 **Do not start unit 1 or 2 without checking the expensive-operation gate first.**
 A half-migrated corpus or a half-retrieved CMS snapshot is worse than neither.
