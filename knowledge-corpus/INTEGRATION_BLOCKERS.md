@@ -8,10 +8,36 @@ This branch is not merged into `main`, and the corpus is not live. No applicatio
 file was modified: no loader, no `packages/nexus-core` schema, no entitlement
 code, no Assessment logic, nothing under `content/`, nothing in `.nexus/`.
 
-## The blocker that comes before all the others
+## The blocker that came before all the others — RESOLVED 2026-10-04
 
-**Two implementations of one content contract exist, and the merge of one of them
-to `main` did not choose between them.**
+**D18 chose Contract B.** The D12 Zod model in
+`packages/nexus-core/src/knowledge-corpus/` is canonical for validation, build,
+ingestion, indexing, retrieval, migration, authoring and review. This lane's
+`knowledge-corpus/schema/kb-record.schema.json` is the **retired** contract, and
+all 432 records are written against it.
+
+Decided by DEVICE-01 under the owner's standing authorization, acting on the
+owner's master resolution instruction — **not an owner decision**. The register
+entry says so explicitly, and so does this one. Architecture:
+`docs/KNOWLEDGE_ARCHITECTURE.md`.
+
+**What the measurement reframed.** Field-name overlap is 11 of 54, and those 11
+are the entire governance spine: `id`, `provenance`, `revision`, `reviewStatus`,
+`verification`, `contentStatus`, `evidence`, `flags`, `domain`, `rationale`,
+`choices`. The two lanes never built rival governance models. They agree on
+identity, provenance, lifecycle and review, and disagree only about the content
+model — which is why this was a migration question rather than a trust question.
+
+**What this does not do.** The 432 records are **not** migrated; the deliverable
+was the field-level map (`docs/KNOWLEDGE_ARCHITECTURE.md` §3), and PR #21 is
+still not merged. D18 is a precondition for that work, not a substitute for it.
+The open items are now the migration itself and the class (c) per-field
+decisions — see `review/OPEN_REVIEW_ITEMS.md` O5 and O6.
+
+### The superseded framing, kept because it explains this branch's shape
+
+**Two implementations of one content contract existed, and the merge of one of
+them to `main` did not choose between them.**
 
 - This branch: `knowledge-corpus/schema/kb-record.schema.json` (JSON Schema) plus
   `tools/knowledge-corpus/kb-validate.mjs` (24 policy rules), holding **432**

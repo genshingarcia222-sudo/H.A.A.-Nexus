@@ -75,20 +75,15 @@ Measured, in `GAP_ANALYSIS.md`. The four that matter now:
 
 ## NEXT ACTION
 
-**KB-003 — the component-schema change, as its own commit, with no content batch
-bundled into it.** `GAP_ANALYSIS.md` §3.4 and §4.
+D18 resolved the contract question, so the next action is no longer a content batch.
+It is the **A → B migration** (blocker B7) and the **class (c) per-field decisions**
+(B8), in that order, per `docs/KNOWLEDGE_ARCHITECTURE.md` §3. Generating more
+records against the retired contract would add to the migration debt, so KB-003
+begins with the migration rather than with content.
 
-1. Add `schema/kb-component.schema.json` for reusable components, with its own
-   required fields. Do not relax the record schema's required list to accommodate
-   components.
-2. Add an optional `packetRef` (`^KB-[A-Z]{4}-KB[0-9]{3}-[0-9]{6}@[0-9]+$`) to the
-   record schema, alongside `packet` rather than replacing it.
-3. Bump the schema version and write migration notes. **KB-001 and KB-002 keep
-   their embedded packets** — nothing is migrated, so no committed record becomes
-   uninterpretable and no reviewer's verification is invalidated.
-4. Only then extract shared `CHART_PACKET` components, and only for new content.
-
-Then KB-004 for MODERATE / VERY_HARD / REALISTIC_PREMIUM mass, per §3.1a.
+Nothing in this lane has been migrated. The 432 records are unchanged and still
+validate against the retired contract, which is the correct state until the
+migration is designed — see B7.
 
 ## KNOWN BLOCKERS
 
@@ -96,9 +91,11 @@ Then KB-004 for MODERATE / VERY_HARD / REALISTIC_PREMIUM mass, per §3.1a.
 | --- | --- | --- | --- |
 | B1 | The source archive v1.0 is absent from the repository | Corpus layer 1; the 400 seed records; any real source reconciliation | No. Re-verified absent across the repository, all branches, and the whole session filesystem |
 | B2 | Zero registered reviewers exist on this branch | Any record rising above `candidate`. **The binding constraint on the whole corpus** | No. Worse in absolute terms: 432 pending, up from 324 |
-| B3 | Two schemas for one contract — this branch's JSON Schema and the D12 Zod schema at `packages/nexus-core/src/knowledge-corpus/`, which D15's merge `c384ac5` put on `main` on 2026-09-27. The merge did **not** decide which the runtime ingests | Ingestion, and the eventual migration of all 432 records | **Yes, by D15** — the second implementation is now on `main` rather than on an unmerged branch, which makes the undecided contract question live rather than hypothetical. Recorded by DEVICE-01 |
+| B3 | ~~Two schemas for one contract~~ — **RESOLVED by D18 on 2026-10-04.** **Contract B — the D12 Zod model in `packages/nexus-core/src/knowledge-corpus/` — is canonical** for validation, build, ingestion, indexing, retrieval, migration, authoring and review. This lane's `schema/kb-record.schema.json` is therefore the **retired** contract, and all 432 records are written against it. Resolved by DEVICE-01 under the owner's standing authorization acting on the owner's master resolution instruction — **not an owner decision**. Architecture: `docs/KNOWLEDGE_ARCHITECTURE.md` | Nothing any longer. The migration it unblocks is B7 below |
 | B4 | `registries/coding-versions.json` is transcribed and unverified, and it is load-bearing | Every coding record, now and future | No. KB-002 added no coding records, deliberately |
 | B5 | No integration contract | Any merge toward `main`. `INTEGRATION_BLOCKERS.md` | No |
+| B7 | **The 432 records are not migrated.** They are written against the retired contract. The field-level map is `docs/KNOWLEDGE_ARCHITECTURE.md` §3, classifying the 43 unmapped A-keys into rename, structural lift, semantic gap and authoring-only. Two lifts carry real information-loss risk: **375 records** carry variant lineage (5 A fields → 3 B fields) and **318** use `correctChoiceIds` as an array against B's singular `correctChoiceId`, which §3(b) calls a real semantic difference rather than a rename | Ingestion of any record; KB-003's first item |
+| B8 | **Class (c) semantic gaps need a per-field decision**: 18 policy and safety fields this lane enforces that B does not model — among them `safetyFlags`, `privacyFlags`, `escalationRequired`, `hardFailureConditions`, `goldBehavior`, `acceptanceCriteria`, `evidenceBasis`. §3(c) states none may be silently lost: each must extend B's schema or be consciously dropped. `accessClasses` is already dispositioned in §6.2 — not migrated and not modelled | Migration B7, and the safety/privacy guarantees this corpus's QA currently enforces |
 | B6 | No component schema | Reusable packets, retrieval units, and anything citing a shared component by `id@revision` | **New in KB-002**, on correcting a false premise in GAP_ANALYSIS §3.4 |
 
 **Generation is not the constraint. Review is.** 432 records written, 0 approved.

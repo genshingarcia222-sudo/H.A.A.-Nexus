@@ -2,6 +2,68 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-10-04 — D18 resolved the contract question; this lane's records reconciled
+
+**Branch:** `feat/knowledgebase-expansion`. `main` advanced 15 commits to
+`86c36ce` and was merged in cleanly — no conflict, nothing of main's altered.
+
+### What was decided, and by whom
+
+**D18: Contract B is canonical.** The D12 Zod model in
+`packages/nexus-core/src/knowledge-corpus/` is the runtime-ingestion contract for
+validation, build, ingestion, indexing, retrieval, migration, authoring and
+review. This lane's `schema/kb-record.schema.json` is retired.
+
+Resolved by DEVICE-01 under the owner's standing authorization on the owner's
+master resolution instruction — **not an owner decision**, and recorded that way
+here because the register records it that way. Architecture:
+`docs/KNOWLEDGE_ARCHITECTURE.md`.
+
+The measurement reframed it rather than settling it: overlap is 11 of 54 fields
+and those 11 are the whole governance spine, so the two lanes never had rival
+governance models. The disagreement was only ever about the content model.
+
+### Records
+
+**Unchanged. Nothing migrated, nothing regenerated.** Still 432, QA 0 errors and
+0 warnings, privacy CLEAR, 0 approved. The records now validate against a retired
+contract, which is the correct state until the migration is designed — migrating
+ahead of the class (c) decisions would lose fields silently, which §3(c) forbids.
+
+### One open question answered by measurement
+
+`docs/KNOWLEDGE_ARCHITECTURE.md` §3(b) leaves open "whether multi-select items
+exist, and what B does with them", flagging 318 array-form records. Measured here
+against the record files: **318 confirmed, but only 15 are genuinely
+multi-select** — all `taskType: MULTI_SELECT`, all with exactly two correct
+choices, from two template families (12 in KB-001, 3 in KB-002), ids
+`KB-QUES-KB001-000013` … `KB-QUES-KB002-000096`. The other 303 hold a single id
+and lift mechanically.
+
+That narrows the decision from a 318-record problem to a 15-record one: B either
+gains multi-select, or those 15 are dropped, re-authored as single-answer, or held
+back. Recorded as review item O5. The 375-record variant-lineage figure in §3(b)
+was also re-measured here and agrees exactly.
+
+### Corrections to this lane's own records
+
+The merge made several of this lane's statements false, and they are corrected
+under §10(F) — `KB_BUILD_STATE.md` most urgently, because it is the recovery point
+and was telling a future session that the single largest blocker was open:
+
+- `KB_BUILD_STATE.md` — B3 marked resolved with what D18 chose; new blockers B7
+  (the unmigrated 432) and B8 (the class (c) gaps); NEXT ACTION changed from a
+  content batch to the migration, since generating more records against the
+  retired contract would only add migration debt.
+- `review/OPEN_REVIEW_ITEMS.md` — O1 closed; O5 and O6 opened.
+- `INTEGRATION_BLOCKERS.md` — the headline blocker marked resolved, with the
+  superseded framing kept because it explains why this branch is shaped as it is.
+
+### Approved content
+
+**None.** Still 0 of 432. D18 changed which contract they must eventually satisfy;
+it changed nothing about review, which remains the binding constraint.
+
 ## 2026-09-27 — `main` merged in after D15; records unchanged
 
 **Branch:** `feat/knowledgebase-expansion`. `main` advanced 47 commits from
