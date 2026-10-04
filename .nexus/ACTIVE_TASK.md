@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P10-002
-task_name: "A9 and A6: close two pieces of accepted Phase 7 debt"
+task_id: P10-003
+task_name: "A2 resolution, and truthful dispositions for the accessClasses gap, D17 and A7"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-10-04T07:05:50.860Z
-last_update: 2026-10-04T07:14:49.218Z
+status: ACTIVE
+started_at: 2026-10-04T07:36:07.530Z
+last_update: 2026-10-04T07:36:07.530Z
 stale_after_hours: 12
-expected_scope: "A9: scenarioSchemaVersion is read by nothing but the preflight check reporting it dead; real compatibility is the Zod validate gate, the per-scenario content version and the content-hash gate. Remove the field rather than invent a compatibility claim. A6: D8 answered what A6 was blocked behind, so close it as superseded without adding reveal-position persistence."
+expected_scope: "Cheap, decision-critical work only, under a YELLOW budget state. A2: resolve by removing the dead competencyDomains field and replacing the duplicated domain list with one exported source in nexus-core, guarded at type level so it cannot drift from CategoryScores again. Then truthful dispositions for the accessClasses/D4 gap, D17 and A7 as far as evidence safely allows. Expensive operations - the 432-record migration and CMS ICD-10 ingestion - are gated out: section 10 requires GREEN and the session is in the caution band."
 affected_areas: "packages/nexus-core/, apps/desktop/, tools/preflight/, docs/, CHANGELOG.md, .nexus/"
 branch: main
-claim_commit: c1f407c77efa19029af6bdb643e5fae85b2a9cac
-last_commit: 98e8315c4c3df87dfb21fff2941ba3f9f64374ec
+claim_commit: 5ba1c8bd908d774ac2b41c97fb4874658dba14fa
+last_commit: 5ba1c8bd908d774ac2b41c97fb4874658dba14fa
 handoff_required: no
 handoff_to: none
-next_action: "Dependency-ordered and sized in docs/PHASE_BUILD_HANDOFF_DEVICE-01.md: (1) CMS ICD-10-CM ingestion - large, CMS reachable but nothing retrieved; (2) migrate the 432 KB records to contract B - large, unblocks PR #21; (3) A2 - small; (4) A7 - small; (5) D17 - medium. Do not start (1) or (2) without checking the expensive-operation gate. D10, D13, D14 remain owner-gated and A12 and Pilot Batch 001 need human clinical review."
+next_action: "not recorded"
 ```
 
 ## Ownership history
@@ -104,3 +104,4 @@ Timestamps are UTC.
 | 2026-10-04T07:05:45.406Z | RELEASE COMPLETE | DEVICE-01 | P10-001 | D18 resolved under standing authorization: contract B canonical, migration map produced, 432 records NOT migrated and PR #21 NOT merged. Stale control-plane facts reconciled and a device-activity detection defect recorded. Commit ac8cae2. |
 | 2026-10-04T07:05:50.860Z | CLAIM | DEVICE-01 | P10-002 | claimed |
 | 2026-10-04T07:14:49.218Z | RELEASE COMPLETE | DEVICE-01 | P10-002 | A9 resolved by removing the dead scenarioSchemaVersion field (compatibility already carried by the Zod gate, the per-scenario content version and the content-hash gate); A6 closed as superseded by D8 with no code written; preflight learned a third outcome, superseded, because A6 is neither resolved nor blocked. Baseline B-008 at ff3a12d. nexus-core 804/804, desktop 330/330, preflight 30/30, cargo 70/70 with clippy clean. |
+| 2026-10-04T07:36:07.530Z | CLAIM | DEVICE-01 | P10-003 | claimed |
