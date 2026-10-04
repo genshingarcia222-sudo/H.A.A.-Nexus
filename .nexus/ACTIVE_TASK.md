@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P10-003
 task_name: "A2 resolution, and truthful dispositions for the accessClasses gap, D17 and A7"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-10-04T07:36:07.530Z
-last_update: 2026-10-04T07:36:07.530Z
+last_update: 2026-10-04T07:41:57.621Z
 stale_after_hours: 12
 expected_scope: "Cheap, decision-critical work only, under a YELLOW budget state. A2: resolve by removing the dead competencyDomains field and replacing the duplicated domain list with one exported source in nexus-core, guarded at type level so it cannot drift from CategoryScores again. Then truthful dispositions for the accessClasses/D4 gap, D17 and A7 as far as evidence safely allows. Expensive operations - the 432-record migration and CMS ICD-10 ingestion - are gated out: section 10 requires GREEN and the session is in the caution band."
 affected_areas: "packages/nexus-core/, apps/desktop/, tools/preflight/, docs/, CHANGELOG.md, .nexus/"
 branch: main
 claim_commit: 5ba1c8bd908d774ac2b41c97fb4874658dba14fa
-last_commit: 5ba1c8bd908d774ac2b41c97fb4874658dba14fa
+last_commit: bfbdc4d3c56b8f5749f24e1442c33f9d21eeb30f
 handoff_required: no
 handoff_to: none
-next_action: "not recorded"
+next_action: "D17 is the remaining cheap decision and was not started. Then the two expensive units behind the entry gate: the 432-record migration and CMS ICD-10-CM ingestion, neither of which may begin outside a GREEN state with enough headroom to reach a verification boundary. D10, D13, D14 stay owner-gated; A12 and Pilot Batch 001 need human clinical review."
 ```
 
 ## Ownership history
@@ -105,3 +105,4 @@ Timestamps are UTC.
 | 2026-10-04T07:05:50.860Z | CLAIM | DEVICE-01 | P10-002 | claimed |
 | 2026-10-04T07:14:49.218Z | RELEASE COMPLETE | DEVICE-01 | P10-002 | A9 resolved by removing the dead scenarioSchemaVersion field (compatibility already carried by the Zod gate, the per-scenario content version and the content-hash gate); A6 closed as superseded by D8 with no code written; preflight learned a third outcome, superseded, because A6 is neither resolved nor blocked. Baseline B-008 at ff3a12d. nexus-core 804/804, desktop 330/330, preflight 30/30, cargo 70/70 with clippy clean. |
 | 2026-10-04T07:36:07.530Z | CLAIM | DEVICE-01 | P10-003 | claimed |
+| 2026-10-04T07:41:57.621Z | RELEASE COMPLETE | DEVICE-01 | P10-003 | A2 resolved: the dead competencyDomains field removed and a third, previously unrecorded duplicate of the domain list eliminated - the domains now live once in nexus-core, compile-guarded against ScoringWeights. A7 deferred with its unblocking condition named and a truthful blocker marker. The accessClasses/D4 gap dispositioned: no schema change needed, and the previous session's claim that a corpus browser must wait for a record-level access model is corrected as wrong. D17 NOT started - the session reached the closure band. Expensive operations never eligible: section 10 requires GREEN. |
