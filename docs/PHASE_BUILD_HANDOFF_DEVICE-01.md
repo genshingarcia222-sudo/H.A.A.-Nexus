@@ -15,28 +15,46 @@ nexus_task: see .nexus/ACTIVE_TASK.md for the live task, owner and status - this
 session: S-phases-building (register/attach it at every session start)
 ```
 
-## Exact next action at control version P9-2026-10-02-001
+## Exact next action at 2026-10-04 (after D18)
 
-**Next action: there is none that is ungated.** CI is green — run 36793771261 at
-`df5dae9` passed both jobs on hosted runners and reproduced every baseline B-006
-figure off this device, including `cargo test` 70/70 on `windows-latest`. The
-last piece of unfinished work in this lane is finished.
+**D18 is resolved. That changes what this lane can do next.**
 
-**Do not invent work to fill the gap.** D16, D8 and D9 were closed under
-the standing authorization and Phase 8.3's decision group is complete. What
-remains needs the owner:
+`docs/KNOWLEDGE_ARCHITECTURE.md` is the authoritative three-layer boundary and
+holds the field-level A-to-B migration map. Contract **B** — the D12 Zod model in
+`packages/nexus-core/src/knowledge-corpus/` — is canonical.
 
-| Blocker | Why a session cannot close it |
-|---|---|
-| **D10** | Cloud persistence needs a provider account, an account model and authentication. The unblocked half - the learner-state classification and a labelled recommendation - is already in the register |
-| **D14** | Needs D10 first |
-| **D13** | A signing identity costs money and requires a legal entity |
-| **D17** | Changes D4's scope or D6's retake rule |
-| **D18** | DEVICE-02's lane is blocked on it |
+**Next safe atomic unit, in dependency order.** None of these was started; each
+is sized to reach a commit on its own.
 
-Do not touch `knowledge-corpus/`, `tools/knowledge-corpus/`, or PR #21. Do not
-cut a release: `docs/RELEASE_POLICY.md` §6 refuses a stable one at `0.1.0`, and
-the tag is the owner's.
+| # | Unit | Why it is next | Size |
+|---|---|---|---|
+| 1 | **ICD-10-CM ingestion from CMS** | the largest unbuilt requirement, and `codingReference` in B is already its shape. CMS is reachable (HTTP 200, 2026-10-04); **nothing has been retrieved** | large — do not start below ~20 points of session headroom |
+| 2 | **Migrate the 432 KB records to contract B** | unblocked by D18, blocks PR #21. Follow the map; classes (a) and (b) are mechanical, class (c) needs a decision per field | large |
+| 3 | **A2** — 12 registry domains vs 7 evaluator domains | inert debt; `competencyDomains` is declared and unused, the sibling of the field A9 just removed. §M authorises "remove/replace" | small |
+| 4 | **A7** — competency trends in recommendations | likeliest honest outcome is a recorded deferral: no source defines a weighting model | small |
+| 5 | **D17** | changes D4's scope or D6's retake rule — a real product decision, pinned today by a characterization test | medium |
+
+**Do not start unit 1 or 2 without checking the expensive-operation gate first.**
+A half-migrated corpus or a half-retrieved CMS snapshot is worse than neither.
+
+**Three questions the migration map raises and does not answer** — settle them
+before touching records: `correctChoiceIds` (array, 318 records) against B's
+singular `correctChoiceId`; variant lineage, 5 A-fields to 3 B-fields across 375
+of 432 records; and `accessClasses`, which has **no home in B at all**, so no
+record can yet be marked `ASSESSMENT_CLOSED_BOOK`.
+
+**A standing constraint that is now sharper:** D4 is held today by the route gate
+and the source-scanning invariant, **not at the record**. A Knowledge Corpus
+browser must not ship before `accessClasses` has a home in B.
+
+**Still owner-gated, and nothing here can close them:** **D10** (needs a provider
+account and an account model), **D14** (needs D10), **D13** (a purchased signing
+identity), plus **A12** and Pilot Batch 001, which need human clinical review that
+cannot be faked. Do not cut a release: `docs/RELEASE_POLICY.md` §6 refuses a
+stable one at `0.1.0`.
+
+**Do not merge PR #21.** D18 being answered is a precondition for that work, not
+a substitute for it.
 
 ## Assigned work
 

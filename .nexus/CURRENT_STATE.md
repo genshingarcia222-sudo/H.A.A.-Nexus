@@ -24,13 +24,13 @@ project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: main (publishes to main; the historical nexus/sync-bootstrap checkout is 106 behind and is not used)
 current_phase: "Phase 9 - Packaging & Release Hardening (P9-A and P9-D satisfied; P9-B/C/E decision-blocked on D13 and D14; Phase 8 is NOT closed)"
-current_milestone: "D16, D8 and D9 all resolved 2026-10-01 under the owner STANDING AUTHORIZATION (none of them owner decisions; each labelled in the register, ledger and changelog). P9-D is SATISFIED so Phase 9 has P9-A and P9-D done with P9-B/C/E blocked on D13 and D14. Phase 8.3 decision group COMPLETE (D1, D3-D9). Phase 8 still open: roadmap steps 3-8 unstarted and D10 blocks step 4. Control plane at P9-2026-10-02-001 (reconciliation audit; no decision resolved). DEVICE-02 owns the Knowledgebase lane (PR #21, not merged, D18 first)"
-baseline_commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
-last_verified_commit: f48a1fc1cdd9dfae69e0a988603ac3436a7ca2ec
-last_verified_tests: "PASS - nexus-core 804/804 (66 files), desktop 330/330 (33 files), preflight 27/27, nexus-sync 81/81, release 25/25 (2026-10-02, DEVICE-01, baseline B-007)"
-last_verified_build: "PASS - pnpm -r build (2026-10-02, DEVICE-01, baseline B-007); cargo build --release measured 10,278,912 B at B-005"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-02, DEVICE-01, baseline B-007)"
-last_verified_rust: "PASS - cargo test 70/70, cargo fmt --check clean, cargo clippy --all-targets zero warnings, rustc 1.98.1 (2026-10-02, DEVICE-01, baseline B-007)"
+current_milestone: "D18 RESOLVED 2026-10-04 under the owner STANDING AUTHORIZATION: contract B (packages/nexus-core/src/knowledge-corpus, the D12 Zod model) is the canonical runtime-ingestion contract. docs/KNOWLEDGE_ARCHITECTURE.md holds the three-layer boundary and the field-level A-to-B migration map. The 432 KB records are NOT migrated and PR #21 is NOT merged - D18 is a precondition for that work, not a substitute. A9 resolved (dead field removed), A6 closed as superseded by D8. Preflight learned a third outcome, superseded. Open: D10, D13, D14, D17, A2, A7, A12. ICD-10-CM ingestion is specified and NOT BUILT (CMS reachable, nothing retrieved). Control plane at P9-2026-10-02-001"
+baseline_commit: ff3a12d7b795956025c2882cb2a66b8dc681ce65
+last_verified_commit: ff3a12d7b795956025c2882cb2a66b8dc681ce65
+last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 30/30, nexus-sync 81/81, release 25/25 (2026-10-04, DEVICE-01, baseline B-008)"
+last_verified_build: "PASS - pnpm -r build (2026-10-04, DEVICE-01, baseline B-008)"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-04, DEVICE-01, baseline B-008)"
+last_verified_rust: "PASS - cargo test 70/70, fmt clean, clippy 0 warnings, rustc 1.98.1 (2026-10-04, DEVICE-01, baseline B-008)"
 active_task: P10-002
 task_owner: DEVICE-01
 task_status: ACTIVE
