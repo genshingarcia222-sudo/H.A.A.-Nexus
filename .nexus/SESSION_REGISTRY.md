@@ -71,19 +71,19 @@ Consequences, in order of how often they matter:
 ```yaml nexus-state
 registry_version: 1
 S-phases-building.DEVICE-01.attached_at: 2026-09-26T13:00:46.532Z
-S-phases-building.DEVICE-01.last_seen: 2026-10-04T07:14:54.806Z
-S-phases-building.DEVICE-01.last_seen_commit: 80aaa0801ff18012024f18a98098504edfdccf12
+S-phases-building.DEVICE-01.last_seen: 2026-10-04T07:42:47.779Z
+S-phases-building.DEVICE-01.last_seen_commit: e0889963f2291a1d17fc4da9603778636e9f6013
 S-phases-building.name: "PHASES BUILDING"
 S-phases-building.role: "orchestrator: authoritative phase plan, task partition, integration and conflict policy"
 S-phases-building.status: ACTIVE
 S-phases-building.control_version: P9-2026-10-02-001
 S-phases-building.branch: main
-S-phases-building.next_action: "D18 RESOLVED 2026-10-04 under standing authorization: contract B (the D12 Zod model on main) is the canonical runtime-ingestion contract; docs/KNOWLEDGE_ARCHITECTURE.md holds the three-layer boundary and the A-to-B migration map. The 432 KB records are NOT migrated and PR #21 is NOT merged. A9 resolved, A6 superseded. Open: D10, D13, D14, D17, A2, A7, A12. ICD-10-CM specified and NOT BUILT. Next units are sized in the DEVICE-01 handoff; DEVICE-02 has three content questions only it can answer."
+S-phases-building.next_action: "A2 RESOLVED and A7 deferred 2026-10-04 under standing authorization; the accessClasses/D4 gap dispositioned - no schema change needed, and a Knowledge Corpus browser is NOT blocked behind a record-level access model (D4 blocks surfaces, not records; the earlier claim was wrong and is corrected in docs/KNOWLEDGE_ARCHITECTURE.md). D17 NOT started: the session reached the closure band. Remaining: D17 (cheap), then the 432-record migration and CMS ICD-10 ingestion behind the GREEN-only entry gate. D10, D13, D14 owner-gated; A12 and Pilot 001 need human review."
 S-phases-building.created_by: DEVICE-01
 S-phases-building.created_at: 2026-09-26T13:00:46.532Z
 S-phases-building.updated_by: DEVICE-01
-S-phases-building.updated_at: 2026-10-04T07:14:54.806Z
-S-phases-building.revision: 9
+S-phases-building.updated_at: 2026-10-04T07:42:47.779Z
+S-phases-building.revision: 10
 S-phases-building.DEVICE-02.attached_at: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen: 2026-09-26T14:17:11.329Z
 S-phases-building.DEVICE-02.last_seen_commit: d162b6d36f1b11873b6d60359d281fcac55b426d
@@ -107,3 +107,4 @@ it replaced. Timestamps are UTC.
 | 2026-10-01T00:07:19.519Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 7 |
 | 2026-10-02T11:35:00.945Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 8 |
 | 2026-10-04T07:14:54.806Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 9 |
+| 2026-10-04T07:42:47.779Z | UPDATE | DEVICE-01 | S-phases-building | set next_action, control_version at revision 10 |
