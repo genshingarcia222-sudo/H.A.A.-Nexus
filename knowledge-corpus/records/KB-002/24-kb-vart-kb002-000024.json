@@ -1,0 +1,582 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000024",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-REMD-KB002-000088",
+      "recordType": "REMEDIATION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M19",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "REMEDIATION",
+      "scenarioType": "TARGETED_REMEDIATION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Feedback and remediation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000024"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000024#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "The learner sent the result to the general clinical inbox and marked the item closed.",
+            "section": "Learner action",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "The stated workflow routes results to the ordering clinician, PA Hyacinth Obuya-Lindfors, and closes the item only on confirmed receipt.",
+            "section": "Correct action",
+            "decisive": false
+          },
+          {
+            "ref": "Z3",
+            "text": "asked why, the learner said the general inbox is monitored and someone would pick it up, which locates the failure in what counts as a destination rather than in carelessness about the workflow",
+            "section": "Learner reasoning",
+            "decisive": true
+          },
+          {
+            "ref": "Z4",
+            "text": "The same learner routed two earlier results correctly to named clinicians.",
+            "section": "History",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Peregrine Oyelude",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "A learner routed a result for Peregrine Oyelude (MRN SYN-6742) to the wrong destination. What remediation does this failure call for?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Have the learner re-send the result to PA Hyacinth Obuya-Lindfors and close the remediation there.",
+          "why": "Fixing the instance leaves the belief untouched, so it recurs whenever a named clinician is inconvenient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Re-teach the results routing workflow and re-test on the same scenario.",
+          "why": "The learner already applies that workflow, so this targets a gap the evidence contradicts.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Record it as a lapse of attention and monitor the next five routings.",
+          "why": "The learner gave a reason, which makes this a belief rather than a lapse. Monitoring detects recurrence without correcting it.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Address the belief that a monitored queue is an owner, re-work this item with confirmation, and retry where the clinician is absent.",
+          "why": "Correct: the remediation targets the reasoning the learner actually used."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Target the belief, not the behaviour. The learner can follow the workflow — two earlier results went to named clinicians — so the remediation addresses the idea that a monitored queue is an owner. Show that closure requires a confirmed recipient, have them re-work this item to PA Hyacinth Obuya-Lindfors with confirmation, and retry on a variant where the ordering clinician is absent, so the answer is a named cover rather than a queue. Do not re-teach the routing workflow they already apply, and do not treat it as inattention.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Locates the failure in the learner's stated reasoning rather than in workflow ignorance.",
+          "credit": 0.34,
+          "evidenceRef": "Z3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Cites the two correct earlier routings as evidence against a knowledge gap.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Specifies a retry variant that tests the same belief under a harder condition.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000024",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "instructor",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "ac9e8e24bcd07233",
+        "scenarioFingerprint": "b5374a7b1c51e5f4",
+        "competencyFingerprint": "dbb5400d4cd047d1",
+        "evidenceLayoutFingerprint": "3276fe3b1971a26c",
+        "answerPatternFingerprint": "80527e1000bdf4ee"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-REMD-KB002-000089",
+      "recordType": "REMEDIATION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M19",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "REMEDIATION",
+      "scenarioType": "TARGETED_REMEDIATION__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Feedback and remediation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000024"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000024#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "The learner sent the result to the general clinical inbox and marked the item closed.",
+            "section": "Learner action",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "The stated workflow routes results to the ordering clinician, CNM Isolde Babatunde-Reyes, and closes the item only on confirmed receipt.",
+            "section": "Correct action",
+            "decisive": false
+          },
+          {
+            "ref": "Z4",
+            "text": "The same learner routed two earlier results correctly to named clinicians.",
+            "section": "History",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "Z3",
+            "text": "asked why, the learner said the general inbox is monitored and someone would pick it up, which locates the failure in what counts as a destination rather than in carelessness about the workflow",
+            "section": "Learner reasoning",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Quilla Nakashima-Obi",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "A learner routed a result for Quilla Nakashima-Obi (MRN SYN-3168) to the wrong destination. What remediation does this failure call for? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Address the belief that a monitored queue is an owner, re-work this item with confirmation, and retry where the clinician is absent.",
+          "why": "Correct: the remediation targets the reasoning the learner actually used."
+        },
+        {
+          "id": "b",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "Re-teach the results routing workflow and re-test on the same scenario.",
+          "why": "The learner already applies that workflow, so this targets a gap the evidence contradicts.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Record it as a lapse of attention and monitor the next five routings.",
+          "why": "The learner gave a reason, which makes this a belief rather than a lapse. Monitoring detects recurrence without correcting it.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Target the belief, not the behaviour. The learner can follow the workflow — two earlier results went to named clinicians — so the remediation addresses the idea that a monitored queue is an owner. Show that closure requires a confirmed recipient, have them re-work this item to CNM Isolde Babatunde-Reyes with confirmation, and retry on a variant where the ordering clinician is absent, so the answer is a named cover rather than a queue. Do not re-teach the routing workflow they already apply, and do not treat it as inattention.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Locates the failure in the learner's stated reasoning rather than in workflow ignorance.",
+          "credit": 0.34,
+          "evidenceRef": "Z3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Cites the two correct earlier routings as evidence against a knowledge gap.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Specifies a retry variant that tests the same belief under a harder condition.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-REMD-KB002-000088",
+      "variantOf": "KB-REMD-KB002-000088",
+      "templateId": "KB-VART-KB002-000024",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-REMD-KB002-000088"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "instructor",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "7353b98ac4ae3a3d",
+        "scenarioFingerprint": "939efdf3a59974c4",
+        "competencyFingerprint": "dbb5400d4cd047d1",
+        "evidenceLayoutFingerprint": "68918fb50abf8249",
+        "answerPatternFingerprint": "3ae35095fd00e679"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-REMD-KB002-000090",
+      "recordType": "REMEDIATION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M19",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "REMEDIATION",
+      "scenarioType": "TARGETED_REMEDIATION__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Feedback and remediation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000024"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000024#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "RESULT_PACKET",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "Z3",
+            "text": "Routine reconciliation note from G. Hallgrimsdottir: demographics confirmed, card image legible, and — asked why, the learner said the general inbox is monitored and someone would pick it up, which locates the failure in what counts as a destination rather than in carelessness about the workflow — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "G. Hallgrimsdottir",
+            "recordedOn": "2027-02-23",
+            "decisive": true
+          },
+          {
+            "ref": "Z1",
+            "text": "The learner sent the result to the general clinical inbox and marked the item closed.",
+            "section": "Learner action",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "The stated workflow routes results to the ordering clinician, Dr. Imani Farrokhzad, and closes the item only on confirmed receipt.",
+            "section": "Correct action",
+            "decisive": false
+          },
+          {
+            "ref": "Z4",
+            "text": "The same learner routed two earlier results correctly to named clinicians.",
+            "section": "History",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Rasheed Vondracek",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A learner routed a result for Rasheed Vondracek (MRN SYN-9503) to the wrong destination. What remediation does this failure call for? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "b",
+          "text": "Address the belief that a monitored queue is an owner, re-work this item with confirmation, and retry where the clinician is absent.",
+          "why": "Correct: the remediation targets the reasoning the learner actually used."
+        },
+        {
+          "id": "c",
+          "text": "Re-teach the results routing workflow and re-test on the same scenario.",
+          "why": "The learner already applies that workflow, so this targets a gap the evidence contradicts.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Record it as a lapse of attention and monitor the next five routings.",
+          "why": "The learner gave a reason, which makes this a belief rather than a lapse. Monitoring detects recurrence without correcting it.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Target the belief, not the behaviour. The learner can follow the workflow — two earlier results went to named clinicians — so the remediation addresses the idea that a monitored queue is an owner. Show that closure requires a confirmed recipient, have them re-work this item to Dr. Imani Farrokhzad with confirmation, and retry on a variant where the ordering clinician is absent, so the answer is a named cover rather than a queue. Do not re-teach the routing workflow they already apply, and do not treat it as inattention.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Locates the failure in the learner's stated reasoning rather than in workflow ignorance.",
+          "credit": 0.34,
+          "evidenceRef": "Z3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Cites the two correct earlier routings as evidence against a knowledge gap.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Specifies a retry variant that tests the same belief under a harder condition.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-REMD-KB002-000088",
+      "variantOf": "KB-REMD-KB002-000088",
+      "templateId": "KB-VART-KB002-000024",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-REMD-KB002-000088"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "instructor",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "dbe5544f514c1d67",
+        "scenarioFingerprint": "8a81c0accbcd1181",
+        "competencyFingerprint": "dbb5400d4cd047d1",
+        "evidenceLayoutFingerprint": "28da211bdf45ebb5",
+        "answerPatternFingerprint": "64102faeb9a4ebb1"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

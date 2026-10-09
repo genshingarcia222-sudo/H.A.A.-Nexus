@@ -1,0 +1,745 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000012",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000045",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "EASY",
+      "taskType": "ERROR_HUNT",
+      "scenarioType": "WRONG_ENCOUNTER_FILING",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Error taxonomy",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000012"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000012#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Two encounters exist for this patient: 2026-08-13 with Dr. Rurik Vandeveer, and 2026-09-10 with the same clinician.",
+            "section": "Encounters",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "a wound-check note describing a dressing change is filed against the 2026-08-13 encounter, and the note's own body states the dressing was changed on 2026-09-10",
+            "section": "Document",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Quietwater Family Health's stated records policy for this scenario permits a mis-filing to be corrected only by the records owner, with the original filing retained in the audit trail.",
+            "section": "Policy",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Quietwater Family Health — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "C. Oyedepo-Mansur is checking a filing for Arden Kowalczyk-Reyes (MRN SYN-4418). What is wrong, and what is the defensible correction?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Report it as a wrong-encounter filing and refer it to the records owner, retaining the original filing in the trail.",
+          "why": "Correct: the defect is the filing, and the stated policy reserves the correction to the owner."
+        },
+        {
+          "id": "b",
+          "text": "Edit the date inside the note to 2026-08-13 so it matches the encounter it is filed against.",
+          "why": "That edits clinical content to fit a filing error, which destroys the evidence of the error.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "c",
+          "text": "Re-file the note against the 2026-09-10 encounter now, since that is plainly where it belongs.",
+          "why": "The destination is right and the authority is not: the policy reserves the correction to the records owner.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Accept the filing: the most recent entry against an encounter governs what it contains.",
+          "why": "No such rule is stated, and it would make any mis-filing self-justifying.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Report a wrong-encounter filing: the note's own body dates the dressing change to 2026-09-10 while it sits against the 2026-08-13 encounter. Refer it to the records owner for correction under the stated policy, with the original filing retained in the trail. Do not move the note yourself, and do not change the date inside the note so it matches the encounter it is filed against — that would make the document agree with the error.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the mismatch between the note's internal date and the encounter it is filed against.",
+          "credit": 0.34,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Refers the correction to the records owner, retaining the original filing.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not alter the note's content to resolve the mismatch.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000012",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "a59f695684c69caa",
+        "scenarioFingerprint": "e1c5e1404dbeeac3",
+        "competencyFingerprint": "5b3497c28e5ab16a",
+        "evidenceLayoutFingerprint": "a0d592751f6452c9",
+        "answerPatternFingerprint": "d6bb58697b43709b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000046",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "EASY",
+      "taskType": "ERROR_HUNT",
+      "scenarioType": "WRONG_ENCOUNTER_FILING__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Error taxonomy",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000012"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000012#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Two encounters exist for this patient: 2026-09-01 with Dr. Saoirse Mbeki-Lantz, and 2026-09-29 with the same clinician.",
+            "section": "Encounters",
+            "decisive": false
+          },
+          {
+            "ref": "E3",
+            "text": "Marbury Heights Clinic's stated records policy for this scenario permits a mis-filing to be corrected only by the records owner, with the original filing retained in the audit trail.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "a wound-check note describing a dressing change is filed against the 2026-09-01 encounter, and the note's own body states the dressing was changed on 2026-09-29",
+            "section": "Document",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Marbury Heights Clinic — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "E. Villaseñor-Bak is checking a filing for Bassey Oduya (MRN SYN-7290). What is wrong, and what is the defensible correction? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Report it as a wrong-encounter filing and refer it to the records owner, retaining the original filing in the trail.",
+          "why": "Correct: the defect is the filing, and the stated policy reserves the correction to the owner."
+        },
+        {
+          "id": "c",
+          "text": "Edit the date inside the note to 2026-09-01 so it matches the encounter it is filed against.",
+          "why": "That edits clinical content to fit a filing error, which destroys the evidence of the error.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Re-file the note against the 2026-09-29 encounter now, since that is plainly where it belongs.",
+          "why": "The destination is right and the authority is not: the policy reserves the correction to the records owner.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Report a wrong-encounter filing: the note's own body dates the dressing change to 2026-09-29 while it sits against the 2026-09-01 encounter. Refer it to the records owner for correction under the stated policy, with the original filing retained in the trail. Do not move the note yourself, and do not change the date inside the note so it matches the encounter it is filed against — that would make the document agree with the error.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the mismatch between the note's internal date and the encounter it is filed against.",
+          "credit": 0.34,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Refers the correction to the records owner, retaining the original filing.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not alter the note's content to resolve the mismatch.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000045",
+      "variantOf": "KB-QUES-KB002-000045",
+      "templateId": "KB-VART-KB002-000012",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000045"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "ca983906264ac9ea",
+        "scenarioFingerprint": "1c91e8e4256e3903",
+        "competencyFingerprint": "5b3497c28e5ab16a",
+        "evidenceLayoutFingerprint": "10b29136b38a1ab4",
+        "answerPatternFingerprint": "670205a3aefde6ec"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000047",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "EASY",
+      "taskType": "ERROR_HUNT",
+      "scenarioType": "WRONG_ENCOUNTER_FILING__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Error taxonomy",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000012"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000012#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "E2",
+            "text": "Routine reconciliation note from F. Adegboyega: demographics confirmed, card image legible, and — a wound-check note describing a dressing change is filed against the 2026-11-05 encounter, and the note's own body states the dressing was changed on 2026-12-03 — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "E1",
+            "text": "Two encounters exist for this patient: 2026-11-05 with NP Caius Ostrowski, and 2026-12-03 with the same clinician.",
+            "section": "Encounters",
+            "decisive": false
+          },
+          {
+            "ref": "E3",
+            "text": "Rosemark Internal Medicine's stated records policy for this scenario permits a mis-filing to be corrected only by the records owner, with the original filing retained in the audit trail.",
+            "section": "Policy",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "F. Adegboyega is checking a filing for Corrin Vasquez-Lund (MRN SYN-3355). What is wrong, and what is the defensible correction? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Edit the date inside the note to 2026-11-05 so it matches the encounter it is filed against.",
+          "why": "That edits clinical content to fit a filing error, which destroys the evidence of the error.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Report it as a wrong-encounter filing and refer it to the records owner, retaining the original filing in the trail.",
+          "why": "Correct: the defect is the filing, and the stated policy reserves the correction to the owner."
+        },
+        {
+          "id": "d",
+          "text": "Re-file the note against the 2026-12-03 encounter now, since that is plainly where it belongs.",
+          "why": "The destination is right and the authority is not: the policy reserves the correction to the records owner.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Report a wrong-encounter filing: the note's own body dates the dressing change to 2026-12-03 while it sits against the 2026-11-05 encounter. Refer it to the records owner for correction under the stated policy, with the original filing retained in the trail. Do not move the note yourself, and do not change the date inside the note so it matches the encounter it is filed against — that would make the document agree with the error.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the mismatch between the note's internal date and the encounter it is filed against.",
+          "credit": 0.34,
+          "evidenceRef": "E2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Refers the correction to the records owner, retaining the original filing.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not alter the note's content to resolve the mismatch.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000045",
+      "variantOf": "KB-QUES-KB002-000045",
+      "templateId": "KB-VART-KB002-000012",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000045"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "03715048c00c74c9",
+        "scenarioFingerprint": "5a0ee8e1ed944375",
+        "competencyFingerprint": "5b3497c28e5ab16a",
+        "evidenceLayoutFingerprint": "d287c3b763752dee",
+        "answerPatternFingerprint": "0a6183e9cb10557b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000048",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M02"
+      ],
+      "competencyIds": [
+        "KB-D01"
+      ],
+      "sourceCompetencyIds": [
+        "D01"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "ERROR_HUNT",
+      "scenarioType": "WRONG_ENCOUNTER_FILING__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Error taxonomy",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000012"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000012#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "E1",
+            "text": "Two encounters exist for this patient: 2026-12-08 with PA Yolanda Trevisani, and 2027-01-05 with the same clinician.",
+            "section": "Encounters",
+            "decisive": true
+          },
+          {
+            "ref": "E3",
+            "text": "Cedar Hollow Family Practice's stated records policy for this scenario permits a mis-filing to be corrected only by the records owner, with the original filing retained in the audit trail.",
+            "section": "Policy",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "G. Hallgrimsdottir is checking a filing for Delphine Achterberg (MRN SYN-8102). What is wrong, and what is the defensible correction? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Edit the date inside the note to 2026-12-08 so it matches the encounter it is filed against.",
+          "why": "That edits clinical content to fit a filing error, which destroys the evidence of the error.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Report it as a wrong-encounter filing and refer it to the records owner, retaining the original filing in the trail.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which encounter the dressing change actually belongs to is not in the record, request it from PA Yolanda Trevisani, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which encounter the dressing change actually belongs to), name PA Yolanda Trevisani as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which encounter the dressing change actually belongs to\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "E1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong encounter fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Patient identity and encounter context. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000045",
+      "variantOf": "KB-QUES-KB002-000045",
+      "templateId": "KB-VART-KB002-000012",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000045"
+      ],
+      "errorTargets": [
+        "KB-ERR-WRONG-ENCOUNTER",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ENCOUNTER-ANCHOR",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "7a737e97bbd61860",
+        "scenarioFingerprint": "db8dbc21d6639350",
+        "competencyFingerprint": "d2d3a096b11e21a0",
+        "evidenceLayoutFingerprint": "440b904cfa141543",
+        "answerPatternFingerprint": "503da20ad170a73e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

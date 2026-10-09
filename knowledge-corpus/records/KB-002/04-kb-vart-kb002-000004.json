@@ -1,0 +1,737 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000004",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000013",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "EASY",
+      "taskType": "REFERRAL_PACKET_REVIEW",
+      "scenarioType": "PACKET_COMPLETENESS",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral and fax packets",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000004"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000004#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Cover sheet, referral reason, the 2026-05-04 office note and the current medication list are attached and legible.",
+            "section": "Packet",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "the receiving office's stated intake checklist for this scenario requires the referral reason, the relevant note, the medication list and the imaging report referenced in that note, and the imaging report is the one item not attached",
+            "section": "Packet checklist",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "The 2026-05-04 note's plan section refers the reader to the imaging report for the finding that prompted the referral.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Yevgenia Olatunji-Kvist",
+        "encounterLabel": "Bellrock Community Health Center — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "D. Eluwande is preparing a referral packet for Yevgenia Olatunji-Kvist (MRN SYN-6418) to Dr. Rurik Vandeveer. Is the packet ready to send?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Attach the imaging report the note relies on, then send the completed packet to Dr. Rurik Vandeveer's office.",
+          "why": "Correct: the checklist names it, the note depends on it, and the packet is complete once it is attached."
+        },
+        {
+          "id": "b",
+          "text": "Send the packet now and fax the imaging report separately once it is located.",
+          "why": "A split packet is how an item goes missing, and the receiving office's intake needs it together.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Send the packet as it stands: the note already describes the finding in its plan section.",
+          "why": "The note points to the report rather than reproducing it. A reference is not the document.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Hold the referral and ask the patient to bring the imaging report to their next visit.",
+          "why": "It moves a task the practice can complete onto the patient and delays a referral for no reason.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "The packet is not ready. Name the single missing item — the imaging report the note's plan depends on — and say why its absence matters: without it the receiving office has the referral's reason but not the finding behind it. Attach it, then send. Do not send the packet with a note that the report will follow, and do not treat the note's own summary of the finding as a substitute for the report.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies the imaging report as the one missing checklist item.",
+          "credit": 0.34,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Explains that the note depends on it for the finding that prompted the referral.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Completes the packet before sending rather than sending and following up.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000004",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "971293b4341f9b0f",
+        "scenarioFingerprint": "c1cd483caa6fa16f",
+        "competencyFingerprint": "5e6c8902576293d0",
+        "evidenceLayoutFingerprint": "e74bd95ecd3e42aa",
+        "answerPatternFingerprint": "73810c52654eb1fb"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000014",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "EASY",
+      "taskType": "REFERRAL_PACKET_REVIEW",
+      "scenarioType": "PACKET_COMPLETENESS__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral and fax packets",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000004"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000004#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Cover sheet, referral reason, the 2026-06-22 office note and the current medication list are attached and legible.",
+            "section": "Packet",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "F3",
+            "text": "The 2026-06-22 note's plan section refers the reader to the imaging report for the finding that prompted the referral.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "the receiving office's stated intake checklist for this scenario requires the referral reason, the relevant note, the medication list and the imaging report referenced in that note, and the imaging report is the one item not attached",
+            "section": "Packet checklist",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Zacharias Ndlovu-Persson",
+        "encounterLabel": "Thornfield Medical Partners — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "P. Kirchmayer is preparing a referral packet for Zacharias Ndlovu-Persson (MRN SYN-3541) to Dr. Saoirse Mbeki-Lantz. Is the packet ready to send? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Attach the imaging report the note relies on, then send the completed packet to Dr. Saoirse Mbeki-Lantz's office.",
+          "why": "Correct: the checklist names it, the note depends on it, and the packet is complete once it is attached."
+        },
+        {
+          "id": "c",
+          "text": "Send the packet now and fax the imaging report separately once it is located.",
+          "why": "A split packet is how an item goes missing, and the receiving office's intake needs it together.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Send the packet as it stands: the note already describes the finding in its plan section.",
+          "why": "The note points to the report rather than reproducing it. A reference is not the document.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "The packet is not ready. Name the single missing item — the imaging report the note's plan depends on — and say why its absence matters: without it the receiving office has the referral's reason but not the finding behind it. Attach it, then send. Do not send the packet with a note that the report will follow, and do not treat the note's own summary of the finding as a substitute for the report.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies the imaging report as the one missing checklist item.",
+          "credit": 0.34,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Explains that the note depends on it for the finding that prompted the referral.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Completes the packet before sending rather than sending and following up.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000013",
+      "variantOf": "KB-WFLW-KB002-000013",
+      "templateId": "KB-VART-KB002-000004",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "P. Kirchmayer",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "fb35baba15bf90d0",
+        "scenarioFingerprint": "b8c37a9cc7ea7171",
+        "competencyFingerprint": "5e6c8902576293d0",
+        "evidenceLayoutFingerprint": "6711bdeaf5d83692",
+        "answerPatternFingerprint": "a6d38e18066ae623"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000015",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "EASY",
+      "taskType": "REFERRAL_PACKET_REVIEW",
+      "scenarioType": "PACKET_COMPLETENESS__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral and fax packets",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000004"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000004#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "F2",
+            "text": "Routine reconciliation note from A. Nwosu-Ferrand: demographics confirmed, card image legible, and — the receiving office's stated intake checklist for this scenario requires the referral reason, the relevant note, the medication list and the imaging report referenced in that note, and the imaging report is the one item not attached — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "F1",
+            "text": "Cover sheet, referral reason, the 2026-08-13 office note and the current medication list are attached and legible.",
+            "section": "Packet",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "F3",
+            "text": "The 2026-08-13 note's plan section refers the reader to the imaging report for the finding that prompted the referral.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Anneliese Chukwuemeka-Rho",
+        "encounterLabel": "Quietwater Family Health — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "A. Nwosu-Ferrand is preparing a referral packet for Anneliese Chukwuemeka-Rho (MRN SYN-7095) to NP Caius Ostrowski. Is the packet ready to send? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send the packet now and fax the imaging report separately once it is located.",
+          "why": "A split packet is how an item goes missing, and the receiving office's intake needs it together.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Attach the imaging report the note relies on, then send the completed packet to NP Caius Ostrowski's office.",
+          "why": "Correct: the checklist names it, the note depends on it, and the packet is complete once it is attached."
+        },
+        {
+          "id": "d",
+          "text": "Send the packet as it stands: the note already describes the finding in its plan section.",
+          "why": "The note points to the report rather than reproducing it. A reference is not the document.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "The packet is not ready. Name the single missing item — the imaging report the note's plan depends on — and say why its absence matters: without it the receiving office has the referral's reason but not the finding behind it. Attach it, then send. Do not send the packet with a note that the report will follow, and do not treat the note's own summary of the finding as a substitute for the report.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies the imaging report as the one missing checklist item.",
+          "credit": 0.34,
+          "evidenceRef": "F2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Explains that the note depends on it for the finding that prompted the referral.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Completes the packet before sending rather than sending and following up.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000013",
+      "variantOf": "KB-WFLW-KB002-000013",
+      "templateId": "KB-VART-KB002-000004",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "796c6d94208d923d",
+        "scenarioFingerprint": "066404415a652c83",
+        "competencyFingerprint": "5e6c8902576293d0",
+        "evidenceLayoutFingerprint": "1806227c1ba35ac3",
+        "answerPatternFingerprint": "0971028de0f78d3a"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000016",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "REFERRAL_PACKET_REVIEW",
+      "scenarioType": "PACKET_COMPLETENESS__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Referral and fax packets",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000004"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000004#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "REFERRAL_PACKET",
+        "lines": [
+          {
+            "ref": "F1",
+            "text": "Cover sheet, referral reason, the 2026-09-01 office note and the current medication list are attached and legible.",
+            "section": "Packet",
+            "recordedBy": "B. Tkachenko",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "F3",
+            "text": "The 2026-09-01 note's plan section refers the reader to the imaging report for the finding that prompted the referral.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bartholomew Sannikov",
+        "encounterLabel": "Marbury Heights Clinic — voicemail",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "B. Tkachenko is preparing a referral packet for Bartholomew Sannikov (MRN SYN-4632) to PA Yolanda Trevisani. Is the packet ready to send? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send the packet now and fax the imaging report separately once it is located.",
+          "why": "A split packet is how an item goes missing, and the receiving office's intake needs it together.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Attach the imaging report the note relies on, then send the completed packet to PA Yolanda Trevisani's office.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which imaging report the note's plan section refers to is not in the record, request it from PA Yolanda Trevisani, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which imaging report the note's plan section refers to), name PA Yolanda Trevisani as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which imaging report the note's plan section refers to\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "F1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000013",
+      "variantOf": "KB-WFLW-KB002-000013",
+      "templateId": "KB-VART-KB002-000004",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000013"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "B. Tkachenko",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "06c5c038719f7e81",
+        "scenarioFingerprint": "efd48818a03ac93a",
+        "competencyFingerprint": "a35913d038414710",
+        "evidenceLayoutFingerprint": "ff868e22dc4deb36",
+        "answerPatternFingerprint": "9a31d5867030aae7"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

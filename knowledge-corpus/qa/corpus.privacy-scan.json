@@ -1,0 +1,19 @@
+{
+  "scan": "kb-privacy-scan/1.0.0",
+  "batch": "<all>",
+  "batches": [
+    "KB-001",
+    "KB-002"
+  ],
+  "records": 432,
+  "files": 57,
+  "allowlist": {
+    "patientLabels": 29,
+    "syntheticMrns": 30,
+    "providersAndStaff": 30,
+    "practicesAndPayers": 24
+  },
+  "findings": [],
+  "bySeverity": {},
+  "verdict": "CLEAR"
+}

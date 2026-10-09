@@ -1,0 +1,11 @@
+{
+  "registryId": "KB-REG-CODING-VERSIONS",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section XIV (owner-supplied, 2026-09-26)",
+  "principle": "Fiscal-year code set editions are never silently mixed. Every coding record carries the encounter date and the edition in force on that date, and QA rejects a record whose encounter date falls outside its declared edition window.",
+  "verificationCaveat": "The window boundaries below are transcribed from the owner-supplied charter, not retrieved from CDC/NCHS or CMS in this session. No record in this workstream is marked source_verified on the strength of this registry. A registered human reviewer must confirm each edition against the primary publisher before any coding record rises above candidate_needs_source_verification.",
+  "editions": [
+    { "id": "ICD-10-CM-FY2026", "system": "ICD-10-CM", "jurisdiction": "US", "effectiveFrom": null, "effectiveTo": "2026-09-30", "verificationStatus": "UNVERIFIED_TRANSCRIBED_FROM_CHARTER" },
+    { "id": "ICD-10-CM-FY2027", "system": "ICD-10-CM", "jurisdiction": "US", "effectiveFrom": "2026-10-01", "effectiveTo": null, "verificationStatus": "UNVERIFIED_TRANSCRIBED_FROM_CHARTER" }
+  ]
+}

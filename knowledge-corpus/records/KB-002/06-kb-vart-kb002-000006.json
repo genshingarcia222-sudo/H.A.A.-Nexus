@@ -1,0 +1,745 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000006",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000021",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D08"
+      ],
+      "difficulty": "EASY",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_ROUTING",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000006#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "M1",
+            "text": "Pharmacy requests a refill of a maintenance medication on the active list; the last fill was 30 days ago and the quantity requested matches the prescription on file.",
+            "section": "Request",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "M2",
+            "text": "the prescription on file shows zero refills remaining, and the stated workflow for this scenario is that a request with no refills left is a new prescribing decision for the prescriber rather than an administrative renewal",
+            "section": "Prescription",
+            "decisive": true
+          },
+          {
+            "ref": "M3",
+            "text": "Dr. Esperanza Nkemdirim is the prescriber of record and the patient's next visit is 2026-03-09.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Willowbank Primary Care — inbound fax",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A refill request for Emeka Solberg (MRN SYN-5647) has arrived from the pharmacy. What does H. Ezeagwula-Roth do with it?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Route it to Dr. Esperanza Nkemdirim as a prescribing decision, and tell the pharmacy where it sits.",
+          "why": "Correct: the refill count is exhausted, so the decision is the prescriber's, and the loop back to the pharmacy is closed."
+        },
+        {
+          "id": "b",
+          "text": "Approve the refill: the quantity matches the prescription on file and the timing is right.",
+          "why": "Matching an exhausted prescription is not authority to refill it. This is the scope boundary the record turns on.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "c",
+          "text": "Tell the pharmacy to hold the request until the 2026-03-09 visit.",
+          "why": "It defers a prescribing decision the prescriber has not seen and may leave the patient without a maintenance medication.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Deny the request and tell the patient to ask at their next appointment.",
+          "why": "Denial is also a prescribing decision, and it is made here without the prescriber.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Route the request to Dr. Esperanza Nkemdirim as a prescribing decision, because the prescription has no refills remaining. Give the prescriber what they need to decide — the medication, the last fill date, the requested quantity and the fact that refills are exhausted — and tell the pharmacy the request is with the prescriber. Do not approve the refill because the request matches the prescription on file, and do not tell the patient the refill is on its way.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that zero refills remaining makes this a prescribing decision, not a renewal.",
+          "credit": 0.34,
+          "evidenceRef": "M2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Routes to the named prescriber with the facts needed to decide.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Tells the pharmacy where the request now sits, rather than leaving it unanswered.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000006",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "1225955e936c809b",
+        "scenarioFingerprint": "9501a7c02514b743",
+        "competencyFingerprint": "f624370270ba182f",
+        "evidenceLayoutFingerprint": "f5dc0e255dbb69da",
+        "answerPatternFingerprint": "6e0a755e1b08cf35"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000022",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D08"
+      ],
+      "difficulty": "EASY",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_ROUTING__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000006#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "M1",
+            "text": "Pharmacy requests a refill of a maintenance medication on the active list; the last fill was 30 days ago and the quantity requested matches the prescription on file.",
+            "section": "Request",
+            "recordedOn": "2026-03-17",
+            "decisive": false
+          },
+          {
+            "ref": "M3",
+            "text": "Dr. Fionnuala Adeoti-Krause is the prescriber of record and the patient's next visit is 2026-04-14.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "M2",
+            "text": "the prescription on file shows zero refills remaining, and the stated workflow for this scenario is that a request with no refills left is a new prescribing decision for the prescriber rather than an administrative renewal",
+            "section": "Prescription",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Ashcombe Multispecialty Group — voicemail",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A refill request for Fenella Quintanilla (MRN SYN-2914) has arrived from the pharmacy. What does J. Marchesini-Ola do with it? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Route it to Dr. Fionnuala Adeoti-Krause as a prescribing decision, and tell the pharmacy where it sits.",
+          "why": "Correct: the refill count is exhausted, so the decision is the prescriber's, and the loop back to the pharmacy is closed."
+        },
+        {
+          "id": "c",
+          "text": "Approve the refill: the quantity matches the prescription on file and the timing is right.",
+          "why": "Matching an exhausted prescription is not authority to refill it. This is the scope boundary the record turns on.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Tell the pharmacy to hold the request until the 2026-04-14 visit.",
+          "why": "It defers a prescribing decision the prescriber has not seen and may leave the patient without a maintenance medication.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Route the request to Dr. Fionnuala Adeoti-Krause as a prescribing decision, because the prescription has no refills remaining. Give the prescriber what they need to decide — the medication, the last fill date, the requested quantity and the fact that refills are exhausted — and tell the pharmacy the request is with the prescriber. Do not approve the refill because the request matches the prescription on file, and do not tell the patient the refill is on its way.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that zero refills remaining makes this a prescribing decision, not a renewal.",
+          "credit": 0.34,
+          "evidenceRef": "M2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Routes to the named prescriber with the facts needed to decide.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Tells the pharmacy where the request now sits, rather than leaving it unanswered.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000021",
+      "variantOf": "KB-WFLW-KB002-000021",
+      "templateId": "KB-VART-KB002-000006",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000021"
+      ],
+      "errorTargets": [
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_ANSWER_OUTSIDE_SCOPE",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "031210a36435390d",
+        "scenarioFingerprint": "79b35fe7f7c330e0",
+        "competencyFingerprint": "f624370270ba182f",
+        "evidenceLayoutFingerprint": "27bc5e0a7935455f",
+        "answerPatternFingerprint": "f908746b827f72d4"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000023",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D08"
+      ],
+      "difficulty": "EASY",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_ROUTING__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000006#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "M2",
+            "text": "Routine reconciliation note from M. Okonjo: demographics confirmed, card image legible, and — the prescription on file shows zero refills remaining, and the stated workflow for this scenario is that a request with no refills left is a new prescribing decision for the prescriber rather than an administrative renewal — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "M1",
+            "text": "Pharmacy requests a refill of a maintenance medication on the active list; the last fill was 30 days ago and the quantity requested matches the prescription on file.",
+            "section": "Request",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "M3",
+            "text": "NP Gustavo Ihejirika is the prescriber of record and the patient's next visit is 2026-06-01.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Bellrock Community Health Center — secure internal message",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A refill request for Gideon Marchetti-Oyelaran (MRN SYN-6073) has arrived from the pharmacy. What does M. Okonjo do with it? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Approve the refill: the quantity matches the prescription on file and the timing is right.",
+          "why": "Matching an exhausted prescription is not authority to refill it. This is the scope boundary the record turns on.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Route it to NP Gustavo Ihejirika as a prescribing decision, and tell the pharmacy where it sits.",
+          "why": "Correct: the refill count is exhausted, so the decision is the prescriber's, and the loop back to the pharmacy is closed."
+        },
+        {
+          "id": "d",
+          "text": "Tell the pharmacy to hold the request until the 2026-06-01 visit.",
+          "why": "It defers a prescribing decision the prescriber has not seen and may leave the patient without a maintenance medication.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Route the request to NP Gustavo Ihejirika as a prescribing decision, because the prescription has no refills remaining. Give the prescriber what they need to decide — the medication, the last fill date, the requested quantity and the fact that refills are exhausted — and tell the pharmacy the request is with the prescriber. Do not approve the refill because the request matches the prescription on file, and do not tell the patient the refill is on its way.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that zero refills remaining makes this a prescribing decision, not a renewal.",
+          "credit": 0.34,
+          "evidenceRef": "M2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Routes to the named prescriber with the facts needed to decide.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Tells the pharmacy where the request now sits, rather than leaving it unanswered.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000021",
+      "variantOf": "KB-WFLW-KB002-000021",
+      "templateId": "KB-VART-KB002-000006",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000021"
+      ],
+      "errorTargets": [
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_ANSWER_OUTSIDE_SCOPE",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "5e7984b2fdb653ee",
+        "scenarioFingerprint": "df425482766a2ceb",
+        "competencyFingerprint": "f624370270ba182f",
+        "evidenceLayoutFingerprint": "983d09c47c7fdc93",
+        "answerPatternFingerprint": "ed5731b5e53a093b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000024",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09"
+      ],
+      "competencyIds": [
+        "KB-D08"
+      ],
+      "sourceCompetencyIds": [
+        "D08"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "REFILL_ROUTING__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication and refill workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000006"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000006#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "M1",
+            "text": "Pharmacy requests a refill of a maintenance medication on the active list; the last fill was 30 days ago and the quantity requested matches the prescription on file.",
+            "section": "Request",
+            "recordedOn": "2026-06-22",
+            "decisive": true
+          },
+          {
+            "ref": "M3",
+            "text": "PA Hyacinth Obuya-Lindfors is the prescriber of record and the patient's next visit is 2026-07-20.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Thornfield Medical Partners — walk-in at the front desk",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A refill request for Halina Berkovits (MRN SYN-1528) has arrived from the pharmacy. What does R. Skibinski do with it? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Approve the refill: the quantity matches the prescription on file and the timing is right.",
+          "why": "Matching an exhausted prescription is not authority to refill it. This is the scope boundary the record turns on.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Route it to PA Hyacinth Obuya-Lindfors as a prescribing decision, and tell the pharmacy where it sits.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that how many refills remain on the prescription on file is not in the record, request it from PA Hyacinth Obuya-Lindfors, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (how many refills remain on the prescription on file), name PA Hyacinth Obuya-Lindfors as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"how many refills remain on the prescription on file\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "M1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000021",
+      "variantOf": "KB-WFLW-KB002-000021",
+      "templateId": "KB-VART-KB002-000006",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000021"
+      ],
+      "errorTargets": [
+        "KB-ERR-SCOPE-VIOLATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-SCOPE-BOUNDARY",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_ANSWER_OUTSIDE_SCOPE",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": false,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "585782b0ff38d484",
+        "scenarioFingerprint": "7f439a3c0c70fdfb",
+        "competencyFingerprint": "f7eb82a9a74ff4da",
+        "evidenceLayoutFingerprint": "37f379461e4f1f89",
+        "answerPatternFingerprint": "1b656e98d85cda73"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

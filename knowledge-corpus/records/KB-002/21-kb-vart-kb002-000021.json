@@ -1,0 +1,581 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000021",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000079",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M01",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D02",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D02",
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "WORKFLOW_DECISION",
+      "scenarioType": "COMPETING_QUEUE_PRIORITIES",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prioritisation under competing demands",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000021"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000021#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "J1",
+            "text": "Item 1: a card update. Item 2: a result awaiting routing to NP Caius Ostrowski. Item 3: a callback promised to Gideon Marchetti-Oyelaran today. Item 4: filing last week's correspondence.",
+            "section": "Queue",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "J2",
+            "text": "The result in item 2 is marked by the laboratory as requiring clinician review the same day.",
+            "section": "Queue detail",
+            "decisive": false
+          },
+          {
+            "ref": "J3",
+            "text": "the stated rule for this scenario orders work by consequence of delay rather than by arrival, and an item with a named external commitment outranks one with none",
+            "section": "Priority rule",
+            "decisive": true
+          },
+          {
+            "ref": "J4",
+            "text": "NP Caius Ostrowski leaves in an hour; the incoming coordinator can take unfinished items with a named handoff.",
+            "section": "Staffing",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "M. Okonjo has four items and time for two before the clinic closes. Which two, and why?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The result and the card update, since both can be finished quickly and cleared.",
+          "why": "Speed is not consequence, and it abandons a promise made to a named patient.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Items 1 and 2 in arrival order, leaving the callback and filing for tomorrow.",
+          "why": "Arrival order is what the stated rule replaces, and it drops a commitment made for today.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "The same-day result first, then the promised callback; hand the card update and filing to the incoming coordinator by name.",
+          "why": "Correct: it orders by consequence, uses the clinician's remaining hour, and leaves no item without an owner."
+        },
+        {
+          "id": "d",
+          "text": "The result and the callback, leaving the other two in the shared queue overnight.",
+          "why": "The selection is right and the handoff is missing: an item in a shared queue has no owner.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do the same-day result and the promised callback. The result carries the largest consequence of delay and a clinician who leaves in an hour, so it goes first; the callback is a commitment made to a named person for today. Then hand the card update and the filing to the incoming coordinator by name rather than leaving them in the queue, because neither has a same-day consequence but both still need an owner. Do not work the queue in arrival order, and do not leave the unfinished items unassigned.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Selects the same-day result and the promised callback, reasoning from consequence of delay.",
+          "credit": 0.34,
+          "evidenceRef": "J3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Puts the result first because the reviewing clinician leaves within the hour.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Hands the two deferred items to a named person rather than leaving them in the queue.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Clinical intent and task interpretation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000021",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "1dd25ddcf8de5f99",
+        "scenarioFingerprint": "2a820f1b99e0064f",
+        "competencyFingerprint": "c3828d13ee3f4cd8",
+        "evidenceLayoutFingerprint": "f5132cda4036830a",
+        "answerPatternFingerprint": "9a344167e4575bca"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000080",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M01",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D02",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D02",
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "WORKFLOW_DECISION",
+      "scenarioType": "COMPETING_QUEUE_PRIORITIES__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prioritisation under competing demands",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000021"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000021#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "J1",
+            "text": "Item 1: a card update. Item 2: a result awaiting routing to PA Yolanda Trevisani. Item 3: a callback promised to Halina Berkovits today. Item 4: filing last week's correspondence.",
+            "section": "Queue",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "J2",
+            "text": "The result in item 2 is marked by the laboratory as requiring clinician review the same day.",
+            "section": "Queue detail",
+            "decisive": false
+          },
+          {
+            "ref": "J4",
+            "text": "PA Yolanda Trevisani leaves in an hour; the incoming coordinator can take unfinished items with a named handoff.",
+            "section": "Staffing",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "J3",
+            "text": "the stated rule for this scenario orders work by consequence of delay rather than by arrival, and an item with a named external commitment outranks one with none",
+            "section": "Priority rule",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "R. Skibinski has four items and time for two before the clinic closes. Which two, and why? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The result and the card update, since both can be finished quickly and cleared.",
+          "why": "Speed is not consequence, and it abandons a promise made to a named patient.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "Items 1 and 2 in arrival order, leaving the callback and filing for tomorrow.",
+          "why": "Arrival order is what the stated rule replaces, and it drops a commitment made for today.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "d",
+          "text": "The same-day result first, then the promised callback; hand the card update and filing to the incoming coordinator by name.",
+          "why": "Correct: it orders by consequence, uses the clinician's remaining hour, and leaves no item without an owner."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Do the same-day result and the promised callback. The result carries the largest consequence of delay and a clinician who leaves in an hour, so it goes first; the callback is a commitment made to a named person for today. Then hand the card update and the filing to the incoming coordinator by name rather than leaving them in the queue, because neither has a same-day consequence but both still need an owner. Do not work the queue in arrival order, and do not leave the unfinished items unassigned.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Selects the same-day result and the promised callback, reasoning from consequence of delay.",
+          "credit": 0.34,
+          "evidenceRef": "J3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Puts the result first because the reviewing clinician leaves within the hour.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Hands the two deferred items to a named person rather than leaving them in the queue.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000079",
+      "variantOf": "KB-WFLW-KB002-000079",
+      "templateId": "KB-VART-KB002-000021",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000079"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "f7b31385742e9400",
+        "scenarioFingerprint": "2c7a73312a2424d2",
+        "competencyFingerprint": "c3828d13ee3f4cd8",
+        "evidenceLayoutFingerprint": "1a9c01c06e94e3ca",
+        "answerPatternFingerprint": "dfae569a36ba2545"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000081",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M01",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D02",
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D02",
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "WORKFLOW_DECISION",
+      "scenarioType": "COMPETING_QUEUE_PRIORITIES__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Prioritisation under competing demands",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000021"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000021#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "J3",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the stated rule for this scenario orders work by consequence of delay rather than by arrival, and an item with a named external commitment outranks one with none — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "J1",
+            "text": "Item 1: a card update. Item 2: a result awaiting routing to Dr. Anwuli Steensgaard. Item 3: a callback promised to Ignatius Nwachukwu today. Item 4: filing last week's correspondence.",
+            "section": "Queue",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "J2",
+            "text": "The result in item 2 is marked by the laboratory as requiring clinician review the same day.",
+            "section": "Queue detail",
+            "decisive": false
+          },
+          {
+            "ref": "J4",
+            "text": "Dr. Anwuli Steensgaard leaves in an hour; the incoming coordinator can take unfinished items with a named handoff.",
+            "section": "Staffing",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Willowbank Primary Care — inbound fax",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "T. Alvarado-Ng has four items and time for two before the clinic closes. Which two, and why? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The same-day result first, then the promised callback; hand the card update and filing to the incoming coordinator by name.",
+          "why": "Correct: it orders by consequence, uses the clinician's remaining hour, and leaves no item without an owner."
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Items 1 and 2 in arrival order, leaving the callback and filing for tomorrow.",
+          "why": "Arrival order is what the stated rule replaces, and it drops a commitment made for today.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "d",
+          "text": "The result and the card update, since both can be finished quickly and cleared.",
+          "why": "Speed is not consequence, and it abandons a promise made to a named patient.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do the same-day result and the promised callback. The result carries the largest consequence of delay and a clinician who leaves in an hour, so it goes first; the callback is a commitment made to a named person for today. Then hand the card update and the filing to the incoming coordinator by name rather than leaving them in the queue, because neither has a same-day consequence but both still need an owner. Do not work the queue in arrival order, and do not leave the unfinished items unassigned.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Selects the same-day result and the promised callback, reasoning from consequence of delay.",
+          "credit": 0.34,
+          "evidenceRef": "J3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Puts the result first because the reviewing clinician leaves within the hour.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Hands the two deferred items to a named person rather than leaving them in the queue.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation; Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000079",
+      "variantOf": "KB-WFLW-KB002-000079",
+      "templateId": "KB-VART-KB002-000021",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000079"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "results coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "57c476f53ed1fddd",
+        "scenarioFingerprint": "dd84e9af186b3423",
+        "competencyFingerprint": "c3828d13ee3f4cd8",
+        "evidenceLayoutFingerprint": "31fd6f9e48f40453",
+        "answerPatternFingerprint": "fcf129c909f38781"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}
