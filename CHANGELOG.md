@@ -11,6 +11,55 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D17 Characterized — Owner Decision Required (2026-10-09)
+
+**No behaviour changed, no test weakened, no code written.** D17 was opened,
+characterized end to end, and determined **not resolvable under standing
+authorization**.
+
+**Why it is the owner's.** Every option changes something an owner decided.
+Closing the window changes **D4**'s scope; making the retake draw a different
+scenario changes **D6**'s retake rule; and leaving it open is not a neutral
+default either - ratifying today's behaviour states a policy, that a learner may
+study between an interrupted Assessment and its retake. There is no option that
+is merely technical.
+
+**What survives a restart, measured by layer** - the distinction the decision
+turns on:
+
+| Layer | Survives | Evidence |
+|---|---|---|
+| in-memory session | **nothing** | no persist middleware; `App.tsx` hydrates only the profile store |
+| device-local persistence | the whole record, `status: in_progress` | SQLite; `findInterrupted()` returns it |
+| hosted / cross-device | **does not exist** | the web target uses in-memory repositories - this is D10 |
+
+After restart the store is empty, so the gate asks
+`mayAccessReferenceMaterial(null)`, which answers `true`: **both Knowledge Base
+and Training open** while the attempt is still recorded `in_progress`. Discard
+and retake do not restore reference access - it is already restored before either
+is reached.
+
+**Two findings that change how the options should be priced.**
+
+**D10 does not block the decision; it blocks uniform enforcement.** On the
+desktop the record is in SQLite and `findInterrupted()` already works, so closing
+the window is implementable today. On the web build a refresh destroys the record
+entirely, so the same change would be **silently inert there** until D10. A
+decision taken now holds on one target and quietly does not hold on the other.
+
+**Closing the window is cheaper than the register implied.** The entry described
+it as requiring "the session store to read persistence at boot", which reads like
+new infrastructure. It is not: `findInterrupted()` exists and `Dashboard.tsx`
+already calls it on mount. The missing piece is one boot-time read feeding the
+gate.
+
+**Evidence.** `closedBookBoundary.test.tsx` **26/26** (2026-10-09), unchanged.
+The "D4 and a restart" block is the expectation that must change when the owner
+answers, and it says so in place. Running it is what confirms the window is still
+open.
+
+---
+
 ## A2 Resolved, A7 Deliberately Deferred, and the accessClasses Gap Narrowed (2026-10-04)
 
 All three **CLAUDE-RECOMMENDED UNDER THE OWNER'S STANDING AUTHORIZATION**. None

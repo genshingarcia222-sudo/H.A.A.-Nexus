@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P10-003
-task_name: "A2 resolution, and truthful dispositions for the accessClasses gap, D17 and A7"
+task_id: P10-004
+task_name: "D17 characterization and outcome determination"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-10-04T07:36:07.530Z
-last_update: 2026-10-04T07:41:57.621Z
+status: BLOCKED
+started_at: 2026-10-09T03:33:34.221Z
+last_update: 2026-10-09T03:35:22.631Z
 stale_after_hours: 12
-expected_scope: "Cheap, decision-critical work only, under a YELLOW budget state. A2: resolve by removing the dead competencyDomains field and replacing the duplicated domain list with one exported source in nexus-core, guarded at type level so it cannot drift from CategoryScores again. Then truthful dispositions for the accessClasses/D4 gap, D17 and A7 as far as evidence safely allows. Expensive operations - the 432-record migration and CMS ICD-10 ingestion - are gated out: section 10 requires GREEN and the session is in the caution band."
-affected_areas: "packages/nexus-core/, apps/desktop/, tools/preflight/, docs/, CHANGELOG.md, .nexus/"
+expected_scope: "Characterize interrupted-Assessment behaviour across restart and determine the D17 outcome from executable evidence. Observation-first; no persistence redesign, no hosted persistence, no change to D4 or D6 scope. Expensive operations remain locked."
+affected_areas: "docs/, .nexus/, CHANGELOG.md"
 branch: main
-claim_commit: 5ba1c8bd908d774ac2b41c97fb4874658dba14fa
-last_commit: bfbdc4d3c56b8f5749f24e1442c33f9d21eeb30f
+claim_commit: 86c36cef12952d590eaee5b7f39b4ae35bffff48
+last_commit: 5fc88873da5b89a13352b3d6d5d4d40a16922fce
 handoff_required: no
 handoff_to: none
-next_action: "D17 is the remaining cheap decision and was not started. Then the two expensive units behind the entry gate: the 432-record migration and CMS ICD-10-CM ingestion, neither of which may begin outside a GREEN state with enough headroom to reach a verification boundary. D10, D13, D14 stay owner-gated; A12 and Pilot Batch 001 need human clinical review."
+next_action: "D17 awaits an owner answer to one question: may a learner who has seen an Assessment scenario study reference material before retaking that same scenario? The decision packet with per-option cost is in docs/DECISION_REGISTER.md. Nothing cheap remains in the DEVICE-01 lane - everything left is an owner decision (D10, D13, D14, D17, A7, A12) or one of the two large operations behind their own budgeted window: the 432-record migration and CMS ICD-10-CM ingestion."
 ```
 
 ## Ownership history
@@ -106,3 +106,5 @@ Timestamps are UTC.
 | 2026-10-04T07:14:49.218Z | RELEASE COMPLETE | DEVICE-01 | P10-002 | A9 resolved by removing the dead scenarioSchemaVersion field (compatibility already carried by the Zod gate, the per-scenario content version and the content-hash gate); A6 closed as superseded by D8 with no code written; preflight learned a third outcome, superseded, because A6 is neither resolved nor blocked. Baseline B-008 at ff3a12d. nexus-core 804/804, desktop 330/330, preflight 30/30, cargo 70/70 with clippy clean. |
 | 2026-10-04T07:36:07.530Z | CLAIM | DEVICE-01 | P10-003 | claimed |
 | 2026-10-04T07:41:57.621Z | RELEASE COMPLETE | DEVICE-01 | P10-003 | A2 resolved: the dead competencyDomains field removed and a third, previously unrecorded duplicate of the domain list eliminated - the domains now live once in nexus-core, compile-guarded against ScoringWeights. A7 deferred with its unblocking condition named and a truthful blocker marker. The accessClasses/D4 gap dispositioned: no schema change needed, and the previous session's claim that a corpus browser must wait for a record-level access model is corrected as wrong. D17 NOT started - the session reached the closure band. Expensive operations never eligible: section 10 requires GREEN. |
+| 2026-10-09T03:33:34.221Z | CLAIM | DEVICE-01 | P10-004 | claimed |
+| 2026-10-09T03:35:22.631Z | RELEASE BLOCKED | DEVICE-01 | P10-004 | D17 characterized end to end and determined OWNER DECISION REQUIRED. Not resolvable under standing authorization: closing the window changes D4's scope, changing the retake changes D6's rule, and leaving it open ratifies a policy - no option is merely technical. No behaviour changed, no test weakened; closedBookBoundary 26/26 unchanged. Two new findings recorded: D10 blocks uniform enforcement rather than the decision (option 2 works on desktop today, inert on web), and option 2 is cheaper than the register implied because findInterrupted() already exists. |

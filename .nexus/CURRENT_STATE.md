@@ -31,12 +31,12 @@ last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 30/3
 last_verified_build: "PASS - pnpm -r build (2026-10-04, DEVICE-01, baseline B-008)"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-04, DEVICE-01, baseline B-008)"
 last_verified_rust: "PASS - cargo test 70/70, fmt clean, clippy 0 warnings, rustc 1.98.1 (2026-10-04, DEVICE-01, baseline B-008)"
-active_task: P10-003
+active_task: P10-004
 task_owner: DEVICE-01
-task_status: COMPLETE
-last_successful_sync: 2026-10-04T07:42:52.995Z
+task_status: BLOCKED
+last_successful_sync: 2026-10-09T03:35:28.127Z
 last_sync_device: DEVICE-01
-last_sync_commit: 549d50b0425f6c8a411657db53194099507bd1a6
+last_sync_commit: bb57c63297f07b3aabb85f288de722915da56805
 sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```

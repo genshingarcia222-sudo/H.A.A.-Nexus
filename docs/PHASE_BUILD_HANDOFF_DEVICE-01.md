@@ -30,7 +30,7 @@ is sized to reach a commit on its own.
 |---|---|---|---|
 | 1 | **ICD-10-CM ingestion from CMS** | the largest unbuilt requirement, and `codingReference` in B is already its shape. CMS is reachable (HTTP 200, 2026-10-04); **nothing has been retrieved** | large — do not start below ~20 points of session headroom |
 | 2 | **Migrate the 432 KB records to contract B** | unblocked by D18, blocks PR #21. Follow the map; classes (a) and (b) are mechanical, class (c) needs a decision per field | large |
-| 3 | **D17** | the only cheap decision left. Changes D4's scope or D6's retake rule, pinned today by a characterization test. **Not started 2026-10-04** - the session reached the closure band first, and opening a product decision there risks leaving it half-made | medium |
+| ~~3~~ | ~~**D17**~~ | **Characterized 2026-10-09 — OWNER DECISION REQUIRED.** Not resolvable under standing authorization: every option, including leaving it open, states a policy about D4's scope or D6's retake rule. The decision packet is in the register. No code changed; the 26 characterization tests still pass | done |
 
 **A2, A7 and the accessClasses question are closed as of 2026-10-04.** A2
 resolved - the dead field removed, and a third previously unrecorded copy of the
@@ -45,6 +45,18 @@ records, so a browser ships as a gated route exactly as `/knowledge-base` does.
 The previous statement to the contrary in `docs/KNOWLEDGE_ARCHITECTURE.md` was
 wrong and is corrected there. `accessClasses` is the one class-(c) field the
 migration map deliberately leaves behind.
+
+**D17 is characterized and waiting on the owner as of 2026-10-09.** That was
+the last cheap decision in this lane. **Everything that remains is either an
+owner decision or one of the two large operations** — there is no third
+category left, which is worth knowing before planning a session.
+
+Two findings from the characterization that change how D17's options should be
+priced, both recorded in the register: **D10 does not block the decision, it
+blocks uniform enforcement** (option 2 works on desktop today and is silently
+inert on web until D10), and **option 2 is cheaper than the entry implied** —
+`findInterrupted()` already exists and the Dashboard already calls it, so the
+missing piece is one boot-time read, not a persistence layer.
 
 **Do not start unit 1 or 2 without checking the expensive-operation gate first.**
 A half-migrated corpus or a half-retrieved CMS snapshot is worse than neither.
