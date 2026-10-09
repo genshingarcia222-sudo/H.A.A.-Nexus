@@ -902,6 +902,65 @@ Choosing any of the last two changes D4's scope or D6's retake rule, so the
 choice is the owner's. The characterization test exists so that whoever makes it
 sees the current expectation fail and reads why.
 
+### Characterization completed 2026-10-04..09 (DEVICE-01) — **OWNER DECISION REQUIRED**
+
+D17 was opened and characterized end to end. **It is not resolvable under
+standing authorization**, for the reason already stated above: every option
+except "leave it open" changes the scope of **D4** or the retake rule of **D6**,
+and both are *owner* decisions. "Leave it open" is not a neutral default either —
+ratifying today's behaviour is itself a policy statement that a learner may study
+between an interrupted Assessment and its retake. So all three options are the
+owner's, and the entry stays blocked.
+
+**What survives a restart, separated by layer.** This is the distinction the
+decision turns on, and it was measured rather than assumed:
+
+| Layer | Survives restart | Evidence |
+|---|---|---|
+| In-memory session (`useSessionStore`) | **nothing** | no persist middleware; `App.tsx` hydrates only `profileStore` (`App.tsx:17-21`) |
+| Device-local persistence | **the whole record** — `status: in_progress`, draft, timings, flags | SQLite via `TauriSessionRepository`; `findInterrupted()` returns it |
+| Hosted / cross-device | **does not exist** | the web target falls back to in-memory repositories — this is **D10** |
+
+**The seven questions, answered.** An interrupted Assessment leaves its record
+`in_progress` (no transition is applied at crash time, because nothing measures
+when it happened). After restart the store is empty, so `ReferenceGate` asks
+`mayAccessReferenceMaterial(null)`, which answers `true` — **both** `/knowledge-base`
+and `/training` open. Discard and retake do not *restore* reference access; it is
+already restored before either is reached. Starting a new attempt closes the book
+again, because that creates an in-memory assessment session.
+
+**Two findings that change how the options should be priced, and are new here.**
+
+1. **The asymmetry: D10 does not block the decision, it blocks uniform
+   enforcement.** On the desktop the record is in SQLite and `findInterrupted()`
+   already works, so option 2 is implementable **today**. On the web build the
+   repositories are in-memory, so a refresh destroys the record entirely and
+   there is nothing left to gate on — option 2 would be **silently inert there**
+   until D10. A decision taken now would hold on one target and quietly not hold
+   on the other, which is worth knowing before taking it.
+
+2. **Option 2 is cheaper than this entry implied.** It is described above as
+   requiring "the session store to read persistence at boot", which reads like
+   new infrastructure. It is not: `sessionRepository.findInterrupted()` exists and
+   `Dashboard.tsx` already calls it on mount. The missing piece is one boot-time
+   read feeding the gate, not a persistence layer.
+
+**Evidence status.** The characterization tests pass (26/26 in
+`closedBookBoundary.test.tsx`, 2026-10-09) and are unchanged — **no behaviour was
+modified and no test was weakened**. Running them is what confirms the window is
+still open; the "D4 and a restart" block is the one that must change when the
+owner answers.
+
+**The decision packet, minimum form.** *May a learner who has seen an Assessment
+scenario study reference material before retaking that same scenario?*
+
+| If the answer is | Then | Cost |
+|---|---|---|
+| **Yes** (today's behaviour) | ratify it in D17; no code changes | none |
+| **No, close the window** | the gate consults persistence at boot; reference stays closed until the learner discards or submits | small on desktop; **inert on web until D10** |
+| **No, but keep books open** | the retake must draw a *different* scenario | touches **D6** and scenario selection; larger |
+
+
 ---
 
 ## D18 — Which content contract does the runtime ingest? — **RESOLVED**
