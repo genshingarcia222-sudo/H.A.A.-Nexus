@@ -28,6 +28,7 @@ is sized to reach a commit on its own.
 
 | # | Unit | Why it is next | Size |
 |---|---|---|---|
+| 0 | **Windows release candidate (Status A)** | the highest-priority unblocked work toward the owner's stated goal, and the only outstanding Phase 9 item no decision blocks. **Toolchain verified ready 2026-10-12** — `tauri-cli 2.11.4`, `rustc 1.98.1`, and both bundlers already cached (`WixTools314`, `NSIS`), so there is no prerequisite gap: the build is go the moment a window exists | large — needs a full session window; do not begin below ~20pp of session headroom |
 | 1 | **ICD-10-CM ingestion from CMS** | the largest unbuilt requirement, and `codingReference` in B is already its shape. CMS is reachable (HTTP 200, 2026-10-04); **nothing has been retrieved** | large — do not start below ~20 points of session headroom |
 | 2 | **Migrate the 432 KB records to contract B** | unblocked by D18, blocks PR #21. Follow the map; classes (a) and (b) are mechanical, class (c) needs a decision per field | large |
 | ~~3~~ | ~~**D17**~~ | **Characterized 2026-10-09 — OWNER DECISION REQUIRED.** Not resolvable under standing authorization: every option, including leaving it open, states a policy about D4's scope or D6's retake rule. The decision packet is in the register. No code changed; the 26 characterization tests still pass | done |
@@ -57,6 +58,20 @@ blocks uniform enforcement** (option 2 works on desktop today and is silently
 inert on web until D10), and **option 2 is cheaper than the entry implied** —
 `findInterrupted()` already exists and the Dashboard already calls it, so the
 missing piece is one boot-time read, not a persistence layer.
+
+**Unit 0 is new and it is the one to run next.** Its scope, in order, so a budget stop
+cannot leave a half-made release: `tauri build` from the release commit → inspect the
+**newly built** exe's PE subsystem and architecture (not the Oct-1 development binary,
+which must not be mistaken for an RC) → record artifact paths, sizes and SHA-256 →
+install / launch / close / relaunch / uninstall on this machine → write the artifact
+manifest → commit. That yields **Status A, an unsigned internal release candidate**.
+
+**Status B is not reachable and must not be claimed:** P9-B needs **D13** (signing
+identity), P9-E needs D13 plus a recorded legal entity, P9-C needs **D14**, which needs
+**D10**. Artifacts stay out of source control; only the manifest is committed.
+
+**Same-machine limitation, stated up front:** a smoke test here is not a clean-machine
+install, and the difference must appear in the manifest rather than be glossed.
 
 **Do not start unit 1 or 2 without checking the expensive-operation gate first.**
 A half-migrated corpus or a half-retrieved CMS snapshot is worse than neither.

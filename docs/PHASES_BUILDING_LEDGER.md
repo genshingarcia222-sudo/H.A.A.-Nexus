@@ -24,7 +24,7 @@ against the remote on every read.
 
 | Item | Objective | Status | Evidence | Acceptance condition |
 |---|---|---|---|---|
-| **P9-A** | Release builds open no console window | **SATISFIED** | `main.rs:8` carries `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`; guard test in the 70-test Rust suite; arrived with D15 merge `c384ac5` | A Windows release build showing no console window — the attribute is the mechanism; a clean-machine run has not been repeated since the merge |
+| **P9-A** | Release builds open no console window | **SATISFIED — now confirmed in the binary** | `main.rs:8` carries the attribute, with a guard test in the Rust suite; arrived with D15 merge `c384ac5`. **Binary evidence 2026-10-12:** a release build of `main`'s Rust source reads PE `Subsystem` **2 (WINDOWS_GUI)**, Machine `0x8664`, PE32+, SHA-256 `097A7714…0879`. `main.rs` is unchanged since that binary was produced and the only `src-tauri` commits since are rustfmt and comments, so the measurement holds for current `main` | A **clean-machine run of an installer built from the release commit**. The mechanism is proven; what is outstanding is the end-user install, which P9-B blocks from being the real distribution path |
 | **P9-B** | Installers are signed | **BLOCKED** | No `certificateThumbprint`, `digestAlgorithm`, `timestampUrl` or `signCommand` anywhere in `tauri.conf.json`; `Get-AuthenticodeSignature` reported `NotSigned` for all three artifacts | **D13** names an identity, then a signed installer runs on a clean machine without a signing-attributable SmartScreen block |
 | **P9-C** | Auto-update is wired | **BLOCKED** | `Cargo.toml` has no `tauri-plugin-updater`; `tauri.conf.json` has no `plugins.updater` and no `createUpdaterArtifacts` (confirmed again 2026-09-27: `plugins: []`) | **D14** (needs **D10**), then one version-to-version update completed against a real feed |
 | **P9-D** | Release discipline | **SATISFIED** | `docs/RELEASE_POLICY.md` (D16, 2026-10-01, standing authorization); parity enforced in `tools/preflight/preflight.mjs` and extended to reject an unshippable format; `tools/release/version.mjs` sets all six declarations atomically, **25/25** | A written policy, one authoritative source, and a tool that makes a bump a single command - all three present |
@@ -59,7 +59,7 @@ not actually performed on a Windows machine.**
 |---|---|
 | Rust suite | `cargo test --offline` **70/70**, rustc 1.98.1, cargo 1.98.1 |
 | Packaging produces artifacts | `tauri build` at `894a425`: 9.78 MB exe, 3.61 MB MSI, 2.54 MB NSIS setup |
-| Release builds are windowed | PE `Subsystem` 2 measured on a build of the branch that is now `main` |
+| Release builds are windowed | PE `Subsystem` **2** measured 2026-10-12 directly from `target/release/haa-nexus-desktop.exe` built from `main` after the D15 merge — x64, PE32+, SHA-256 `097A7714…0879`, `Get-AuthenticodeSignature` → `NotSigned` (expected; P9-B is blocked on D13). `main.rs` unchanged since; the intervening `src-tauri` commits are rustfmt and comments only |
 | Cross-platform path handling | `app_data_dir().join("haa-nexus.sqlite")` with `create_dir_all`; tests use `std::env::temp_dir()`. No hardcoded POSIX path in shipped code |
 | Tooling runs on Windows | preflight **27/27**, release `version` **25/25**, nexus-sync **81/81**, all zero-dependency Node with explicit CRLF handling. Re-measured 2026-10-02 |
 | Web/desktop parity of the closed-book boundary | Exercised live in the browser preview on 2026-09-27 as well as in jsdom |

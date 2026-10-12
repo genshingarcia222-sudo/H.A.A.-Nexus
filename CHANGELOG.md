@@ -11,6 +11,51 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## P9-A Confirmed in the Binary, and the Windows Release Package Scoped (2026-10-12)
+
+**Audit and evidence only. No code changed, no artifact built, no release cut.**
+
+**P9-A moves from "the attribute is present" to "the binary has the property".**
+Until now P9-A rested on source evidence - `main.rs:8` carries
+`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`, guarded by
+a test - plus a PE measurement taken on the *feature branch* before D15 merged.
+The release binary built from `main` was inspected directly:
+
+| Property | Value |
+|---|---|
+| PE `Subsystem` | **2 — WINDOWS_GUI** (3 would be a console app) |
+| Machine | `0x8664` (x64) |
+| Optional header | `0x20B` (PE32+) |
+| SHA-256 | `097A7714BA5633F359E49E24319AED598438D0691CAAE863289F0D0D2ECA0879` |
+| `Get-AuthenticodeSignature` | `NotSigned` — expected; P9-B is blocked on D13 |
+
+The binary predates three `src-tauri` commits, so this was checked rather than
+assumed: **`main.rs` is unchanged** since it was produced, and the three commits
+are rustfmt output plus comments (`commands.rs`, `contract_tests.rs`,
+`delivery.rs`, and a Cargo.toml comment block). Nothing that determines the
+subsystem has moved, so the measurement holds for current `main`.
+
+**This retires a stale lead rather than confirming it.** A historical report
+held that `main`'s release binary was a console application while only the
+feature branch had the GUI subsystem, and recommended cherry-picking the fix
+instead of merging the branch. That was true *before* D15, which the owner
+decided on 2026-09-27 as a merge and which was executed at `c384ac5`. The
+recommendation is superseded, and the binary now measured from `main` is the
+evidence.
+
+**What this is not.** The inspected binary is **not a release candidate**: it is
+not built from HEAD, and an RC must be built from the commit being released. A
+`tauri build` producing MSI and NSIS artifacts from the release commit, with
+hashes and a clean-machine install, remains outstanding and is the next Windows
+package.
+
+**Device channel, verified rather than assumed.** No peer session is reachable
+from this machine, so direct dispatch to DEVICE-02 is **unavailable**. Its
+assignment continues to live in `docs/PHASE_BUILD_HANDOFF_DEVICE-02.md`, which
+is the supported mechanism. Nothing was reported as dispatched.
+
+---
+
 ## D17 Characterized — Owner Decision Required (2026-10-09)
 
 **No behaviour changed, no test weakened, no code written.** D17 was opened,
