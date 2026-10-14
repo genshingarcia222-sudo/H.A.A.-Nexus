@@ -52,18 +52,18 @@ reviewed commit.
 task_id: P8-D17
 task_name: "D17: close the closed-book window across a restart"
 owner: DEVICE-01
-status: ACTIVE
+status: COMPLETE
 started_at: 2026-10-14T08:45:30.670Z
-last_update: 2026-10-14T08:45:30.670Z
+last_update: 2026-10-14T08:58:39.315Z
 stale_after_hours: 12
 expected_scope: "D17 implementation under the owner's explicit delegation: an interrupted assessment persisted as in_progress must keep the Knowledge Base and Training closed after a restart, until the learner discards or submits that attempt. Pure rule in nexus-core (new function; the existing arity pin on mayAccessReferenceMaterial stays intact), one boot-time persistence read feeding the gate, ReferenceGate wiring, and the closedBookBoundary characterization expectations updated only where the policy changed - no test weakened or deleted. Desktop only; the web target is inert until D10 and that is recorded, not hidden."
 affected_areas: "not recorded"
 branch: main
 claim_commit: 51259d7fbfa7a7f12eb2bf406a0a8f73fc84b136
-last_commit: 51259d7fbfa7a7f12eb2bf406a0a8f73fc84b136
+last_commit: 92b51e9785e776b7251d25cdd1813e3ad29ef905
 handoff_required: no
 handoff_to: none
-next_action: "not recorded"
+next_action: "P9-011: Knowledge Base migration of the 432 records to contract B, implementing the O5 and O6 dispositions in the same commit series (multi-select carried; 17 of 18 class-(c) fields carried). Integrate PR #21 only as the migrated result - the gate assessment in docs/KB_INTEGRATION_GATE_PR21.md explains why not before."
 ```
 
 ## Ownership history
@@ -114,3 +114,4 @@ Timestamps are UTC.
 | 2026-10-14T08:19:49.574Z | CLAIM | DEVICE-01 | P9-010 | claimed |
 | 2026-10-14T08:34:41.888Z | RELEASE COMPLETE | DEVICE-01 | P9-010 | complete |
 | 2026-10-14T08:45:30.670Z | CLAIM | DEVICE-01 | P8-D17 | claimed |
+| 2026-10-14T08:58:39.315Z | RELEASE COMPLETE | DEVICE-01 | P8-D17 | complete |
