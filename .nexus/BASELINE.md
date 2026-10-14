@@ -18,7 +18,7 @@ commit: e7c8708c5df851c38bb28458681a4e776b35fb8c
 branch: main
 timestamp: 2026-10-14T08:35:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 807/807, desktop 330/330, preflight 30/30, nexus-sync 81/81, release tool 25/25"
+tests: "PASS - nexus-core 824/824, desktop 337/337, preflight 30/30, nexus-sync 81/81, release tool 25/25"
 build: "PASS - pnpm -r build"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
 rust: "PASS - cargo test 70/70, cargo fmt --check clean, cargo clippy 0 warnings; rustc 1.98.1"
@@ -27,6 +27,33 @@ known_conditions: "D10, D13, D14, D17, A7, A12 open (A2 and A9 closed 2026-10-04
 ```
 
 ## History
+
+### B-010 — D17 resolved; the closed-book window survives a restart — 2026-10-14 — DEVICE-01
+
+| Check | Command | Result |
+|---|---|---|
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **824/824** (68 files), desktop **337/337** (33 files) |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; **11 resolved, 1 superseded, 5 blocked** (D10, A7, A12, D13, D14) |
+| Typecheck | `pnpm -r typecheck` | exit 0 |
+| Rust | unchanged by this work | **70/70** at B-009 |
+
+**Movement from B-009.** nexus-core **807 → 824** (+17 domain tests for D17),
+desktop **330 → 337** (the characterization block went from 1 test recording the
+open window to 8 pinning the closed one). D17 moved from blocked to resolved, so
+**blocked decisions 6 → 5**.
+
+**No test was weakened or deleted.** The one replaced expectation had started
+passing **vacuously** once the gate became asynchronous — it reported "not
+blocked" while the book was in fact shut — and its own comment instructed that it
+be changed when the decision came. The replacements are **mutation-verified**:
+disabling the rule fails 5 of them.
+
+**What this baseline does NOT establish.** D17 is enforced on the **desktop
+only** and is **inert on the web until D10**, because the web target uses
+in-memory repositories and a refresh destroys the record. The nav rail still
+shows both reference links after a restart; the route gate is the protection.
+No Rust, bundler or installer work is involved, so the RC evidence in B-009
+stands unchanged.
 
 ### B-009 — Windows release candidate 0.1.0 built and smoke-tested — `e7c8708` — 2026-10-14 — DEVICE-01
 

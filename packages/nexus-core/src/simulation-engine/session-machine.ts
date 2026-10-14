@@ -105,6 +105,116 @@ export function assertMayAccessReferenceMaterial(session: SimulationSession | nu
   }
 }
 
+/**
+ * The shape of a stored attempt this rule needs. Declared structurally rather
+ * than importing `SessionRecord`, so the simulation engine does not take a
+ * dependency on the persistence layer to answer a question about policy.
+ * `SessionRecord` satisfies it.
+ */
+export interface StoredAttempt {
+  id: string;
+  mode: SimulationMode;
+  status: SessionStatus;
+}
+
+/**
+ * The stored assessment attempt that is still unresolved, or null (D17).
+ *
+ * "Unresolved" means the record exists in persistence and has neither been
+ * submitted nor discarded: `in_progress`, `paused` or `interrupted`. The other
+ * statuses are resolved as far as the closed-book window is concerned -
+ * `completed` and `retried` because the work was submitted, `abandoned` because
+ * it was discarded, `not_started` because nothing was written, and
+ * `evaluation_failed` because D9 treats a failed evaluation as a failed *save*
+ * of work the learner has already finished writing, not as an attempt still in
+ * front of them.
+ *
+ * `interrupted` is included although nothing currently writes it: no
+ * transition is applied at crash time, because nothing measures when the crash
+ * happened, so a killed attempt stays `in_progress`. The repository's
+ * `findInterrupted` likewise returns only `in_progress` and `paused`. Accepting
+ * `interrupted` here makes this rule stricter than the data it is fed rather
+ * than dependent on that gap, so marking a record `interrupted` later cannot
+ * silently reopen the book.
+ *
+ * `liveSessionId` is excluded deliberately. A live assessment autosaves into
+ * exactly the `in_progress` state this function looks for, so without the
+ * exclusion the attempt on screen would count as its own interruption. That is
+ * the same defect the Dashboard's interrupted card hit (D8), found there by
+ * walking the flow in a browser; it is cheaper to not repeat it.
+ */
+export function unresolvedStoredAssessment(
+  stored: readonly StoredAttempt[],
+  liveSessionId: string | null
+): StoredAttempt | null {
+  for (const attempt of stored) {
+    if (attempt.id === liveSessionId) continue;
+    if (attempt.mode !== "assessment") continue;
+    if (attempt.status === "in_progress" || attempt.status === "paused" || attempt.status === "interrupted") {
+      return attempt;
+    }
+  }
+  return null;
+}
+
+/**
+ * D17 - the closed-book window survives a restart.
+ *
+ * `mayAccessReferenceMaterial` above answers from the live session alone, and
+ * after a restart there is no live session: the store carries no persist
+ * middleware, so it answers `true` for `null` and the Knowledge Base and
+ * Training reopen while an interrupted assessment still sits in SQLite. That
+ * was measured during the D17 characterisation, and it is the hole this closes.
+ *
+ * **The policy, decided by the owner's delegation on 2026-10-14:** reference
+ * material stays closed until the learner **submits or discards** the
+ * interrupted attempt. Restarting the application is not a way to open the
+ * book, and neither is starting something else.
+ *
+ * That last clause is why an unresolved stored assessment loses to nothing: a
+ * live *practice* session does not reopen the book while an assessment is
+ * unresolved. Allowing it would make "start a practice attempt" a one-click
+ * bypass of D4, which is exactly the class of hole D4 forbids. The cost is that
+ * a learner who abandons an assessment mid-way must say so before studying
+ * again - which is the intended meaning of a closed-book assessment, not a side
+ * effect.
+ *
+ * **This is enforced on the desktop and is inert on the web until D10.** The
+ * web target falls back to in-memory repositories, so a refresh destroys the
+ * record and leaves nothing to gate on. Recorded rather than hidden: the rule
+ * is the same on both targets, and only one of them can currently supply the
+ * evidence it needs.
+ */
+export function mayAccessReferenceMaterialAcrossRestart(
+  session: SimulationSession | null,
+  stored: readonly StoredAttempt[]
+): boolean {
+  return referenceBlockReason(session, stored) === null;
+}
+
+/**
+ * Why reference material is closed, or null when it is open.
+ *
+ * The two reasons are different situations for the learner - "finish what is on
+ * screen" versus "you left an attempt open and we cannot tell whether you meant
+ * to" - so the UI needs to tell them apart. It lives here rather than in the
+ * component because deciding *which* rule applies is the same kind of judgement
+ * as deciding whether one applies, and `closedBookBoundary.test.tsx` enforces
+ * that the app never re-implements either: a `mode === "assessment"` test in a
+ * component fails that invariant, correctly.
+ *
+ * `live-attempt` is checked first, so D4 can answer from the session alone
+ * without waiting on a persistence read.
+ */
+export function referenceBlockReason(
+  session: SimulationSession | null,
+  stored: readonly StoredAttempt[]
+): "live-attempt" | "unresolved-stored-attempt" | null {
+  if (!mayAccessReferenceMaterial(session)) return "live-attempt";
+  if (unresolvedStoredAssessment(stored, session?.id ?? null)) return "unresolved-stored-attempt";
+  return null;
+}
+
 function assertStatus(session: SimulationSession, allowed: SessionStatus[], action: string): void {
   if (!allowed.includes(session.status)) {
     throw new InvalidSessionTransitionError(session.status, action);

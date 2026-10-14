@@ -37,7 +37,7 @@ against the remote on every read.
 | **D10** | What persists a web learner's progress | Roadmap steps 4–5; **D14** | Choose the persistence model |
 | **D13** | Code-signing identity | P9-B, P9-E | Purchase or designate a certificate |
 | **D14** | Update-feed location | P9-C | Decide, after D10 |
-| **D17** | May a learner study before retaking an interrupted Assessment? | The scope of the closed-book window | **Characterized 2026-10-09; OWNER DECISION REQUIRED.** All three options are the owner's - even "leave it open" ratifies a policy. Decision packet and per-option cost in the register. Note the asymmetry: option 2 is implementable on desktop today and **inert on web until D10** |
+| ~~**D17**~~ | May a learner study before retaking an interrupted Assessment? | The scope of the closed-book window | **RESOLVED 2026-10-14 under STANDING AUTHORIZATION** after the owner delegated it explicitly and named the required property. The window **survives a restart**: reference stays closed until the attempt is submitted or discarded, and a live practice attempt does not reopen it. Fails closed. Desktop only - **inert on web until D10**. nexus-core 807 to 824, desktop 330 to 337, mutation-verified, no test weakened |
 | **A7, A12** | Accepted Phase 7 debt still open | A7: guidance behaviour; A12: paid-tier content depth | A7 needs a product statement of what a competency trend should change; A12 needs human clinical authoring |
 | ~~A2~~ | ~~12 registry domains vs 7 evaluator domains~~ **RESOLVED 2026-10-04** - the dead field removed and the domains exported once from nexus-core, guarded against ScoringWeights | — | — |
 | ~~A9~~ | ~~Scenario schema version~~ **RESOLVED 2026-10-04** - the dead field was removed rather than given an invented value | — | — |

@@ -21,6 +21,8 @@ import {
   mayRevealPerformance,
   mayContinueFromDraft,
   assertMayRevealPerformance,
+  mayAccessReferenceMaterial,
+  referenceBlockReason,
   sessionTimesAt,
   type Scenario,
   type SimulationSession,
@@ -29,7 +31,8 @@ import {
   type FlagType,
   type TranscriptBeat,
   type EvaluationResult,
-  type SessionRecord
+  type SessionRecord,
+  type StoredAttempt
 } from "@haa-nexus/nexus-core";
 import { sessionRepository, competencyRepository } from "../persistence/repositories.js";
 import { currentEntitlements } from "./entitlementStore.js";
@@ -69,6 +72,17 @@ interface SessionState {
    * way forward.
    */
   evaluationFailed: boolean;
+  /**
+   * Attempts that persistence says are unresolved, for the D17 closed-book
+   * check. Held as the raw list rather than as a precomputed boolean, so the
+   * answer is always recomputed against the *current* live session and there
+   * is no cached verdict to go stale when an attempt is submitted or discarded.
+   */
+  storedAttempts: StoredAttempt[];
+  /** False until persistence has been read once. The gate fails closed until then. */
+  closedBookHydrated: boolean;
+  /** True when the read itself failed, which the gate reports rather than ignores. */
+  closedBookReadFailed: boolean;
 
   /**
    * Starts a session, or refuses to. Returns `true` if a session started and
@@ -101,6 +115,7 @@ interface SessionState {
    * Resolves to whether the save succeeded.
    */
   persistDraft: () => Promise<boolean>;
+  refreshStoredAttempts: () => Promise<void>;
 }
 
 function toSessionRecord(
@@ -141,6 +156,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   result: null,
   saveError: null,
   evaluationFailed: false,
+  storedAttempts: [],
+  closedBookHydrated: false,
+  closedBookReadFailed: false,
 
   start: (scenario, mode, continueFrom) => {
     // Entitlement enforcement (Phase 8.2). Every way into a session - the
@@ -339,6 +357,22 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       saveError: null,
       evaluationFailed: false
     });
+  },
+
+  refreshStoredAttempts: async () => {
+    try {
+      const stuck = await sessionRepository.findInterrupted();
+      set({
+        storedAttempts: stuck.map((r) => ({ id: r.id, mode: r.mode, status: r.status })),
+        closedBookHydrated: true,
+        closedBookReadFailed: false
+      });
+    } catch (err) {
+      // Fail closed: leave `closedBookHydrated` false so the gate stays shut,
+      // and record that the reason was a read failure rather than a finding.
+      console.error("Failed to read interrupted attempts for the closed-book gate:", err);
+      set({ closedBookReadFailed: true });
+    }
   }
 }));
 
@@ -401,6 +435,43 @@ export function visibleTranscriptBeats(): TranscriptBeat[] {
  * `useRevealableResult`; `liveFeedbackBoundary.invariant.test.ts` fails if a
  * component reaches for `state.result` directly.
  */
+/**
+ * Reads persistence for unresolved attempts (D17).
+ *
+ * `ReferenceGate` calls this when it mounts, which is the whole staleness
+ * story: the gate renders only on `/training` and `/knowledge-base`, so one
+ * read per navigation keeps the answer current without `submit`, `start` or the
+ * Dashboard's discard path having to remember to invalidate anything.
+ *
+ * A failed read sets `closedBookReadFailed` and leaves `closedBookHydrated`
+ * false, so the gate **fails closed**. A safety gate that opens when it cannot
+ * check is worse than one that asks the learner to try again.
+ */
+export function selectMayAccessReference(state: SessionState): boolean {
+  return selectReferenceBlock(state) === null;
+}
+
+/**
+ * Why reference material is closed, for a UI that has to explain it.
+ *
+ * `"checking"` is this layer's own state rather than a domain reason: the D17
+ * rule needs a persistence read, and until it lands the honest answer is "not
+ * yet known", which **fails closed**.
+ *
+ * D4 is asked first and answers from the live session alone, so a live
+ * assessment is blocked on the first render with no read and no flicker - the
+ * behaviour before D17, preserved exactly. The checking state can only appear
+ * on the path D17 added, where there is no live assessment to decide it.
+ */
+export function selectReferenceBlock(
+  state: SessionState
+): "live-attempt" | "unresolved-stored-attempt" | "checking" | "unavailable" | null {
+  if (!mayAccessReferenceMaterial(state.session)) return "live-attempt";
+  if (state.closedBookReadFailed) return "unavailable";
+  if (!state.closedBookHydrated) return "checking";
+  return referenceBlockReason(state.session, state.storedAttempts);
+}
+
 export function selectRevealableResult(state: SessionState): EvaluationResult | null {
   if (!state.session || !state.result) return null;
   return mayRevealPerformance(state.session) ? state.result : null;

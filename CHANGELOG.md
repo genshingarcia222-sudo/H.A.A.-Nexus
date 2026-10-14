@@ -11,6 +11,80 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## D17 Resolved — the Closed-Book Window Survives a Restart (2026-10-14)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Not an
+owner decision, and not labelled as one.
+
+**The decision.** Reference material stays closed until the learner **submits or
+discards** an interrupted assessment attempt. Restarting the application is not a
+way to open the book, and neither is starting something else.
+
+**The defect it closes was measured, not imagined.** `useSessionStore` carries no
+persist middleware and only the profile store hydrates at boot, so after a restart
+the live session was `null`, `mayAccessReferenceMaterial(null)` answered `true`,
+and both `/knowledge-base` and `/training` opened while the attempt still sat in
+SQLite as `in_progress`.
+
+**Why this was resolvable now.** The October characterization concluded D17 was
+*not* resolvable under standing authorization, because every option changes D4's
+scope or D6's retake rule. That was right about the authority. **The owner then
+delegated it explicitly** and named the property the answer had to have —
+"preserves the closed-book boundary during active Assessment" — which selects
+option 2 from the register's table. The earlier conclusion is left in the register
+rather than rewritten, because what changed was the authority, not the analysis.
+
+**What changed.**
+
+- `unresolvedStoredAssessment`, `mayAccessReferenceMaterialAcrossRestart` and
+  `referenceBlockReason` in `nexus-core`. **`mayAccessReferenceMaterial` is
+  untouched**, including the arity pin its own test asserts — which is why this
+  is a second function rather than a third parameter.
+- `ReferenceGate` reads persistence on mount. One read per navigation is the
+  whole staleness story: nothing caches a verdict, so `submit`, `start` and the
+  Dashboard's discard path have nothing to invalidate.
+- **It fails closed.** Until the read lands the answer is "no", and a *failed*
+  read is reported to the learner rather than silently treated as permission.
+- D4 still answers from the live session alone, so a live assessment blocks on
+  the first render with no read and no flicker. The checking state can only
+  appear on the path this decision added.
+- The gate contains **no mode or status comparison of its own** — the invariant
+  test caught a `mode === "assessment"` in the first draft, correctly, and the
+  distinction moved into the domain as `referenceBlockReason`.
+
+**Scope, stated rather than implied.** `in_progress`, `paused` and `interrupted`
+are unresolved; `completed`, `retried`, `abandoned`, `not_started` and
+`evaluation_failed` are resolved. `evaluation_failed` is resolved because **D9**
+makes a failed evaluation a failed *save* of finished work — holding the book shut
+would punish the learner for a defect on our side. `interrupted` is accepted
+although nothing writes it today, so marking a record `interrupted` later cannot
+silently reopen the book.
+
+**A live practice attempt does not reopen the book** while an assessment is
+unresolved, because otherwise "start a practice attempt" is a one-click bypass
+of D4.
+
+**Two limitations, recorded rather than hidden.** It is enforced on the desktop
+and **inert on the web until D10** (in-memory repositories there, so a refresh
+destroys the record and leaves nothing to gate on) — D10 is what makes it
+uniform. And **the nav rail still shows both links after a restart**, because
+`AppShell` reads the live session; the gate is the protection and the nav was
+always a courtesy, so the learner clicks and is told why. Deliberate, and cheap
+to change.
+
+**Verified.** nexus-core **807 → 824** (17 new domain tests), desktop **330 →
+337**. The characterization block went from one test recording the open window to
+**8** pinning the closed one, as that test's own comment instructed. **No test was
+weakened or deleted** and the D4 suite is untouched. The new tests were
+**mutation-verified**: disabling the rule fails 5 of them. That check mattered —
+the test being replaced had started passing *vacuously* once the gate became
+asynchronous, reporting "not blocked" while the book was in fact shut.
+
+**Not claimed.** No web enforcement, no nav-rail change, and no change to what
+D6 permits on a retake.
+
+---
+
 ## Knowledge Base Integration Gate Assessed, and O5 and O6 Decided (2026-10-14)
 
 **Assessment and two delegated decisions. No record was migrated, no schema

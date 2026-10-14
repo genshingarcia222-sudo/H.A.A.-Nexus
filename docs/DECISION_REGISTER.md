@@ -867,11 +867,81 @@ the synthetic preview bank, and the exposure ledger is still not written to.
 
 ## D17 — After an interrupted Assessment, may the learner study before retaking the same scenario?
 
-**Blocked work:** whether the closed-book window (D4) extends past the end of an
-interrupted attempt. Nothing is implemented for it either way, and no behaviour
-was changed while recording this.
+**Resolved 2026-10-14 — CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING
+AUTHORIZATION.** Not an owner decision, and not labelled as one.
 
-**Current behaviour, measured on `main` and pinned by a characterization test**
+**The decision: the closed-book window survives a restart.** Reference material
+stays closed until the learner **submits or discards** the interrupted attempt.
+Restarting the application is not a way to open the book, and neither is starting
+something else.
+
+**Why this is now resolvable when the characterization below says it is not.**
+That assessment was correct when written: all three options change D4's scope or
+D6's retake rule, which made them the owner's. **The owner then delegated it
+explicitly**, in the continuation mandate of 2026-10-14, and named the property
+the answer had to have — *"define post-interruption behavior that preserves the
+closed-book boundary during active Assessment and implement the exact policy
+using characterization and regression tests."* That selects option 2 from the
+table below. The earlier conclusion is left in place rather than rewritten,
+because it was right about the authority and the authority is what changed.
+
+**What was implemented.**
+
+- `unresolvedStoredAssessment` and `mayAccessReferenceMaterialAcrossRestart` in
+  `packages/nexus-core/src/simulation-engine/session-machine.ts`, plus
+  `referenceBlockReason` so the UI can tell the two block reasons apart without
+  re-implementing the rule. The existing `mayAccessReferenceMaterial` is
+  **unchanged**, including the arity pin its own test asserts — which is why this
+  is a second function rather than a third parameter.
+- `ReferenceGate` reads persistence when it mounts. One read per navigation is
+  the whole staleness story: `submit`, `start` and the Dashboard's discard path
+  do not have to remember to invalidate a cached verdict, because none is cached.
+- **It fails closed.** Until the read lands the answer is "no". A safety gate
+  that opens while it is still deciding is not a gate. A *failed* read is
+  reported to the learner as a reason it could not be checked, not silently
+  treated as permission.
+- D4 still answers from the live session alone, so a live assessment is blocked
+  on the first render with no read and no flicker. The brief checking state can
+  only appear on the path this decision added.
+
+**Scope, stated rather than implied.** `unresolvedStoredAssessment` treats
+`in_progress`, `paused` and `interrupted` as unresolved, and `completed`,
+`retried`, `abandoned`, `not_started` and `evaluation_failed` as resolved —
+`evaluation_failed` because **D9** makes a failed evaluation a failed *save* of
+work already finished, so holding the book shut would punish the learner for a
+defect on our side. `interrupted` is accepted although nothing writes it today,
+so that marking a record `interrupted` later cannot silently reopen the book.
+
+**A live practice attempt does not reopen the book** while an assessment is
+unresolved. Allowing it would make "start a practice attempt" a one-click bypass
+of D4, which is the class of hole D4 exists to forbid. The cost is that a learner
+who walks away from an assessment must say so before studying again; that is the
+meaning of a closed-book assessment, not a side effect.
+
+**Two limitations, recorded rather than hidden.**
+
+1. **This is enforced on the desktop and is inert on the web until D10.** The web
+   target falls back to in-memory repositories, so a refresh destroys the record
+   and leaves nothing to gate on. The rule is identical on both targets; only one
+   can currently supply the evidence it needs. **D10 is what makes it uniform**,
+   which is the asymmetry the characterization below found.
+2. **The nav rail still shows both links after a restart.** `AppShell` reads the
+   live session, so the links reappear while the routes stay blocked. The gate is
+   the protection and the nav is a courtesy — that was already the design — so
+   the effect is that a learner clicks and is told why, which is better than a
+   silently missing link. Deliberate, and cheap to change if the owner prefers
+   the links hidden.
+
+**Evidence.** 17 new domain tests in
+`packages/nexus-core/src/simulation-engine/closed-book-restart.test.ts`; the
+characterization block in `closedBookBoundary.test.tsx` rewritten from one test
+that recorded the open window into **8** that pin the closed one. nexus-core
+**807 → 824**, desktop **330 → 337**. **No test was weakened or deleted**, and
+the D4 suite is untouched. The new tests were **mutation-verified**: disabling
+the rule fails 5 of them, so they are not passing vacuously — which the replaced
+test was, once the gate became asynchronous.
+
+**Current behaviour before this decision, measured on `main` and pinned by a characterization test**
 (`apps/desktop/src/components/closedBookBoundary.test.tsx`, "D4 and a restart"):
 the session store does **not** restore an in-flight attempt at boot — only the
 profile store hydrates — so after a restart there is no session in memory,
