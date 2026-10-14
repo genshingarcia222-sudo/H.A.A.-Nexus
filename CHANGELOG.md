@@ -11,6 +11,68 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Windows Release Candidate 0.1.0 Built and Smoke-Tested — Status A (2026-10-14)
+
+**An unsigned internal release candidate exists. It is not a release.**
+`docs/RELEASE_CANDIDATE_0.1.0.md` is the artifact manifest; the artifacts
+themselves stay out of source control.
+
+**What was built.** `tauri build` at `e7c8708` on a clean tree produced both
+configured bundles — `H.A.A. Nexus_0.1.0_x64_en-US.msi` (3,842,048 B) and
+`H.A.A. Nexus_0.1.0_x64-setup.exe` (2,708,547 B) — with full SHA-256 hashes
+recorded for each. The stale Oct-1 development binary was deleted first and
+deliberately so it could not be mistaken for the candidate.
+
+**P9-A is now confirmed in the shipping binary.** PE headers read directly out of
+the newly built executable: Machine `0x8664` (x64), magic `0x20b` (PE32+),
+**Subsystem 2 (WINDOWS_GUI)**. The source attribute was the mechanism and the
+Rust guard test pinned it; this is the measured consequence in the artifact a
+user would run.
+
+**The NSIS installer completes a full lifecycle on this machine.** Install (silent,
+exit 0, ~2s, per-user) → launch (real GUI window, responding, three WebView2
+children) → **writes to its real SQLite store** (the WAL grew 247,232 → 329,632
+bytes across the first launch) → close cleanly on window close → relaunch and
+re-open the same database → uninstall (exit 0) removing the install directory,
+registry entry and Start-menu shortcut, **while preserving user data**.
+
+**Three findings, all recorded in the manifest rather than smoothed over.**
+
+1. **The loose `target/release` exe is not what ships.** Tauri patches a
+   bundle-type marker per bundler and restores the loose binary afterwards, so it
+   differs from the installed binary by **exactly 3 bytes at `0x7af572`**
+   (`UNK` vs `NSS`). The authoritative candidate hashes are the installers'; the
+   loose exe is a build intermediate whose hash matches nothing a user runs.
+2. **The MSI was never installed.** It is **per-machine** (`ALLUSERS=1`) and
+   returned 1603 in an unelevated session, failing before copying any file. Its
+   metadata is read and hashed; its lifecycle is **NOT VERIFIED** and is not
+   claimed. Two installers with two different install scopes is also a real
+   question for D14.
+3. **`tauri build` rewrites `Cargo.toml` with LF endings**, leaving a dirty tree
+   after every release build — the exact condition the release gates require to
+   be absent. Content identity was proven before byte identity was restored.
+
+**Clean-machine verification remains OUTSTANDING**, and is stated as a limitation
+rather than glossed: this is the build machine, so it cannot answer what
+WebView2 bootstrapping or SmartScreen do for a real user.
+
+**Gates.** All twelve commands in `RELEASE_POLICY.md` §7 run at the candidate
+commit with each exit status captured independently — `version check`,
+`nexus-sync start`, `-r test`, `-r typecheck`, `-r build`, preflight and its
+tests, the sync and release tool suites, `cargo test`, `cargo fmt --check`,
+`cargo clippy -- -D warnings` — **all exit 0**. nexus-core **807/807** (804 → 807,
+one new file), desktop **330/330**, preflight **30/30**, nexus-sync **81/81**,
+release tool **25/25**, Rust **70/70**. No count regressed and no test was
+weakened.
+
+**Still blocked, and nothing here was invented to get past it:** P9-B and P9-E on
+**D13** (a signing identity and a legal entity), P9-C on **D14** → **D10**. All
+three artifacts are `NotSigned`, confirmed twice — by `Get-AuthenticodeSignature`
+and by an empty PE certificate table. No tag was created and the release ledger
+stays empty.
+
+---
+
 ## P9-A Confirmed in the Binary, and the Windows Release Package Scoped (2026-10-12)
 
 **Audit and evidence only. No code changed, no artifact built, no release cut.**

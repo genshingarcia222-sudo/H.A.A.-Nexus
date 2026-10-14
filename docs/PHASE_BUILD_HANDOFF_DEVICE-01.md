@@ -28,7 +28,7 @@ is sized to reach a commit on its own.
 
 | # | Unit | Why it is next | Size |
 |---|---|---|---|
-| 0 | **Windows release candidate (Status A)** | the highest-priority unblocked work toward the owner's stated goal, and the only outstanding Phase 9 item no decision blocks. **Toolchain verified ready 2026-10-12** — `tauri-cli 2.11.4`, `rustc 1.98.1`, and both bundlers already cached (`WixTools314`, `NSIS`), so there is no prerequisite gap: the build is go the moment a window exists | large — needs a full session window; do not begin below ~20pp of session headroom |
+| ~~0~~ | ~~**Windows release candidate (Status A)**~~ | **DONE 2026-10-14 at `e7c8708`.** MSI and NSIS both built, PE headers read from the newly built binary (x64, PE32+, Subsystem 2), full hashes recorded, NSIS verified install → launch → persist → close → relaunch → uninstall with user data preserved, all twelve release gates exit 0. Manifest: `docs/RELEASE_CANDIDATE_0.1.0.md`. **Outstanding and not claimed:** clean-machine install, and the MSI lifecycle (per-machine, needs owner-granted elevation) | done |
 | 1 | **ICD-10-CM ingestion from CMS** | the largest unbuilt requirement, and `codingReference` in B is already its shape. CMS is reachable (HTTP 200, 2026-10-04); **nothing has been retrieved** | large — do not start below ~20 points of session headroom |
 | 2 | **Migrate the 432 KB records to contract B** | unblocked by D18, blocks PR #21. Follow the map; classes (a) and (b) are mechanical, class (c) needs a decision per field | large |
 | ~~3~~ | ~~**D17**~~ | **Characterized 2026-10-09 — OWNER DECISION REQUIRED.** Not resolvable under standing authorization: every option, including leaving it open, states a policy about D4's scope or D6's retake rule. The decision packet is in the register. No code changed; the 26 characterization tests still pass | done |
@@ -72,6 +72,17 @@ identity), P9-E needs D13 plus a recorded legal entity, P9-C needs **D14**, whic
 
 **Same-machine limitation, stated up front:** a smoke test here is not a clean-machine
 install, and the difference must appear in the manifest rather than be glossed.
+
+**Unit 0 is complete as of 2026-10-14 and the result is Status A, an unsigned
+internal release candidate.** Read `docs/RELEASE_CANDIDATE_0.1.0.md` before any
+further Phase 9 work; three findings in it change what a reviewer should trust:
+the loose `target/release` exe is a **build intermediate** whose hash matches
+nothing a user runs (Tauri's 3-byte bundle-type marker), the **MSI has never
+been installed** because it is per-machine and needs elevation, and `tauri
+build` **leaves a dirty tree** by rewriting `Cargo.toml`'s line endings.
+
+**What is left in this lane is now only the two large operations and the owner's
+decisions.** Promotion past Status A is **D13**, not more engineering.
 
 **Do not start unit 1 or 2 without checking the expensive-operation gate first.**
 A half-migrated corpus or a half-retrieved CMS snapshot is worse than neither.
