@@ -2,6 +2,64 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-10-14 (later) — a false premise corrected, and the migration's prerequisite arrives as PR #23
+
+`main` advanced four commits to `2cf6d8a` and merged CLEAN. Two things in it
+matter to this lane, and both came from someone measuring instead of re-reading.
+
+### The `accessClasses` premise was false, and this lane already had it right
+
+`main`'s `7fcf86e` corrects `docs/KNOWLEDGE_ARCHITECTURE.md` §6.2, which had
+justified dropping `accessClasses` partly because the field was "on zero records
+today and the generator cannot assign it". **Re-measured here independently
+rather than accepted from the commit message:** all **432** records carry a
+non-empty value, split **299 / 106 / 27** across
+`[TRAINING,PRACTICE,INSTRUCTOR_ADMIN]`, `+SIMULATION`, and
+`+SIMULATION,PREMIUM_REALISTIC` — and **0** records carry
+`ASSESSMENT_CLOSED_BOOK`. The figures agree exactly with DEVICE-01's.
+
+**The decision is not reversed**, and nothing here reopens it: it rests on the
+leg that no record carries `ASSESSMENT_CLOSED_BOOK`, so dropping the field
+cannot drop a closed-book rule. What changed is the honesty of the price — the
+drop discards real differentiated data from 432 records, and the 27 marked
+`PREMIUM_REALISTIC` are entitlement-adjacent to **D1**.
+
+**This lane needed no correction for it.** `GAP_ANALYSIS.md` G10 has said since
+KB-001 that every record carries `accessClasses` and that
+`ASSESSMENT_CLOSED_BOOK` is on zero records — which is the true statement. The
+false generalisation lived in the architecture document, not here, and no record
+in this lane was rewritten on the strength of the correction. Worth noting only
+because the opposite would have mattered a great deal.
+
+### PR #23 — the migration's prerequisite, and it is DEVICE-01's
+
+Open against this branch, based directly on this lane's head:
+`tools/knowledge-corpus/kb-field-disposition.mjs` plus 19 tests, two `kb:*`
+scripts, `kb:verify` extended. It encodes all 54 contract A fields with class,
+target and authorising decision — derived from the schema, the 432 records and
+the contract B source rather than from prose — and **fails closed**: a populated
+field with no disposition, a drop citing no authority, a `direct` mapping naming
+a field B lacks, or O5/O6 arithmetic drifting all exit non-zero. Its own count:
+11 direct, 7 rename, 9 lift, 17 extend, 1 drop-policy, 9 drop-authoring, and
+**contract B must gain 17 fields** before any record validates.
+
+**Verified read-only in a throwaway worktree, not taken on trust** — it lands on
+this lane and extends this lane's tooling: tool exit 0, tests 19/19, and all six
+existing lane gates still green on its tree. Then the claim that actually
+matters, because a check that cannot fail proves nothing: **mutation-tested** by
+reclassifying `safetyFlags` from `extend` to a drop — the tool exits **1** and
+the tests fail on the 17-field count. The enforcement enforces.
+
+**Not merged, not closed, not modified.** It is DEVICE-01's pull request on
+active claimed work (P9-011), so the likely resolution is that DEVICE-01 carries
+it forward itself. Recorded as **O8** so it cannot go stranded the way PR #22
+did.
+
+### Corpus
+
+**Untouched.** 432 records, QA 0 errors / 0 warnings, privacy CLEAR, 0 approved,
+70 checksums identical.
+
 ## 2026-10-14 — the gate was assessed on the merged result, and O5 and O6 were decided
 
 **Branch:** `feat/knowledgebase-expansion`. `main` advanced eighteen commits to

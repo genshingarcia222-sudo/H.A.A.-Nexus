@@ -115,6 +115,14 @@ session's pull request. A reset session should check whether it is still open
 before doing anything else with the changelog, because taking it later costs more
 the further this branch moves.
 
+**Two pull requests are now open against this branch, not against `main`.** PR
+#22 is the stranded 2026-10-01 changelog record (**O7**). **PR #23 is
+DEVICE-01's P9-011 step A1** — `kb-field-disposition.mjs` and its 19 tests,
+which make §3's prose class map machine-checked and fail closed when a
+populated field has no disposition (**O8**). PR #23 is the migration's own
+prerequisite and is based directly on this lane's head. Neither was merged,
+closed or modified by this session; both are other sessions' pull requests.
+
 ## KNOWN BLOCKERS
 
 | # | Blocker | Blocks | Changed since KB-001? |
