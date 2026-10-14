@@ -23,20 +23,20 @@ completed (SYNC_PROTOCOL step "UPDATE .nexus STATE").
 project: H.A.A. Nexus
 repository: https://github.com/genshingarcia222-sudo/H.A.A.-Nexus.git
 active_branch: main (publishes to main; the historical nexus/sync-bootstrap checkout is 106 behind and is not used)
-current_phase: "Phase 9 - Packaging & Release Hardening (P9-A and P9-D satisfied; P9-B/C/E decision-blocked on D13 and D14; Phase 8 is NOT closed)"
-current_milestone: "D18 RESOLVED 2026-10-04 under the owner STANDING AUTHORIZATION: contract B (packages/nexus-core/src/knowledge-corpus, the D12 Zod model) is the canonical runtime-ingestion contract. docs/KNOWLEDGE_ARCHITECTURE.md holds the three-layer boundary and the field-level A-to-B migration map. The 432 KB records are NOT migrated and PR #21 is NOT merged - D18 is a precondition for that work, not a substitute. A9 resolved (dead field removed), A6 closed as superseded by D8. Preflight learned a third outcome, superseded. Open: D10, D13, D14, D17, A2, A7, A12. ICD-10-CM ingestion is specified and NOT BUILT (CMS reachable, nothing retrieved). Control plane at P9-2026-10-02-001"
-baseline_commit: ff3a12d7b795956025c2882cb2a66b8dc681ce65
-last_verified_commit: ff3a12d7b795956025c2882cb2a66b8dc681ce65
-last_verified_tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 30/30, nexus-sync 81/81, release 25/25 (2026-10-04, DEVICE-01, baseline B-008)"
-last_verified_build: "PASS - pnpm -r build (2026-10-04, DEVICE-01, baseline B-008)"
-last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-04, DEVICE-01, baseline B-008)"
-last_verified_rust: "PASS - cargo test 70/70, fmt clean, clippy 0 warnings, rustc 1.98.1 (2026-10-04, DEVICE-01, baseline B-008)"
-active_task: P10-004
+current_phase: "Phase 9 - Packaging & Release Hardening (P9-A CONFIRMED IN THE BINARY and P9-D satisfied; an unsigned internal RC 0.1.0 Status A exists; P9-B/C/E decision-blocked on D13 and D14; Phase 8 is NOT closed)"
+current_milestone: "D17 RESOLVED 2026-10-14 under STANDING AUTHORIZATION (owner delegated it explicitly): the closed-book window now survives a restart - reference stays closed until an interrupted assessment is submitted or discarded, fails closed, desktop only and inert on web until D10. nexus-core 807 to 824, desktop 330 to 337, mutation-verified, no test weakened. Preflight: 11 resolved, 1 superseded, 5 blocked (D10, A7, A12, D13, D14). Earlier: KB INTEGRATION GATE assessed 2026-10-14 on a real local merge: PR #21 passes 6 of 7 criteria, criterion 2 FAILS because merging narrows O6; 90 KB tests pass on the merged result; 432 records verified (324+108 in 57 template-group files), 0 of 432 human-reviewed; divergence re-measured and the 11-of-54 D18 basis holds. O5 and O6 DECIDED under standing authorisation (multi-select carried; 17 of 18 class-(c) fields carried, accessClasses dropped) with implementation deferred to the migration commit series. DO NOT MERGE PR #21 or #22. Earlier: RELEASE CANDIDATE 0.1.0 (Status A, UNSIGNED, NO TAG) built and smoke-tested 2026-10-14 on DEVICE-01 - MSI and NSIS both produced, NSIS verified install-to-uninstall with user data preserved, P9-A confirmed in the shipping binary (PE Subsystem 2, x64, PE32+); manifest in docs/RELEASE_CANDIDATE_0.1.0.md. Clean-machine install NOT VERIFIED and the MSI was NOT INSTALLED (per-machine, needs elevation). Promotion past Status A needs D13 from the owner. Earlier: D18 RESOLVED 2026-10-04 under the owner STANDING AUTHORIZATION: contract B (packages/nexus-core/src/knowledge-corpus, the D12 Zod model) is the canonical runtime-ingestion contract. docs/KNOWLEDGE_ARCHITECTURE.md holds the three-layer boundary and the field-level A-to-B migration map. The 432 KB records are NOT migrated and PR #21 is NOT merged - D18 is a precondition for that work, not a substitute. A9 resolved (dead field removed), A6 closed as superseded by D8. Preflight learned a third outcome, superseded. Open: D10, D13, D14, D17, A2, A7, A12. ICD-10-CM ingestion is specified and NOT BUILT (CMS reachable, nothing retrieved). Control plane at P9-2026-10-02-001"
+baseline_commit: e7c8708c5df851c38bb28458681a4e776b35fb8c
+last_verified_commit: e7c8708c5df851c38bb28458681a4e776b35fb8c
+last_verified_tests: "PASS - nexus-core 824/824, desktop 337/337, preflight 30/30, nexus-sync 81/81, release 25/25 (2026-10-14, DEVICE-01, baseline B-010)"
+last_verified_build: "PASS - pnpm -r build, and tauri build produced MSI + NSIS (2026-10-14, DEVICE-01, baseline B-009)"
+last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-14, DEVICE-01, baseline B-009)"
+last_verified_rust: "PASS - cargo test 70/70, fmt clean, clippy 0 warnings, rustc 1.98.1 (2026-10-14, DEVICE-01, baseline B-009)"
+active_task: P8-D17
 task_owner: DEVICE-01
-task_status: BLOCKED
-last_successful_sync: 2026-10-12T05:10:56.747Z
+task_status: COMPLETE
+last_successful_sync: 2026-10-14T10:25:00.435Z
 last_sync_device: DEVICE-01
-last_sync_commit: 967098a89d3260f7227a50680b9dda72e4519192
+last_sync_commit: e4efa40d46b4a82b2a6132ea340eae2c930268ce
 sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```

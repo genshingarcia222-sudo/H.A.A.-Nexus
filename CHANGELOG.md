@@ -11,6 +11,285 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Release Build Reliability — the Exit Status and the Dirty Tree (2026-10-14)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Fixes two
+defects that the 0.1.0 release build exposed in the release *process*, not in the
+product. Both were found and disclosed during that build and are recorded in
+`docs/RELEASE_CANDIDATE_0.1.0.md`.
+
+**There was no release build script at all.** `tauri build` was invoked by an
+ad-hoc shell command, which is where both defects came from, and CI never runs
+it. `tools/release/build.mjs` is now that script, and it is the last line of the
+`RELEASE_POLICY.md` §7 gate list.
+
+**Defect 1 — a failed build could have reported success.** The build ran as
+`... tauri build 2>&1 | tail -25` followed by `BUILD_EXIT=$?`. A shell
+pipeline's status is its **last** stage, so the number captured was `tail`'s.
+0.1.0 was still verifiable because the artifacts existed and were measured
+directly — by luck, not by the check. The runner spawns the build with
+`spawnSync`, **no shell and no pipeline**, so the status reported is the build's
+own. It also treats a signal kill (`status === null`) and a failure to spawn as
+failures rather than as zero, which a shell would have flattened into a number.
+
+**It also surfaces the first error rather than the tail.** Cargo prints
+`error[E0425]` hundreds of lines before `error: could not compile`, and the
+first line is the cause. The old command only ever displayed the last 25 lines.
+
+**Defect 2 — the release build left the tree dirty.** `tauri build` rewrites
+`apps/desktop/src-tauri/Cargo.toml` with LF line endings, which is exactly the
+condition §7 requires to be absent at a release commit. The runner snapshots the
+working tree before and after, classifies each build-generated change as
+**content-identical** or **semantic** using `git diff`'s own normalisation, and
+restores only the content-identical ones. **A semantic change is never
+discarded** — the runner prints the file and exits non-zero, because a
+legitimately bumped version must not be thrown away by a cleanup step. It also
+**refuses to build at all** on an already-dirty tree, so a pre-existing change
+can never be mistaken for a build-generated one.
+
+**Verified.** `node tools/release/build.test.mjs` — **16/16**. The suite
+reproduces the pipeline defect (portably, and again through a real bash pipeline
+where one is spawnable), proves a 400-line log cannot hide a non-zero exit,
+proves a spawn failure is not a zero, and proves a version bump is classified
+semantic so a future change that discarded real edits would fail the gate. It
+runs **no** release build: failure is produced with a controlled command, because
+the way to test a failure path is not to break the product. The pre-build refusal
+was additionally verified end to end — run against a dirty tree it exits 1 and
+names the files without starting a build.
+
+**Two things found while writing the tests, worth recording.** The line-ending
+fixture initially reproduced the wrong direction (it stored CRLF in the index,
+where this repository stores LF) and so reported `semantic` for a safe change.
+And the non-vacuity check originally asserted on `package.json`, which started
+failing the moment this very package added a script to it — a test that depends
+on the repository staying still fails for the wrong reason, so it now uses a
+disposable repository.
+
+**Not claimed.** The classification and restore logic is unit-tested against
+disposable repositories and the refusal paths are verified directly, but **the
+restore has not yet run against a real `tauri build`**. That confirmation belongs
+to the next release build and is cheap. No artifact was rebuilt, no release was
+cut, and the 0.1.0 candidate's recorded evidence is unchanged.
+
+---
+
+## D17 Resolved — the Closed-Book Window Survives a Restart (2026-10-14)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Not an
+owner decision, and not labelled as one.
+
+**The decision.** Reference material stays closed until the learner **submits or
+discards** an interrupted assessment attempt. Restarting the application is not a
+way to open the book, and neither is starting something else.
+
+**The defect it closes was measured, not imagined.** `useSessionStore` carries no
+persist middleware and only the profile store hydrates at boot, so after a restart
+the live session was `null`, `mayAccessReferenceMaterial(null)` answered `true`,
+and both `/knowledge-base` and `/training` opened while the attempt still sat in
+SQLite as `in_progress`.
+
+**Why this was resolvable now.** The October characterization concluded D17 was
+*not* resolvable under standing authorization, because every option changes D4's
+scope or D6's retake rule. That was right about the authority. **The owner then
+delegated it explicitly** and named the property the answer had to have —
+"preserves the closed-book boundary during active Assessment" — which selects
+option 2 from the register's table. The earlier conclusion is left in the register
+rather than rewritten, because what changed was the authority, not the analysis.
+
+**What changed.**
+
+- `unresolvedStoredAssessment`, `mayAccessReferenceMaterialAcrossRestart` and
+  `referenceBlockReason` in `nexus-core`. **`mayAccessReferenceMaterial` is
+  untouched**, including the arity pin its own test asserts — which is why this
+  is a second function rather than a third parameter.
+- `ReferenceGate` reads persistence on mount. One read per navigation is the
+  whole staleness story: nothing caches a verdict, so `submit`, `start` and the
+  Dashboard's discard path have nothing to invalidate.
+- **It fails closed.** Until the read lands the answer is "no", and a *failed*
+  read is reported to the learner rather than silently treated as permission.
+- D4 still answers from the live session alone, so a live assessment blocks on
+  the first render with no read and no flicker. The checking state can only
+  appear on the path this decision added.
+- The gate contains **no mode or status comparison of its own** — the invariant
+  test caught a `mode === "assessment"` in the first draft, correctly, and the
+  distinction moved into the domain as `referenceBlockReason`.
+
+**Scope, stated rather than implied.** `in_progress`, `paused` and `interrupted`
+are unresolved; `completed`, `retried`, `abandoned`, `not_started` and
+`evaluation_failed` are resolved. `evaluation_failed` is resolved because **D9**
+makes a failed evaluation a failed *save* of finished work — holding the book shut
+would punish the learner for a defect on our side. `interrupted` is accepted
+although nothing writes it today, so marking a record `interrupted` later cannot
+silently reopen the book.
+
+**A live practice attempt does not reopen the book** while an assessment is
+unresolved, because otherwise "start a practice attempt" is a one-click bypass
+of D4.
+
+**Two limitations, recorded rather than hidden.** It is enforced on the desktop
+and **inert on the web until D10** (in-memory repositories there, so a refresh
+destroys the record and leaves nothing to gate on) — D10 is what makes it
+uniform. And **the nav rail still shows both links after a restart**, because
+`AppShell` reads the live session; the gate is the protection and the nav was
+always a courtesy, so the learner clicks and is told why. Deliberate, and cheap
+to change.
+
+**Verified.** nexus-core **807 → 824** (17 new domain tests), desktop **330 →
+337**. The characterization block went from one test recording the open window to
+**8** pinning the closed one, as that test's own comment instructed. **No test was
+weakened or deleted** and the D4 suite is untouched. The new tests were
+**mutation-verified**: disabling the rule fails 5 of them. That check mattered —
+the test being replaced had started passing *vacuously* once the gate became
+asynchronous, reporting "not blocked" while the book was in fact shut.
+
+**Not claimed.** No web enforcement, no nav-rail change, and no change to what
+D6 permits on a retake.
+
+---
+
+## Knowledge Base Integration Gate Assessed, and O5 and O6 Decided (2026-10-14)
+
+**Assessment and two delegated decisions. No record was migrated, no schema
+changed, nothing was merged to `main`, nothing was pushed from the trial branch.**
+
+**PR #21 was re-assessed because its recorded blocker is gone.** The register, the
+handoff and the branch's own blocker file all said it was blocked on **D18** —
+resolved on 2026-10-04. The gate was therefore re-run against the repository on a
+**real local merge** in a throwaway worktree: `main` `3c496e3` + PR #21
+`8ce93b3`, **clean, zero conflicts**, 107 files, +93,513.
+
+**Verdict: six of seven criteria pass; criterion 2 fails.**
+`docs/KB_INTEGRATION_GATE_PR21.md` carries the evidence.
+
+- **Suites on the merged result:** `kb:manifest:check`, `kb:validate`,
+  `kb:privacy`, and three test suites — all exit 0, **90 KB tests passing**,
+  including *"KB-001 regenerates byte-identically to the committed files"*, which
+  is the owner's byte-identity requirement met by regeneration rather than by a
+  generator exiting 0.
+- **The existing suites transfer by proof, not assumption:** in the merged tree
+  `packages/`, `apps/`, `.github/`, `.nexus/`, `docs/` and `content/` are
+  **byte-identical to `main`**, so B-009's counts hold unchanged. This is stated
+  as a proof from the diff, not implied to be a fresh run.
+- **Criterion 2 fails for a specific reason.** Merging does not reopen D18; it
+  **narrows O6**. While the 18 class-(c) safety fields sit on a branch, the
+  migration may carry or drop each as a forward choice. Once they are on `main`
+  with `kb-validate.mjs`'s `SAFETY-PRECEDENCE` running, dropping one becomes a
+  safety guarantee *removed from `main`*. Same options, materially different cost.
+- **The fix is sequencing, and it costs nothing:** resolve O5 and O6, migrate on
+  the lane, integrate the migrated result as one unit.
+
+**`mergeable` was treated as one criterion out of seven.** PR #21 is `MERGEABLE`
+and its own title still says do not merge; it was not merged, and specifically not
+on the strength of that label. **PR #22 is open against the lane, not `main`**, and
+was not merged, closed or modified.
+
+**The record count was verified rather than inherited.** **432 is correct** — 324
+in KB-001 (27 template families × 12 operators) plus 108 in KB-002, stored as
+**57 template-group files**, each holding a family's records. A file count reads
+as 57 and is not the record count. Still **0 approved, 432 pending human review,
+0 source-verified**, and the declared v1.0 source archive is **absent** from the
+repository, so its 400 seed records are not in this corpus and no part of them was
+reconstructed.
+
+**Divergence re-measured against current `main`:** 54 A-properties, 432 records,
+**11** keys with a same-named home in B, **43** without, 39 of those on all 432
+records, against **33** `.strict()` schemas. **The 11-of-54 figure D18 rests on
+still holds**, so contract B has not drifted and D18 needs no revisiting.
+
+**Two decisions taken under the owner's standing authorisation**, recorded in
+`docs/KNOWLEDGE_ARCHITECTURE.md` §3 and labelled as delegated, not as owner
+decisions:
+
+- **O5 — multi-select is carried.** Measured independently of the lane: of 432
+  records, 318 carry `correctChoiceIds` and exactly **15** carry more than one,
+  all with exactly two correct choices, all `MULTI_SELECT`, from two template
+  families. Contract B gains optional multi-select and the 15 migrate. Dropping,
+  re-authoring and holding back were all rejected — re-authoring in particular
+  would mean rewriting judged clinical content without a reviewer. **One part is a
+  product call and is flagged, not buried:** scoring is set to **all-or-nothing**
+  because partial credit needs a weighting judgement nobody has made, and the
+  owner can override that line.
+- **O6 — seventeen of the eighteen class-(c) fields are carried; only
+  `accessClasses` stays dropped** on the §6.2 reasoning. Safety, regulatory
+  applicability, assessment semantics and structural fields are each dispositioned
+  in a per-field table. Extending is additive against already-`.strict()` schemas
+  so it cannot break a consumer, while dropping seventeen would delete enforcement
+  that works to save schema surface that costs nothing.
+
+**Both implementations are deliberately deferred to the migration commit series**,
+not done ahead of it: adding unconsumed fields to the canonical contract is
+exactly what **A9** removed, and repeating it immediately after would be
+incoherent. The fields land with the records that populate them.
+
+**Carrying a safety field does not implement safety behaviour**, and that is not
+claimed: it means the value survives migration intact, not that any surface acts
+on it. No record moved toward review or production eligibility, and no schema
+change could do so.
+
+---
+
+## Windows Release Candidate 0.1.0 Built and Smoke-Tested — Status A (2026-10-14)
+
+**An unsigned internal release candidate exists. It is not a release.**
+`docs/RELEASE_CANDIDATE_0.1.0.md` is the artifact manifest; the artifacts
+themselves stay out of source control.
+
+**What was built.** `tauri build` at `e7c8708` on a clean tree produced both
+configured bundles — `H.A.A. Nexus_0.1.0_x64_en-US.msi` (3,842,048 B) and
+`H.A.A. Nexus_0.1.0_x64-setup.exe` (2,708,547 B) — with full SHA-256 hashes
+recorded for each. The stale Oct-1 development binary was deleted first and
+deliberately so it could not be mistaken for the candidate.
+
+**P9-A is now confirmed in the shipping binary.** PE headers read directly out of
+the newly built executable: Machine `0x8664` (x64), magic `0x20b` (PE32+),
+**Subsystem 2 (WINDOWS_GUI)**. The source attribute was the mechanism and the
+Rust guard test pinned it; this is the measured consequence in the artifact a
+user would run.
+
+**The NSIS installer completes a full lifecycle on this machine.** Install (silent,
+exit 0, ~2s, per-user) → launch (real GUI window, responding, three WebView2
+children) → **writes to its real SQLite store** (the WAL grew 247,232 → 329,632
+bytes across the first launch) → close cleanly on window close → relaunch and
+re-open the same database → uninstall (exit 0) removing the install directory,
+registry entry and Start-menu shortcut, **while preserving user data**.
+
+**Three findings, all recorded in the manifest rather than smoothed over.**
+
+1. **The loose `target/release` exe is not what ships.** Tauri patches a
+   bundle-type marker per bundler and restores the loose binary afterwards, so it
+   differs from the installed binary by **exactly 3 bytes at `0x7af572`**
+   (`UNK` vs `NSS`). The authoritative candidate hashes are the installers'; the
+   loose exe is a build intermediate whose hash matches nothing a user runs.
+2. **The MSI was never installed.** It is **per-machine** (`ALLUSERS=1`) and
+   returned 1603 in an unelevated session, failing before copying any file. Its
+   metadata is read and hashed; its lifecycle is **NOT VERIFIED** and is not
+   claimed. Two installers with two different install scopes is also a real
+   question for D14.
+3. **`tauri build` rewrites `Cargo.toml` with LF endings**, leaving a dirty tree
+   after every release build — the exact condition the release gates require to
+   be absent. Content identity was proven before byte identity was restored.
+
+**Clean-machine verification remains OUTSTANDING**, and is stated as a limitation
+rather than glossed: this is the build machine, so it cannot answer what
+WebView2 bootstrapping or SmartScreen do for a real user.
+
+**Gates.** All twelve commands in `RELEASE_POLICY.md` §7 run at the candidate
+commit with each exit status captured independently — `version check`,
+`nexus-sync start`, `-r test`, `-r typecheck`, `-r build`, preflight and its
+tests, the sync and release tool suites, `cargo test`, `cargo fmt --check`,
+`cargo clippy -- -D warnings` — **all exit 0**. nexus-core **807/807** (804 → 807,
+one new file), desktop **330/330**, preflight **30/30**, nexus-sync **81/81**,
+release tool **25/25**, Rust **70/70**. No count regressed and no test was
+weakened.
+
+**Still blocked, and nothing here was invented to get past it:** P9-B and P9-E on
+**D13** (a signing identity and a legal entity), P9-C on **D14** → **D10**. All
+three artifacts are `NotSigned`, confirmed twice — by `Get-AuthenticodeSignature`
+and by an empty PE certificate table. No tag was created and the release ledger
+stays empty.
+
+---
+
 ## P9-A Confirmed in the Binary, and the Windows Release Package Scoped (2026-10-12)
 
 **Audit and evidence only. No code changed, no artifact built, no release cut.**

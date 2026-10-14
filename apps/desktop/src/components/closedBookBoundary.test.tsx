@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import {
   createEmptyDraft,
@@ -262,24 +262,28 @@ describe("D4 cannot be escaped by where the learner already is", () => {
   }
 });
 
-describe("D4 and a restart: what today's behaviour actually is", () => {
+describe("D4 and a restart: D17 closes the window", () => {
   /**
-   * CHARACTERIZATION, not endorsement. The session store does not restore an
-   * in-flight attempt at boot - only the profile store hydrates - so after a
-   * restart there is no session in memory and `mayAccessReferenceMaterial`
-   * answers about nothing rather than about the assessment still sitting in the
-   * database as `in_progress`.
+   * **D17 was decided on 2026-10-14 and this block now pins the decision
+   * rather than characterising a defect.** The previous version of it recorded
+   * the opposite behaviour - "therefore opens the book after a restart -
+   * recorded, not endorsed" - and said that whoever answered the question would
+   * see this expectation fail and read why. That is what happened.
    *
-   * Whether that is correct is a decision, not a bug to fix here: D6 already
-   * permits retaking an interrupted Assessment as a new attempt, and nothing
-   * forbids reading before a first attempt. The open question is narrower -
-   * whether a learner who has *seen* a scenario may study and then retake that
-   * same scenario - and answering it would change D4's scope or D6's retake
-   * rule. It is recorded as a finding in `docs/DECISION_REGISTER.md` rather
-   * than decided by a test.
+   * The behaviour it recorded was real: the session store carries no persist
+   * middleware, only the profile store hydrates, so after a restart there is no
+   * session in memory and the live-session rule answered about nothing rather
+   * than about the assessment still sitting in the database as `in_progress`.
    *
-   * This test pins the behaviour so the answer, when it comes, has to be
-   * deliberate: whoever changes it will see this test fail and read why.
+   * **The policy now:** reference material stays closed until the learner
+   * submits or discards that attempt. Restarting the application is not a way
+   * to open the book, and neither is starting something else. The rule is
+   * `mayAccessReferenceMaterialAcrossRestart` in `nexus-core`; the gate reads
+   * persistence when it mounts and fails closed until that read lands.
+   *
+   * Taken under the owner's explicit delegation, and recorded as
+   * CLAUDE-RECOMMENDED in `docs/DECISION_REGISTER.md` - not as an owner
+   * decision.
    */
   function interruptedAssessmentRecord(): SessionRecord {
     return {
@@ -307,14 +311,80 @@ describe("D4 and a restart: what today's behaviour actually is", () => {
     expect(useSessionStore.getState().session, "nothing restores it into memory").toBeNull();
   });
 
-  it("therefore opens the book after a restart - recorded, not endorsed", async () => {
+  for (const route of REFERENCE_ROUTES) {
+    it(`keeps ${route} closed after a restart, until the attempt is resolved`, async () => {
+      await sessionRepository.save(interruptedAssessmentRecord());
+
+      renderAt(route);
+
+      // The gate reads persistence on mount, so the verdict lands a tick later.
+      // What must never happen is the content rendering in the meantime.
+      await waitFor(() => expect(isBlocked()).toBe(true));
+      expect(screen.queryByLabelText("Search terminology")).toBeNull();
+      expect(screen.queryByRole("button", { name: "Open lesson" })).toBeNull();
+    });
+  }
+
+  it("never renders the content while it is still checking", async () => {
+    // Fails closed. The first synchronous render happens before the read
+    // resolves, and it must not be an open book.
     await sessionRepository.save(interruptedAssessmentRecord());
 
     renderAt("/knowledge-base");
 
-    // If an owner decision later closes this window, this expectation is the
-    // one that must change, and its comment above says what to change it to.
-    expect(isBlocked()).toBe(false);
+    expect(screen.queryByLabelText("Search terminology"), "not even for one render").toBeNull();
+    await waitFor(() => expect(isBlocked()).toBe(true));
+  });
+
+  it("explains that the attempt was never submitted, not that one is on screen", async () => {
+    // The two block reasons are different situations for the learner, and the
+    // wording has to tell them apart - there is nothing to "return to".
+    await sessionRepository.save(interruptedAssessmentRecord());
+
+    renderAt("/knowledge-base");
+
+    await waitFor(() => expect(screen.queryByText(/never submitted/)).not.toBeNull());
+    expect(screen.queryByText(/return to Live Scribing/)).toBeNull();
+  });
+
+  it("opens again once the interrupted attempt is submitted", async () => {
+    await sessionRepository.save({ ...interruptedAssessmentRecord(), status: "completed" });
+
+    renderAt("/knowledge-base");
+
+    await waitFor(() => expect(isBlocked()).toBe(false));
+  });
+
+  it("opens again once the interrupted attempt is discarded", async () => {
+    await sessionRepository.save({ ...interruptedAssessmentRecord(), status: "abandoned" });
+
+    renderAt("/knowledge-base");
+
+    await waitFor(() => expect(isBlocked()).toBe(false));
+  });
+
+  it("is not triggered by an interrupted practice attempt", async () => {
+    // D4 restricts assessment. An interrupted practice attempt has never
+    // closed the book and must not start now.
+    await sessionRepository.save({
+      ...interruptedAssessmentRecord(),
+      id: "p-interrupted-restart",
+      mode: "practice"
+    });
+
+    renderAt("/knowledge-base");
+
+    await waitFor(() => expect(isBlocked()).toBe(false));
+  });
+
+  it("does not let a practice attempt reopen the book while an assessment is unresolved", async () => {
+    // Otherwise "start a practice attempt" is a one-click bypass of D4.
+    await sessionRepository.save(interruptedAssessmentRecord());
+    startIn("practice");
+
+    renderAt("/knowledge-base");
+
+    await waitFor(() => expect(isBlocked()).toBe(true));
   });
 });
 

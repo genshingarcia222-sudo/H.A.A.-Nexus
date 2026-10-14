@@ -14,19 +14,85 @@ Earlier checkpoints, from before this file existed, are recorded in
 preserved there, not copied here.
 
 ```yaml nexus-state
-commit: ff3a12d7b795956025c2882cb2a66b8dc681ce65
+commit: e7c8708c5df851c38bb28458681a4e776b35fb8c
 branch: main
-timestamp: 2026-10-04T07:25:00Z
+timestamp: 2026-10-14T08:35:00Z
 device: DEVICE-01
-tests: "PASS - nexus-core 804/804, desktop 330/330, preflight 30/30, nexus-sync 81/81, release tool 25/25"
+tests: "PASS - nexus-core 824/824, desktop 337/337, preflight 30/30, nexus-sync 81/81, release tool 25/25"
 build: "PASS - pnpm -r build"
 typecheck: "PASS - pnpm -r typecheck (nexus-core, ui-kit, desktop)"
 rust: "PASS - cargo test 70/70, cargo fmt --check clean, cargo clippy 0 warnings; rustc 1.98.1"
-audit_status: "Phase 7 closed; Phase 8.3 decision group COMPLETE; D15 executed; D16/D8/D9 resolved 2026-10-01 and D18/A9 resolved and A6 superseded 2026-10-04, all under the owner STANDING AUTHORIZATION; P9-A and P9-D SATISFIED. D18 names contract B canonical - the 432 KB records are NOT migrated and PR #21 is NOT merged"
-known_conditions: "D10, D13, D14, D17, A2, A7, A12 open; Phase 9 P9-B/C/E blocked on D13 and D14; Phase 8 not closed - roadmap steps 3-8 unstarted and D10 blocks step 4; ICD-10-CM ingestion specified in docs/KNOWLEDGE_ARCHITECTURE.md section 5 and NOT BUILT (CMS reachable, nothing retrieved); 432 KB records not migrated to contract B; Pilot Batch 001 0 of 12 human-verified; tauri build not re-run since the D15 merge; no release tag; a device-activity detection defect is recorded in DEVICE_REGISTRY"
+audit_status: "Phase 7 closed; Phase 8.3 decision group COMPLETE; D15 executed; D16/D8/D9/D18/A9/A2 resolved and A6 superseded, all under the owner STANDING AUTHORIZATION; preflight reports 10 resolved, 1 superseded, 6 blocked. P9-A SATISFIED and now CONFIRMED IN THE SHIPPING BINARY (PE Subsystem 2, x64, PE32+) and P9-D SATISFIED. An unsigned internal RELEASE CANDIDATE 0.1.0 (Status A) exists at this commit - both MSI and NSIS built, NSIS smoke-tested install-to-uninstall on DEVICE-01; manifest in docs/RELEASE_CANDIDATE_0.1.0.md. It is NOT a release: unsigned, no tag, clean-machine NOT verified, MSI NOT installed. D18 names contract B canonical - the 432 KB records are NOT migrated and PR #21 is NOT merged"
+known_conditions: "D10, D13, D14, D17, A7, A12 open (A2 and A9 closed 2026-10-04; D17 CHARACTERIZED and awaiting the OWNER); Phase 9 P9-B/C/E blocked on D13 and D14; Phase 8 not closed - roadmap steps 3-8 unstarted and D10 blocks step 4; ICD-10-CM ingestion specified in docs/KNOWLEDGE_ARCHITECTURE.md section 5 and NOT BUILT (CMS reachable, nothing retrieved); 432 KB records not migrated to contract B; Pilot Batch 001 0 of 12 human-verified; RC 0.1.0 built 2026-10-14 but UNSIGNED, NO TAG, clean-machine install NOT VERIFIED and the MSI NOT INSTALLED (per-machine, needs elevation); tauri build rewrites Cargo.toml line endings and leaves a dirty tree; a device-activity detection defect is recorded in DEVICE_REGISTRY"
 ```
 
 ## History
+
+### B-010 — D17 resolved; the closed-book window survives a restart — 2026-10-14 — DEVICE-01
+
+| Check | Command | Result |
+|---|---|---|
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **824/824** (68 files), desktop **337/337** (33 files) |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; **11 resolved, 1 superseded, 5 blocked** (D10, A7, A12, D13, D14) |
+| Typecheck | `pnpm -r typecheck` | exit 0 |
+| Rust | unchanged by this work | **70/70** at B-009 |
+
+**Movement from B-009.** nexus-core **807 → 824** (+17 domain tests for D17),
+desktop **330 → 337** (the characterization block went from 1 test recording the
+open window to 8 pinning the closed one). D17 moved from blocked to resolved, so
+**blocked decisions 6 → 5**.
+
+**No test was weakened or deleted.** The one replaced expectation had started
+passing **vacuously** once the gate became asynchronous — it reported "not
+blocked" while the book was in fact shut — and its own comment instructed that it
+be changed when the decision came. The replacements are **mutation-verified**:
+disabling the rule fails 5 of them.
+
+**What this baseline does NOT establish.** D17 is enforced on the **desktop
+only** and is **inert on the web until D10**, because the web target uses
+in-memory repositories and a refresh destroys the record. The nav rail still
+shows both reference links after a restart; the route gate is the protection.
+No Rust, bundler or installer work is involved, so the RC evidence in B-009
+stands unchanged.
+
+### B-009 — Windows release candidate 0.1.0 built and smoke-tested — `e7c8708` — 2026-10-14 — DEVICE-01
+
+The tree at `e7c8708c5df851c38bb28458681a4e776b35fb8c`, on `main`, working tree clean at build start, verified in
+full on DEVICE-01 against the release gates in `docs/RELEASE_POLICY.md` §7. Every
+exit status was captured independently rather than through a pipe.
+
+| Check | Command | Result |
+|---|---|---|
+| Tests | `npx --yes pnpm@9 -r test` | nexus-core **807/807** (67 files), desktop **330/330** (33 files) |
+| Preflight tool | `node tools/preflight/preflight.test.mjs` | **30/30** |
+| Preflight run | `node tools/preflight/preflight.mjs` | exit 0; **10 resolved, 1 superseded, 6 blocked** (D10, A7, A12, D13, D14, D17) |
+| Sync tool | `node tools/nexus-sync/nexus-sync.test.mjs` | **81/81** |
+| Release tool | `node tools/release/version.test.mjs` | **25/25** |
+| Version parity | `node tools/release/version.mjs check` | exit 0, six declarations agree |
+| Typecheck / build | `pnpm -r typecheck`, `pnpm -r build` | exit 0 |
+| Rust | `cargo test --offline`, `fmt --check`, `clippy -- -D warnings` | **70/70**, clean, 0 warnings |
+| **Windows bundle** | `pnpm --filter @haa-nexus/desktop exec tauri build` | **MSI and NSIS both produced**; see `docs/RELEASE_CANDIDATE_0.1.0.md` |
+
+**Movement from B-008.** nexus-core **804 → 807** (+3 tests, one new file);
+every other count unchanged. The substantive movement is not a test count: **an
+unsigned internal release candidate now exists**, and P9-A is confirmed in the
+binary that would actually ship (PE Subsystem **2**, Machine `0x8664`, PE32+).
+B-008 recorded "tauri build not re-run since the D15 merge" — that condition is
+now discharged.
+
+**Artifact hashes** (artifacts are not in source control):
+
+| Artifact | Bytes | SHA-256 |
+|---|---|---|
+| `…_x64_en-US.msi` | 3,842,048 | `323df12362a3b213b79b5fc61c1319ed69aee03bfb31d7bbb2f4e1420333ea1b` |
+| `…_x64-setup.exe` | 2,708,547 | `b10281b1e60747249af10449285e0e57a6b2b3146ae2583af57615cbb5e8c5b8` |
+
+**What this baseline does NOT establish.** The candidate is **unsigned** (all
+three files `NotSigned`, confirmed also by an empty PE certificate table), there
+is **no tag**, **clean-machine verification was not performed** (this is the
+build machine), and **the MSI was never installed** — it is per-machine and
+returned 1603 unelevated, before copying any file. P9-B and P9-E remain blocked
+on **D13**, P9-C on **D14** → **D10**.
 
 ### B-008 — D18 resolved; A9 and A6 closed — `ff3a12d` — 2026-10-04 — DEVICE-01
 
