@@ -54,16 +54,16 @@ task_name: "Knowledge Base migration to contract B"
 owner: DEVICE-01
 status: ACTIVE
 started_at: 2026-10-14T13:30:18.056Z
-last_update: 2026-10-14T13:30:18.056Z
+last_update: 2026-10-14T13:38:12.594Z
 stale_after_hours: 12
 expected_scope: "P9-011 step A1 prerequisite: a machine-generated, test-enforced disposition for every one of contract A's 54 fields across all 432 records, derived from the actual schema, the actual records and the actual contract B source - not from prose. Encodes the D18 section 3 class map plus the binding O5 (multi-select carried, all-or-nothing) and O6 (17 of 18 class-(c) fields carried, accessClasses dropped) dispositions, and FAILS if any field lacks one, which is the no-silent-dropping guarantee made mechanical. Work happens in an isolated worktree on a branch off the knowledgebase lane; main is not touched and the lane head is not moved. The record transform itself is deliberately NOT started in the same breath: contract B field additions must land with the records that populate them (the A9 precedent), and a budget stop must never leave half-migrated canonical records."
 affected_areas: "not recorded"
 branch: main
 claim_commit: 9c7b09b61f7bb24d848675fc1d75e1cb76f5cc22
-last_commit: 9c7b09b61f7bb24d848675fc1d75e1cb76f5cc22
+last_commit: a31bf17670c9082ab7723caec5145e89af6676cc
 handoff_required: no
 handoff_to: none
-next_action: "not recorded"
+next_action: "P9-011 step A2/A3/A4, ONE atomic unit on branch p9-011/field-disposition (PR #23 must land first or be built on): extend contract B with the 17 carried class-(c) fields AND optional multi-select, transform all 432 records, validate against contract B, regenerate manifests and checksums - all in the same commit series, because the A9 precedent forbids landing unconsumed contract fields ahead of their records. The disposition table (kb:disposition, 19 tests) is the input: 11 direct, 7 rename, 9 lift, 17 extend, 1 drop-policy, 9 drop-authoring. Do NOT start it without enough budget to finish, validate and checkpoint - a half-migrated corpus is worse than none."
 ```
 
 ## Ownership history
