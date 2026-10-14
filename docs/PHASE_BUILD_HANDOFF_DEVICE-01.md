@@ -31,7 +31,7 @@ is sized to reach a commit on its own.
 | ~~0~~ | ~~**Windows release candidate (Status A)**~~ | **DONE 2026-10-14 at `e7c8708`.** MSI and NSIS both built, PE headers read from the newly built binary (x64, PE32+, Subsystem 2), full hashes recorded, NSIS verified install → launch → persist → close → relaunch → uninstall with user data preserved, all twelve release gates exit 0. Manifest: `docs/RELEASE_CANDIDATE_0.1.0.md`. **Outstanding and not claimed:** clean-machine install, and the MSI lifecycle (per-machine, needs owner-granted elevation) | done |
 | 1 | **ICD-10-CM ingestion from CMS** | the largest unbuilt requirement, and `codingReference` in B is already its shape. CMS is reachable (HTTP 200, 2026-10-04); **nothing has been retrieved** | large — do not start below ~20 points of session headroom |
 | 2 | **Migrate the 432 KB records to contract B** | unblocked by D18, blocks PR #21. Follow the map; classes (a) and (b) are mechanical, class (c) needs a decision per field | large |
-| ~~3~~ | ~~**D17**~~ | **RESOLVED AND IMPLEMENTED 2026-10-14** under standing authorization, after the owner delegated it explicitly and named the required property. The closed-book window now survives a restart; it fails closed; desktop only and **inert on web until D10**. nexus-core 807 to 824, desktop 330 to 337, mutation-verified, no test weakened. The October characterization that called this owner-only is left in the register, because what changed was the authority, not the analysis | done |
+| ~~3~~ | ~~**D17**~~ | **RESOLVED AND IMPLEMENTED 2026-10-14** under standing authorization, after the owner delegated it explicitly and named the required property. The closed-book window now survives a restart; it fails closed; desktop only and **inert on web until D10**. nexus-core 807 to 824, desktop 330 to 337, mutation-verified, no test weakened. Domain tests in `packages/nexus-core/src/simulation-engine/closed-book-restart.test.ts`. The October characterization that called this owner-only is left in the register, because what changed was the authority, not the analysis | done |
 
 **A2, A7 and the accessClasses question are closed as of 2026-10-04.** A2
 resolved - the dead field removed, and a third previously unrecorded copy of the
@@ -85,9 +85,9 @@ build` **leaves a dirty tree** by rewriting `Cargo.toml`'s line endings.
 decisions.** Promotion past Status A is **D13**, not more engineering.
 
 **State as of 2026-10-14, after three packages:** unit 0 (Windows RC) is **done** -
-Status A, unsigned, . Unit 3 (**D17**) is **done**.
+Status A, unsigned, `docs/RELEASE_CANDIDATE_0.1.0.md`. Unit 3 (**D17**) is **done**.
 The **PR #21 integration gate** was formally assessed on a real merge and fails on
-one criterion only -  - and **O5 and O6 are now
+one criterion only - `docs/KB_INTEGRATION_GATE_PR21.md` - and **O5 and O6 are now
 decided**, so the 432-record migration is no longer blocked on a content-model
 question.
 
