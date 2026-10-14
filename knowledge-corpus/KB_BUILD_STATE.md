@@ -75,15 +75,36 @@ Measured, in `GAP_ANALYSIS.md`. The four that matter now:
 
 ## NEXT ACTION
 
-D18 resolved the contract question, so the next action is no longer a content batch.
-It is the **A → B migration** (blocker B7) and the **class (c) per-field decisions**
-(B8), in that order, per `docs/KNOWLEDGE_ARCHITECTURE.md` §3. Generating more
-records against the retired contract would add to the migration debt, so KB-003
-begins with the migration rather than with content.
+**The A → B migration (B7), and it is no longer waiting on a decision.** Its two
+prerequisites were resolved on **2026-10-14** by DEVICE-01 under the owner's
+standing authorization, in `docs/KNOWLEDGE_ARCHITECTURE.md`:
+
+- **O5 — multi-select is carried, not dropped.** Contract B gains optional
+  multi-select and the 15 genuinely multi-select records migrate. DEVICE-01
+  re-derived the 15 independently and it agrees with this lane's measurement
+  exactly. **One part is a product call, not settled:** the scoring rule is
+  delegated as **all-or-nothing**, and the register says explicitly that the
+  owner wanting partial credit overrides that line.
+- **O6 — seventeen of the eighteen class (c) fields are carried.** Only
+  `accessClasses` stays dropped, on the §6.2 reasoning. Safety, regulatory
+  applicability, assessment semantics and the structural pair all survive
+  migration with their values intact — which is not the same as any surface
+  acting on them, and the register says so.
+
+Both decisions **defer implementation to the migration commit series**, so `main`
+never carries unconsumed contract surface. That is the A9 lesson (`A9` removed
+`scenarioSchemaVersion` for exactly this reason), and it means the schema
+extension and the records land together or not at all.
+
+**The sequencing is now prescribed, and it is not the one this file used to
+assume.** `docs/KB_INTEGRATION_GATE_PR21.md` requires: resolve O5 and O6 → migrate
+**on this lane** → integrate the migrated result **as one unit**. Merging the
+unmigrated records first is what criterion 2 fails on, so the migration is not
+optional preparation for integration; it is a precondition of it.
 
 Nothing in this lane has been migrated. The 432 records are unchanged and still
-validate against the retired contract, which is the correct state until the
-migration is designed — see B7.
+validate against the retired contract, which remains the correct state until the
+migration is executed — see B7.
 
 **One thing is waiting that is not this lane's to decide.** PR #22 is open against
 this branch — not against `main` — carrying a single `CHANGELOG.md` entry from a
@@ -104,7 +125,7 @@ the further this branch moves.
 | B4 | `registries/coding-versions.json` is transcribed and unverified, and it is load-bearing | Every coding record, now and future | No. KB-002 added no coding records, deliberately |
 | B5 | No integration contract | Any merge toward `main`. `INTEGRATION_BLOCKERS.md` | No |
 | B7 | **The 432 records are not migrated.** They are written against the retired contract. The field-level map is `docs/KNOWLEDGE_ARCHITECTURE.md` §3, classifying the 43 unmapped A-keys into rename, structural lift, semantic gap and authoring-only. Two lifts carry real information-loss risk: **375 records** carry variant lineage (5 A fields → 3 B fields) and **318** use `correctChoiceIds` as an array against B's singular `correctChoiceId`, which §3(b) calls a real semantic difference rather than a rename | Ingestion of any record; KB-003's first item |
-| B8 | **Class (c) semantic gaps need a per-field decision**: 18 policy and safety fields this lane enforces that B does not model — among them `safetyFlags`, `privacyFlags`, `escalationRequired`, `hardFailureConditions`, `goldBehavior`, `acceptanceCriteria`, `evidenceBasis`. §3(c) states none may be silently lost: each must extend B's schema or be consciously dropped. `accessClasses` is already dispositioned in §6.2 — not migrated and not modelled | Migration B7, and the safety/privacy guarantees this corpus's QA currently enforces |
+| B8 | ~~Class (c) semantic gaps need a per-field decision~~ — **RESOLVED by O6 on 2026-10-14**, by DEVICE-01 under the owner's standing authorization and recorded as **not an owner decision**. Seventeen of the eighteen fields are **carried**; only `accessClasses` stays dropped on the §6.2 reasoning. `docs/KNOWLEDGE_ARCHITECTURE.md` holds the per-field table §3(c) demands. Implementation is deferred to the migration commit series so `main` never carries unconsumed contract surface | Nothing any longer. The migration it unblocks is B7 |
 | B6 | No component schema | Reusable packets, retrieval units, and anything citing a shared component by `id@revision` | **New in KB-002**, on correcting a false premise in GAP_ANALYSIS §3.4 |
 
 **Generation is not the constraint. Review is.** 432 records written, 0 approved.

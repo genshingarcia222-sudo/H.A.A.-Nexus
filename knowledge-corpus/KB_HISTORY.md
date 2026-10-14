@@ -2,6 +2,70 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-10-14 — the gate was assessed on the merged result, and O5 and O6 were decided
+
+**Branch:** `feat/knowledgebase-expansion`. `main` advanced eighteen commits to
+`9c7b09b` and conflicted for the first time since this lane opened. One file,
+`package.json`, resolved under `docs/PHASES_BUILDING_CONTROL.md` §10(H).
+
+### Someone else audited this corpus, and the audit is better than the records it replaced
+
+`docs/KB_INTEGRATION_GATE_PR21.md`, DEVICE-01, on a **real local merge** in a
+throwaway worktree. Verdict **DO NOT MERGE YET**: six of seven criteria pass,
+criterion 2 fails. The reason the re-run happened is itself the finding — the
+register, the handoff and this lane's own `INTEGRATION_BLOCKERS.md` all still
+said the blocker was **D18**, which had been discharged ten days earlier. The
+stale note had outlived the fact, and the gate was re-run against the repository
+instead of against the note.
+
+**Criterion 2 fails because merging would narrow O6**, by a mechanism this lane
+had not identified: once the 18 class (c) fields are on `main` with
+`kb-validate.mjs`'s `SAFETY-PRECEDENCE` rule live in the repository, dropping one
+stops being a field not carried forward and becomes a safety guarantee removed
+from `main`. Same option set; different cost and meaning. The fix is an ordering —
+resolve O5 and O6, migrate on the lane, integrate as one unit — and it costs
+nothing, because the branch is clean against `main` and nothing is decaying.
+
+### O5 and O6 are decided, and the lane's records had to be corrected
+
+Both by DEVICE-01 under the owner's **standing authorization** and recorded as
+**not owner decisions**, in `docs/KNOWLEDGE_ARCHITECTURE.md`:
+
+- **O5 — carry multi-select.** B gains an optional multi-select and the 15
+  records migrate. Dropping, re-authoring and holding back were each rejected on
+  the record; re-authoring in particular because it would rewrite judged clinical
+  assessment content with no reviewer. **The 15 was re-derived independently and
+  matches this lane's measurement exactly** — a second derivation, not a citation
+  of ours. Its scoring rule, **all-or-nothing**, is flagged as a product call the
+  owner may override, not recorded as settled.
+- **O6 — carry seventeen of eighteen.** Only `accessClasses` stays dropped on the
+  §6.2 reasoning. The argument is an asymmetry: optional additions to `.strict()`
+  schemas cannot break a consumer that ignores them, while dropping them deletes
+  enforcement that exists and works.
+
+Both defer implementation to the migration commit series so `main` never carries
+unconsumed contract surface — the **A9** lesson, which removed
+`scenarioSchemaVersion` for exactly that reason.
+
+**So B8 is resolved and B7 is unblocked**, and this lane's `KB_BUILD_STATE.md`,
+`review/OPEN_REVIEW_ITEMS.md` and `INTEGRATION_BLOCKERS.md` were saying otherwise.
+They are reconciled here under §10(F). The reconciliation is the point: the gate
+re-run happened *because* stale records misdirected it, and leaving this lane's
+copies stale would set the same trap for the next session.
+
+### The migration was not executed
+
+Deliberately. Its prerequisites are met, but it is substantial, it extends a
+contract that lives in `packages/nexus-core` rather than in this lane, and
+nobody asked for it. It is surfaced as the next real work, with the prescribed
+ordering recorded, and left for the owner. **That is a choice, not an oversight.**
+
+### Corpus
+
+**Untouched.** 432 records, QA 0 errors / 0 warnings, privacy CLEAR, 0 approved,
+70 checksums identical. The merge changed no record, registry, schema or tool, and
+neither did this entry.
+
 ## 2026-10-04 — a sibling session's work found stranded in an open PR against this lane
 
 **Found during a routine watch of PR #21, not by anything that pointed at it.**

@@ -8,6 +8,59 @@ This branch is not merged into `main`, and the corpus is not live. No applicatio
 file was modified: no loader, no `packages/nexus-core` schema, no entitlement
 code, no Assessment logic, nothing under `content/`, nothing in `.nexus/`.
 
+## The gate was assessed on the merged result — 2026-10-14, DEVICE-01
+
+**Verdict: DO NOT MERGE YET. Six of seven criteria pass; criterion 2 fails.**
+`docs/KB_INTEGRATION_GATE_PR21.md`, assessed at `main` = `3c496e3` against PR #21
+head `8ce93b3`, on a real local merge in a throwaway worktree. Nothing was merged
+to `main` and nothing was pushed. The merge decision was reported, not taken.
+
+**This supersedes what the rest of this file used to say.** Every record here, in
+the register and in the handoff said PR #21 was blocked on **D18** — and D18 was
+discharged on 2026-10-04, so that reason had outlived itself. The gate was re-run
+against the repository rather than against the stale note, and it now fails for a
+different and better reason.
+
+**Criterion 2 — no open decision is resolved, narrowed or implied — FAILS, and
+the mechanism is worth stating exactly.** Merging does not resolve D18 and does
+not reopen it. What it does is **narrow O6**. Today the 18 class (c) fields live
+on a branch and the migration may carry or drop each one as a forward-looking
+choice. Once they are on `main` with `kb-validate.mjs`'s 24 rules live in the
+repository — `SAFETY-PRECEDENCE` among them — dropping any of them stops being
+"a field we chose not to carry forward" and becomes **"a safety guarantee removed
+from `main`"**. The option set is unchanged; the cost and the meaning of one
+option change materially. That is what "narrowed" is for.
+
+**The prescribed fix is an ordering, not a change to this corpus:** resolve O5
+and O6 → migrate on this lane → integrate the migrated result **as one unit**.
+Then `main` receives records in the canonical contract, the retired JSON Schema
+arrives labelled as an authoring artifact rather than as live content, and no
+safety field is dropped from `main` because none was ever on it unmigrated. O5
+and O6 were resolved the same day; the migration is B7.
+
+**What the other six criteria established**, measured rather than asserted: scope
+touches no other lane's owned files; the local merge is genuinely **zero-conflict**
+so no §10 policy was needed; **90 KB tests pass on the merged result** including
+the KB-001 byte-identity regeneration test; `.nexus/` is **byte-identical** in the
+merged tree; no application, runtime, Rust, bundler, CI or entitlement code is
+added; and the CHANGELOG entry carries its explicit "not verified, and not
+claimed" section.
+
+**Two findings worth keeping from someone else's reading of this corpus.** The
+record count was re-derived from the files rather than read off the manifest and
+**432 is correct** — each committed JSON file is a template *group*, so the 57-file
+count is not the record count, which is exactly the sort of discrepancy that gets
+propagated. And the `.gitattributes` rule `knowledge-corpus/**/*.json -text` was
+called out as right for the reason it was written: the corpus is pinned by
+SHA-256, so a line-ending conversion on checkout would report drift for a reason
+unrelated to content — the same failure mode that was *discovered* in `Cargo.toml`
+during the release build the same day, and here anticipated.
+
+**PR #22 is explicitly outside this gate**, being open against this branch rather
+than `main`, and the assessment did not touch it.
+
+---
+
 ## The blocker that came before all the others — RESOLVED 2026-10-04
 
 **D18 chose Contract B.** The D12 Zod model in
