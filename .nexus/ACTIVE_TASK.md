@@ -54,16 +54,16 @@ task_name: "D17 characterization and outcome determination"
 owner: DEVICE-01
 status: BLOCKED
 started_at: 2026-10-09T03:33:34.221Z
-last_update: 2026-10-12T04:50:30.331Z
+last_update: 2026-10-14T08:19:22.369Z
 stale_after_hours: 12
 expected_scope: "Characterize interrupted-Assessment behaviour across restart and determine the D17 outcome from executable evidence. Observation-first; no persistence redesign, no hosted persistence, no change to D4 or D6 scope. Expensive operations remain locked."
 affected_areas: "docs/, .nexus/, CHANGELOG.md"
 branch: main
 claim_commit: 86c36cef12952d590eaee5b7f39b4ae35bffff48
-last_commit: c4baa9ea6a637aa34e0597d27883abc5995afa24
+last_commit: ee9c2eb427c52070ba25fd38776f080aacb1982f
 handoff_required: no
 handoff_to: none
-next_action: "NEXT WINDOWS PACKAGE, needs a fresh session window (>=20pp session headroom): tauri build from the release commit producing MSI and NSIS, artifact paths and SHA-256 hashes, then a clean-machine install/launch/uninstall smoke test on Windows. That yields Status A, an unsigned internal release candidate. Status B stays unreachable: P9-B needs D13 (signing identity), P9-E needs D13 plus a legal entity, P9-C needs D14 which needs D10. Owner decisions outstanding: D10, D13, D17, and A12/Pilot 001 human clinical review."
+next_action: "Owner answer to the D17 question. Independent of the Windows RC."
 ```
 
 ## Ownership history
@@ -109,3 +109,4 @@ Timestamps are UTC.
 | 2026-10-09T03:33:34.221Z | CLAIM | DEVICE-01 | P10-004 | claimed |
 | 2026-10-09T03:35:22.631Z | RELEASE BLOCKED | DEVICE-01 | P10-004 | D17 characterized end to end and determined OWNER DECISION REQUIRED. Not resolvable under standing authorization: closing the window changes D4's scope, changing the retake changes D6's rule, and leaving it open ratifies a policy - no option is merely technical. No behaviour changed, no test weakened; closedBookBoundary 26/26 unchanged. Two new findings recorded: D10 blocks uniform enforcement rather than the decision (option 2 works on desktop today, inert on web), and option 2 is cheaper than the register implied because findInterrupted() already exists. |
 | 2026-10-12T04:50:30.331Z | RELEASE BLOCKED | DEVICE-01 | P10-004 | P9-A confirmed at the binary level: PE Subsystem 2 (WINDOWS_GUI), x64, PE32+, SHA-256 097A7714...0879, NotSigned. main.rs unchanged since the binary was built and the intervening src-tauri commits are rustfmt and comments, so the measurement holds for current main. Retires the stale lead that main was a console build - that predated the D15 merge. Device channel verified: no peer session reachable, so no dispatch was claimed. D17 remains the owner-blocked item this task was opened for. |
+| 2026-10-14T08:19:22.369Z | RELEASE BLOCKED | DEVICE-01 | P10-004 | D17 remains the owner's to answer; the decision packet is recorded. Releasing the hold so the Windows RC package can be claimed - D17 blocks no release work. |
