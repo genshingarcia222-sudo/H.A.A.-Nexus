@@ -141,7 +141,49 @@ enter the runtime contract at all.
 | `effectiveFrom`, `effectiveTo` | `applicability.effectiveFrom/.effectiveTo` | B cross-validates these against `codingReference`; A cannot |
 | `codingVersion` | `codingReference{system, code, version, source, effectiveFrom, effectiveTo}` | **an upgrade, not a rename.** A flat version string cannot carry the provenance §5 requires |
 | `variantOf`, `parentId`, `templateId`, `mutationTypes`, `variantLineage` | `variantGroup`, `supersedes`, `exceptionOf` | 5 → 3. **375 of the 432 records carry variant lineage**, so this is the highest-volume lift and the one most likely to lose information |
-| `correctChoiceIds` (array) | `correctChoiceId` (singular) | **a real semantic difference, not a rename.** 318 records use the array form. Whether multi-select items exist, and what B does with them, is an open question this map surfaces rather than answers |
+| `correctChoiceIds` (array) | `correctChoiceId` (singular) | **a real semantic difference, not a rename.** 318 records use the array form. **O5 is now decided — see below.** |
+
+
+#### O5 decided — `correctChoiceIds` → multi-select is carried, not dropped
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORISATION**, 2026-10-14,
+DEVICE-01. Not an owner decision, and not labelled as one.
+
+**Measured first, independently of the lane's own count.** Of the 432 records,
+**318** carry `correctChoiceIds` and exactly **15** carry more than one id. All
+fifteen have **exactly two** correct choices, all are `taskType: MULTI_SELECT`,
+and all come from two template families (`KB-VART-KB001-000002`,
+`KB-VART-KB002-000026`), ids `KB-QUES-KB001-000013` … `KB-QUES-KB002-000096`.
+The other **303** array-form records hold a single id and lift mechanically. The
+lane's figure was correct; this is a second, independent derivation of it.
+
+**Decision: contract B gains optional multi-select, and the 15 records migrate.**
+
+The alternatives were to drop the 15, re-author them as single-answer, or hold
+them back. All three were rejected:
+
+- **dropping** destroys authored content, against the standing rule that nothing
+  is silently lost;
+- **re-authoring** means rewriting judged clinical assessment content without a
+  reviewer, which no automated step may do;
+- **holding back** makes the migration permanently partial for 15 records and
+  defers the same decision to whoever finds them later.
+
+Carrying them is additive, the surface is small and fully characterised, and B's
+ITEM family already extends the Training question-bank schema where a response
+format is modelled.
+
+**One part of this is a product decision and is flagged, not buried.** Scoring a
+multi-select item needs a rule: all-or-nothing, or partial credit. The delegated
+choice is **all-or-nothing**, because it is the only rule that keeps deterministic
+evaluation independent of a weighting judgement nobody has made. **If the owner
+wants partial credit, that overrides this line** — it is a product call, and
+recording it as settled would misrepresent it.
+
+**Implementation is deliberately deferred to the migration commit series**, not
+done ahead of it. Adding an unconsumed field to the canonical contract is exactly
+what **A9** removed (`scenarioSchemaVersion`), and repeating it immediately after
+would be incoherent. The field arrives with the records that populate it.
 
 ### (c) Semantic gap — B has no equivalent and a decision is required per field
 
@@ -166,6 +208,41 @@ Three of these are load-bearing for decisions already taken:
   regulatory statement safe to show. §5 depends on them.
 - **`clinicianJudgmentRequired`** and **`escalationRequired`** are safety
   metadata. Dropping them silently would be the worst outcome in this document.
+
+#### O6 decided — all seventeen remaining class-(c) fields are carried; only `accessClasses` is dropped
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORISATION**, 2026-10-14,
+DEVICE-01. Not an owner decision.
+
+**Decision: contract B is extended to carry every class-(c) field except
+`accessClasses`, which stays dropped on the §6.2 reasoning.** None is dropped
+silently, and the per-field decision §3(c) demands is this table.
+
+| Group | Fields | Disposition |
+|---|---|---|
+| **Safety** | `safetyFlags`, `privacyFlags`, `escalationRequired`, `clinicianJudgmentRequired`, `hardFailureConditions` | **carried.** These are what the lane's `SAFETY-PRECEDENCE` rule enforces today; dropping one removes a guarantee a reviewer can currently rely on |
+| **Regulatory applicability** | `jurisdictions`, `payerSpecific`, `encounterDate` | **carried.** §5 depends on them — they are what makes a coding or regulatory statement safe to show, alongside the `effectiveFrom/To` lift already in class (b) |
+| **Assessment semantics** | `goldBehavior`, `acceptanceCriteria`, `errorTargets`, `remediationTargets`, `trapTypes`, `expectedOutput` (114), `steps` (16) | **carried.** These carry what a correct response *is*; without them a migrated record is a prompt with no gradeable intent |
+| **Structural** | `moduleIds`, `evidenceBasis` | **carried.** `moduleIds` is the module boundary; `evidenceBasis` is provenance-adjacent and cheap to keep |
+| **Dropped** | `accessClasses` | **not migrated and not modelled**, per §6.2 — D4 blocks surfaces rather than records, it is on zero records, and the generator cannot assign it |
+
+**Why extend rather than drop.** The fields are optional additions to schemas
+that are already `.strict()`, so they cannot break an existing consumer: a
+consumer that does not read them is unaffected, and a record that omits them
+still validates. Against that, dropping seventeen fields would delete enforcement
+that exists and works, to save schema surface that costs nothing. The asymmetry
+is not close.
+
+**What this does not claim.** Extending the schema does not make any record
+reviewed, source-verified or production-eligible — all 432 remain
+`pendingHumanReview`, and no schema change can alter that. It also does not
+implement the safety *behaviour*: carrying `escalationRequired` means the field
+survives migration with its value intact, not that any surface acts on it. A
+consumer that enforces it is separate work and is not claimed here.
+
+**Implementation is deferred to the migration commit series**, for the A9 reason
+given under O5: the fields land with the records that populate them, so `main`
+never carries unconsumed contract surface.
 
 ### (d) Authoring-pipeline metadata — must NOT enter the runtime contract
 

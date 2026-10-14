@@ -11,6 +11,87 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Knowledge Base Integration Gate Assessed, and O5 and O6 Decided (2026-10-14)
+
+**Assessment and two delegated decisions. No record was migrated, no schema
+changed, nothing was merged to `main`, nothing was pushed from the trial branch.**
+
+**PR #21 was re-assessed because its recorded blocker is gone.** The register, the
+handoff and the branch's own blocker file all said it was blocked on **D18** —
+resolved on 2026-10-04. The gate was therefore re-run against the repository on a
+**real local merge** in a throwaway worktree: `main` `3c496e3` + PR #21
+`8ce93b3`, **clean, zero conflicts**, 107 files, +93,513.
+
+**Verdict: six of seven criteria pass; criterion 2 fails.**
+`docs/KB_INTEGRATION_GATE_PR21.md` carries the evidence.
+
+- **Suites on the merged result:** `kb:manifest:check`, `kb:validate`,
+  `kb:privacy`, and three test suites — all exit 0, **90 KB tests passing**,
+  including *"KB-001 regenerates byte-identically to the committed files"*, which
+  is the owner's byte-identity requirement met by regeneration rather than by a
+  generator exiting 0.
+- **The existing suites transfer by proof, not assumption:** in the merged tree
+  `packages/`, `apps/`, `.github/`, `.nexus/`, `docs/` and `content/` are
+  **byte-identical to `main`**, so B-009's counts hold unchanged. This is stated
+  as a proof from the diff, not implied to be a fresh run.
+- **Criterion 2 fails for a specific reason.** Merging does not reopen D18; it
+  **narrows O6**. While the 18 class-(c) safety fields sit on a branch, the
+  migration may carry or drop each as a forward choice. Once they are on `main`
+  with `kb-validate.mjs`'s `SAFETY-PRECEDENCE` running, dropping one becomes a
+  safety guarantee *removed from `main`*. Same options, materially different cost.
+- **The fix is sequencing, and it costs nothing:** resolve O5 and O6, migrate on
+  the lane, integrate the migrated result as one unit.
+
+**`mergeable` was treated as one criterion out of seven.** PR #21 is `MERGEABLE`
+and its own title still says do not merge; it was not merged, and specifically not
+on the strength of that label. **PR #22 is open against the lane, not `main`**, and
+was not merged, closed or modified.
+
+**The record count was verified rather than inherited.** **432 is correct** — 324
+in KB-001 (27 template families × 12 operators) plus 108 in KB-002, stored as
+**57 template-group files**, each holding a family's records. A file count reads
+as 57 and is not the record count. Still **0 approved, 432 pending human review,
+0 source-verified**, and the declared v1.0 source archive is **absent** from the
+repository, so its 400 seed records are not in this corpus and no part of them was
+reconstructed.
+
+**Divergence re-measured against current `main`:** 54 A-properties, 432 records,
+**11** keys with a same-named home in B, **43** without, 39 of those on all 432
+records, against **33** `.strict()` schemas. **The 11-of-54 figure D18 rests on
+still holds**, so contract B has not drifted and D18 needs no revisiting.
+
+**Two decisions taken under the owner's standing authorisation**, recorded in
+`docs/KNOWLEDGE_ARCHITECTURE.md` §3 and labelled as delegated, not as owner
+decisions:
+
+- **O5 — multi-select is carried.** Measured independently of the lane: of 432
+  records, 318 carry `correctChoiceIds` and exactly **15** carry more than one,
+  all with exactly two correct choices, all `MULTI_SELECT`, from two template
+  families. Contract B gains optional multi-select and the 15 migrate. Dropping,
+  re-authoring and holding back were all rejected — re-authoring in particular
+  would mean rewriting judged clinical content without a reviewer. **One part is a
+  product call and is flagged, not buried:** scoring is set to **all-or-nothing**
+  because partial credit needs a weighting judgement nobody has made, and the
+  owner can override that line.
+- **O6 — seventeen of the eighteen class-(c) fields are carried; only
+  `accessClasses` stays dropped** on the §6.2 reasoning. Safety, regulatory
+  applicability, assessment semantics and structural fields are each dispositioned
+  in a per-field table. Extending is additive against already-`.strict()` schemas
+  so it cannot break a consumer, while dropping seventeen would delete enforcement
+  that works to save schema surface that costs nothing.
+
+**Both implementations are deliberately deferred to the migration commit series**,
+not done ahead of it: adding unconsumed fields to the canonical contract is
+exactly what **A9** removed, and repeating it immediately after would be
+incoherent. The fields land with the records that populate them.
+
+**Carrying a safety field does not implement safety behaviour**, and that is not
+claimed: it means the value survives migration intact, not that any surface acts
+on it. No record moved toward review or production eligibility, and no schema
+change could do so.
+
+---
+
 ## Windows Release Candidate 0.1.0 Built and Smoke-Tested — Status A (2026-10-14)
 
 **An unsigned internal release candidate exists. It is not a release.**
