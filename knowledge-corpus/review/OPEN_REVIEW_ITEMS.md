@@ -76,6 +76,43 @@ registry entry governs every coding record the corpus will ever hold.
 | O6 | ~~The 18 class (c) policy and safety fields~~ — **DECIDED 2026-10-14**: **seventeen are carried, only `accessClasses` is dropped** on the §6.2 reasoning. The per-field table §3(c) demands is in `docs/KNOWLEDGE_ARCHITECTURE.md`, grouped as safety, regulatory applicability, assessment semantics and structural. The reasoning is the asymmetry: the fields are optional additions to `.strict()` schemas, so they cannot break a consumer that ignores them, while dropping them deletes enforcement that exists and works. Decided by DEVICE-01 under standing authorization, **not an owner decision** | Nothing any longer. Note what it does **not** claim: carrying `escalationRequired` means the field survives with its value intact, **not** that any surface acts on it, and no schema change makes any record reviewed or production-eligible — all 432 stay pending |
 | O7 | **Whether to take PR #22 into this lane.** It is open against `feat/knowledgebase-expansion` (not `main`), authored 2026-10-01 by a third DEVICE-02 session and untouched since. Measured, not read off its body: against the merge base `9e58995` the entire diff is **93 insertions in `CHANGELOG.md` and nothing else** — one `##` entry recording that two sessions resolved the same `main`-into-lane conflict in parallel, and the coordination lesson from it. `git merge-tree` against `35ca619` reports **CLEAN**; the changelog would go from 84 headings to 85. Its two CI claims were checked against the API and both are genuine successes (`36821096497` at `fa5a040`, `36821384469` at `640b600`). It contains no record, schema, registry, tool or workspace change. One caveat: the entry states "D18 is untouched", true on 2026-10-01 and false since `ac8cae2` — historical, but it must be read with its date. **This session did not merge, close or modify it**, because it is another session's pull request | Blocks nothing. But the entry's content is recorded nowhere else in this lane, so leaving the PR to rot is the only way its author's work gets lost |
 
+### O6, corrected by measurement — `accessClasses` is NOT on zero records
+
+**Measured 2026-10-14 by DEVICE-01 while building the P9-011 disposition table
+(`tools/knowledge-corpus/kb-field-disposition.mjs`), and it corrects a stated
+basis of the decision.**
+
+`docs/KNOWLEDGE_ARCHITECTURE.md` §3(c)/§6.2 justified dropping `accessClasses`
+partly on the claim that *"it is on **zero** records today and the generator
+cannot assign it."* That is false. Every one of the **432** records carries a
+non-empty value, and the generator assigns three distinct ones:
+
+| Records | Value |
+|---|---|
+| 299 | `["TRAINING","PRACTICE","INSTRUCTOR_ADMIN"]` |
+| 106 | `["TRAINING","PRACTICE","SIMULATION","INSTRUCTOR_ADMIN"]` |
+| 27 | `["TRAINING","PRACTICE","SIMULATION","PREMIUM_REALISTIC","INSTRUCTOR_ADMIN"]` |
+
+**What survives the correction, and it is the leg that matters.** **No record
+carries `ASSESSMENT_CLOSED_BOOK`** — asserted by test. So the decision's real
+ground holds: D4 blocks surfaces rather than records, nothing in this corpus
+claims closed-book access, and dropping the field cannot drop a closed-book
+rule. The **decision therefore stands as ratified** (the owner has since
+confirmed it directly), and this session did not reverse it.
+
+**What changes is the honesty of its price.** The drop is not a no-op: it
+discards a real, differentiated value from **all 432** records, and **27 of them
+are marked `PREMIUM_REALISTIC`**, which is an entitlement-relevant distinction
+and therefore adjacent to **D1**. A migration that drops it should expect to
+re-derive that distinction from elsewhere if an entitlement ever needs it.
+
+**Why this cannot go quiet again.** `lossReport()` in the disposition tool
+measures, on every run, how many records lose a non-empty value for each dropped
+field, and prints the values. Three tests pin it: that the loss is reported as
+432 and not zero, that no record claims `ASSESSMENT_CLOSED_BOOK`, and that the
+`PREMIUM_REALISTIC` count is 27. A sentence cannot be trusted to stay true about
+data; a measurement can be re-run.
+
 ### O1, measured
 
 `npm run kb:divergence` measures the two contracts instead of describing them.
