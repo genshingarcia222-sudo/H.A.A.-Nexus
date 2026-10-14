@@ -11,6 +11,66 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## P9-011 Step A1 — the Field Disposition Table, and a False Premise Corrected (2026-10-14)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Work landed
+on the knowledgebase lane as **PR #23** into `feat/knowledgebase-expansion`, not
+into `main`. **No record was migrated, no schema changed, no manifest or
+checksum touched**, and all 432 records remain `pendingHumanReview` with 0
+approved.
+
+**What exists now.** `tools/knowledge-corpus/kb-field-disposition.mjs`: every
+contract A field and what the migration does with it, derived from the actual
+schema, the actual 432 records and the actual contract B source rather than from
+prose. All **54** declared properties are populated by the corpus and all 54 are
+dispositioned — **11 direct, 7 rename, 9 lift, 17 extend, 1 drop-policy, 9
+drop-authoring**.
+
+The migration's binding rule is that no field may be silently dropped, and §3 of
+`docs/KNOWLEDGE_ARCHITECTURE.md` could not enforce it. The tool exits non-zero
+when a populated field has no disposition, when the table names a field no
+record carries, when a `direct` mapping names a field contract B does not have,
+when a drop cites no deciding authority, or when O5/O6 arithmetic drifts from
+the decisions. Its readers are imported from `kb-schema-divergence.mjs` on
+purpose: a second parser for the same three inputs is how two tools start
+disagreeing about what the corpus contains.
+
+**A correction the measurement forced, and it is the substantive finding.**
+§6.2 justified dropping `accessClasses` partly because *"it is on zero records
+today and the generator cannot assign it."* **All 432 records carry a non-empty
+value**, in three distinct forms (299 / 106 / 27), and **27 are marked
+`PREMIUM_REALISTIC`** — entitlement-relevant, and adjacent to **D1**.
+
+The decision still holds on the leg that was always doing the work: **no record
+carries `ASSESSMENT_CLOSED_BOOK`**, asserted by test, so dropping the field
+cannot drop a closed-book rule. **It was not reversed** — the owner has since
+confirmed it directly. What was wrong is the claim that the drop costs nothing.
+`lossReport()` now measures, on every run, how many records lose a non-empty
+value for each dropped field and prints the values; three tests pin the 432, the
+absence of `ASSESSMENT_CLOSED_BOOK`, and the count of 27.
+
+**Verified on the lane.** `kb:disposition` exit 0 · `kb:test:disposition`
+**19/19** · and the existing chain still green: `kb:manifest:check`,
+`kb:validate`, `kb:privacy`, `kb:test`, `kb:test:privacy`,
+`kb:test:divergence`, all exit 0. Both new checks were added to `kb:verify`.
+**Mutation-verified:** reclassifying `safetyFlags` as authoring metadata fails 5
+tests and makes the tool exit 1.
+
+**Deliberately not started, and this is a sequencing decision rather than a
+shortfall.** The record transform and the contract B schema extension are not
+begun. The 17 carried fields must land in the **same commit series** as the
+records that populate them — **A9** removed a field nothing consumed, and adding
+one ahead of its records would repeat exactly that mistake. Separating them also
+means a budget stop cannot leave half-migrated canonical records, which is the
+one outcome worse than not starting.
+
+**Ownership respected.** DEVICE-02 had advanced the lane to `98d1bea` (a merge of
+`main` plus one docs commit recording the O5/O6 dispositions). That head was
+**not moved**; this work sits on its own branch and asks to be merged by PR. No
+other session's worktree or uncommitted work was touched.
+
+---
+
 ## Release Build Reliability — the Exit Status and the Dirty Tree (2026-10-14)
 
 **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Fixes two
