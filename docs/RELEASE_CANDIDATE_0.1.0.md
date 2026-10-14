@@ -264,6 +264,17 @@ build, which is precisely the condition `RELEASE_POLICY.md` §7 requires to be
 absent at a release commit. Anyone running the gate list after a build will find
 the tree dirty for no reason and may be tempted to commit the noise.
 
+**Fixed 2026-10-14 in `tools/release/build.mjs`**, together with the exit-status
+defect in §2. The runner classifies each build-generated change as
+content-identical or semantic using `git diff`'s own normalisation and restores
+only the content-identical ones; a semantic change is refused rather than
+discarded, so a legitimately bumped version cannot be cleaned away. 16 tests in
+`tools/release/build.test.mjs`, and the runner is now the last line of the §7
+gate list. **The classification and restore logic is unit-tested against
+disposable repositories; it has not yet been exercised against a real
+`tauri build`** - that confirmation is the next release build's to give, and it
+is cheap.
+
 ---
 
 ## 10. Conclusion

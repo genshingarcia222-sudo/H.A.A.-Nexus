@@ -163,9 +163,41 @@ node tools/preflight/preflight.mjs
 node tools/preflight/preflight.test.mjs
 node tools/nexus-sync/nexus-sync.test.mjs
 node tools/release/version.test.mjs
+node tools/release/build.test.mjs
 cd apps/desktop/src-tauri && cargo test --offline && cargo fmt --check
-npx --yes pnpm@9 tauri build
+node tools/release/build.mjs
 ```
+
+**The last line is `tools/release/build.mjs`, not a bare `tauri build`, and that
+is a correction rather than a preference.** Two defects in the 0.1.0 build are
+why, both recorded in `docs/RELEASE_CANDIDATE_0.1.0.md`:
+
+1. The build was run as `... tauri build 2>&1 | tail -25` followed by
+   `BUILD_EXIT=$?`. A shell pipeline's status is its **last** stage, so that
+   number was `tail`'s. **A failed build would have reported success.** The
+   artifacts happened to exist, so 0.1.0 was still verifiable - by luck, not by
+   the check. The runner spawns the build with no shell and no pipeline, so the
+   status it reports is the build's own; it also treats a signal kill and a
+   failure to spawn as failures rather than as zero.
+2. `tauri build` rewrites `apps/desktop/src-tauri/Cargo.toml` with LF line
+   endings, which leaves the tree dirty after every release build - exactly the
+   condition this section requires to be absent. The runner snapshots the tree
+   before and after, classifies each build-generated change as
+   **content-identical** or **semantic** using `git diff`'s own normalisation,
+   and restores only the content-identical ones. **A semantic change is never
+   discarded**: the runner refuses, prints the file and exits non-zero, because a
+   legitimately bumped version must not be thrown away by a cleanup step.
+
+The runner also prints the **first** error lines rather than only the tail. Cargo
+prints `error[E0425]` hundreds of lines before `error: could not compile`, and
+the first one is the cause.
+
+`build.test.mjs` is in the gate list above because the guarantee needs pinning,
+not just implementing. It reproduces the pipeline defect, proves a 400-line log
+cannot hide a non-zero exit, and proves a version bump is classified semantic -
+so a future change that made the runner discard real edits would fail the gate.
+It runs no release build: failure is produced with a controlled command, because
+the way to test a failure path is not to break the product.
 
 Then, before the tag: record the artifact sizes and `Get-AuthenticodeSignature`
 results, append the baseline to `.nexus/BASELINE.md`, and confirm no test count

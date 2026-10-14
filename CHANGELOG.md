@@ -11,6 +11,68 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## Release Build Reliability — the Exit Status and the Dirty Tree (2026-10-14)
+
+**CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Fixes two
+defects that the 0.1.0 release build exposed in the release *process*, not in the
+product. Both were found and disclosed during that build and are recorded in
+`docs/RELEASE_CANDIDATE_0.1.0.md`.
+
+**There was no release build script at all.** `tauri build` was invoked by an
+ad-hoc shell command, which is where both defects came from, and CI never runs
+it. `tools/release/build.mjs` is now that script, and it is the last line of the
+`RELEASE_POLICY.md` §7 gate list.
+
+**Defect 1 — a failed build could have reported success.** The build ran as
+`... tauri build 2>&1 | tail -25` followed by `BUILD_EXIT=$?`. A shell
+pipeline's status is its **last** stage, so the number captured was `tail`'s.
+0.1.0 was still verifiable because the artifacts existed and were measured
+directly — by luck, not by the check. The runner spawns the build with
+`spawnSync`, **no shell and no pipeline**, so the status reported is the build's
+own. It also treats a signal kill (`status === null`) and a failure to spawn as
+failures rather than as zero, which a shell would have flattened into a number.
+
+**It also surfaces the first error rather than the tail.** Cargo prints
+`error[E0425]` hundreds of lines before `error: could not compile`, and the
+first line is the cause. The old command only ever displayed the last 25 lines.
+
+**Defect 2 — the release build left the tree dirty.** `tauri build` rewrites
+`apps/desktop/src-tauri/Cargo.toml` with LF line endings, which is exactly the
+condition §7 requires to be absent at a release commit. The runner snapshots the
+working tree before and after, classifies each build-generated change as
+**content-identical** or **semantic** using `git diff`'s own normalisation, and
+restores only the content-identical ones. **A semantic change is never
+discarded** — the runner prints the file and exits non-zero, because a
+legitimately bumped version must not be thrown away by a cleanup step. It also
+**refuses to build at all** on an already-dirty tree, so a pre-existing change
+can never be mistaken for a build-generated one.
+
+**Verified.** `node tools/release/build.test.mjs` — **16/16**. The suite
+reproduces the pipeline defect (portably, and again through a real bash pipeline
+where one is spawnable), proves a 400-line log cannot hide a non-zero exit,
+proves a spawn failure is not a zero, and proves a version bump is classified
+semantic so a future change that discarded real edits would fail the gate. It
+runs **no** release build: failure is produced with a controlled command, because
+the way to test a failure path is not to break the product. The pre-build refusal
+was additionally verified end to end — run against a dirty tree it exits 1 and
+names the files without starting a build.
+
+**Two things found while writing the tests, worth recording.** The line-ending
+fixture initially reproduced the wrong direction (it stored CRLF in the index,
+where this repository stores LF) and so reported `semantic` for a safe change.
+And the non-vacuity check originally asserted on `package.json`, which started
+failing the moment this very package added a script to it — a test that depends
+on the repository staying still fails for the wrong reason, so it now uses a
+disposable repository.
+
+**Not claimed.** The classification and restore logic is unit-tested against
+disposable repositories and the refusal paths are verified directly, but **the
+restore has not yet run against a real `tauri build`**. That confirmation belongs
+to the next release build and is cheap. No artifact was rebuilt, no release was
+cut, and the 0.1.0 candidate's recorded evidence is unchanged.
+
+---
+
 ## D17 Resolved — the Closed-Book Window Survives a Restart (2026-10-14)
 
 **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Not an
