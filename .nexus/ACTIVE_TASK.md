@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P9-010
-task_name: "Windows release candidate (Status A): build, package, verify"
+task_id: P8-D17
+task_name: "D17: close the closed-book window across a restart"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-10-14T08:19:49.574Z
-last_update: 2026-10-14T08:34:41.888Z
+status: ACTIVE
+started_at: 2026-10-14T08:45:30.670Z
+last_update: 2026-10-14T08:45:30.670Z
 stale_after_hours: 12
-expected_scope: "Build the Windows RC from the authoritative release commit: tauri build producing MSI and NSIS, inspect the NEWLY BUILT binary's PE subsystem and architecture, record artifact paths, sizes and SHA-256, run an install/launch/uninstall smoke test on this machine (labelled same-machine, not clean-machine), and write the artifact manifest. Artifacts stay out of source control. Status B is NOT claimed."
-affected_areas: "docs/, .nexus/, CHANGELOG.md"
+expected_scope: "D17 implementation under the owner's explicit delegation: an interrupted assessment persisted as in_progress must keep the Knowledge Base and Training closed after a restart, until the learner discards or submits that attempt. Pure rule in nexus-core (new function; the existing arity pin on mayAccessReferenceMaterial stays intact), one boot-time persistence read feeding the gate, ReferenceGate wiring, and the closedBookBoundary characterization expectations updated only where the policy changed - no test weakened or deleted. Desktop only; the web target is inert until D10 and that is recorded, not hidden."
+affected_areas: "not recorded"
 branch: main
-claim_commit: 79198d5029a943ab93164cb59e8096ff83b721c9
-last_commit: b081c361411ba72d74d5267606c99ad67778cdf2
+claim_commit: 51259d7fbfa7a7f12eb2bf406a0a8f73fc84b136
+last_commit: 51259d7fbfa7a7f12eb2bf406a0a8f73fc84b136
 handoff_required: no
 handoff_to: none
-next_action: "P9-011: Knowledge Base migration of the 432 authored records to canonical contract B (D18), with provenance mapping, duplicate checks, manifest regeneration and consumer reconciliation"
+next_action: "not recorded"
 ```
 
 ## Ownership history
@@ -113,3 +113,4 @@ Timestamps are UTC.
 | 2026-10-14T08:19:42.651Z | RELEASE COMPLETE | DEVICE-01 | P10-004 | The TASK is complete: D17 was characterized end to end and its outcome determined as OWNER DECISION REQUIRED, with the decision packet recorded. The DECISION remains blocked in the register - that separation is deliberate, and D17 blocks no release work. |
 | 2026-10-14T08:19:49.574Z | CLAIM | DEVICE-01 | P9-010 | claimed |
 | 2026-10-14T08:34:41.888Z | RELEASE COMPLETE | DEVICE-01 | P9-010 | complete |
+| 2026-10-14T08:45:30.670Z | CLAIM | DEVICE-01 | P8-D17 | claimed |
