@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P10-004
-task_name: "D17 characterization and outcome determination"
+task_id: P9-010
+task_name: "Windows release candidate (Status A): build, package, verify"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-10-09T03:33:34.221Z
-last_update: 2026-10-14T08:19:42.651Z
+status: ACTIVE
+started_at: 2026-10-14T08:19:49.574Z
+last_update: 2026-10-14T08:19:49.574Z
 stale_after_hours: 12
-expected_scope: "Characterize interrupted-Assessment behaviour across restart and determine the D17 outcome from executable evidence. Observation-first; no persistence redesign, no hosted persistence, no change to D4 or D6 scope. Expensive operations remain locked."
+expected_scope: "Build the Windows RC from the authoritative release commit: tauri build producing MSI and NSIS, inspect the NEWLY BUILT binary's PE subsystem and architecture, record artifact paths, sizes and SHA-256, run an install/launch/uninstall smoke test on this machine (labelled same-machine, not clean-machine), and write the artifact manifest. Artifacts stay out of source control. Status B is NOT claimed."
 affected_areas: "docs/, .nexus/, CHANGELOG.md"
 branch: main
-claim_commit: 86c36cef12952d590eaee5b7f39b4ae35bffff48
-last_commit: 01a28fbde1021058a1764db75b5648d573d8742c
+claim_commit: 79198d5029a943ab93164cb59e8096ff83b721c9
+last_commit: 79198d5029a943ab93164cb59e8096ff83b721c9
 handoff_required: no
 handoff_to: none
-next_action: "Windows release candidate, handoff unit 0."
+next_action: "not recorded"
 ```
 
 ## Ownership history
@@ -111,3 +111,4 @@ Timestamps are UTC.
 | 2026-10-12T04:50:30.331Z | RELEASE BLOCKED | DEVICE-01 | P10-004 | P9-A confirmed at the binary level: PE Subsystem 2 (WINDOWS_GUI), x64, PE32+, SHA-256 097A7714...0879, NotSigned. main.rs unchanged since the binary was built and the intervening src-tauri commits are rustfmt and comments, so the measurement holds for current main. Retires the stale lead that main was a console build - that predated the D15 merge. Device channel verified: no peer session reachable, so no dispatch was claimed. D17 remains the owner-blocked item this task was opened for. |
 | 2026-10-14T08:19:22.369Z | RELEASE BLOCKED | DEVICE-01 | P10-004 | D17 remains the owner's to answer; the decision packet is recorded. Releasing the hold so the Windows RC package can be claimed - D17 blocks no release work. |
 | 2026-10-14T08:19:42.651Z | RELEASE COMPLETE | DEVICE-01 | P10-004 | The TASK is complete: D17 was characterized end to end and its outcome determined as OWNER DECISION REQUIRED, with the decision packet recorded. The DECISION remains blocked in the register - that separation is deliberate, and D17 blocks no release work. |
+| 2026-10-14T08:19:49.574Z | CLAIM | DEVICE-01 | P9-010 | claimed |
