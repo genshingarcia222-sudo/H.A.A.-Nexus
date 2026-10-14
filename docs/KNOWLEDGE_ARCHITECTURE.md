@@ -118,7 +118,18 @@ of what a record *is*.
 ## 3. The A → B migration map
 
 The 43 A-keys with no same-named home in B, classified. **This classification is
-the deliverable; the migration itself is NOT done.** Classes (a) and (b) are
+the deliverable; the migration itself is NOT done.**
+
+**Since 2026-10-14 this table is also machine-checked.**
+`tools/knowledge-corpus/kb-field-disposition.mjs` (on the knowledgebase lane,
+PR #23) encodes every one of contract A's 54 fields with its class, its target
+and the decision that authorises it, derived from the actual schema, the actual
+432 records and the actual contract B source. It **exits non-zero** if a
+populated field has no disposition, if the table names a field no record
+carries, if a `direct` mapping names a field B does not have, if a drop cites no
+authority, or if O5/O6 arithmetic drifts. Prose below, enforcement there — and
+the enforcement already caught one false statement in this document, recorded
+under `accessClasses` in §3(c). Classes (a) and (b) are
 mechanical once written; class (c) needs a per-field decision; class (d) must not
 enter the runtime contract at all.
 
@@ -199,11 +210,29 @@ either extend B's schema or be consciously dropped. **None may be silently lost.
 Three of these are load-bearing for decisions already taken:
 
 - **`accessClasses`** is how a record would ever be marked
-  `ASSESSMENT_CLOSED_BOOK`. It is on **zero** records today and the generator
-  cannot assign it. **Dispositioned 2026-10-04 (see §6.2): it is not migrated and
-  not modelled**, because D4 blocks surfaces rather than records and nothing
-  requires a subset rule. Dropping it from the migration is therefore a decision,
-  not an oversight — and it is the one class-(c) field deliberately left behind.
+  `ASSESSMENT_CLOSED_BOOK`. **Dispositioned 2026-10-04 (see §6.2): it is not
+  migrated and not modelled**, because D4 blocks surfaces rather than records and
+  nothing requires a subset rule. Dropping it from the migration is therefore a
+  decision, not an oversight — and it is the one class-(c) field deliberately
+  left behind.
+
+  **Corrected 2026-10-14. This entry used to say the field was "on zero records
+  today and the generator cannot assign it", and that was false.** Measured
+  against the corpus by `tools/knowledge-corpus/kb-field-disposition.mjs`: all
+  **432** records carry a non-empty value, and the generator assigns three
+  distinct ones — `["TRAINING","PRACTICE","INSTRUCTOR_ADMIN"]` on 299,
+  `[…,"SIMULATION",…]` on 106, and `[…,"SIMULATION","PREMIUM_REALISTIC",…]` on
+  **27**.
+
+  **The decision still holds, on the leg that was always doing the work:** *no*
+  record carries `ASSESSMENT_CLOSED_BOOK`, which is asserted by test, so
+  dropping the field cannot drop a closed-book rule. What was wrong was the
+  claim that the drop costs nothing. It discards a real, differentiated value
+  from every record, and the 27 marked `PREMIUM_REALISTIC` are an
+  entitlement-relevant distinction adjacent to **D1** — a migration that drops
+  it must expect to re-derive that distinction from elsewhere if an entitlement
+  ever needs it. `lossReport()` now measures this on every run, and three tests
+  pin it, because a sentence cannot be trusted to stay true about data.
 - **`jurisdictions`** and **`effectiveFrom/To`** are what make a coding or
   regulatory statement safe to show. §5 depends on them.
 - **`clinicianJudgmentRequired`** and **`escalationRequired`** are safety

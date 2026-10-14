@@ -49,21 +49,21 @@ threshold is repository state (`stale_after_hours`), so changing it is a
 reviewed commit.
 
 ```yaml nexus-state
-task_id: P8-D17
-task_name: "D17: close the closed-book window across a restart"
+task_id: P9-011
+task_name: "Knowledge Base migration to contract B"
 owner: DEVICE-01
-status: COMPLETE
-started_at: 2026-10-14T08:45:30.670Z
-last_update: 2026-10-14T08:58:39.315Z
+status: ACTIVE
+started_at: 2026-10-14T13:30:18.056Z
+last_update: 2026-10-14T13:38:12.594Z
 stale_after_hours: 12
-expected_scope: "D17 implementation under the owner's explicit delegation: an interrupted assessment persisted as in_progress must keep the Knowledge Base and Training closed after a restart, until the learner discards or submits that attempt. Pure rule in nexus-core (new function; the existing arity pin on mayAccessReferenceMaterial stays intact), one boot-time persistence read feeding the gate, ReferenceGate wiring, and the closedBookBoundary characterization expectations updated only where the policy changed - no test weakened or deleted. Desktop only; the web target is inert until D10 and that is recorded, not hidden."
+expected_scope: "P9-011 step A1 prerequisite: a machine-generated, test-enforced disposition for every one of contract A's 54 fields across all 432 records, derived from the actual schema, the actual records and the actual contract B source - not from prose. Encodes the D18 section 3 class map plus the binding O5 (multi-select carried, all-or-nothing) and O6 (17 of 18 class-(c) fields carried, accessClasses dropped) dispositions, and FAILS if any field lacks one, which is the no-silent-dropping guarantee made mechanical. Work happens in an isolated worktree on a branch off the knowledgebase lane; main is not touched and the lane head is not moved. The record transform itself is deliberately NOT started in the same breath: contract B field additions must land with the records that populate them (the A9 precedent), and a budget stop must never leave half-migrated canonical records."
 affected_areas: "not recorded"
 branch: main
-claim_commit: 51259d7fbfa7a7f12eb2bf406a0a8f73fc84b136
-last_commit: 92b51e9785e776b7251d25cdd1813e3ad29ef905
+claim_commit: 9c7b09b61f7bb24d848675fc1d75e1cb76f5cc22
+last_commit: a31bf17670c9082ab7723caec5145e89af6676cc
 handoff_required: no
 handoff_to: none
-next_action: "P9-011: Knowledge Base migration of the 432 records to contract B, implementing the O5 and O6 dispositions in the same commit series (multi-select carried; 17 of 18 class-(c) fields carried). Integrate PR #21 only as the migrated result - the gate assessment in docs/KB_INTEGRATION_GATE_PR21.md explains why not before."
+next_action: "P9-011 step A2/A3/A4, ONE atomic unit on branch p9-011/field-disposition (PR #23 must land first or be built on): extend contract B with the 17 carried class-(c) fields AND optional multi-select, transform all 432 records, validate against contract B, regenerate manifests and checksums - all in the same commit series, because the A9 precedent forbids landing unconsumed contract fields ahead of their records. The disposition table (kb:disposition, 19 tests) is the input: 11 direct, 7 rename, 9 lift, 17 extend, 1 drop-policy, 9 drop-authoring. Do NOT start it without enough budget to finish, validate and checkpoint - a half-migrated corpus is worse than none."
 ```
 
 ## Ownership history
@@ -115,3 +115,4 @@ Timestamps are UTC.
 | 2026-10-14T08:34:41.888Z | RELEASE COMPLETE | DEVICE-01 | P9-010 | complete |
 | 2026-10-14T08:45:30.670Z | CLAIM | DEVICE-01 | P8-D17 | claimed |
 | 2026-10-14T08:58:39.315Z | RELEASE COMPLETE | DEVICE-01 | P8-D17 | complete |
+| 2026-10-14T13:30:18.056Z | CLAIM | DEVICE-01 | P9-011 | claimed |
