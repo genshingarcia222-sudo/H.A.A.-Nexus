@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CORPUS_DIFFICULTY_BANDS } from "./difficulty.js";
 import {
   CONTENT_STATUSES,
   REVIEW_STATUSES,
@@ -391,11 +392,29 @@ export const CORPUS_DROPPED_POLICY_FIELDS = ["accessClasses"] as const;
 
 export type AcceptanceCriterion = z.infer<typeof AcceptanceCriterionSchema>;
 
+
+/**
+ * Source metadata the archive is authoritative for and contract B keeps
+ * alongside its own derived values — **O4**, 2026-10-15.
+ *
+ * `difficultyBand` is the archive's own five-band model. It is **not** a
+ * replacement for `difficultyLevel` and never becomes one: the band survives a
+ * numeric assignment rather than being consumed by it, so a consumer that wants
+ * the archive's model reads the band while one that needs the 1-6 scale reads
+ * the level and must handle its absence. See `difficulty.ts` for why `EASY`
+ * cannot currently be given a level.
+ */
+export const CorpusSourceMetadataShape = {
+  difficultyBand: z.enum(CORPUS_DIFFICULTY_BANDS).optional()
+} as const;
+
 export const KnowledgeRecordSchema = z
   .object({
     ...recordHeaderShape,
     // O6: the seventeen carried policy and safety fields, all optional.
     ...CorpusPolicyShape,
+    // O4: the archive's own difficulty band, preserved beside the level.
+    ...CorpusSourceMetadataShape,
     family: z.literal("KNOWLEDGE"),
     kind: z.enum(KNOWLEDGE_KINDS),
     domain: z.string().min(1),
@@ -463,6 +482,8 @@ export const ScenarioContextSchema = z
     ...caseContextBase,
     // O6: the seventeen carried policy and safety fields, all optional.
     ...CorpusPolicyShape,
+    // O4: the archive's own difficulty band, preserved beside the level.
+    ...CorpusSourceMetadataShape,
     kind: z.literal("SCENARIO"),
     role: z.string().min(1),
     actors: z.array(z.object({ role: z.string().min(1), description: z.string().min(1).optional() }).strict()).default([]),
@@ -486,6 +507,8 @@ export const SoapContextSchema = z
     ...caseContextBase,
     // O6: the seventeen carried policy and safety fields, all optional.
     ...CorpusPolicyShape,
+    // O4: the archive's own difficulty band, preserved beside the level.
+    ...CorpusSourceMetadataShape,
     kind: z.literal("SOAP_NOTE"),
     encounterType: z.string().min(1).optional(),
     sections: z
@@ -560,6 +583,8 @@ export const AssessmentConceptSchema = z
     ...recordHeaderShape,
     // O6: the seventeen carried policy and safety fields, all optional.
     ...CorpusPolicyShape,
+    // O4: the archive's own difficulty band, preserved beside the level.
+    ...CorpusSourceMetadataShape,
     family: z.literal("CONCEPT"),
     statement: z.string().min(1),
     domain: z.string().min(1),

@@ -47,7 +47,7 @@ export const ITEM_REQUIRED = {
   modality: { from: "taskType", how: "mapped through TASK_TO_MODALITY" },
   difficultyLevel: {
     from: "difficulty",
-    how: "BLOCKED ON O4: contract A carries a band (EASY/MODERATE/HARD), contract B a 1-6 level. The band-to-level mapping is advisory and unaccepted, so applying it would resolve O4 by side effect"
+    how: "O4 IMPLEMENTED 2026-10-15: the band is always preserved as difficultyBand, and a numeric level is assigned only where the registry hints exactly one. EASY hints two levels, so its records keep the band and no level"
   },
   skillArea: { from: null, how: "contract A has no skillArea. `domain` is already used for `domain`, and `moduleIds` are ids, not a skill area" },
   learningObjective: {
@@ -104,6 +104,65 @@ export const RECORD_TYPE_TO_FAMILY = {
   REMEDIATION: "ITEM"
 };
 
+
+/**
+ * O4 — the band-to-level crosswalk, read from the owner-supplied registry.
+ *
+ * `registries/difficulty.json` is the single source. `nexus-core`'s
+ * `difficulty.ts` transcribes the same hints because it declares no build and
+ * cannot read repository files at runtime, and its test asserts the
+ * transcription against this file — so the two cannot drift.
+ *
+ * A band whose `repositoryLevelHint` names exactly one level is VERIFIED. One
+ * naming more than one is AMBIGUOUS and gets no level, because choosing between
+ * two hinted levels is the invention O4 forbids. The registry's own note is why
+ * the hint is treated as evidence rather than as a definition: the five bands
+ * "are the archive's model and are NOT that scale".
+ */
+export function loadDifficultyRegistry() {
+  const file = path.join(REPO_ROOT, "knowledge-corpus", "registries", "difficulty.json");
+  const parsed = JSON.parse(readFileSync(file, "utf8"));
+  const hints = new Map();
+  for (const band of parsed.bands ?? []) {
+    hints.set(band.id, Object.freeze([...(band.repositoryLevelHint ?? [])]));
+  }
+  return { registryId: parsed.registryId, registryVersion: parsed.registryVersion, hints };
+}
+
+export function crosswalkDifficulty(band, registry = loadDifficultyRegistry()) {
+  if (band === undefined || band === null || band === "") {
+    return { status: "ABSENT", band: null, level: null, hint: null, reason: "the record carries no difficulty band" };
+  }
+  const hint = registry.hints.get(band);
+  if (!hint) {
+    return {
+      status: "INVALID_BAND",
+      band: String(band),
+      level: null,
+      hint: null,
+      reason: `"${String(band)}" is not a band ${registry.registryId} defines`
+    };
+  }
+  if (hint.length === 1) {
+    return {
+      status: "VERIFIED",
+      band,
+      level: hint[0],
+      hint,
+      reason: `${registry.registryId} hints exactly one level (${hint[0]}) for ${band}`
+    };
+  }
+  return {
+    status: "AMBIGUOUS",
+    band,
+    level: null,
+    hint,
+    reason:
+      `${registry.registryId} hints ${hint.length} levels (${hint.join(", ")}) for ${band}, ` +
+      "so the evidence does not single one out and O4 forbids choosing"
+  };
+}
+
 export function loadRecords(files = recordFiles()) {
   const records = [];
   for (const file of files) {
@@ -122,7 +181,7 @@ export function loadRecords(files = recordFiles()) {
  * could not be supplied. A record with an empty `blockedOn` is fully migratable
  * today; one with entries is not, and the entries say exactly why.
  */
-export function transformRecord(entry) {
+export function transformRecord(entry, registry = loadDifficultyRegistry()) {
   const a = entry.record;
   const blockedOn = [];
   const candidate = { family: "ITEM" };
@@ -157,6 +216,20 @@ export function transformRecord(entry) {
     if (a[field] !== undefined) candidate[field] = a[field];
   }
 
+  // O4: the band is preserved unconditionally, and the level is assigned only
+  // on verified evidence. The band is never replaced by the level.
+  const difficulty = crosswalkDifficulty(a.difficulty, registry);
+  if (difficulty.band !== null) candidate.difficultyBand = difficulty.band;
+  if (difficulty.status === "VERIFIED") {
+    candidate.difficultyLevel = difficulty.level;
+  } else {
+    blockedOn.push({
+      field: "difficultyLevel",
+      why: difficulty.reason,
+      crosswalkStatus: difficulty.status
+    });
+  }
+
   // Modality, from the task type.
   const modality = TASK_TO_MODALITY[a.taskType];
   if (modality) candidate.modality = modality;
@@ -179,16 +252,13 @@ export function transformRecord(entry) {
       blockedOn.push({ field, why: spec.how });
     }
   }
-  if (a.difficulty !== undefined) {
-    blockedOn.push({ field: "difficultyLevel", why: ITEM_REQUIRED.difficultyLevel.how });
-  }
-
   return { id: a.id, recordType: a.recordType, taskType: a.taskType, candidate, blockedOn };
 }
 
 export function migrate({ write = false } = {}) {
   const entries = loadRecords();
-  const results = entries.map(transformRecord);
+  const registry = loadDifficultyRegistry();
+  const results = entries.map((e) => transformRecord(e, registry));
 
   const migratable = results.filter((r) => r.blockedOn.length === 0);
   const blocked = results.filter((r) => r.blockedOn.length > 0);
@@ -203,6 +273,18 @@ export function migrate({ write = false } = {}) {
   }
 
   const structural = blocked.filter((r) => r.blockedOn.some((b) => b.field === "choices"));
+
+  // O4 outcomes, counted rather than asserted.
+  const difficulty = { VERIFIED: 0, AMBIGUOUS: 0, ABSENT: 0, INVALID_BAND: 0 };
+  const bandsPreserved = new Map();
+  for (const r of results) {
+    const level = r.candidate.difficultyLevel;
+    const entry = r.blockedOn.find((b) => b.field === "difficultyLevel");
+    if (level !== undefined) difficulty.VERIFIED += 1;
+    else if (entry?.crosswalkStatus) difficulty[entry.crosswalkStatus] += 1;
+    const band = r.candidate.difficultyBand;
+    if (band) bandsPreserved.set(band, (bandsPreserved.get(band) ?? 0) + 1);
+  }
 
   if (write) {
     // Isolated, and rebuilt from scratch so a stale candidate cannot survive a
@@ -226,6 +308,9 @@ export function migrate({ write = false } = {}) {
     structurallyBlocked: structural.length,
     byField: [...byField.values()].sort((a, b) => b.records - a.records),
     wrote: write ? OUT_DIR : null,
+    difficultyCrosswalk: difficulty,
+    difficultyBandsPreserved: Object.fromEntries([...bandsPreserved.entries()].sort()),
+    difficultyRegistry: `${registry.registryId} ${registry.registryVersion}`,
     // Every record has an outcome; that is the invariant, not that every record
     // migrates.
     everyRecordAccountedFor: migratable.length + blocked.length === results.length
@@ -244,6 +329,16 @@ function render(m) {
   L.push(`  fully migratable today    ${m.migratableToday}`);
   L.push(`  blocked                   ${m.blocked}`);
   L.push(`  every record accounted for ${m.everyRecordAccountedFor ? "yes" : "NO"}`);
+  L.push("");
+  L.push(`O4 DIFFICULTY  (registry ${m.difficultyRegistry})`);
+  L.push(`  verified numeric level   ${m.difficultyCrosswalk.VERIFIED}`);
+  L.push(`  ambiguous, left unset    ${m.difficultyCrosswalk.AMBIGUOUS}`);
+  L.push(`  absent band              ${m.difficultyCrosswalk.ABSENT}`);
+  L.push(`  invalid band             ${m.difficultyCrosswalk.INVALID_BAND}`);
+  L.push("  bands preserved:");
+  for (const [band, n] of Object.entries(m.difficultyBandsPreserved)) {
+    L.push(`    ${band.padEnd(20)} ${String(n).padStart(4)}`);
+  }
   L.push("");
   L.push("WHY RECORDS ARE BLOCKED  (a record can be blocked on more than one)");
   for (const b of m.byField) {
