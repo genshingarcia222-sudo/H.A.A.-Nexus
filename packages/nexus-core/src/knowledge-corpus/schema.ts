@@ -296,9 +296,106 @@ export const SourceRecordSchema = SourceDefinitionSchema.extend({
  * `exceptionOf`, so a question resting on a rule can also point at the
  * exception and never teach the absolute version of a rule that has one.
  */
+
+/**
+ * One acceptance criterion for a free-text or structured-output task.
+ *
+ * `credit` is a weight for grading an open response against a rubric, and it is
+ * **not** related to O5's multi-select rule: multi-select is scored
+ * all-or-nothing on a set of choices, while these weights grade a written
+ * answer criterion by criterion. Shapes are taken from the authored corpus
+ * rather than invented.
+ */
+export const AcceptanceCriterionSchema = z
+  .object({
+    id: z.string().min(1),
+    requirement: z.string().min(1),
+    credit: z.number().gt(0).max(1),
+    evidenceRef: z.string().min(1).optional()
+  })
+  .strict();
+
+/**
+ * The policy, safety and applicability metadata the authoring contract enforces
+ * and the runtime contract did not model — **O6**, decided 2026-10-14.
+ *
+ * Seventeen of the eighteen class-(c) fields are carried; `accessClasses` is the
+ * single deliberate omission, on the D18 §6.2 reasoning. The decision's own
+ * ground: these are the fields the authoring lane's `SAFETY-PRECEDENCE` rule
+ * enforces today, and dropping one would delete a guarantee a reviewer can
+ * currently rely on.
+ *
+ * **Every field is optional**, so this cannot break a consumer that ignores it
+ * and cannot invalidate a record that omits it. Types are taken from the 432
+ * authored records, measured rather than assumed.
+ *
+ * **What this does not do.** Carrying `escalationRequired` means the value
+ * survives migration intact; it does **not** mean any surface acts on it.
+ * Enforcement is separate work and is not claimed here. Taxonomy membership —
+ * that an `errorTargets` entry is a real error id — stays with the authoring
+ * lane's validator, which owns the registries; this layer owns the shape.
+ */
+export const CorpusPolicyShape = {
+  /** Safety markers. Empty on 394 records, populated on 38. */
+  safetyFlags: z.array(z.string().min(1)).optional(),
+  /** Privacy markers. Empty on 371 records, populated on 61. */
+  privacyFlags: z.array(z.string().min(1)).optional(),
+  /** Whether the task requires escalation beyond the learner's role. */
+  escalationRequired: z.boolean().optional(),
+  /** Whether answering safely needs clinician judgement the role lacks. */
+  clinicianJudgmentRequired: z.boolean().optional(),
+  /** Conditions that fail a response outright, whatever else it gets right. */
+  hardFailureConditions: z.array(z.string().min(1)).optional(),
+  /** Where the content applies; `UNIVERSAL` where it is not jurisdictional. */
+  jurisdictions: z.array(z.string().min(1)).min(1).optional(),
+  /** Whether the content depends on a specific payer's rules. */
+  payerSpecific: z.boolean().optional(),
+  /** The encounter date a temporal question turns on, where there is one. */
+  encounterDate: z.string().min(1).nullable().optional(),
+  /** What a fully correct response does. */
+  goldBehavior: z.string().min(1).optional(),
+  /** The rubric for an open response. */
+  acceptanceCriteria: z.array(AcceptanceCriterionSchema).optional(),
+  /** Error-taxonomy ids this item targets. */
+  errorTargets: z.array(z.string().min(1)).optional(),
+  /** Remediation ids a wrong answer should route to. */
+  remediationTargets: z.array(z.string().min(1)).optional(),
+  /** Trap-taxonomy ids the distractors implement. */
+  trapTypes: z.array(z.string().min(1)).optional(),
+  /** What the learner is expected to produce, for a free-text task. */
+  expectedOutput: z.string().min(1).optional(),
+  /** Ordered steps, for a multi-stage task. */
+  steps: z.array(z.string().min(1)).optional(),
+  /** Curriculum module ids. */
+  moduleIds: z.array(z.string().min(1)).optional(),
+  /** How self-contained the item is, e.g. `SELF_CONTAINED`. */
+  evidenceBasis: z.string().min(1).optional()
+} as const;
+
+/** The seventeen carried field names, so a test can assert the set. */
+export const CORPUS_POLICY_FIELDS = Object.keys(CorpusPolicyShape) as readonly (keyof typeof CorpusPolicyShape)[];
+
+/**
+ * The one field O6 deliberately does not carry.
+ *
+ * Named here rather than left implicit so that the omission is auditable in
+ * code. **Measured 2026-10-14: all 432 records carry a non-empty value**
+ * (299/106/27), so the drop is not a no-op — the earlier claim that it was "on
+ * zero records" was false. What makes it safe is narrower and was verified: no
+ * record carries `ASSESSMENT_CLOSED_BOOK`, so D4 continues to block surfaces
+ * rather than records. 27 records carry `PREMIUM_REALISTIC`, which is
+ * entitlement-relevant and adjacent to D1; a consumer that needs that
+ * distinction must re-derive it rather than read it here.
+ */
+export const CORPUS_DROPPED_POLICY_FIELDS = ["accessClasses"] as const;
+
+export type AcceptanceCriterion = z.infer<typeof AcceptanceCriterionSchema>;
+
 export const KnowledgeRecordSchema = z
   .object({
     ...recordHeaderShape,
+    // O6: the seventeen carried policy and safety fields, all optional.
+    ...CorpusPolicyShape,
     family: z.literal("KNOWLEDGE"),
     kind: z.enum(KNOWLEDGE_KINDS),
     domain: z.string().min(1),
@@ -364,6 +461,8 @@ const caseContextBase = {
 export const ScenarioContextSchema = z
   .object({
     ...caseContextBase,
+    // O6: the seventeen carried policy and safety fields, all optional.
+    ...CorpusPolicyShape,
     kind: z.literal("SCENARIO"),
     role: z.string().min(1),
     actors: z.array(z.object({ role: z.string().min(1), description: z.string().min(1).optional() }).strict()).default([]),
@@ -385,6 +484,8 @@ export const ScenarioContextSchema = z
 export const SoapContextSchema = z
   .object({
     ...caseContextBase,
+    // O6: the seventeen carried policy and safety fields, all optional.
+    ...CorpusPolicyShape,
     kind: z.literal("SOAP_NOTE"),
     encounterType: z.string().min(1).optional(),
     sections: z
@@ -457,6 +558,8 @@ export const CaseContextSchema = z
 export const AssessmentConceptSchema = z
   .object({
     ...recordHeaderShape,
+    // O6: the seventeen carried policy and safety fields, all optional.
+    ...CorpusPolicyShape,
     family: z.literal("CONCEPT"),
     statement: z.string().min(1),
     domain: z.string().min(1),
