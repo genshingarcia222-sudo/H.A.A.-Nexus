@@ -2,6 +2,117 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-10-15 — the migration is measured as blocked, the archive is found outside Git, and its axis table is contaminated
+
+`main` advanced three commits to `34bb6b6` and merged CLEAN (CHANGELOG under
+`docs/PHASES_BUILDING_CONTROL.md` §10(G): base 88 / main 89 / lane 91 headings,
+both sides purely additive, union 92, merged 92, **0 lost, 0 invented, 0
+duplicated**, newest-first order intact, corpus untouched). What it carries is a
+summary of DEVICE-01's P9-011 work, which lives on this lane as **PR #24** — a
+fourth pull request, and the first one that changes what this lane should do
+next.
+
+### The migration is blocked, and this lane re-measured it rather than repeating it
+
+PR #24 adds `tools/knowledge-corpus/kb-migrate.mjs`, which reports
+**`migratable today: 0 of 432`**. Re-measured here independently against this
+lane's own 432 records, and every figure agrees exactly:
+
+| Measured here | Count |
+|---|---|
+| records in the corpus | 432 |
+| lacking `skillArea` / `learningObjective` / `questionType` / `source` | 432 each |
+| lacking `difficultyLevel` (blocked on **O4**) | 432 |
+| zero choices **and** an `expectedOutput` — free-text or structured-output tasks | **114** |
+| genuinely multi-select (`correctChoiceIds` length > 1) — the **O5** population | 15 |
+| `reviewStatus: pending` / approved | 432 / **0** |
+
+The 114 are the structural one: contract B's ITEM family extends a
+**multiple-choice** question bank, so it cannot represent a free-text task at
+all. Proposed as **O9** in `knowledge-corpus/MIGRATION_BLOCKERS.md` with four
+options and their costs.
+
+**This corrects a statement this lane was carrying.** `KB_BUILD_STATE.md` said
+the migration was "no longer waiting on a decision" because O5 and O6 had been
+resolved. Those two were resolved; the migration is blocked on four different
+fields, on O4, and on O9. Corrected in place rather than left to misdirect a
+reset session — this is the same failure mode as the stale D18 note, caught
+early this time.
+
+### PR #24 verified read-only, and mutation-checked
+
+Verified in a throwaway worktree at `4ec7fea`, nothing merged and nothing
+pushed: the engine runs exit 0, `kb-migrate.test` 20/20,
+`kb-field-disposition.test` 19/19, `kb-validate.test` 52/52,
+`kb-privacy-scan.test` 19/19, `kb-schema-divergence.test` 19/19, manifest
+matching at 432 records / 70 checksummed files, validator 0 errors / 0 warnings,
+privacy CLEAR. **Mutation-checked:** giving `skillArea` an invented source
+(`from: null` → `from: "domain"`) makes **two** tests fail — "no candidate
+acquires a field contract A cannot supply" and "every record is blocked on the
+unsourceable fields, and says so". Worth recording precisely: unlike PR #23, the
+**engine itself still exits 0** under that mutation and still reports 0
+migratable, because other fields go on blocking. The no-invention guarantee is
+carried by the test suite, not by the engine's exit status.
+
+The `nexus-core` claims — 824 → 867 tests, `tsc --noEmit` clean, the
+`accessClasses` drop enforced by `.strict()` — are **not verified here**: this
+container has no `node_modules` and no install was attempted. They are verified
+by CI, which is green on PR #24's head for both jobs.
+
+### O3 is recovered, outside Git, and this lane cannot verify the artefact
+
+DEVICE-01 reports `Nexus_Knowledgebase_Archive_v1.0_2026-09-22.pdf` on the
+owner's local filesystem — 1,219,286 bytes, SHA-256 `ED3BCD26…3F75`, 82 pages,
+never committed to any branch and not committed by PR #24. **That file is not
+reachable from this container**, so its existence, size and digest are carried
+here as DEVICE-01's measurement, not as a fact this lane verified.
+
+What *is* checkable is the committed JSON reference, and this lane re-measured
+all six identity criteria on it: 400 distinct record ids; prefix sums
+`NEXUS-EA/HA/MO/VE` 84 each and `NEXUS-REAL` 64, totalling 400; bands
+84/84/84/84/64 = 400; 336 + 64 = 400; 20 contiguous modules M01–M20; 12
+contiguous axes D01–D12. **All six reconcile exactly.** The 400 seed records
+are still not in the corpus and none was reconstructed.
+
+### One defect found here that the identity verification did not look for — B9
+
+The archive reference's **competency-axis labels are contaminated and
+misaligned by three rows.** 11 of the 12 `competencyAxes[].competency` values
+contain three-or-more consecutive spaces — PDF table-bleed — and the bleed is
+structural, not cosmetic: outer `D01` holds the table *header*
+(`"D12 matrix … Competency"`), outer `D03` holds the header cell `"ID"`, and
+outer `D04`…`D12` each carry an **embedded** id running `D01`…`D09`. So reading
+`axisId` as the archive's axis id returns the wrong competency for every row —
+outer `D08` reads "ICD-10-CM coding support" while its embedded id says that is
+the archive's **D05** — and the archive's own D10, D11 and D12 have **no label
+in the file at all**. The 20 module labels are clean; only the axis table is
+affected.
+
+This does **not** invalidate the O3 identity verification, whose six criteria
+are counts and arithmetic and which reproduced exactly here. It invalidates
+using that file as the source of axis *identity*, which matters for the charter
+§IV `KB-D01`…`KB-D12` addressing and for preserving `source_competency_id`. The
+fix is a re-extraction of one table. **The three missing labels were not
+guessed**: inferring them would be fabrication. Recorded as blocker **B9**.
+
+### And one thing that is now stale rather than merely unverified — B4
+
+The archive quotes the edition boundary: FY2026 ICD-10-CM active through 30
+September 2026, FY2027 beginning 1 October 2026. Today is 2026-10-15, so
+**FY2027 is active and FY2026 is superseded** — and `registries/coding-versions.json`
+still describes FY2026 as current. That is an archive quotation, not a CMS
+retrieval: **CMS remains the authority, nothing was retrieved, and no coding
+content was ingested, validated or relabelled.** The two entries remain
+`UNVERIFIED_TRANSCRIBED_FROM_CHARTER` and now also name a superseded edition.
+
+### What this session did not do
+
+Did not execute the migration — it is blocked by measurement, and it was never
+this session's to start unasked. Did not merge, close or modify PR #21, #22,
+#23 or #24. Did not touch `.nexus/`, the records, the manifest, the schema or
+any registry. All three lane PRs still merge CLEAN against this lane's head
+after this session's push.
+
 ## 2026-10-14 (later) — a false premise corrected, and the migration's prerequisite arrives as PR #23
 
 `main` advanced four commits to `2cf6d8a` and merged CLEAN. Two things in it

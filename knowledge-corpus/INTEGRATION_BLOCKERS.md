@@ -8,6 +8,36 @@ This branch is not merged into `main`, and the corpus is not live. No applicatio
 file was modified: no loader, no `packages/nexus-core` schema, no entitlement
 code, no Assessment logic, nothing under `content/`, nothing in `.nexus/`.
 
+## The prescribed ordering is itself now blocked — 2026-10-15, measured on this lane
+
+The gate below prescribes: resolve O5 and O6 → **migrate on this lane** →
+integrate the migrated result as one unit. O5 and O6 were resolved on 2026-10-14.
+The middle step is now **measured as blocked**, so the ordering cannot be
+executed as written and PR #21 does not become mergeable by waiting.
+
+DEVICE-01's transform engine (PR #24, `tools/knowledge-corpus/kb-migrate.mjs`)
+reports **`migratable today: 0 of 432`**. Re-measured independently on this
+lane's own records, agreeing exactly: **all 432** records lack `skillArea`,
+`learningObjective`, `questionType` and `source`, which contract B requires and
+contract A has no source for; `difficultyLevel` is blocked on **O4**; and
+**114** records carry zero choices with an `expectedOutput`, so contract B's
+multiple-choice ITEM family has no family for them at all — proposed as **O9**
+in `MIGRATION_BLOCKERS.md`.
+
+**What this changes about the gate, and what it does not.** Criterion 2 still
+fails and the verdict is still DO NOT MERGE YET; nothing here makes PR #21 more
+mergeable. What changes is *who it waits on*. The gate used to wait on work
+(the migration). It now waits on **decisions** — O9, O4, and the per-field
+derivations for `skillArea`, `learningObjective`, `questionType` and `source`,
+each of which needs an authoring judgement or human verification that cannot be
+inferred from the records. None of the four can be filled in by a tool without
+inventing content.
+
+**The one option the measurement rules out.** "Migrate what can be migrated and
+integrate that" is not available: the blocked count is **432 of 432**, so there
+is no migratable subset to carry. A partial migration would have to invent at
+least one required field for every record it moved.
+
 ## The gate was assessed on the merged result — 2026-10-14, DEVICE-01
 
 **Verdict: DO NOT MERGE YET. Six of seven criteria pass; criterion 2 fails.**
