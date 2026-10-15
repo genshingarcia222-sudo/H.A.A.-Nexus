@@ -1,0 +1,232 @@
+{
+  "archive": {
+    "sourceId": "NEXUS-KB-ARCHIVE-V1.0",
+    "title": "H.A.A. Nexus Knowledgebase Archive v1.0",
+    "edition": "Human-review edition",
+    "publishedOn": "2026-09-22",
+    "fileName": "Nexus_Knowledgebase_Archive_v1.0_2026-09-22.pdf",
+    "locatedAt": "D:/HAA_Nexus/NEXUS - Prologue/Nexus_Knowledgebase_Archive_v1.0_2026-09-22.pdf",
+    "sha256": "ED3BCD2608DC9EA93139210879EC9E7355FDC1AAFFE6FFF6DE48173112653F75",
+    "bytes": 1219286,
+    "pdfVersion": "1.7",
+    "pageObjects": 82,
+    "extractableCharacters": 428857,
+    "recoveredOn": "2026-10-15",
+    "recoveredBy": "DEVICE-01",
+    "outsideRepository": true,
+    "note": "Recovered from the owner's local filesystem, not from Git. It has never been committed to any branch and is not committed by this change."
+  },
+  "declaredTotals": {
+    "seedRecords": 400,
+    "tieredCompetencySeeds": 336,
+    "realisticPremiumCases": 64,
+    "knowledgeModules": 20,
+    "competencyAxes": 12
+  },
+  "verification": {
+    "distinctRecordIdsFound": 400,
+    "recordIdsByPrefix": {
+      "NEXUS-EA": 84,
+      "NEXUS-HA": 84,
+      "NEXUS-MO": 84,
+      "NEXUS-REAL": 64,
+      "NEXUS-VE": 84
+    },
+    "bandCounts": [
+      {
+        "band": "Easy",
+        "records": 84
+      },
+      {
+        "band": "Moderate",
+        "records": 84
+      },
+      {
+        "band": "Hard",
+        "records": 84
+      },
+      {
+        "band": "Very Hard",
+        "records": 84
+      },
+      {
+        "band": "Realistic Premium",
+        "records": 64
+      }
+    ],
+    "consistent": true
+  },
+  "icd10cm": {
+    "currentAtPublication": "FY2026",
+    "currentThrough": "30 September 2026",
+    "next": "FY2027",
+    "nextBegins": "1 October 2026",
+    "quoted": "FY2026 ICD-10-CM is active through 30 September 2026; FY2027 begins 1 October 2026"
+  },
+  "knowledgeModules": [
+    {
+      "moduleId": "M01",
+      "name": "Nexus operating principles",
+      "scope": "Scope, evidence hierarchy, uncertainty, provenance, and non-fabrication."
+    },
+    {
+      "moduleId": "M02",
+      "name": "Patient identity and context",
+      "scope": "Identity verification, encounter date, duplicate charts, proxies."
+    },
+    {
+      "moduleId": "M03",
+      "name": "Call handling and probing",
+      "scope": "Clarification, probing, call control, escalation, closure."
+    },
+    {
+      "moduleId": "M04",
+      "name": "SOAP and documentation",
+      "scope": "S/O/A/P boundaries, neutrality, completeness, corrections."
+    },
+    {
+      "moduleId": "M05",
+      "name": "Clinical terminology",
+      "scope": "Anatomy, symptoms, abbreviations, medication forms, diagnostic language."
+    },
+    {
+      "moduleId": "M06",
+      "name": "Referral and fax packets",
+      "scope": "Indication, destination, records, signatures, routing, confirmation."
+    },
+    {
+      "moduleId": "M07",
+      "name": "Radiology and diagnostic orders",
+      "scope": "Exam, body site, laterality, contrast, indication, urgency."
+    },
+    {
+      "moduleId": "M08",
+      "name": "ICD-10-CM support",
+      "scope": "Versioning, documentation support, symptom vs diagnosis, specificity."
+    },
+    {
+      "moduleId": "M09",
+      "name": "Medication and refill workflow",
+      "scope": "Reconciliation, duplicate entries, intolerance, provider review."
+    },
+    {
+      "moduleId": "M10",
+      "name": "Lab/imaging results workflow",
+      "scope": "Routine vs critical results, routing, acknowledgement, closure."
+    },
+    {
+      "moduleId": "M11",
+      "name": "Insurance/admin workflows",
+      "scope": "Prior auth, payer evidence, scheduling dependencies."
+    },
+    {
+      "moduleId": "M12",
+      "name": "HIPAA/privacy/security",
+      "scope": "Minimum necessary, identity, authorization, channel safeguards."
+    },
+    {
+      "moduleId": "M13",
+      "name": "Handoffs and TeamSTEPPS",
+      "scope": "SBAR, I-PASS, check-back, handoff acceptance."
+    },
+    {
+      "moduleId": "M14",
+      "name": "Error taxonomy",
+      "scope": "Contradiction, omission, fabrication, wrong-patient, wrong-destination."
+    },
+    {
+      "moduleId": "M15",
+      "name": "Audit and QA",
+      "scope": "Traceability, severity, correction without erasing provenance."
+    },
+    {
+      "moduleId": "M16",
+      "name": "Dynamic question generation",
+      "scope": "Mutation rules, novelty, calibration, near-neighbors."
+    },
+    {
+      "moduleId": "M17",
+      "name": "D12 decision matrix",
+      "scope": "Twelve-axis evaluation, gates, score dimensions."
+    },
+    {
+      "moduleId": "M18",
+      "name": "Realistic Premium architecture",
+      "scope": "Multi-stage cases, delayed clues, ownership, replay."
+    },
+    {
+      "moduleId": "M19",
+      "name": "Feedback and remediation",
+      "scope": "Explain why wrong; target the failing gate or competency."
+    },
+    {
+      "moduleId": "M20",
+      "name": "Version and source governance",
+      "scope": "Source authority, release dates, deprecated knowledge."
+    }
+  ],
+  "competencyAxes": [
+    {
+      "axisId": "D01",
+      "competency": "D12 matrix                     Competency"
+    },
+    {
+      "axisId": "D02",
+      "competency": "Patient identity and encounter context"
+    },
+    {
+      "axisId": "D03",
+      "competency": "ID                            Clinical intent and task interpretation"
+    },
+    {
+      "axisId": "D04",
+      "competency": "D01                           Safety, red flags, and escalation"
+    },
+    {
+      "axisId": "D05",
+      "competency": "D02                           Pertinent chart extraction"
+    },
+    {
+      "axisId": "D06",
+      "competency": "D03                           SOAP and clinical documentation"
+    },
+    {
+      "axisId": "D07",
+      "competency": "D04                           Orders, referrals, and fax workflows"
+    },
+    {
+      "axisId": "D08",
+      "competency": "D05                           ICD-10-CM coding support"
+    },
+    {
+      "axisId": "D09",
+      "competency": "D06                           Medication, laboratory, and imaging workflow"
+    },
+    {
+      "axisId": "D10",
+      "competency": "D07                           Insurance, authorization, and administrative workflow"
+    },
+    {
+      "axisId": "D11",
+      "competency": "D08                           HIPAA, privacy, security, and minimum necessary"
+    },
+    {
+      "axisId": "D12",
+      "competency": "D09                           Communication, calls, and closed-loop coordination"
+    }
+  ],
+  "alsoNamedButNOTRecovered": [
+    {
+      "name": "nexus_knowledgebase_archive_v1.jsonl",
+      "role": "primary machine-readable source named by the archive itself",
+      "searched": "whole repository history and the local filesystem",
+      "found": false
+    },
+    {
+      "name": "nexus_knowledgebase_materials_v1.md",
+      "role": "generation and content specification named by the workstream charter",
+      "searched": "whole repository history and the local filesystem",
+      "found": false
+    }
+  ]
+}
