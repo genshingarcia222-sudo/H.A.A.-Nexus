@@ -933,9 +933,59 @@ bands do not divide into six levels, and the previously advisory
 6. test valid mappings, ambiguous mappings, unmapped bands and boundary
    conditions.
 
-**Status: DECIDED, NOT IMPLEMENTED.** No crosswalk exists yet, and
-`kb-migrate.mjs` still reports `difficultyLevel` as blocked on all 432 records —
-which is now the correct behaviour under this policy rather than a gap in it.
+**Status: IMPLEMENTED 2026-10-15 and VERIFIED.** Landed on the knowledgebase
+lane as PR #25 (merge commit `d1be449`), with the repair in PR #26.
+
+**What implements it.** `packages/nexus-core/src/knowledge-corpus/difficulty.ts`
+holds the crosswalk; `difficultyBand` is a new optional field on all five family
+schemas; `tools/knowledge-corpus/kb-migrate.mjs` applies it.
+
+**Where the evidence comes from, and why the hint is evidence rather than a
+definition.** `knowledge-corpus/registries/difficulty.json` is owner-supplied
+(charter §X) and gives each band a `repositoryLevelHint`, while its own note
+says the five bands "are the archive's model and are **NOT** that scale". So a
+band whose hint names **exactly one** level is `VERIFIED`; one naming more than
+one is `AMBIGUOUS` and gets no level, because choosing between two hinted levels
+is the invention this decision forbids.
+
+**Measured on the live corpus:**
+
+| Band | Records | Outcome |
+|---|---|---|
+| MODERATE | 120 | level 3 |
+| HARD | 192 | level 4 |
+| VERY_HARD | 30 | level 5 |
+| REALISTIC_PREMIUM | 27 | level 6 |
+| **EASY** | **63** | **band kept, no level** — hints both 1 and 2 |
+
+**369 verified · 63 ambiguous · 0 absent · 0 invalid · all 432 bands
+preserved.**
+
+**The four outcomes stay distinct** — `VERIFIED`, `AMBIGUOUS`, `ABSENT`,
+`INVALID_BAND` — because collapsing them is how an absent value starts looking
+like a decided one. **The band is never replaced by the level:** both travel
+together, and a test asserts a band cannot stand in for a level, so a record
+without a verified level still fails the production contract. That is the
+intended behaviour, not a gap.
+
+**Single source of truth.** The engine reads the registry directly; `nexus-core`
+transcribes the same hints because it declares no build and cannot read
+repository files at runtime, and a test asserts that transcription against the
+registry on disk so the two cannot drift. `QuestionDifficultyLevel` is imported
+from the question bank rather than redeclared.
+
+**Evidence:** `tsc --noEmit` exit 0 · nexus-core **883/883** (16 new tests) ·
+desktop **337/337** · all eleven `kb:*` gates exit 0, including
+`kb:test:migrate` **23/23**. CI green on PR #25 head `4623f2a`, run
+`38695161643`.
+
+**One defect this produced and the repair.** O4's engine change broke
+`kb:test:migrate` on the merged lane: the test called
+`entries.map(transformRecord)` and `Array.map`'s index argument overrode the new
+registry parameter, because a default only fires on `undefined`. It passed PR
+CI because **the `kb:*` suites were not in the CI gate list**. PR #26 guards the
+exported signature, replaces the stale assertion with three stronger ones, and
+adds the suites to CI behind a corpus-existence guard.
 
 **Explicitly prohibited:** assigning arbitrary levels to make the transform
 pass, and making a mandatory production field globally optional to avoid the

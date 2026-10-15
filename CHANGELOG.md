@@ -11,6 +11,61 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## O4 Implemented and Merged; a Gate Failure Found and Repaired (2026-10-15)
+
+**O4 moves from DECIDED to IMPLEMENTED.** Landed on the knowledgebase lane as
+**PR #25** (merge commit `d1be449`), with the repair as **PR #26**. The lane is
+**not** merged into `main`, and the 432-record migration remains incomplete.
+
+**What O4 does.** The original difficulty band is preserved on every record, and
+a numeric level is assigned **only where the owner-supplied registry justifies
+one**. `registries/difficulty.json`'s own note is why its `repositoryLevelHint`
+is evidence rather than a definition: the five bands "are the archive's model and
+are **NOT** that scale". A band hinting exactly one level resolves; one hinting
+more does not.
+
+**Measured on the live corpus:** MODERATE 120 → 3, HARD 192 → 4, VERY_HARD 30 →
+5, REALISTIC_PREMIUM 27 → 6, and **EASY 63 keeps its band with no level** because
+it hints both 1 and 2. **369 verified · 63 ambiguous · 0 absent · 0 invalid ·
+all 432 bands preserved.**
+
+Four outcomes stay distinct — `VERIFIED`, `AMBIGUOUS`, `ABSENT`, `INVALID_BAND`
+— because collapsing them is how an absent value starts looking like a decided
+one. **The band never replaces the level:** a test asserts a band cannot stand in
+for one, so a record without a verified level still fails the production
+contract. Intended, not a gap.
+
+**A real gate failure, found by running the gates on the merged lane rather than
+trusting the PR's green CI.** `kb:test:migrate` exited **1** at `d1be449`. The
+cause was mine: `kb-migrate.test.mjs` called `entries.map(transformRecord)`, and
+`Array.map` passes `(element, index, array)` — so the index overrode O4's new
+registry parameter, since a default only fires on `undefined`.
+
+**Why it slipped, and both halves addressed.** The `kb:*` suites were **not in
+the CI gate list**, so "CI green" was never evidence for them — and I had not
+re-run the tool suite after changing the engine, which is the rule that a passing
+result only covers the code it ran on. PR #26 guards the exported signature
+(because the next caller would hit the same trap), replaces the stale O4
+assertion with three stronger ones, adds a regression test pinning the `map`
+trap, and puts the suites in CI behind a corpus-existence guard so the step is a
+clean no-op on `main` and runs in full on the lane.
+
+**One limitation stated rather than glossed:** the workflow YAML could not be
+parsed locally — no yaml module is available — so its syntax is verified by
+GitHub running it, not by a local check.
+
+**Verified at `d1be449` + the repair:** `tsc --noEmit` exit 0 · nexus-core
+**883/883** · desktop **337/337** · all eleven `kb:*` gates exit 0 (142 tool
+tests), `kb:test:migrate` **23/23**. Each exit code captured per command, never
+through a pipeline.
+
+**Unchanged:** `migratable today` is still **0 of 432** — O9 is decided and
+**not** implemented, and `skillArea`, `learningObjective`, `questionType` and
+`source` remain unsourceable. **0 of 432 records are human-reviewed or
+production-eligible.**
+
+---
+
 ## PR #23 and #24 Merged into the Lane; O9 and O4 Decided; B9 Corrected (2026-10-15)
 
 **Both authorized lane merges executed and verified. The lane is NOT merged into
