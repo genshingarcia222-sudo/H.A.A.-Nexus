@@ -5,6 +5,7 @@ import {
 } from "../question-bank/schema.js";
 import {
   ApplicabilitySchema,
+  CorpusPolicyShape,
   CorpusVerificationSchema,
   EvidenceLinkSchema,
   MachineVerificationSchema,
@@ -102,6 +103,8 @@ export const ModalityDetailSchema = z
   .strict();
 
 export const AssessmentItemObjectSchema = TrainingQuestionObjectSchema.extend({
+  // O6: the seventeen carried policy and safety fields, all optional.
+  ...CorpusPolicyShape,
   family: z.literal("ITEM"),
   revision: z.number().int().min(1),
   modality: z.enum(MODALITIES),
