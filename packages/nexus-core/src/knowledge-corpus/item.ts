@@ -6,6 +6,7 @@ import {
 import {
   ApplicabilitySchema,
   CorpusPolicyShape,
+  CorpusSourceMetadataShape,
   CorpusVerificationSchema,
   EvidenceLinkSchema,
   MachineVerificationSchema,
@@ -105,6 +106,8 @@ export const ModalityDetailSchema = z
 export const AssessmentItemObjectSchema = TrainingQuestionObjectSchema.extend({
   // O6: the seventeen carried policy and safety fields, all optional.
   ...CorpusPolicyShape,
+  // O4: the archive's own difficulty band, preserved beside the level.
+  ...CorpusSourceMetadataShape,
   family: z.literal("ITEM"),
   revision: z.number().int().min(1),
   modality: z.enum(MODALITIES),

@@ -2,6 +2,7 @@ export * from "./schema.js";
 export * from "./ids.js";
 export * from "./item.js";
 export * from "./scoring.js";
+export * from "./difficulty.js";
 export * from "./quality.js";
 export * from "./review.js";
 export * from "./temporal.js";
