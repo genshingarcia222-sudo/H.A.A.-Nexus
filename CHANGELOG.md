@@ -11,6 +11,124 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## O4 Implemented and Merged; a Gate Failure Found and Repaired (2026-10-15)
+
+**O4 moves from DECIDED to IMPLEMENTED.** Landed on the knowledgebase lane as
+**PR #25** (merge commit `d1be449`), with the repair as **PR #26**. The lane is
+**not** merged into `main`, and the 432-record migration remains incomplete.
+
+**What O4 does.** The original difficulty band is preserved on every record, and
+a numeric level is assigned **only where the owner-supplied registry justifies
+one**. `registries/difficulty.json`'s own note is why its `repositoryLevelHint`
+is evidence rather than a definition: the five bands "are the archive's model and
+are **NOT** that scale". A band hinting exactly one level resolves; one hinting
+more does not.
+
+**Measured on the live corpus:** MODERATE 120 → 3, HARD 192 → 4, VERY_HARD 30 →
+5, REALISTIC_PREMIUM 27 → 6, and **EASY 63 keeps its band with no level** because
+it hints both 1 and 2. **369 verified · 63 ambiguous · 0 absent · 0 invalid ·
+all 432 bands preserved.**
+
+Four outcomes stay distinct — `VERIFIED`, `AMBIGUOUS`, `ABSENT`, `INVALID_BAND`
+— because collapsing them is how an absent value starts looking like a decided
+one. **The band never replaces the level:** a test asserts a band cannot stand in
+for one, so a record without a verified level still fails the production
+contract. Intended, not a gap.
+
+**A real gate failure, found by running the gates on the merged lane rather than
+trusting the PR's green CI.** `kb:test:migrate` exited **1** at `d1be449`. The
+cause was mine: `kb-migrate.test.mjs` called `entries.map(transformRecord)`, and
+`Array.map` passes `(element, index, array)` — so the index overrode O4's new
+registry parameter, since a default only fires on `undefined`.
+
+**Why it slipped, and both halves addressed.** The `kb:*` suites were **not in
+the CI gate list**, so "CI green" was never evidence for them — and I had not
+re-run the tool suite after changing the engine, which is the rule that a passing
+result only covers the code it ran on. PR #26 guards the exported signature
+(because the next caller would hit the same trap), replaces the stale O4
+assertion with three stronger ones, adds a regression test pinning the `map`
+trap, and puts the suites in CI behind a corpus-existence guard so the step is a
+clean no-op on `main` and runs in full on the lane.
+
+**One limitation stated rather than glossed:** the workflow YAML could not be
+parsed locally — no yaml module is available — so its syntax is verified by
+GitHub running it, not by a local check.
+
+**Verified at `d1be449` + the repair:** `tsc --noEmit` exit 0 · nexus-core
+**883/883** · desktop **337/337** · all eleven `kb:*` gates exit 0 (142 tool
+tests), `kb:test:migrate` **23/23**. Each exit code captured per command, never
+through a pipeline.
+
+**Unchanged:** `migratable today` is still **0 of 432** — O9 is decided and
+**not** implemented, and `skillArea`, `learningObjective`, `questionType` and
+`source` remain unsourceable. **0 of 432 records are human-reviewed or
+production-eligible.**
+
+---
+
+## PR #23 and #24 Merged into the Lane; O9 and O4 Decided; B9 Corrected (2026-10-15)
+
+**Both authorized lane merges executed and verified. The lane is NOT merged into
+`main`, and the 432-record migration is NOT complete.**
+
+| PR | Result | Evidence |
+|---|---|---|
+| **#23** field disposition | **MERGED** → `8161a85` | CI green both jobs, run `38573095510` |
+| **#24** contract B + engine + B9 fix | **MERGED** → `f1ad273` | CI green both jobs at `cacc11f`, run `38679282078` |
+
+Dependency order was **verified by ancestry, not by numbering**: #24 genuinely
+contained #23, so #23 merged first. GitHub reported #24 `CONFLICTING` after the
+first merge; the conflict was not real — merging the lane locally was clean and
+added no file changes, only ancestry, after which GitHub recomputed to `CLEAN`.
+
+**Verified on the merged lane**, not inferred from the merges: `tsc` exit 0,
+nexus-core **867/867** (70 files), desktop **337/337** (33 files), and all
+**eleven** `kb:verify` steps exit 0 — manifest check, validate, privacy, the
+three original suites, disposition, migrate and the new archive-reference suite.
+**17 `kb:*` scripts with no duplicates** and the verify chain intact at eleven
+steps. The migration engine still reports **0 of 432 migratable, 432 accounted
+for**, which is the correct state and not a regression.
+
+**B9 — a real defect in my own work, found by DEVICE-02 and corrected.** The
+recovered archive's competency-axis table was contaminated: I paired labels to
+`D01`–`D12` **by position** after dropping only lines that matched an id
+exactly, while my own code comment admitted the table was misaligned. The
+archive renders the matrix as two column streams that `pdftotext` offsets by two
+rows, so the header line and every embedded id survived into the label text and
+the pairing was **wrong for every row**.
+
+Corrected by splitting the columns at the measured boundary, dropping each
+stream's header cells by name, and pairing the streams in order — and the
+extractor now refuses to emit unless both streams are exactly twelve entries,
+the ids are contiguous, and no label carries an embedded id, column bleed or a
+header cell. **The pairing is settled by evidence rather than argument:**
+records tagged `KB-D10` carry `privacyFlags` at **47%** against an 11–17%
+baseline for all eleven other axes, and stream-order is what puts "HIPAA,
+privacy, security, and minimum necessary" at D10. Same-row pairing would put it
+at D09, which sits at baseline. That signal comes from the corpus's own
+metadata, independent of the PDF. 10 tests, mutation-verified against the
+original contaminated label.
+
+**O9 — OWNER-DECIDED:** contract B must support open response as a distinct,
+first-class type; the 114 free-text records are not to be forced into the
+multiple-choice family. Automated scoring stays disabled unless a validated
+rubric supports it — the corpus's `acceptanceCriteria` weights are a rubric
+*shape* that has never been validated as a scorer. **DECIDED, NOT IMPLEMENTED.**
+
+**O4 — OWNER-DECIDED:** the original difficulty band stays authoritative source
+metadata; no unsupported five-band-to-six-level equivalence may be invented, and
+a record without a verified numeric level stays out of any production path that
+requires one. **DECIDED, NOT IMPLEMENTED** — `difficultyLevel` remaining blocked
+on all 432 records is now correct behaviour under the policy rather than a gap.
+
+**Not done:** the draft/production boundary, the skill-area derivation, the
+atomic 432-record transform, PR #21, PR #22/O7, O2's twelve human reviews, and
+the D10/D13/D14/A7/A12 sweep. Weekly usage reached **72%**, past the stated 70%
+ceiling, and each of those is a package that would strand rather than finish.
+**0 of 432 records are human-reviewed or production-eligible.**
+
+---
+
 ## P9-011 — Contract B Extended, the Transform Engine Built, and the Source Archive Recovered (2026-10-15)
 
 **All of this is on the knowledgebase lane as PR #24** (building on PR #23), not

@@ -492,7 +492,14 @@ does not read the silence as something forgotten.
 
 **Blocked because:** no source defines what a competency trend should change
 about guidance, and inventing one would silently alter what learners are told to
-do next. The deferral is deliberate and recorded; the entry stays blocked rather
+do next.
+
+**Re-swept 2026-10-15 against the code, not this entry.** The engine exists —
+`packages/nexus-core/src/recommendation-engine/index.ts` with its test — and
+contains **zero** occurrences of `competenc`. So the engine is real and purely
+error-based; what is missing is the competency dimension, not the engine. That
+distinction matters for sizing the work: A7 is an addition to a working module,
+not a module to build. The deferral is deliberate and recorded; the entry stays blocked rather
 than closed, because the product question is real and unanswered.
 
 **Why nothing was built.** The register's own measured evidence is that
@@ -530,6 +537,14 @@ was fabricated to make tiers look complete.
 
 **Blocked because:** authoring clinical scenarios is content work requiring
 clinical review, not an engineering decision.
+
+**Re-swept 2026-10-15, and the gap is now quantified.** `content/scenarios/live-scribing/`
+holds exactly **two** scenarios — `SCRIBE-FM-014-v1.0` and `SCRIBE-IM-032-v1.0` —
+at difficulty **1** and **3**. So **four of the six** difficulty bands (2, 4, 5
+and 6) have **no scenario at all**, and two of six are covered. The blocker is
+unchanged and still needs clinical review; what changed is that the shortfall is
+measured rather than described, so the authoring request can name the four bands
+it has to fill.
 
 **Concrete consequence, measured 2026-09-20:** the released inventory is one
 difficulty-1 and one difficulty-3 scenario. Difficulty 3 is unlocked from
@@ -864,6 +879,132 @@ still **0 of 12 human-verified with 0 production-eligible**, Training still runs
 the synthetic preview bank, and the exposure ledger is still not written to.
 
 ---
+
+## O9 — How does contract B represent a free-text task?
+
+**Resolved 2026-10-15 — OWNER-DECIDED.** The owner's consolidated directive
+states it directly: *"contract B must support open-response items as a distinct,
+first-class response type. Do not force the 114 reported free-text records into
+the multiple-choice family."* Recorded as the owner's, not as delegated.
+
+**The measurement it answers.** 114 of the 432 authored records carry **zero**
+choices and an `expectedOutput` instead — 59 `DOCUMENTATION_TASK`, 24
+`QUESTION`, 16 `WORKFLOW`, 15 `SCENARIO`. Contract B's ITEM family extends a
+**multiple-choice** question bank (`choices.min(2)`, `correctChoiceId`
+required), so it cannot represent them at all. Measured by
+`tools/knowledge-corpus/kb-migrate.mjs`.
+
+**What the decision requires, and these are constraints rather than a design:**
+
+- open response is a **distinct** response type, kept apart from single-best-answer
+  and from multi-select;
+- the original question, free-text task, and existing gold-behaviour material are
+  preserved **without fabricating choices**;
+- the multiple-choice contract and its **D11/D12** requirements are left intact —
+  no weakening to raise a migration count;
+- open-response validation and scoring behaviour are defined **explicitly**;
+- **automated scoring stays disabled** unless an existing validated rubric
+  supports it. The corpus carries `acceptanceCriteria` with per-criterion
+  `credit` weights, which is a rubric shape but has never been validated as a
+  scorer — it is not sufficient on its own, and inferring a rubric from an
+  example answer alone is forbidden;
+- required **human evaluation is represented explicitly**;
+- an unreviewed open-response item **cannot become production-eligible**;
+- schema, serialisation, scoring, consumer-compatibility and regression tests.
+
+**Status: DECIDED, NOT IMPLEMENTED.** The decision's status and the
+implementation's status are deliberately kept apart. Nothing in contract B yet
+carries an open-response type, and this entry does not claim otherwise.
+
+**Explicitly prohibited by this decision:** mapping `goldBehavior` onto
+`learningObjective` — the measurement that produced O9 refused exactly that,
+because what a correct *response* does is not what an item *teaches*.
+
+## O4 — Five archive difficulty bands against contract B's six numeric levels
+
+**Resolved 2026-10-15 — OWNER-DECIDED.** The directive states it: *"the original
+difficulty band remains authoritative source metadata. No unsupported
+equivalence between five original bands and six numeric difficulty levels may be
+invented."*
+
+**The measurement.** Contract A carries a band; contract B needs a 1–6
+`difficultyLevel`. The recovered archive is authoritative for the bands and
+their distribution: **Easy 84, Moderate 84, Hard 84, Very Hard 84, Realistic
+Premium 64 = 400** (`knowledge-corpus/source/archive-v1-reference.json`). Five
+bands do not divide into six levels, and the previously advisory
+`repositoryLevelHint` was never accepted.
+
+**The policy, in the order it must be applied:**
+
+1. **preserve the original band on every applicable record** — it is source
+   metadata, not a derived value, and it survives any later mapping;
+2. build a deterministic band-to-level crosswalk **only where the existing
+   taxonomy and authoritative definitions justify it**;
+3. keep the original band **after** a legitimate numeric mapping, never replaced
+   by it;
+4. leave unsupported numeric assignments **unresolved** rather than guessed;
+5. keep a record **without a verified numeric level out of any production path
+   that requires one**;
+6. test valid mappings, ambiguous mappings, unmapped bands and boundary
+   conditions.
+
+**Status: IMPLEMENTED 2026-10-15 and VERIFIED.** Landed on the knowledgebase
+lane as PR #25 (merge commit `d1be449`), with the repair in PR #26.
+
+**What implements it.** `packages/nexus-core/src/knowledge-corpus/difficulty.ts`
+holds the crosswalk; `difficultyBand` is a new optional field on all five family
+schemas; `tools/knowledge-corpus/kb-migrate.mjs` applies it.
+
+**Where the evidence comes from, and why the hint is evidence rather than a
+definition.** `knowledge-corpus/registries/difficulty.json` is owner-supplied
+(charter §X) and gives each band a `repositoryLevelHint`, while its own note
+says the five bands "are the archive's model and are **NOT** that scale". So a
+band whose hint names **exactly one** level is `VERIFIED`; one naming more than
+one is `AMBIGUOUS` and gets no level, because choosing between two hinted levels
+is the invention this decision forbids.
+
+**Measured on the live corpus:**
+
+| Band | Records | Outcome |
+|---|---|---|
+| MODERATE | 120 | level 3 |
+| HARD | 192 | level 4 |
+| VERY_HARD | 30 | level 5 |
+| REALISTIC_PREMIUM | 27 | level 6 |
+| **EASY** | **63** | **band kept, no level** — hints both 1 and 2 |
+
+**369 verified · 63 ambiguous · 0 absent · 0 invalid · all 432 bands
+preserved.**
+
+**The four outcomes stay distinct** — `VERIFIED`, `AMBIGUOUS`, `ABSENT`,
+`INVALID_BAND` — because collapsing them is how an absent value starts looking
+like a decided one. **The band is never replaced by the level:** both travel
+together, and a test asserts a band cannot stand in for a level, so a record
+without a verified level still fails the production contract. That is the
+intended behaviour, not a gap.
+
+**Single source of truth.** The engine reads the registry directly; `nexus-core`
+transcribes the same hints because it declares no build and cannot read
+repository files at runtime, and a test asserts that transcription against the
+registry on disk so the two cannot drift. `QuestionDifficultyLevel` is imported
+from the question bank rather than redeclared.
+
+**Evidence:** `tsc --noEmit` exit 0 · nexus-core **883/883** (16 new tests) ·
+desktop **337/337** · all eleven `kb:*` gates exit 0, including
+`kb:test:migrate` **23/23**. CI green on PR #25 head `4623f2a`, run
+`38695161643`.
+
+**One defect this produced and the repair.** O4's engine change broke
+`kb:test:migrate` on the merged lane: the test called
+`entries.map(transformRecord)` and `Array.map`'s index argument overrode the new
+registry parameter, because a default only fires on `undefined`. It passed PR
+CI because **the `kb:*` suites were not in the CI gate list**. PR #26 guards the
+exported signature, replaces the stale assertion with three stronger ones, and
+adds the suites to CI behind a corpus-existence guard.
+
+**Explicitly prohibited:** assigning arbitrary levels to make the transform
+pass, and making a mandatory production field globally optional to avoid the
+problem.
 
 ## D17 — After an interrupted Assessment, may the learner study before retaking the same scenario?
 
