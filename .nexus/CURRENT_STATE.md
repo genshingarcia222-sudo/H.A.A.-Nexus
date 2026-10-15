@@ -31,12 +31,12 @@ last_verified_tests: "PASS - nexus-core 824/824, desktop 337/337, preflight 30/3
 last_verified_build: "PASS - pnpm -r build, and tauri build produced MSI + NSIS (2026-10-14, DEVICE-01, baseline B-009)"
 last_verified_typecheck: "PASS - pnpm -r typecheck (2026-10-14, DEVICE-01, baseline B-009)"
 last_verified_rust: "PASS - cargo test 70/70, fmt clean, clippy 0 warnings, rustc 1.98.1 (2026-10-14, DEVICE-01, baseline B-009)"
-active_task: P8-D17
+active_task: P9-011
 task_owner: DEVICE-01
-task_status: COMPLETE
-last_successful_sync: 2026-10-14T10:25:00.435Z
+task_status: ACTIVE
+last_successful_sync: 2026-10-14T13:37:25.952Z
 last_sync_device: DEVICE-01
-last_sync_commit: e4efa40d46b4a82b2a6132ea340eae2c930268ce
+last_sync_commit: 7fcf86ea08f617cd2391fe6d31e7432d9ef85c04
 sync_status: REMOTE_SYNCED
 recovery_status: "none - no recovery in progress"
 ```
