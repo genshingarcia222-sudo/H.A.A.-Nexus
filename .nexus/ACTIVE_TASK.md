@@ -54,16 +54,16 @@ task_name: "Knowledge Base migration to contract B"
 owner: DEVICE-01
 status: ACTIVE
 started_at: 2026-10-14T13:30:18.056Z
-last_update: 2026-10-15T02:36:47.706Z
+last_update: 2026-10-15T04:08:02.588Z
 stale_after_hours: 12
 expected_scope: "P9-011 step A1 prerequisite: a machine-generated, test-enforced disposition for every one of contract A's 54 fields across all 432 records, derived from the actual schema, the actual records and the actual contract B source - not from prose. Encodes the D18 section 3 class map plus the binding O5 (multi-select carried, all-or-nothing) and O6 (17 of 18 class-(c) fields carried, accessClasses dropped) dispositions, and FAILS if any field lacks one, which is the no-silent-dropping guarantee made mechanical. Work happens in an isolated worktree on a branch off the knowledgebase lane; main is not touched and the lane head is not moved. The record transform itself is deliberately NOT started in the same breath: contract B field additions must land with the records that populate them (the A9 precedent), and a budget stop must never leave half-migrated canonical records."
 affected_areas: "not recorded"
 branch: main
 claim_commit: 9c7b09b61f7bb24d848675fc1d75e1cb76f5cc22
-last_commit: 8b60de09c81d1f537fc1c39dc0f029192276cc84
+last_commit: 0ec93f38c982dae7aa8c82cacc9f7ae0405714e8
 handoff_required: no
 handoff_to: none
-next_action: "P9-011 continues on branch p9-011/migration (PR #24). Contract B extension and the transform engine are DONE and pushed. The remaining work is NOT engineering: it needs O9 (how contract B represents a free-text task - 114 records), O4 (five archive bands to contract B's 1-6 level), a skillArea derivation decision (moduleIds[0] to module name, now possible from the recovered archive), and learningObjective/questionType/per-record source locators, which require authoring or human verification and must not be invented. Also outstanding: recover nexus_knowledgebase_archive_v1.jsonl (the archive's own primary machine-readable source, still missing), and reconcile ICD-10-CM FY2027 as the active edition against CMS."
+next_action: "P9-011 next unit, in this order: (1) implement O9 - an open-response type in contract B as a distinct response format, preserving the 114 free-text records' question/expectedOutput/goldBehavior without fabricating choices, automated scoring DISABLED (acceptanceCriteria weights are an unvalidated rubric shape), human evaluation explicit, unreviewed items not production-eligible; (2) implement O4 - preserve the original band always, build a crosswalk only where justified, leave unsupported levels unresolved, keep records without a verified level out of production paths; (3) the draft/production boundary so incomplete records are preserved faithfully without passing as validated material; (4) skill-area derivation from the 20 verified module names, classified as evidence-backed / ambiguous / insufficient; then the atomic 432-record transform. The lane is at f1ad273 with both PRs merged and all 11 kb:verify steps green. Still external: O2's 12 human reviews, D13, D14 (needs D10), and the missing nexus_knowledgebase_archive_v1.jsonl."
 ```
 
 ## Ownership history
