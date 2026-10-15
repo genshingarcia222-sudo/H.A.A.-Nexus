@@ -11,6 +11,69 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## PR #23 and #24 Merged into the Lane; O9 and O4 Decided; B9 Corrected (2026-10-15)
+
+**Both authorized lane merges executed and verified. The lane is NOT merged into
+`main`, and the 432-record migration is NOT complete.**
+
+| PR | Result | Evidence |
+|---|---|---|
+| **#23** field disposition | **MERGED** → `8161a85` | CI green both jobs, run `38573095510` |
+| **#24** contract B + engine + B9 fix | **MERGED** → `f1ad273` | CI green both jobs at `cacc11f`, run `38679282078` |
+
+Dependency order was **verified by ancestry, not by numbering**: #24 genuinely
+contained #23, so #23 merged first. GitHub reported #24 `CONFLICTING` after the
+first merge; the conflict was not real — merging the lane locally was clean and
+added no file changes, only ancestry, after which GitHub recomputed to `CLEAN`.
+
+**Verified on the merged lane**, not inferred from the merges: `tsc` exit 0,
+nexus-core **867/867** (70 files), desktop **337/337** (33 files), and all
+**eleven** `kb:verify` steps exit 0 — manifest check, validate, privacy, the
+three original suites, disposition, migrate and the new archive-reference suite.
+**17 `kb:*` scripts with no duplicates** and the verify chain intact at eleven
+steps. The migration engine still reports **0 of 432 migratable, 432 accounted
+for**, which is the correct state and not a regression.
+
+**B9 — a real defect in my own work, found by DEVICE-02 and corrected.** The
+recovered archive's competency-axis table was contaminated: I paired labels to
+`D01`–`D12` **by position** after dropping only lines that matched an id
+exactly, while my own code comment admitted the table was misaligned. The
+archive renders the matrix as two column streams that `pdftotext` offsets by two
+rows, so the header line and every embedded id survived into the label text and
+the pairing was **wrong for every row**.
+
+Corrected by splitting the columns at the measured boundary, dropping each
+stream's header cells by name, and pairing the streams in order — and the
+extractor now refuses to emit unless both streams are exactly twelve entries,
+the ids are contiguous, and no label carries an embedded id, column bleed or a
+header cell. **The pairing is settled by evidence rather than argument:**
+records tagged `KB-D10` carry `privacyFlags` at **47%** against an 11–17%
+baseline for all eleven other axes, and stream-order is what puts "HIPAA,
+privacy, security, and minimum necessary" at D10. Same-row pairing would put it
+at D09, which sits at baseline. That signal comes from the corpus's own
+metadata, independent of the PDF. 10 tests, mutation-verified against the
+original contaminated label.
+
+**O9 — OWNER-DECIDED:** contract B must support open response as a distinct,
+first-class type; the 114 free-text records are not to be forced into the
+multiple-choice family. Automated scoring stays disabled unless a validated
+rubric supports it — the corpus's `acceptanceCriteria` weights are a rubric
+*shape* that has never been validated as a scorer. **DECIDED, NOT IMPLEMENTED.**
+
+**O4 — OWNER-DECIDED:** the original difficulty band stays authoritative source
+metadata; no unsupported five-band-to-six-level equivalence may be invented, and
+a record without a verified numeric level stays out of any production path that
+requires one. **DECIDED, NOT IMPLEMENTED** — `difficultyLevel` remaining blocked
+on all 432 records is now correct behaviour under the policy rather than a gap.
+
+**Not done:** the draft/production boundary, the skill-area derivation, the
+atomic 432-record transform, PR #21, PR #22/O7, O2's twelve human reviews, and
+the D10/D13/D14/A7/A12 sweep. Weekly usage reached **72%**, past the stated 70%
+ceiling, and each of those is a package that would strand rather than finish.
+**0 of 432 records are human-reviewed or production-eligible.**
+
+---
+
 ## P9-011 — Contract B Extended, the Transform Engine Built, and the Source Archive Recovered (2026-10-15)
 
 **All of this is on the knowledgebase lane as PR #24** (building on PR #23), not

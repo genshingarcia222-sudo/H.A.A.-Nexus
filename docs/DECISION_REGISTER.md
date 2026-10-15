@@ -865,6 +865,82 @@ the synthetic preview bank, and the exposure ledger is still not written to.
 
 ---
 
+## O9 — How does contract B represent a free-text task?
+
+**Resolved 2026-10-15 — OWNER-DECIDED.** The owner's consolidated directive
+states it directly: *"contract B must support open-response items as a distinct,
+first-class response type. Do not force the 114 reported free-text records into
+the multiple-choice family."* Recorded as the owner's, not as delegated.
+
+**The measurement it answers.** 114 of the 432 authored records carry **zero**
+choices and an `expectedOutput` instead — 59 `DOCUMENTATION_TASK`, 24
+`QUESTION`, 16 `WORKFLOW`, 15 `SCENARIO`. Contract B's ITEM family extends a
+**multiple-choice** question bank (`choices.min(2)`, `correctChoiceId`
+required), so it cannot represent them at all. Measured by
+`tools/knowledge-corpus/kb-migrate.mjs`.
+
+**What the decision requires, and these are constraints rather than a design:**
+
+- open response is a **distinct** response type, kept apart from single-best-answer
+  and from multi-select;
+- the original question, free-text task, and existing gold-behaviour material are
+  preserved **without fabricating choices**;
+- the multiple-choice contract and its **D11/D12** requirements are left intact —
+  no weakening to raise a migration count;
+- open-response validation and scoring behaviour are defined **explicitly**;
+- **automated scoring stays disabled** unless an existing validated rubric
+  supports it. The corpus carries `acceptanceCriteria` with per-criterion
+  `credit` weights, which is a rubric shape but has never been validated as a
+  scorer — it is not sufficient on its own, and inferring a rubric from an
+  example answer alone is forbidden;
+- required **human evaluation is represented explicitly**;
+- an unreviewed open-response item **cannot become production-eligible**;
+- schema, serialisation, scoring, consumer-compatibility and regression tests.
+
+**Status: DECIDED, NOT IMPLEMENTED.** The decision's status and the
+implementation's status are deliberately kept apart. Nothing in contract B yet
+carries an open-response type, and this entry does not claim otherwise.
+
+**Explicitly prohibited by this decision:** mapping `goldBehavior` onto
+`learningObjective` — the measurement that produced O9 refused exactly that,
+because what a correct *response* does is not what an item *teaches*.
+
+## O4 — Five archive difficulty bands against contract B's six numeric levels
+
+**Resolved 2026-10-15 — OWNER-DECIDED.** The directive states it: *"the original
+difficulty band remains authoritative source metadata. No unsupported
+equivalence between five original bands and six numeric difficulty levels may be
+invented."*
+
+**The measurement.** Contract A carries a band; contract B needs a 1–6
+`difficultyLevel`. The recovered archive is authoritative for the bands and
+their distribution: **Easy 84, Moderate 84, Hard 84, Very Hard 84, Realistic
+Premium 64 = 400** (`knowledge-corpus/source/archive-v1-reference.json`). Five
+bands do not divide into six levels, and the previously advisory
+`repositoryLevelHint` was never accepted.
+
+**The policy, in the order it must be applied:**
+
+1. **preserve the original band on every applicable record** — it is source
+   metadata, not a derived value, and it survives any later mapping;
+2. build a deterministic band-to-level crosswalk **only where the existing
+   taxonomy and authoritative definitions justify it**;
+3. keep the original band **after** a legitimate numeric mapping, never replaced
+   by it;
+4. leave unsupported numeric assignments **unresolved** rather than guessed;
+5. keep a record **without a verified numeric level out of any production path
+   that requires one**;
+6. test valid mappings, ambiguous mappings, unmapped bands and boundary
+   conditions.
+
+**Status: DECIDED, NOT IMPLEMENTED.** No crosswalk exists yet, and
+`kb-migrate.mjs` still reports `difficultyLevel` as blocked on all 432 records —
+which is now the correct behaviour under this policy rather than a gap in it.
+
+**Explicitly prohibited:** assigning arbitrary levels to make the transform
+pass, and making a mandatory production field globally optional to avoid the
+problem.
+
 ## D17 — After an interrupted Assessment, may the learner study before retaking the same scenario?
 
 **Resolved 2026-10-14 — CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING
