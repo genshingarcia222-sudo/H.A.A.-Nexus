@@ -99,6 +99,31 @@ jobs:
       - name: Cross-device sync tool
         run: node tools/nexus-sync/nexus-sync.test.mjs
 
+      # The knowledgebase tool suites were outside this list until 2026-10-15,
+      # and that gap had a real cost: the O4 engine change passed CI on its own
+      # branch and then failed `kb:test:migrate` on the merged lane, because
+      # nothing here ran it. Guarded on the corpus existing, so this step is a
+      # clean no-op on a branch that does not carry `knowledge-corpus/` - `main`
+      # today - and runs in full on the knowledgebase lane.
+      - name: Knowledgebase corpus and migration tooling
+        shell: bash
+        run: |
+          if [ ! -d knowledge-corpus ]; then
+            echo "no knowledge-corpus/ on this branch - skipping"
+            exit 0
+          fi
+          fails=0
+          for s in kb:manifest:check kb:validate kb:privacy kb:test kb:test:privacy kb:test:divergence kb:disposition kb:test:disposition kb:migrate kb:test:migrate kb:test:archive; do
+            if npm run --silent "$s"; then
+              echo "PASS $s"
+            else
+              echo "FAIL $s (exit $?)"
+              fails=$((fails + 1))
+            fi
+          done
+          echo "nonzero gates: $fails"
+          exit $fails
+
   windows:
     name: Rust suite and formatting (Windows)
     runs-on: windows-latest

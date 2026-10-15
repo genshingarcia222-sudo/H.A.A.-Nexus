@@ -181,7 +181,19 @@ export function loadRecords(files = recordFiles()) {
  * could not be supplied. A record with an empty `blockedOn` is fully migratable
  * today; one with entries is not, and the entries say exactly why.
  */
-export function transformRecord(entry, registry = loadDifficultyRegistry()) {
+export function transformRecord(entry, maybeRegistry) {
+  // `entries.map(transformRecord)` is the obvious thing to write, and
+  // `Array.map` passes (element, index, array) - so the index arrives here as
+  // the second argument and a default parameter does NOT fire, because a
+  // default only applies to `undefined`. That is how this threw
+  // "Cannot read properties of undefined (reading 'get')" on a number.
+  //
+  // Guarding the signature rather than only fixing the call sites: this
+  // function is exported, and the next caller would hit the same trap.
+  const registry =
+    maybeRegistry && typeof maybeRegistry === "object" && maybeRegistry.hints instanceof Map
+      ? maybeRegistry
+      : loadDifficultyRegistry();
   const a = entry.record;
   const blockedOn = [];
   const candidate = { family: "ITEM" };

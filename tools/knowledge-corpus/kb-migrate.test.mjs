@@ -36,7 +36,9 @@ function test(name, fn) {
 console.log("P9-011 migration engine tests\n");
 
 const entries = loadRecords();
-const results = entries.map(transformRecord);
+// Explicit arrow rather than `map(transformRecord)`: see the regression test
+// below for why bare `map` was a trap worth keeping a test on.
+const results = entries.map((e) => transformRecord(e));
 const m = migrate();
 
 console.log("every record has an outcome");
@@ -206,12 +208,57 @@ test("the 114 free-text records are blocked structurally, with a reason", () => 
   }
 });
 
-test("difficultyLevel is blocked on O4 rather than guessed", () => {
+test("O4: the band is preserved on every single record", () => {
+  // The decision's first clause. Whatever happens to the numeric level, the
+  // archive's own band must survive on all 432.
   for (const r of results) {
+    assert.ok(r.candidate.difficultyBand, `${r.id} lost its difficulty band`);
+  }
+});
+
+test("O4: a level is assigned only where the registry hints exactly one", () => {
+  // Replaces an earlier assertion that every record was blocked on
+  // difficultyLevel. That was correct before O4 was implemented and became
+  // false when it was - the engine now resolves 369 of 432 on registry
+  // evidence. The guarantee that still matters is the one below: a level is
+  // never produced for an ambiguous band.
+  const verified = results.filter((r) => r.candidate.difficultyLevel !== undefined);
+  const unresolved = results.filter((r) => r.candidate.difficultyLevel === undefined);
+  assert.equal(verified.length, 369, "records with a verified level");
+  assert.equal(unresolved.length, 63, "records left unresolved");
+
+  for (const r of verified) {
+    assert.ok(
+      ["MODERATE", "HARD", "VERY_HARD", "REALISTIC_PREMIUM"].includes(r.candidate.difficultyBand),
+      `${r.id} got a level for band ${r.candidate.difficultyBand}`
+    );
+    assert.ok(r.candidate.difficultyLevel >= 1 && r.candidate.difficultyLevel <= 6);
+  }
+});
+
+test("O4: EASY never receives a level, and says why", () => {
+  // EASY hints both 1 and 2, so choosing either is the invention O4 forbids.
+  const easy = results.filter((r) => r.candidate.difficultyBand === "EASY");
+  assert.equal(easy.length, 63);
+  for (const r of easy) {
+    assert.equal(r.candidate.difficultyLevel, undefined, `${r.id} guessed a level for EASY`);
     const d = r.blockedOn.find((b) => b.field === "difficultyLevel");
-    assert.ok(d, `${r.id} does not report the difficulty blocker`);
-    assert.match(d.why, /O4/);
-    assert.equal(r.candidate.difficultyLevel, undefined, "a level must not be guessed from a band");
+    assert.ok(d, `${r.id} does not report why the level is unresolved`);
+    assert.equal(d.crosswalkStatus, "AMBIGUOUS");
+  }
+});
+
+test("REGRESSION: map(transformRecord) must not break on the index argument", () => {
+  // This is the exact defect the merged lane surfaced. `Array.map` passes
+  // (element, index, array), so bare `map(transformRecord)` handed a number in
+  // as the registry and threw. The engine now ignores a second argument that
+  // is not a registry.
+  const sample = entries.slice(0, 3);
+  const viaBareMap = sample.map(transformRecord);
+  const viaArrow = sample.map((e) => transformRecord(e));
+  assert.deepEqual(viaBareMap, viaArrow, "bare map must agree with an explicit call");
+  for (const r of viaBareMap) {
+    assert.ok(r.candidate.difficultyBand, "the band resolved even through bare map");
   }
 });
 
