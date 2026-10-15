@@ -11,6 +11,70 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## P9-011 — Contract B Extended, the Transform Engine Built, and the Source Archive Recovered (2026-10-15)
+
+**All of this is on the knowledgebase lane as PR #24** (building on PR #23), not
+on `main`. **No record was migrated**, no manifest or checksum changed, and all
+432 authored records remain `pendingHumanReview` with 0 approved.
+
+**The contract B extension is done.**
+
+- **O5** — `RESPONSE_FORMATS` gains `MULTI_SELECT`; `correctChoiceIds` is
+  optional and must agree with the format in both directions. Scoring is
+  **all-or-nothing** in a new `scoring.ts`: nothing is silently filtered or
+  normalised, and a multi-select item is never scored from `correctChoiceId`
+  alone. 24 tests.
+- **O6** — `CorpusPolicyShape` carries the **17** policy and safety fields, all
+  optional, spread across all five family schemas. Types measured from the 432
+  records. The `accessClasses` drop is **enforced**: `.strict()` rejects a record
+  still carrying it. 19 tests.
+
+`nexus-core` **824 → 867**, `tsc --noEmit` clean, and all three extension points
+mutation-verified.
+
+**The transform engine is done, and it invents nothing — which is the finding.**
+`migratable today: 0 of 432`. Five required contract B fields the authored
+corpus cannot supply: `skillArea`, `learningObjective`, `questionType` and
+`source` on all 432, and `difficultyLevel` blocked on **O4**. Plus a structural
+one: **114** records have zero choices and an `expectedOutput`, and contract B's
+ITEM family extends a **multiple-choice** question bank, so it cannot represent
+a free-text task at all. Proposed as **O9** with four options and their costs in
+`knowledge-corpus/MIGRATION_BLOCKERS.md`. 20 tests, deterministic, isolated;
+the canonical corpus is never written to.
+
+**O3 is RECOVERED, and this is the substantive discovery.** The archive
+`SOURCE_RECONCILIATION_v1.md` recorded as absent was never in Git — no commit,
+no blob in any history, no tag, no release — but it is on the owner's local
+filesystem, which that reconciliation ran outside of.
+`Nexus_Knowledgebase_Archive_v1.0_2026-09-22.pdf`, 1,219,286 bytes, SHA-256
+`ED3BCD26…3F75`, 82 pages. **Identity verified on six independent criteria**
+that agree with the charter and with each other: 400 distinct record ids; five
+bands at 84/84/84/84/64 = 400; id prefixes matching those bands; 20 modules
+M01–M20; 12 axes D01–D12; and the archive's own changelog line "336 tiered
+competency seeds + 64 Realistic Premium cases". The PDF is **not committed** —
+the reviewable form is `knowledge-corpus/source/archive-v1-reference.json`.
+
+**Still missing:** `nexus_knowledgebase_archive_v1.jsonl`, which the archive
+itself names as its primary machine-readable source, and the charter's
+`nexus_knowledgebase_materials_v1.md`. Both searched for by exact name and
+pattern across the whole repository history and the local filesystem.
+
+**And one immediately actionable finding.** The archive states FY2026 ICD-10-CM
+is active through 30 September 2026 and FY2027 begins 1 October 2026. **Today is
+2026-10-15, so FY2027 is active and FY2026 is superseded** — and the archive was
+published while FY2026 was current, so any coding content it carries was written
+against the superseded release. The boundary dates are quoted from the archive;
+**CMS remains the authority for the code sets, and no ICD-10-CM content was
+ingested, validated or relabelled.**
+
+**Not done, and not claimed.** The 400 seed records were not extracted into the
+corpus: the text is recoverable, but a table-layout PDF transcribed into
+clinical training records needs human verification, and a machine transcription
+presented as the original would be fabrication. No PR was merged. Nothing on the
+owner's filesystem was moved or deleted.
+
+---
+
 ## P9-011 Step A1 — the Field Disposition Table, and a False Premise Corrected (2026-10-14)
 
 **CLAUDE-RECOMMENDED AND IMPLEMENTED UNDER STANDING AUTHORIZATION.** Work landed
