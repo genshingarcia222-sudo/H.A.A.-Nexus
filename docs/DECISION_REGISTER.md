@@ -492,7 +492,14 @@ does not read the silence as something forgotten.
 
 **Blocked because:** no source defines what a competency trend should change
 about guidance, and inventing one would silently alter what learners are told to
-do next. The deferral is deliberate and recorded; the entry stays blocked rather
+do next.
+
+**Re-swept 2026-10-15 against the code, not this entry.** The engine exists —
+`packages/nexus-core/src/recommendation-engine/index.ts` with its test — and
+contains **zero** occurrences of `competenc`. So the engine is real and purely
+error-based; what is missing is the competency dimension, not the engine. That
+distinction matters for sizing the work: A7 is an addition to a working module,
+not a module to build. The deferral is deliberate and recorded; the entry stays blocked rather
 than closed, because the product question is real and unanswered.
 
 **Why nothing was built.** The register's own measured evidence is that
@@ -530,6 +537,14 @@ was fabricated to make tiers look complete.
 
 **Blocked because:** authoring clinical scenarios is content work requiring
 clinical review, not an engineering decision.
+
+**Re-swept 2026-10-15, and the gap is now quantified.** `content/scenarios/live-scribing/`
+holds exactly **two** scenarios — `SCRIBE-FM-014-v1.0` and `SCRIBE-IM-032-v1.0` —
+at difficulty **1** and **3**. So **four of the six** difficulty bands (2, 4, 5
+and 6) have **no scenario at all**, and two of six are covered. The blocker is
+unchanged and still needs clinical review; what changed is that the shortfall is
+measured rather than described, so the authoring request can name the four bands
+it has to fill.
 
 **Concrete consequence, measured 2026-09-20:** the released inventory is one
 difficulty-1 and one difficulty-3 scenario. Difficulty 3 is unlocked from
