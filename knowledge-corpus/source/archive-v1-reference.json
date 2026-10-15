@@ -168,51 +168,63 @@
   "competencyAxes": [
     {
       "axisId": "D01",
-      "competency": "D12 matrix                     Competency"
+      "competency": "Patient identity and encounter context",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D02",
-      "competency": "Patient identity and encounter context"
+      "competency": "Clinical intent and task interpretation",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D03",
-      "competency": "ID                            Clinical intent and task interpretation"
+      "competency": "Safety, red flags, and escalation",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D04",
-      "competency": "D01                           Safety, red flags, and escalation"
+      "competency": "Pertinent chart extraction",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D05",
-      "competency": "D02                           Pertinent chart extraction"
+      "competency": "SOAP and clinical documentation",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D06",
-      "competency": "D03                           SOAP and clinical documentation"
+      "competency": "Orders, referrals, and fax workflows",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D07",
-      "competency": "D04                           Orders, referrals, and fax workflows"
+      "competency": "ICD-10-CM coding support",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D08",
-      "competency": "D05                           ICD-10-CM coding support"
+      "competency": "Medication, laboratory, and imaging workflow",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D09",
-      "competency": "D06                           Medication, laboratory, and imaging workflow"
+      "competency": "Insurance, authorization, and administrative workflow",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D10",
-      "competency": "D07                           Insurance, authorization, and administrative workflow"
+      "competency": "HIPAA, privacy, security, and minimum necessary",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D11",
-      "competency": "D08                           HIPAA, privacy, security, and minimum necessary"
+      "competency": "Communication, calls, and closed-loop coordination",
+      "pairing": "column-stream order"
     },
     {
       "axisId": "D12",
-      "competency": "D09                           Communication, calls, and closed-loop coordination"
+      "competency": "Contradiction detection, auditability, and error control",
+      "pairing": "column-stream order"
     }
   ],
   "alsoNamedButNOTRecovered": [
@@ -228,5 +240,14 @@
       "searched": "whole repository history and the local filesystem",
       "found": false
     }
-  ]
+  ],
+  "competencyAxisExtraction": {
+    "status": "CORRECTED 2026-10-15 (B9)",
+    "defect": "The first extraction paired labels to D01-D12 by position after dropping only lines that matched an id exactly. The archive renders the matrix as two column streams that pdftotext offsets by two rows, so the header line and every embedded id survived into the label text and the pairing was wrong for every row. Found independently by DEVICE-02 and recorded as B9.",
+    "method": "Columns are split at the measured boundary (column 31), each stream's header cells are dropped by name, and the two streams are paired in order. The extractor refuses to emit unless both streams are exactly twelve entries, the ids are a contiguous D01-D12, and no label carries an embedded id, three-or-more-space column bleed, or a header cell.",
+    "pairing": "column-stream order, not same-row",
+    "pairingEvidence": "Same-row pairing would orphan two labels and leave two ids unlabelled, which cannot be the intent of a declared twelve-axis matrix. The corpus then settles it empirically: records tagged KB-D10 carry privacyFlags at 47% against an 11-17% baseline for all eleven other axes, and stream-order pairing is what puts 'HIPAA, privacy, security, and minimum necessary' at D10. Same-row pairing would put it at D09, which sits at baseline (11%).",
+    "verifiedOn": "2026-10-15",
+    "verifiedBy": "DEVICE-01"
+  }
 }
