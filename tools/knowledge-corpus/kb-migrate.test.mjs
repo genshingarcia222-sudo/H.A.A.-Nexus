@@ -15,6 +15,7 @@ import {
   ITEM_REQUIRED,
   RECORD_TYPE_TO_FAMILY,
   TASK_TO_MODALITY,
+  loadDifficultyRegistry,
   loadRecords,
   migrate,
   transformRecord
@@ -36,7 +37,7 @@ function test(name, fn) {
 console.log("P9-011 migration engine tests\n");
 
 const entries = loadRecords();
-const results = entries.map(transformRecord);
+const results = entries.map((entry) => transformRecord(entry));
 const m = migrate();
 
 console.log("every record has an outcome");
@@ -206,20 +207,42 @@ test("the 114 free-text records are blocked structurally, with a reason", () => 
   }
 });
 
-test("difficultyLevel is blocked on O4 rather than guessed", () => {
+// O4 is two rules, not one, and this pins both. Before O4 was implemented no
+// level could be assigned at all, so this asserted that EVERY record carried the
+// blocker. O4 ("bands preserved, levels only on evidence") made a level
+// assignable wherever the registry hints exactly one, which is four of the five
+// bands. Asserting the old universal claim would now require the engine to
+// withhold a level it has evidence for.
+test("difficultyLevel is assigned only on evidence, and blocked on O4 otherwise", () => {
+  const registry = loadDifficultyRegistry();
+  let verified = 0;
+  let blocked = 0;
   for (const r of results) {
+    const band = r.candidate.difficultyBand;
+    assert.ok(band, `${r.id} lost its difficulty band; O4 preserves the band unconditionally`);
+    const hint = registry.hints.get(band);
+    assert.ok(hint, `${band} is not a band ${registry.registryId} defines`);
     const d = r.blockedOn.find((b) => b.field === "difficultyLevel");
-    assert.ok(d, `${r.id} does not report the difficulty blocker`);
-    assert.match(d.why, /O4/);
-    assert.equal(r.candidate.difficultyLevel, undefined, "a level must not be guessed from a band");
+    if (hint.length === 1) {
+      assert.equal(d, undefined, `${r.id}: ${band} hints exactly one level, so nothing is blocked`);
+      assert.equal(r.candidate.difficultyLevel, hint[0], `${r.id}: the hinted level must be carried`);
+      verified++;
+    } else {
+      assert.ok(d, `${r.id} does not report the difficulty blocker although ${band} hints ${hint.length} levels`);
+      assert.match(d.why, /O4/);
+      assert.equal(r.candidate.difficultyLevel, undefined, "a level must not be guessed from a band");
+      blocked++;
+    }
   }
+  assert.equal(blocked, 63, "EASY is the only ambiguous band, and it is on 63 records");
+  assert.equal(verified + blocked, 432, "every record must fall on one side or the other");
 });
 
 console.log("\ndeterminism and isolation");
 
 test("two runs produce identical output", () => {
-  const a = JSON.stringify(entries.map(transformRecord));
-  const b = JSON.stringify(loadRecords().map(transformRecord));
+  const a = JSON.stringify(entries.map((entry) => transformRecord(entry)));
+  const b = JSON.stringify(loadRecords().map((entry) => transformRecord(entry)));
   assert.equal(a, b);
 });
 
