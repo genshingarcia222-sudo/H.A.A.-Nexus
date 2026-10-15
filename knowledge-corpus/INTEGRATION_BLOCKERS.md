@@ -8,6 +8,41 @@ This branch is not merged into `main`, and the corpus is not live. No applicatio
 file was modified: no loader, no `packages/nexus-core` schema, no entitlement
 code, no Assessment logic, nothing under `content/`, nothing in `.nexus/`.
 
+## Two of the five migration blockers have moved — 2026-10-15 (later)
+
+The section below recorded `migratable today: 0 of 432` and five named
+blockers. Two have since moved, and the lane head `901f029` now carries the
+work, so the gate's position has changed and this records how.
+
+**O4 is RESOLVED (owner-decided) and IMPLEMENTED.** `difficultyBand` is
+preserved on every record as source metadata and a numeric level is assigned
+only where the registry's hint names exactly one — **369 verified, 63 ambiguous,
+0 absent, all 432 bands preserved**. Re-measured on this lane's own records and
+the split reproduces exactly: EASY 63 / MODERATE 120 / HARD 192 / VERY_HARD 30 /
+REALISTIC_PREMIUM 27 = 432.
+
+**O9 is RESOLVED (owner-decided) but NOT IMPLEMENTED.** Contract B must gain a
+first-class **open-response** type for the 114 free-text records rather than
+forcing them into the multiple-choice family. The decision carries constraints
+that bear directly on this gate: automated scoring stays **disabled** unless a
+validated rubric supports it (the corpus's `acceptanceCriteria` credit weights
+are a rubric *shape* and have never been validated as a scorer), an unreviewed
+open-response item **cannot become production-eligible**, and mapping
+`goldBehavior` onto `learningObjective` is **explicitly prohibited**.
+
+**What still blocks every record: four fields.** `skillArea`,
+`learningObjective`, `questionType` and `source`, on all 432. Each needs
+authoring judgement or human verification. The O9 prohibition closes the one
+shortcut that looked available, so this is not a gap an implementation can
+close.
+
+**What this means for criterion 2, and it is not better news.** The gate still
+fails and the verdict is still DO NOT MERGE YET. One thing did get stricter:
+O9's "an unreviewed open-response item cannot become production-eligible" lands
+on a corpus with **0 of 432 approved**, so the 114 free-text records now have a
+second, decision-backed reason they cannot reach a production path — the review
+blocker **B2**, not just the contract gap.
+
 ## The prescribed ordering is itself now blocked — 2026-10-15, measured on this lane
 
 The gate below prescribes: resolve O5 and O6 → **migrate on this lane** →

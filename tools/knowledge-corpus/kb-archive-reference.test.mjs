@@ -94,6 +94,37 @@ test("B9: the privacy axis is D10, which the corpus independently confirms", () 
   assert.match(d10.competency, /HIPAA|privacy/i);
 });
 
+test("B9: all twelve axes match the charter registry exactly, in order", () => {
+  // The strongest available check, and an independent one: this lane's
+  // registries/competencies.json is owner-supplied (charter section VIII,
+  // 2026-09-26), predates the archive extraction by three weeks and was never
+  // derived from the PDF. If the extraction's pairing is right, the two agree
+  // on all twelve rows; if it is off by any offset, they disagree on most.
+  //
+  // This subsumes the D10 statistical argument above and would have caught the
+  // original defect on every row at once rather than on one. It also pins the
+  // twelfth label, which the contaminated extraction did not contain at all.
+  const registry = JSON.parse(
+    readFileSync(
+      path.join(REPO_ROOT, "knowledge-corpus/registries/competencies.json"),
+      "utf8"
+    )
+  ).competencies;
+  assert.equal(registry.length, 12, "the registry must still declare twelve axes");
+  assert.equal(ref.competencyAxes.length, 12);
+  const mismatches = [];
+  for (let i = 0; i < 12; i++) {
+    const axis = ref.competencyAxes[i];
+    const entry = registry[i];
+    if (axis.axisId !== entry.sourceCompetencyId || axis.competency.trim() !== entry.title.trim()) {
+      mismatches.push(
+        `${axis.axisId} "${axis.competency}" != ${entry.sourceCompetencyId} "${entry.title}"`
+      );
+    }
+  }
+  assert.deepEqual(mismatches, [], "archive axes diverge from the charter registry");
+});
+
 test("the extraction records its method and its evidence", () => {
   // A derived table that does not say how it was derived is the thing that got
   // shipped wrong the first time.

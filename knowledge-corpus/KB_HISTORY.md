@@ -2,6 +2,103 @@
 
 Append-only. Entries are not rewritten; a correction is a new entry.
 
+## 2026-10-15 (later) — B9 was fixed, and the charter registry proves the fix independently
+
+The lane head moved without this session: `origin/feat/knowledgebase-expansion`
+advanced from `3e10d92` to **`901f029`** as DEVICE-01 merged PRs **#23, #24,
+#25, #26 and #27**. **This lane's work was fully contained in that advance** —
+checked first, before anything else: `3e10d92` is an ancestor of `901f029`, zero
+commits diverged, nothing discarded. Fast-forwarded, then `main` `fc989b3`
+merged in CLEAN (CHANGELOG under §10(G): base 89 / main 91 / lane 92, both sides
+purely additive, union 94, merged 94, **0 lost, 0 invented, 0 duplicated**,
+newest-first intact, corpus untouched).
+
+### B9 was fixed, and this lane verified it against a source the fix did not use
+
+DEVICE-01's `6ca5641` re-extracted the axis table: columns split at the measured
+boundary, each stream's header cells dropped by name, and the extractor refuses
+to emit unless both streams are exactly twelve, the ids contiguous, and no label
+carries an embedded id, column bleed or a header cell. The commit message is
+candid about the cause — *"My own code comment had admitted the table was
+misaligned and I shipped the positional pairing anyway."*
+
+**Verified here rather than accepted, and the check is better than the one the
+fix cites.** The corrected table was compared row by row against
+`knowledge-corpus/registries/competencies.json` — owner-supplied under charter
+§VIII on **2026-09-26**, three weeks before the extraction, and never derived
+from the PDF. **All twelve rows match, in order, 0 mismatches.** That settles
+the stream-order-versus-same-row question directly, where the fix's own evidence
+was an indirect statistic (`privacyFlags` at 47% on KB-D10 against an 11–17%
+baseline) covering one row.
+
+**And it answers the fabrication question this lane raised.** The twelfth label,
+"Contradiction detection, auditability, and error control", is **absent from the
+contaminated extraction entirely** — so a fix that produced it had to get it
+from somewhere. It is in the charter registry, and already in use in KB-001
+record rationales. Not invented.
+
+### The guard the fix lacked, added here
+
+`tools/knowledge-corpus/kb-archive-reference.test.mjs` had ten tests and none of
+them read the registry; D10 was pinned by the statistic. This lane added
+**"B9: all twelve axes match the charter registry exactly, in order"** — 11
+tests now, and it is already inside `kb:verify` and the new CI step, so it needs
+no wiring.
+
+**Mutation-checked twice, because the second mutation is the point:**
+
+| Mutation | Result |
+|---|---|
+| labels shifted by one row | 2 fail — the existing D10 test and the new one |
+| **D01 and D02 swapped**, leaving HIPAA at D10 | **1 fail — only the new one.** Every other test in the suite passes |
+
+So the cross-check is not redundant with what was already there: a
+pairing error that happens to leave the privacy axis in place was invisible
+before and is not now. Had this test existed at extraction time it would have
+caught the original defect on all twelve rows at once.
+
+### O9 and O4 are both owner-decided, and one is implemented
+
+Recorded in `docs/DECISION_REGISTER.md`, read from the repository rather than
+from any conversation.
+
+**O4 — IMPLEMENTED and verified.** The original band stays authoritative source
+metadata; a numeric level is assigned only where the registry hint names exactly
+one, and `AMBIGUOUS` gets no level rather than a guess. **369 verified, 63
+ambiguous, 0 absent, all 432 bands preserved.** Re-measured independently here
+and the band split reproduces exactly: **EASY 63, MODERATE 120, HARD 192,
+VERY_HARD 30, REALISTIC_PREMIUM 27 = 432.**
+
+**O9 — DECIDED, NOT IMPLEMENTED.** Contract B must gain a first-class
+open-response type for the 114 free-text records. Three constraints land on this
+lane: automated scoring stays **disabled** unless a validated rubric supports it
+(the corpus's `acceptanceCriteria` credit weights are a rubric *shape*, never
+validated as a scorer), an unreviewed open-response item **cannot become
+production-eligible**, and mapping `goldBehavior` onto `learningObjective` is
+**explicitly prohibited** — which closes the one shortcut that looked available
+for one of the four remaining blocked fields.
+
+**So the migration's blocker list is down to four fields** — `skillArea`,
+`learningObjective`, `questionType`, `source`, on all 432 — and every one of
+them needs authoring judgement or human verification. None is fixable by
+implementation.
+
+### A CI gap that had a measurable cost, now closed
+
+PR #27 added the eleven `kb:*` gates to the CI job, guarded on
+`knowledge-corpus/` existing so it is a clean no-op on `main`. Before that,
+`kb:test:migrate` sat **red on the lane while every CI run was green**, because
+nothing in CI ran it. Worth recording as a general lesson for this lane: a gate
+that exists but is not in the CI list is not a gate, and this lane's own six
+`kb:*` suites had been in exactly that position since KB-001.
+
+### What this session did not do
+
+Did not execute the migration — four fields still block every record, and it
+was never this session's to start unasked. Did not merge, close or modify PR #21
+or PR #22. Did not touch the records, the manifest, the schema, any registry, or
+`.nexus/`. PR #22 still merges CLEAN against the new head.
+
 ## 2026-10-15 — the migration is measured as blocked, the archive is found outside Git, and its axis table is contaminated
 
 `main` advanced three commits to `34bb6b6` and merged CLEAN (CHANGELOG under
