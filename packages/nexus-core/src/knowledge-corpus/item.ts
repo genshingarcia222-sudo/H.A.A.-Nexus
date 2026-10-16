@@ -5,6 +5,8 @@ import {
 } from "../question-bank/schema.js";
 import {
   ApplicabilitySchema,
+  CorpusPolicyShape,
+  CorpusSourceMetadataShape,
   CorpusVerificationSchema,
   EvidenceLinkSchema,
   MachineVerificationSchema,
@@ -53,7 +55,16 @@ export const MODALITIES = [
  * already grades drafts. Adding a second grading path here would duplicate
  * that engine and change what the run state machine means by "answered".
  */
-export const RESPONSE_FORMATS = ["SINGLE_BEST_ANSWER"] as const;
+/**
+ * How an item expects its answer.
+ *
+ * `MULTI_SELECT` arrives with **O5** (2026-10-14): 15 of the 432 authored
+ * knowledgebase records are genuinely multi-select, each with exactly two
+ * correct choices, and the decision was to carry them rather than drop them,
+ * re-author them without a reviewer, or hold them back. It is additive: an item
+ * that does not declare it behaves exactly as before.
+ */
+export const RESPONSE_FORMATS = ["SINGLE_BEST_ANSWER", "MULTI_SELECT"] as const;
 
 export const SOAP_TASKS = [
   "IDENTIFY_SECTION",
@@ -93,10 +104,25 @@ export const ModalityDetailSchema = z
   .strict();
 
 export const AssessmentItemObjectSchema = TrainingQuestionObjectSchema.extend({
+  // O6: the seventeen carried policy and safety fields, all optional.
+  ...CorpusPolicyShape,
+  // O4: the archive's own difficulty band, preserved beside the level.
+  ...CorpusSourceMetadataShape,
   family: z.literal("ITEM"),
   revision: z.number().int().min(1),
   modality: z.enum(MODALITIES),
   responseFormat: z.enum(RESPONSE_FORMATS).default("SINGLE_BEST_ANSWER"),
+  /**
+   * The complete set of correct choices, for `MULTI_SELECT` only (O5).
+   *
+   * The inherited `correctChoiceId` stays required and stays meaningful: for a
+   * multi-select item it holds the lowest-sorted member of this set, so a
+   * consumer that only knows about single answers still reads a genuinely
+   * correct choice rather than a null. Scoring does **not** go through it -
+   * `scoreSelection` refuses to score a multi-select item from one id, because
+   * accepting a single selection as fully correct would be a silent weakening.
+   */
+  correctChoiceIds: z.array(z.string().min(1)).min(2).optional(),
   /** `<contextId>@<revision>`; pinned so a context edit cannot change a reviewed item. */
   contextRef: z.string().min(1).optional(),
   targetSegmentIds: z.array(z.string().min(1)).optional(),
@@ -135,6 +161,64 @@ export const AssessmentItemSchema = AssessmentItemObjectSchema.superRefine((item
       code: z.ZodIssueCode.custom,
       path: ["choices"],
       message: `an assessment item needs 3-5 choices, got ${item.choices.length}`
+    });
+  }
+
+  // --- Multi-select (O5) -----------------------------------------------
+  //
+  // The field and the format have to agree in both directions. A MULTI_SELECT
+  // item with no set would score as a single answer; a set on a single-answer
+  // item would be silently ignored, which is the failure mode O5 was decided
+  // to avoid.
+  if (item.responseFormat === "MULTI_SELECT") {
+    const ids = item.correctChoiceIds;
+    if (!ids) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["correctChoiceIds"],
+        message: "a MULTI_SELECT item must list its complete correct set in correctChoiceIds"
+      });
+    } else {
+      const choiceIds = new Set(item.choices.map((c) => c.id));
+      for (const id of ids) {
+        if (!choiceIds.has(id)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["correctChoiceIds"],
+            message: `correctChoiceIds contains "${id}", which is not a choice id`
+          });
+        }
+      }
+      if (new Set(ids).size !== ids.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["correctChoiceIds"],
+          message: "correctChoiceIds repeats a choice id"
+        });
+      }
+      if (ids.length >= item.choices.length) {
+        // Every option correct is not a question.
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["correctChoiceIds"],
+          message: `correctChoiceIds marks all ${ids.length} of ${item.choices.length} choices correct`
+        });
+      }
+      if (!ids.includes(item.correctChoiceId)) {
+        // Keeps the inherited field honest for a consumer that only knows
+        // about single answers.
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["correctChoiceId"],
+          message: `correctChoiceId "${item.correctChoiceId}" must be one of correctChoiceIds`
+        });
+      }
+    }
+  } else if (item.correctChoiceIds) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["correctChoiceIds"],
+      message: `correctChoiceIds is only for MULTI_SELECT, not ${item.responseFormat}`
     });
   }
 

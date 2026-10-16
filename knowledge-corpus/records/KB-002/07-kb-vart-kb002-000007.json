@@ -1,0 +1,631 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000007",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-DOCT-KB002-000025",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D05"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SOAP_TRANSFORMATION",
+      "scenarioType": "SECTION_PLACEMENT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "SOAP and clinical documentation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000007"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000007#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "\"Patient says the cough has been going three weeks and is worse at night. Chest clear on auscultation, temp 36.9. Likely post-viral cough. Reassess in two weeks if not settling.\"",
+            "section": "Dictation",
+            "recordedBy": "CNM Isolde Babatunde-Reyes",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "the sections stated for this scenario are strict: Subjective holds only what the patient reports, Objective only what the clinician measured or observed, Assessment the clinician's interpretation, and Plan the intended next step, and nothing may appear in two sections",
+            "section": "Section rules",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "CNM Isolde Babatunde-Reyes (Midwifery) is the author and will sign the note.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Quietwater Family Health — inbound telephone call",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "T. Alvarado-Ng is structuring the 2026-08-13 encounter for Ignatius Nwachukwu (MRN SYN-9461) into SOAP sections. Where does each statement belong?",
+      "goldBehavior": "Place the three-week night-worse cough in Subjective because the patient reported it; the clear chest and the temperature in Objective because the clinician measured them; \"likely post-viral cough\" in Assessment because it is the clinician's interpretation; and the two-week reassessment in Plan. Do not repeat the cough in Objective, and do not move the assessment upward into Objective — an interpretation is not an observation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Assigns each of the four statements to exactly one section, citing the stated rules.",
+          "credit": 0.34,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Keeps the reported cough out of Objective and the interpretation out of Objective.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Attributes the assessment and plan to the clinician rather than to the assistant.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000007",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "e4c0b8643cb4be9b",
+        "scenarioFingerprint": "54e44ea710325d69",
+        "competencyFingerprint": "861075ef2bfe5f13",
+        "evidenceLayoutFingerprint": "757eefae2b6bd946",
+        "answerPatternFingerprint": "3b1c08ef600132ea"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000026",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D05"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SOAP_TRANSFORMATION",
+      "scenarioType": "SECTION_PLACEMENT__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "SOAP and clinical documentation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000007"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000007#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "\"Patient says the cough has been going three weeks and is worse at night. Chest clear on auscultation, temp 36.9. Likely post-viral cough. Reassess in two weeks if not settling.\"",
+            "section": "Dictation",
+            "recordedBy": "Dr. Imani Farrokhzad",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "P3",
+            "text": "Dr. Imani Farrokhzad (Internal Medicine) is the author and will sign the note.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "the sections stated for this scenario are strict: Subjective holds only what the patient reports, Objective only what the clinician measured or observed, Assessment the clinician's interpretation, and Plan the intended next step, and nothing may appear in two sections",
+            "section": "Section rules",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Marbury Heights Clinic — patient portal message",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "L. Haverford is structuring the 2026-09-01 encounter for Jovana Petrakis-Hume (MRN SYN-3807) into SOAP sections. Where does each statement belong? Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Place the three-week night-worse cough in Subjective because the patient reported it; the clear chest and the temperature in Objective because the clinician measured them; \"likely post-viral cough\" in Assessment because it is the clinician's interpretation; and the two-week reassessment in Plan. Do not repeat the cough in Objective, and do not move the assessment upward into Objective — an interpretation is not an observation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Assigns each of the four statements to exactly one section, citing the stated rules.",
+          "credit": 0.34,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Keeps the reported cough out of Objective and the interpretation out of Objective.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Attributes the assessment and plan to the clinician rather than to the assistant.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000025",
+      "variantOf": "KB-DOCT-KB002-000025",
+      "templateId": "KB-VART-KB002-000007",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000025"
+      ],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "2e86d90b9a075f04",
+        "scenarioFingerprint": "2cef14bf41889151",
+        "competencyFingerprint": "861075ef2bfe5f13",
+        "evidenceLayoutFingerprint": "038861c39f684e8a",
+        "answerPatternFingerprint": "3b1c08ef600132ea"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000027",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D05"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SOAP_TRANSFORMATION",
+      "scenarioType": "SECTION_PLACEMENT__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "SOAP and clinical documentation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000007"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000007#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "P2",
+            "text": "Routine reconciliation note from D. Eluwande: demographics confirmed, card image legible, and — the sections stated for this scenario are strict: Subjective holds only what the patient reports, Objective only what the clinician measured or observed, Assessment the clinician's interpretation, and Plan the intended next step, and nothing may appear in two sections — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "P1",
+            "text": "\"Patient says the cough has been going three weeks and is worse at night. Chest clear on auscultation, temp 36.9. Likely post-viral cough. Reassess in two weeks if not settling.\"",
+            "section": "Dictation",
+            "recordedBy": "Dr. Teodoro Haakonsen",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "P3",
+            "text": "Dr. Teodoro Haakonsen (Family Medicine) is the author and will sign the note.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "D. Eluwande is structuring the 2026-11-05 encounter for Kwabena Lindqvist (MRN SYN-7134) into SOAP sections. Where does each statement belong? Nothing in this record is labelled as important.",
+      "goldBehavior": "Place the three-week night-worse cough in Subjective because the patient reported it; the clear chest and the temperature in Objective because the clinician measured them; \"likely post-viral cough\" in Assessment because it is the clinician's interpretation; and the two-week reassessment in Plan. Do not repeat the cough in Objective, and do not move the assessment upward into Objective — an interpretation is not an observation.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Assigns each of the four statements to exactly one section, citing the stated rules.",
+          "credit": 0.34,
+          "evidenceRef": "P2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Keeps the reported cough out of Objective and the interpretation out of Objective.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Attributes the assessment and plan to the clinician rather than to the assistant.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000025",
+      "variantOf": "KB-DOCT-KB002-000025",
+      "templateId": "KB-VART-KB002-000007",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000025"
+      ],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "caa78ba122d9ad7f",
+        "scenarioFingerprint": "b33e8f1057411edb",
+        "competencyFingerprint": "861075ef2bfe5f13",
+        "evidenceLayoutFingerprint": "d2b9a6d7cdb9997c",
+        "answerPatternFingerprint": "3b1c08ef600132ea"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000028",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D05"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SOAP_TRANSFORMATION",
+      "scenarioType": "SECTION_PLACEMENT__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "SOAP and clinical documentation",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000007"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000007#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "P1",
+            "text": "\"Patient says the cough has been going three weeks and is worse at night. Chest clear on auscultation, temp 36.9. Likely post-viral cough. Reassess in two weeks if not settling.\"",
+            "section": "Dictation",
+            "recordedBy": "Dr. Ngozi Brandtsen",
+            "recordedOn": "2026-12-08",
+            "decisive": true
+          },
+          {
+            "ref": "P3",
+            "text": "Dr. Ngozi Brandtsen (Cardiology) is the author and will sign the note.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "P. Kirchmayer is structuring the 2026-12-08 encounter for Lorelai Abubakar-Stern (MRN SYN-4592) into SOAP sections. Where does each statement belong? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which of the four statements the clinician measured rather than was told), name Dr. Ngozi Brandtsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which of the four statements the clinician measured rather than was told\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "P1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000025",
+      "variantOf": "KB-DOCT-KB002-000025",
+      "templateId": "KB-VART-KB002-000007",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000025"
+      ],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "P. Kirchmayer",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "2b4e63ad35647b1a",
+        "scenarioFingerprint": "bbe15f6f4b11c2fe",
+        "competencyFingerprint": "27ee36a56cf0d830",
+        "evidenceLayoutFingerprint": "8b1cded8f4394b8d",
+        "answerPatternFingerprint": "a489924148e75652"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

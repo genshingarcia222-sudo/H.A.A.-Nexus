@@ -1,0 +1,582 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000019",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000073",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CONTRADICTION_DETECTION",
+      "scenarioType": "TWO_ENTRIES_DISAGREE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Contradiction detection",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000019#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "K1",
+            "text": "Allergy list records a penicillin allergy with the reaction noted as rash, entered 2026-05-04.",
+            "section": "Allergies",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "K2",
+            "text": "The 2026-06-01 note's history states the patient reports no known drug allergies.",
+            "section": "Encounter note",
+            "recordedBy": "CNM Isolde Babatunde-Reyes",
+            "recordedOn": "2026-06-01",
+            "decisive": false
+          },
+          {
+            "ref": "K3",
+            "text": "the rule stated for this scenario is that a contradiction between a structured list and narrative text is surfaced to the clinician who can resolve it, and that neither recency nor the structured field wins by default",
+            "section": "Review rule",
+            "decisive": true
+          },
+          {
+            "ref": "K4",
+            "text": "No antibiotic is currently prescribed and none is pending.",
+            "section": "Medications",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Bellrock Community Health Center — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "Two entries in Arden Kowalczyk-Reyes's chart (MRN SYN-4418) disagree. What is the defensible response?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Surface both entries to CNM Isolde Babatunde-Reyes unresolved, record the contradiction as open, and note nothing is currently at risk.",
+          "why": "Correct: the stated rule reserves resolution to the clinician, and the record is left showing the conflict."
+        },
+        {
+          "id": "b",
+          "text": "Update the allergy list to no known allergies, since the later note is the more recent account.",
+          "why": "Recency is explicitly not decisive here, and clearing an allergy on a narrative line is the higher-consequence direction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "c",
+          "text": "Correct the note to match the allergy list, since structured fields are the authoritative record.",
+          "why": "The stated rule gives the structured field no default authority either, and editing a clinician's narrative is not a clerical correction.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Leave both as they are: no antibiotic is prescribed, so the disagreement has no consequence.",
+          "why": "Nothing pending today bounds the risk; it does not close a contradiction that will be read later.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Surface the contradiction rather than resolving it. State both entries precisely — a penicillin allergy with rash on the structured list, no known drug allergies in the later narrative — and that the stated rule gives neither precedence. Refer it to CNM Isolde Babatunde-Reyes for resolution, record that it is open, and note that no antibiotic is prescribed or pending so nothing is immediately at risk while it is resolved. Do not delete either entry, and do not let the later note overwrite the list.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States both entries precisely and that neither takes precedence under the stated rule.",
+          "credit": 0.34,
+          "evidenceRef": "K3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Refers the contradiction to the clinician and records it as open.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Notes that no antibiotic is prescribed or pending, bounding the immediate risk without dismissing the defect.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000019",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS",
+        "TRAP_SILENT_RECONCILIATION"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "d2c14b9cecf9eae1",
+        "scenarioFingerprint": "c350fee631b892f8",
+        "competencyFingerprint": "de260d02f63b7a92",
+        "evidenceLayoutFingerprint": "00d2edffb83651d7",
+        "answerPatternFingerprint": "3a6e46cb0490209a"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000074",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CONTRADICTION_DETECTION",
+      "scenarioType": "TWO_ENTRIES_DISAGREE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Contradiction detection",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000019#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "K1",
+            "text": "Allergy list records a penicillin allergy with the reaction noted as rash, entered 2026-06-22.",
+            "section": "Allergies",
+            "recordedBy": "E. Villaseñor-Bak",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "K2",
+            "text": "The 2026-07-20 note's history states the patient reports no known drug allergies.",
+            "section": "Encounter note",
+            "recordedBy": "Dr. Imani Farrokhzad",
+            "recordedOn": "2026-07-20",
+            "decisive": false
+          },
+          {
+            "ref": "K4",
+            "text": "No antibiotic is currently prescribed and none is pending.",
+            "section": "Medications",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "K3",
+            "text": "the rule stated for this scenario is that a contradiction between a structured list and narrative text is surfaced to the clinician who can resolve it, and that neither recency nor the structured field wins by default",
+            "section": "Review rule",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Thornfield Medical Partners — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Two entries in Bassey Oduya's chart (MRN SYN-7290) disagree. What is the defensible response? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Surface both entries to Dr. Imani Farrokhzad unresolved, record the contradiction as open, and note nothing is currently at risk.",
+          "why": "Correct: the stated rule reserves resolution to the clinician, and the record is left showing the conflict."
+        },
+        {
+          "id": "c",
+          "text": "Update the allergy list to no known allergies, since the later note is the more recent account.",
+          "why": "Recency is explicitly not decisive here, and clearing an allergy on a narrative line is the higher-consequence direction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Correct the note to match the allergy list, since structured fields are the authoritative record.",
+          "why": "The stated rule gives the structured field no default authority either, and editing a clinician's narrative is not a clerical correction.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Surface the contradiction rather than resolving it. State both entries precisely — a penicillin allergy with rash on the structured list, no known drug allergies in the later narrative — and that the stated rule gives neither precedence. Refer it to Dr. Imani Farrokhzad for resolution, record that it is open, and note that no antibiotic is prescribed or pending so nothing is immediately at risk while it is resolved. Do not delete either entry, and do not let the later note overwrite the list.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States both entries precisely and that neither takes precedence under the stated rule.",
+          "credit": 0.34,
+          "evidenceRef": "K3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Refers the contradiction to the clinician and records it as open.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Notes that no antibiotic is prescribed or pending, bounding the immediate risk without dismissing the defect.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000073",
+      "variantOf": "KB-QUES-KB002-000073",
+      "templateId": "KB-VART-KB002-000019",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000073"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "b21b1b4b9d40f6c5",
+        "scenarioFingerprint": "a9d4bcdfb2efeefb",
+        "competencyFingerprint": "de260d02f63b7a92",
+        "evidenceLayoutFingerprint": "029c563b4c48e73b",
+        "answerPatternFingerprint": "4ebac34dfdda92b1"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000075",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M14",
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CONTRADICTION_DETECTION",
+      "scenarioType": "TWO_ENTRIES_DISAGREE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Contradiction detection",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000019"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000019#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "K3",
+            "text": "Routine reconciliation note from F. Adegboyega: demographics confirmed, card image legible, and — the rule stated for this scenario is that a contradiction between a structured list and narrative text is surfaced to the clinician who can resolve it, and that neither recency nor the structured field wins by default — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "K1",
+            "text": "Allergy list records a penicillin allergy with the reaction noted as rash, entered 2026-08-13.",
+            "section": "Allergies",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "K2",
+            "text": "The 2026-09-10 note's history states the patient reports no known drug allergies.",
+            "section": "Encounter note",
+            "recordedBy": "Dr. Teodoro Haakonsen",
+            "recordedOn": "2026-09-10",
+            "decisive": false
+          },
+          {
+            "ref": "K4",
+            "text": "No antibiotic is currently prescribed and none is pending.",
+            "section": "Medications",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Quietwater Family Health — inbound fax",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "Two entries in Corrin Vasquez-Lund's chart (MRN SYN-3355) disagree. What is the defensible response? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Update the allergy list to no known allergies, since the later note is the more recent account.",
+          "why": "Recency is explicitly not decisive here, and clearing an allergy on a narrative line is the higher-consequence direction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Surface both entries to Dr. Teodoro Haakonsen unresolved, record the contradiction as open, and note nothing is currently at risk.",
+          "why": "Correct: the stated rule reserves resolution to the clinician, and the record is left showing the conflict."
+        },
+        {
+          "id": "d",
+          "text": "Correct the note to match the allergy list, since structured fields are the authoritative record.",
+          "why": "The stated rule gives the structured field no default authority either, and editing a clinician's narrative is not a clerical correction.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Surface the contradiction rather than resolving it. State both entries precisely — a penicillin allergy with rash on the structured list, no known drug allergies in the later narrative — and that the stated rule gives neither precedence. Refer it to Dr. Teodoro Haakonsen for resolution, record that it is open, and note that no antibiotic is prescribed or pending so nothing is immediately at risk while it is resolved. Do not delete either entry, and do not let the later note overwrite the list.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States both entries precisely and that neither takes precedence under the stated rule.",
+          "credit": 0.34,
+          "evidenceRef": "K3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Refers the contradiction to the clinician and records it as open.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Notes that no antibiotic is prescribed or pending, bounding the immediate risk without dismissing the defect.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000073",
+      "variantOf": "KB-QUES-KB002-000073",
+      "templateId": "KB-VART-KB002-000019",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000073"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_LATEST_NOTE_WINS",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "712025e515aa86c7",
+        "scenarioFingerprint": "b65d100d0a1c31a7",
+        "competencyFingerprint": "de260d02f63b7a92",
+        "evidenceLayoutFingerprint": "265fad78de44720f",
+        "answerPatternFingerprint": "06d52f7a1892596e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

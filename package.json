@@ -21,7 +21,24 @@
     "version:set": "node tools/release/version.mjs set",
     "version:test": "node tools/release/version.test.mjs",
     "release:build": "node tools/release/build.mjs",
-    "release:build:test": "node tools/release/build.test.mjs"
+    "release:build:test": "node tools/release/build.test.mjs",
+    "kb:generate": "node tools/knowledge-corpus/kb-generate.mjs",
+    "kb:validate": "node tools/knowledge-corpus/kb-validate.mjs",
+    "kb:privacy": "node tools/knowledge-corpus/kb-privacy-scan.mjs",
+    "kb:scorecard": "node tools/knowledge-corpus/kb-scorecard.mjs",
+    "kb:manifest": "node tools/knowledge-corpus/kb-manifest.mjs",
+    "kb:manifest:check": "node tools/knowledge-corpus/kb-manifest.mjs --check",
+    "kb:test": "node tools/knowledge-corpus/kb-validate.test.mjs",
+    "kb:test:privacy": "node tools/knowledge-corpus/kb-privacy-scan.test.mjs",
+    "kb:divergence": "node tools/knowledge-corpus/kb-schema-divergence.mjs",
+    "kb:disposition": "node tools/knowledge-corpus/kb-field-disposition.mjs",
+    "kb:test:disposition": "node tools/knowledge-corpus/kb-field-disposition.test.mjs",
+    "kb:migrate": "node tools/knowledge-corpus/kb-migrate.mjs",
+    "kb:migrate:write": "node tools/knowledge-corpus/kb-migrate.mjs --write",
+    "kb:test:migrate": "node tools/knowledge-corpus/kb-migrate.test.mjs",
+    "kb:test:archive": "node tools/knowledge-corpus/kb-archive-reference.test.mjs",
+    "kb:test:divergence": "node tools/knowledge-corpus/kb-schema-divergence.test.mjs",
+    "kb:verify": "npm run kb:manifest:check && npm run kb:validate && npm run kb:privacy && npm run kb:test && npm run kb:test:privacy && npm run kb:test:divergence && npm run kb:disposition && npm run kb:test:disposition && npm run kb:migrate && npm run kb:test:migrate && npm run kb:test:archive"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

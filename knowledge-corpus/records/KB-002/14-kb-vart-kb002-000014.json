@@ -1,0 +1,649 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000014",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-DOCT-KB002-000053",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D12"
+      ],
+      "difficulty": "EASY",
+      "taskType": "DOCUMENTATION_CORRECTION",
+      "scenarioType": "COPY_FORWARD_CONTAMINATION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation correction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000014#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "D1",
+            "text": "The objective section reads \"ankle swelling improved, dressing dry\" and the plan reads \"continue current dressing, review in one week\".",
+            "section": "Draft note",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "D2",
+            "text": "this encounter was a telephone review with no examination, and the objective wording was carried forward unchanged from the previous in-person visit",
+            "section": "Encounter",
+            "decisive": true
+          },
+          {
+            "ref": "D3",
+            "text": "The previous in-person note carries the identical objective sentence.",
+            "section": "Prior note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Bellrock Community Health Center — secure internal message",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "A draft note for Ignatius Nwachukwu's 2026-05-04 visit is ready for T. Alvarado-Ng to check. What needs correcting?",
+      "goldBehavior": "Remove the carried-forward objective findings. State that no examination took place on this telephone encounter, so \"swelling improved, dressing dry\" cannot be recorded as observed here, and that the identical sentence in the prior note shows where it came from. Replace the section with what the encounter actually establishes — what the patient reported by telephone, marked as reported — and refer the plan to Dr. Esperanza Nkemdirim for confirmation. Do not keep the wording because it is probably still accurate, and do not simply add a note that the visit was by telephone while leaving the findings in place.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies the objective findings as carried forward from a visit with no examination on this encounter.",
+          "credit": 0.34,
+          "evidenceRef": "D2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Removes them rather than annotating around them, and records what the encounter does establish.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Refers the plan to the clinician rather than confirming it.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: SOAP and clinical documentation; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000014",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-PROVENANCE-LOSS"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "9aa080dad8093a64",
+        "scenarioFingerprint": "2ec7bc5ac0d3869d",
+        "competencyFingerprint": "9c5858afe80aaf22",
+        "evidenceLayoutFingerprint": "f66267bcbf397d48",
+        "answerPatternFingerprint": "14d973fd52444b42"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000054",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D12"
+      ],
+      "difficulty": "EASY",
+      "taskType": "DOCUMENTATION_CORRECTION",
+      "scenarioType": "COPY_FORWARD_CONTAMINATION__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation correction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000014#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "D1",
+            "text": "The objective section reads \"ankle swelling improved, dressing dry\" and the plan reads \"continue current dressing, review in one week\".",
+            "section": "Draft note",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "D3",
+            "text": "The previous in-person note carries the identical objective sentence.",
+            "section": "Prior note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "D2",
+            "text": "this encounter was a telephone review with no examination, and the objective wording was carried forward unchanged from the previous in-person visit",
+            "section": "Encounter",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Thornfield Medical Partners — walk-in at the front desk",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "A draft note for Jovana Petrakis-Hume's 2026-06-22 visit is ready for L. Haverford to check. What needs correcting? Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Remove the carried-forward objective findings. State that no examination took place on this telephone encounter, so \"swelling improved, dressing dry\" cannot be recorded as observed here, and that the identical sentence in the prior note shows where it came from. Replace the section with what the encounter actually establishes — what the patient reported by telephone, marked as reported — and refer the plan to Dr. Fionnuala Adeoti-Krause for confirmation. Do not keep the wording because it is probably still accurate, and do not simply add a note that the visit was by telephone while leaving the findings in place.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies the objective findings as carried forward from a visit with no examination on this encounter.",
+          "credit": 0.34,
+          "evidenceRef": "D2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Removes them rather than annotating around them, and records what the encounter does establish.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Refers the plan to the clinician rather than confirming it.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000053",
+      "variantOf": "KB-DOCT-KB002-000053",
+      "templateId": "KB-VART-KB002-000014",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000053"
+      ],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "48fce4e8640e209f",
+        "scenarioFingerprint": "37f54d71c1a16db9",
+        "competencyFingerprint": "9c5858afe80aaf22",
+        "evidenceLayoutFingerprint": "d23f517ad0d6b854",
+        "answerPatternFingerprint": "1dc2d2c6328b937b"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000055",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D12"
+      ],
+      "difficulty": "EASY",
+      "taskType": "DOCUMENTATION_CORRECTION",
+      "scenarioType": "COPY_FORWARD_CONTAMINATION__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation correction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000014#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound telephone call. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "D2",
+            "text": "Routine reconciliation note from D. Eluwande: demographics confirmed, card image legible, and — this encounter was a telephone review with no examination, and the objective wording was carried forward unchanged from the previous in-person visit — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "D1",
+            "text": "The objective section reads \"ankle swelling improved, dressing dry\" and the plan reads \"continue current dressing, review in one week\".",
+            "section": "Draft note",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "D3",
+            "text": "The previous in-person note carries the identical objective sentence.",
+            "section": "Prior note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Quietwater Family Health — inbound telephone call",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "A draft note for Kwabena Lindqvist's 2026-08-13 visit is ready for D. Eluwande to check. What needs correcting? Nothing in this record is labelled as important.",
+      "goldBehavior": "Remove the carried-forward objective findings. State that no examination took place on this telephone encounter, so \"swelling improved, dressing dry\" cannot be recorded as observed here, and that the identical sentence in the prior note shows where it came from. Replace the section with what the encounter actually establishes — what the patient reported by telephone, marked as reported — and refer the plan to NP Gustavo Ihejirika for confirmation. Do not keep the wording because it is probably still accurate, and do not simply add a note that the visit was by telephone while leaving the findings in place.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies the objective findings as carried forward from a visit with no examination on this encounter.",
+          "credit": 0.34,
+          "evidenceRef": "D2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Removes them rather than annotating around them, and records what the encounter does establish.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Refers the plan to the clinician rather than confirming it.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000053",
+      "variantOf": "KB-DOCT-KB002-000053",
+      "templateId": "KB-VART-KB002-000014",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000053"
+      ],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "afed30d21d59ca9d",
+        "scenarioFingerprint": "67d307555e83f682",
+        "competencyFingerprint": "9c5858afe80aaf22",
+        "evidenceLayoutFingerprint": "0d2398d705ed6a3b",
+        "answerPatternFingerprint": "fb86bd4b85f8d357"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000056",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "DOCUMENTATION_CORRECTION",
+      "scenarioType": "COPY_FORWARD_CONTAMINATION__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation correction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000014"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000014#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "D1",
+            "text": "The objective section reads \"ankle swelling improved, dressing dry\" and the plan reads \"continue current dressing, review in one week\".",
+            "section": "Draft note",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "D3",
+            "text": "The previous in-person note carries the identical objective sentence.",
+            "section": "Prior note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Marbury Heights Clinic — patient portal message",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "A draft note for Lorelai Abubakar-Stern's 2026-09-01 visit is ready for P. Kirchmayer to check. What needs correcting? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether any examination took place at this encounter), name PA Hyacinth Obuya-Lindfors as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether any examination took place at this encounter\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "D1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation; Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000053",
+      "variantOf": "KB-DOCT-KB002-000053",
+      "templateId": "KB-VART-KB002-000014",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000053"
+      ],
+      "errorTargets": [
+        "KB-ERR-DOCUMENTATION-CONTAMINATION",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-SECTION-DISCIPLINE",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "P. Kirchmayer",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "31edb2738eb1b36f",
+        "scenarioFingerprint": "4032e5845fd3004d",
+        "competencyFingerprint": "383dfaa4d08f8c69",
+        "evidenceLayoutFingerprint": "c5d674cdeff6bd7d",
+        "answerPatternFingerprint": "6f733997dd02589e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

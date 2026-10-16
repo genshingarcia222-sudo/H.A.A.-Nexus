@@ -1,0 +1,745 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000009",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-COMM-KB002-000033",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "TRANSMISSION_UNCONFIRMED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000009"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000009#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "T1",
+            "text": "Fax transmitted 2026-05-04 to Dr. Anwuli Steensgaard's office; the machine log records the send as successful.",
+            "section": "Send log",
+            "recordedBy": "F. Adegboyega",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "T2",
+            "text": "the loop stated for this scenario closes only when the receiving office confirms it holds the packet, and a successful transmission log records that a machine accepted the pages rather than that anyone received them",
+            "section": "Workflow",
+            "decisive": true
+          },
+          {
+            "ref": "T3",
+            "text": "No acknowledgement from the receiving office appears in the thread.",
+            "section": "Thread",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Quilla Nakashima-Obi",
+        "encounterLabel": "Bellrock Community Health Center — inbound fax",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "F. Adegboyega faxed a referral for Quilla Nakashima-Obi (MRN SYN-3168) two days ago. Is the task finished?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Contact the office for confirmation, record who confirmed and when, and keep the item open until then.",
+          "why": "Correct: confirmation of receipt is what closes the loop, and it must be attributed."
+        },
+        {
+          "id": "b",
+          "text": "Close the item: the fax log records a successful transmission.",
+          "why": "A transmission log reports what the machine did. It is the exact evidence the stated definition rules insufficient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Re-send the fax now, since no acknowledgement has arrived.",
+          "why": "Re-sending duplicates the packet without establishing whether the first arrived, and the office still confirms nothing.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Leave the item open and wait for the office to acknowledge in the thread.",
+          "why": "Waiting is not closing. Nothing here obliges the office to acknowledge unprompted.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "The task is not finished. Distinguish a successful transmission from a confirmed receipt: the log shows the pages were accepted by a machine, and nothing shows a person holds them. Contact the receiving office for confirmation, record who confirmed and when, and keep the item open until then. Do not close it on the transmission log, and do not wait indefinitely for an acknowledgement that may never come.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates a successful send from a confirmed receipt, citing the stated definition.",
+          "credit": 0.34,
+          "evidenceRef": "T2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the action that closes the loop and who will confirm it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Keeps the item open, rather than closing it or leaving it unattended.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000009",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "F. Adegboyega",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "73240490f129bb17",
+        "scenarioFingerprint": "243c467d23519478",
+        "competencyFingerprint": "a52b33a0a54b657f",
+        "evidenceLayoutFingerprint": "d166387be41ab72e",
+        "answerPatternFingerprint": "1650698b9585fe09"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000034",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "TRANSMISSION_UNCONFIRMED__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000009"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000009#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "T1",
+            "text": "Fax transmitted 2026-06-22 to Dr. Basim Oyeleke-Nyström's office; the machine log records the send as successful.",
+            "section": "Send log",
+            "recordedBy": "G. Hallgrimsdottir",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "T3",
+            "text": "No acknowledgement from the receiving office appears in the thread.",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "T2",
+            "text": "the loop stated for this scenario closes only when the receiving office confirms it holds the packet, and a successful transmission log records that a machine accepted the pages rather than that anyone received them",
+            "section": "Workflow",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Rasheed Vondracek",
+        "encounterLabel": "Thornfield Medical Partners — voicemail",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "G. Hallgrimsdottir faxed a referral for Rasheed Vondracek (MRN SYN-9503) two days ago. Is the task finished? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Contact the office for confirmation, record who confirmed and when, and keep the item open until then.",
+          "why": "Correct: confirmation of receipt is what closes the loop, and it must be attributed."
+        },
+        {
+          "id": "c",
+          "text": "Close the item: the fax log records a successful transmission.",
+          "why": "A transmission log reports what the machine did. It is the exact evidence the stated definition rules insufficient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Re-send the fax now, since no acknowledgement has arrived.",
+          "why": "Re-sending duplicates the packet without establishing whether the first arrived, and the office still confirms nothing.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "The task is not finished. Distinguish a successful transmission from a confirmed receipt: the log shows the pages were accepted by a machine, and nothing shows a person holds them. Contact the receiving office for confirmation, record who confirmed and when, and keep the item open until then. Do not close it on the transmission log, and do not wait indefinitely for an acknowledgement that may never come.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates a successful send from a confirmed receipt, citing the stated definition.",
+          "credit": 0.34,
+          "evidenceRef": "T2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the action that closes the loop and who will confirm it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Keeps the item open, rather than closing it or leaving it unattended.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000033",
+      "variantOf": "KB-COMM-KB002-000033",
+      "templateId": "KB-VART-KB002-000009",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000033"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "G. Hallgrimsdottir",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "34b83b803143a4d0",
+        "scenarioFingerprint": "284cc55c246ea3b7",
+        "competencyFingerprint": "a52b33a0a54b657f",
+        "evidenceLayoutFingerprint": "053f67693da19bf2",
+        "answerPatternFingerprint": "f867c46d1096e2c7"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000035",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "TRANSMISSION_UNCONFIRMED__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000009"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000009#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "T2",
+            "text": "Routine reconciliation note from H. Ezeagwula-Roth: demographics confirmed, card image legible, and — the loop stated for this scenario closes only when the receiving office confirms it holds the packet, and a successful transmission log records that a machine accepted the pages rather than that anyone received them — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2026-08-13",
+            "decisive": true
+          },
+          {
+            "ref": "T1",
+            "text": "Fax transmitted 2026-08-13 to Dr. Coralie Abimbola-Wexler's office; the machine log records the send as successful.",
+            "section": "Send log",
+            "recordedBy": "H. Ezeagwula-Roth",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "T3",
+            "text": "No acknowledgement from the receiving office appears in the thread.",
+            "section": "Thread",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Sunniva Balogun-Reith",
+        "encounterLabel": "Quietwater Family Health — secure internal message",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "H. Ezeagwula-Roth faxed a referral for Sunniva Balogun-Reith (MRN SYN-4275) two days ago. Is the task finished? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Close the item: the fax log records a successful transmission.",
+          "why": "A transmission log reports what the machine did. It is the exact evidence the stated definition rules insufficient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Contact the office for confirmation, record who confirmed and when, and keep the item open until then.",
+          "why": "Correct: confirmation of receipt is what closes the loop, and it must be attributed."
+        },
+        {
+          "id": "d",
+          "text": "Re-send the fax now, since no acknowledgement has arrived.",
+          "why": "Re-sending duplicates the packet without establishing whether the first arrived, and the office still confirms nothing.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "The task is not finished. Distinguish a successful transmission from a confirmed receipt: the log shows the pages were accepted by a machine, and nothing shows a person holds them. Contact the receiving office for confirmation, record who confirmed and when, and keep the item open until then. Do not close it on the transmission log, and do not wait indefinitely for an acknowledgement that may never come.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates a successful send from a confirmed receipt, citing the stated definition.",
+          "credit": 0.34,
+          "evidenceRef": "T2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the action that closes the loop and who will confirm it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Keeps the item open, rather than closing it or leaving it unattended.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000033",
+      "variantOf": "KB-COMM-KB002-000033",
+      "templateId": "KB-VART-KB002-000009",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000033"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "ed7f1499de16d696",
+        "scenarioFingerprint": "b8628fd864169cdd",
+        "competencyFingerprint": "a52b33a0a54b657f",
+        "evidenceLayoutFingerprint": "e17fe2f6d94972b7",
+        "answerPatternFingerprint": "bc3ed9fc0d217522"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-COMM-KB002-000036",
+      "recordType": "COMMUNICATION_EVENT",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M06",
+        "M13"
+      ],
+      "competencyIds": [
+        "KB-D11"
+      ],
+      "sourceCompetencyIds": [
+        "D11"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CLOSED_LOOP_COMMUNICATION",
+      "scenarioType": "TRANSMISSION_UNCONFIRMED__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Closed-loop coordination",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000009"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000009#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MESSAGE_THREAD",
+        "lines": [
+          {
+            "ref": "T1",
+            "text": "Fax transmitted 2026-09-01 to Dr. Dmitri Ogunsanya-Holt's office; the machine log records the send as successful.",
+            "section": "Send log",
+            "recordedBy": "J. Marchesini-Ola",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "T3",
+            "text": "No acknowledgement from the receiving office appears in the thread.",
+            "section": "Thread",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Thaddeus Iwuchukwu",
+        "encounterLabel": "Marbury Heights Clinic — walk-in at the front desk",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "J. Marchesini-Ola faxed a referral for Thaddeus Iwuchukwu (MRN SYN-7681) two days ago. Is the task finished? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Close the item: the fax log records a successful transmission.",
+          "why": "A transmission log reports what the machine did. It is the exact evidence the stated definition rules insufficient.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Contact the office for confirmation, record who confirmed and when, and keep the item open until then.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that whether the receiving office has confirmed it holds the packet is not in the record, request it from Dr. Dmitri Ogunsanya-Holt, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether the receiving office has confirmed it holds the packet), name Dr. Dmitri Ogunsanya-Holt as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether the receiving office has confirmed it holds the packet\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "T1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Communication, calls, and closed-loop coordination. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-COMM-KB002-000033",
+      "variantOf": "KB-COMM-KB002-000033",
+      "templateId": "KB-VART-KB002-000009",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-COMM-KB002-000033"
+      ],
+      "errorTargets": [
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_SEND_AND_ASSUME",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "referral coordinator",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "7b4391f47e54c53e",
+        "scenarioFingerprint": "0a53f7f6703bf30b",
+        "competencyFingerprint": "590ed1d6562b0e7f",
+        "evidenceLayoutFingerprint": "1c33f6a2048b810c",
+        "answerPatternFingerprint": "2725891a32dc426c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

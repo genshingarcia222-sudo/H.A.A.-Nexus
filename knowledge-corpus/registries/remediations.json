@@ -1,0 +1,23 @@
+{
+  "registryId": "KB-REG-REMEDIATIONS",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section VII layer 5 and XLIII (owner-supplied, 2026-09-26)",
+  "remediations": [
+    { "id": "KB-REM-EVIDENCE-DISCIPLINE", "title": "State only what the record supports", "prompt": "Point at the line in the packet that carries each clause you wrote. Delete any clause you cannot point at." },
+    { "id": "KB-REM-PROBE-BEFORE-CLOSE", "title": "Probe before closing", "prompt": "Name the one question whose answer would change your action, and ask it before acting." },
+    { "id": "KB-REM-TWO-IDENTIFIER-CHECK", "title": "Two-identifier verification", "prompt": "Confirm two independent identifiers against the chart before any action attaches to a patient." },
+    { "id": "KB-REM-ENCOUNTER-ANCHOR", "title": "Anchor to the encounter", "prompt": "Restate which encounter date and visit this action belongs to before recording it." },
+    { "id": "KB-REM-DESTINATION-CONFIRM", "title": "Confirm the destination", "prompt": "Read back the recipient, the channel and the address from the authoritative record before transmitting." },
+    { "id": "KB-REM-COMPLETENESS-SWEEP", "title": "Sweep for omissions", "prompt": "Walk each section of the packet once more and list what a receiving clinician would need that you did not carry forward." },
+    { "id": "KB-REM-CONTRADICTION-SURFACING", "title": "Surface, do not silently pick", "prompt": "When two records disagree, name both, name which is authoritative and why, and escalate if neither is." },
+    { "id": "KB-REM-MINIMUM-NECESSARY", "title": "Identity, authority, purpose, minimum", "prompt": "Answer four questions in order: who is asking, on what authority, for what permitted purpose, and what is the least information that serves it." },
+    { "id": "KB-REM-SCOPE-BOUNDARY", "title": "Stay inside authorized scope", "prompt": "Name the role authorized to make this call. If it is not yours, route it rather than answer it." },
+    { "id": "KB-REM-ESCALATION-LADDER", "title": "Escalate to the right rung", "prompt": "Match the urgency to the rung: immediate clinical risk goes to a clinician now, not to a queue." },
+    { "id": "KB-REM-CLOSED-LOOP", "title": "Close the loop", "prompt": "A message is not delivered until a named owner confirms receipt and accepts the next action." },
+    { "id": "KB-REM-CODE-TO-DOCUMENTATION", "title": "Code what is documented", "prompt": "Quote the documentation that supports each element of specificity. Unsupported specificity becomes a provider query." },
+    { "id": "KB-REM-VERSION-ANCHOR", "title": "Anchor the code set to the encounter date", "prompt": "Determine the encounter date first, then select the code set edition in force on that date." },
+    { "id": "KB-REM-SECTION-DISCIPLINE", "title": "Keep note sections clean", "prompt": "Reported experience belongs in Subjective, measured findings in Objective, interpretation in Assessment, and intended actions in Plan." },
+    { "id": "KB-REM-ATTRIBUTE-EVERY-CLAIM", "title": "Carry provenance forward", "prompt": "Every carried-forward fact keeps its origin: who said it, when, and in which record." },
+    { "id": "KB-REM-PRIORITY-ORDERING", "title": "Rank by consequence", "prompt": "Order the queue by what goes wrong if it waits, not by what arrived first." }
+  ]
+}

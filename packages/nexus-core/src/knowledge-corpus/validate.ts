@@ -8,6 +8,7 @@ import {
 } from "./schema.js";
 import type { AssessmentConcept, CaseContext, CompetencyNode, KnowledgeRecord, SourceRecord } from "./schema.js";
 import { AssessmentItemSchema } from "./item.js";
+import { OpenResponseTaskSchema } from "./open-response.js";
 import type { AssessmentItem } from "./item.js";
 import { CONCEPT_ID_PATTERN, CONTEXT_ID_PATTERN, ITEM_ID_PATTERN, KNOWLEDGE_ID_PATTERN, parsePinnedRef } from "./ids.js";
 import { ReviewRecordSchema, ReviewerSchema, checkReviewChain } from "./review.js";
@@ -38,6 +39,8 @@ export const KnowledgeCorpusSchema = z
     contexts: z.array(CaseContextSchema).default([]),
     concepts: z.array(AssessmentConceptSchema).default([]),
     items: z.array(AssessmentItemSchema).default([]),
+    /** O9: free-text tasks. A separate array because a task is not an item. */
+    tasks: z.array(OpenResponseTaskSchema).default([]),
     competencies: z.array(CompetencyNodeSchema).default([]),
     reviewers: z.array(ReviewerSchema).default([]),
     /** Append-only: a changed mind is a new record, never an edited one. */

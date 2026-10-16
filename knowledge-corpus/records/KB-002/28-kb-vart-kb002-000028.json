@@ -1,0 +1,597 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000028",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000100",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D03"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "ALLERGY_CONFLICT_ON_NEW_ORDER",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication safety workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000028"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000028#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "AB1",
+            "text": "New prescription from Dr. Dmitri Ogunsanya-Holt, dated 2027-02-23, for an antibiotic in a class the patient's allergy entry names.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "AB2",
+            "text": "Allergy entry: reaction to this antibiotic class recorded as facial swelling and difficulty breathing.",
+            "section": "Allergy list",
+            "decisive": false
+          },
+          {
+            "ref": "AB3",
+            "text": "the stated workflow for this scenario stops dispensing when an order conflicts with a recorded allergy, and requires the conflict to be put to the prescriber before anything is supplied or the allergy entry is altered",
+            "section": "Workflow",
+            "decisive": true
+          },
+          {
+            "ref": "AB4",
+            "text": "The prescription carries no comment on the allergy.",
+            "section": "Order note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bartholomew Sannikov",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "A new prescription for Bartholomew Sannikov (MRN SYN-4632) has arrived for processing. What must happen before it is dispensed?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Amend the allergy entry to an intolerance, which is consistent with the prescriber ordering the drug.",
+          "why": "It edits a safety record to remove an obstacle, inferring the prescriber's reasoning from the order itself.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "b",
+          "text": "Dispense: the prescriber can see the allergy list and has evidently judged the medication appropriate.",
+          "why": "Nothing shows the allergy was considered, and the order carries no comment. This is the assumption the workflow forbids.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Hold dispensing and put the conflict to Dr. Dmitri Ogunsanya-Holt with the recorded reaction, seeking an explicit decision.",
+          "why": "Correct: the workflow reserves this decision to the prescriber, and the recorded reaction makes it urgent."
+        },
+        {
+          "id": "d",
+          "text": "Flag the conflict in the pharmacy queue for review at the next batch check.",
+          "why": "A queue is not the prescriber, and a recorded reaction of this kind does not wait for a batch.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Stop. Do not dispense. Put the conflict to Dr. Dmitri Ogunsanya-Holt directly, stating the ordered drug, the allergy entry and the recorded reaction, and get an explicit decision before anything is supplied. Do not assume the prescriber saw the allergy because it is on the list, and do not edit or downgrade the allergy entry to let the order through. Record that dispensing was held, what was communicated and to whom, and treat the recorded reaction as the reason this cannot wait in a queue.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds dispensing and cites the workflow that requires the conflict to go to the prescriber first.",
+          "credit": 0.34,
+          "evidenceRef": "AB3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Communicates the drug, the allergy entry and the recorded reaction, and seeks an explicit decision.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not alter the allergy entry, and records the hold and the communication.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Medication, laboratory, and imaging workflow; Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000028",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-INCORRECT-ESCALATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-ESCALATION-LADDER"
+      ],
+      "trapTypes": [
+        "TRAP_SILENT_RECONCILIATION"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "Dr. Dmitri Ogunsanya-Holt",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "e0f6afa1b31c98f3",
+        "scenarioFingerprint": "1a1ea98c3a659ee1",
+        "competencyFingerprint": "2ef3a00f84e9ac68",
+        "evidenceLayoutFingerprint": "0571abf068a06127",
+        "answerPatternFingerprint": "938c0319d3cc92dc"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000101",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D03"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "ALLERGY_CONFLICT_ON_NEW_ORDER__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication safety workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000028"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000028#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "AB1",
+            "text": "New prescription from Dr. Esperanza Nkemdirim, dated 2026-02-09, for an antibiotic in a class the patient's allergy entry names.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "AB2",
+            "text": "Allergy entry: reaction to this antibiotic class recorded as facial swelling and difficulty breathing.",
+            "section": "Allergy list",
+            "decisive": false
+          },
+          {
+            "ref": "AB4",
+            "text": "The prescription carries no comment on the allergy.",
+            "section": "Order note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "AB3",
+            "text": "the stated workflow for this scenario stops dispensing when an order conflicts with a recorded allergy, and requires the conflict to be put to the prescriber before anything is supplied or the allergy entry is altered",
+            "section": "Workflow",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Willowbank Primary Care — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A new prescription for Arden Kowalczyk-Reyes (MRN SYN-4418) has arrived for processing. What must happen before it is dispensed? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Amend the allergy entry to an intolerance, which is consistent with the prescriber ordering the drug.",
+          "why": "It edits a safety record to remove an obstacle, inferring the prescriber's reasoning from the order itself.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "b",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "Dispense: the prescriber can see the allergy list and has evidently judged the medication appropriate.",
+          "why": "Nothing shows the allergy was considered, and the order carries no comment. This is the assumption the workflow forbids.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Hold dispensing and put the conflict to Dr. Esperanza Nkemdirim with the recorded reaction, seeking an explicit decision.",
+          "why": "Correct: the workflow reserves this decision to the prescriber, and the recorded reaction makes it urgent."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Stop. Do not dispense. Put the conflict to Dr. Esperanza Nkemdirim directly, stating the ordered drug, the allergy entry and the recorded reaction, and get an explicit decision before anything is supplied. Do not assume the prescriber saw the allergy because it is on the list, and do not edit or downgrade the allergy entry to let the order through. Record that dispensing was held, what was communicated and to whom, and treat the recorded reaction as the reason this cannot wait in a queue.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds dispensing and cites the workflow that requires the conflict to go to the prescriber first.",
+          "credit": 0.34,
+          "evidenceRef": "AB3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Communicates the drug, the allergy entry and the recorded reaction, and seeks an explicit decision.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not alter the allergy entry, and records the hold and the communication.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000100",
+      "variantOf": "KB-WFLW-KB002-000100",
+      "templateId": "KB-VART-KB002-000028",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000100"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "Dr. Esperanza Nkemdirim",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "e7f7c27ca651d998",
+        "scenarioFingerprint": "e82725494888231c",
+        "competencyFingerprint": "2ef3a00f84e9ac68",
+        "evidenceLayoutFingerprint": "dd888e8efb0d87ee",
+        "answerPatternFingerprint": "5bde5711c558f016"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000102",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M09",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D08",
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D08",
+        "D03"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MEDICATION_WORKFLOW_REVIEW",
+      "scenarioType": "ALLERGY_CONFLICT_ON_NEW_ORDER__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Medication safety workflow",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000028"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000028#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "MEDICATION_LIST",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "AB3",
+            "text": "Routine reconciliation note from E. Villaseñor-Bak: demographics confirmed, card image legible, and — the stated workflow for this scenario stops dispensing when an order conflicts with a recorded allergy, and requires the conflict to be put to the prescriber before anything is supplied or the allergy entry is altered — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "E. Villaseñor-Bak",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "AB1",
+            "text": "New prescription from Dr. Fionnuala Adeoti-Krause, dated 2026-03-17, for an antibiotic in a class the patient's allergy entry names.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "AB2",
+            "text": "Allergy entry: reaction to this antibiotic class recorded as facial swelling and difficulty breathing.",
+            "section": "Allergy list",
+            "decisive": false
+          },
+          {
+            "ref": "AB4",
+            "text": "The prescription carries no comment on the allergy.",
+            "section": "Order note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Ashcombe Multispecialty Group — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "A new prescription for Bassey Oduya (MRN SYN-7290) has arrived for processing. What must happen before it is dispensed? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Hold dispensing and put the conflict to Dr. Fionnuala Adeoti-Krause with the recorded reaction, seeking an explicit decision.",
+          "why": "Correct: the workflow reserves this decision to the prescriber, and the recorded reaction makes it urgent."
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Dispense: the prescriber can see the allergy list and has evidently judged the medication appropriate.",
+          "why": "Nothing shows the allergy was considered, and the order carries no comment. This is the assumption the workflow forbids.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Amend the allergy entry to an intolerance, which is consistent with the prescriber ordering the drug.",
+          "why": "It edits a safety record to remove an obstacle, inferring the prescriber's reasoning from the order itself.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Stop. Do not dispense. Put the conflict to Dr. Fionnuala Adeoti-Krause directly, stating the ordered drug, the allergy entry and the recorded reaction, and get an explicit decision before anything is supplied. Do not assume the prescriber saw the allergy because it is on the list, and do not edit or downgrade the allergy entry to let the order through. Record that dispensing was held, what was communicated and to whom, and treat the recorded reaction as the reason this cannot wait in a queue.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds dispensing and cites the workflow that requires the conflict to go to the prescriber first.",
+          "credit": 0.34,
+          "evidenceRef": "AB3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Communicates the drug, the allergy entry and the recorded reaction, and seeks an explicit decision.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not alter the allergy entry, and records the hold and the communication.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Medication, laboratory, and imaging workflow; Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000100",
+      "variantOf": "KB-WFLW-KB002-000100",
+      "templateId": "KB-VART-KB002-000028",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000100"
+      ],
+      "errorTargets": [
+        "KB-ERR-CONTRADICTION-BLINDNESS",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CONTRADICTION-SURFACING",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "pharmacy technician",
+      "nextActionOwner": "Dr. Fionnuala Adeoti-Krause",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "512c56895666998a",
+        "scenarioFingerprint": "34b3ff7f23477b42",
+        "competencyFingerprint": "2ef3a00f84e9ac68",
+        "evidenceLayoutFingerprint": "1498056a61b335dc",
+        "answerPatternFingerprint": "d03cd4a53ab483eb"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

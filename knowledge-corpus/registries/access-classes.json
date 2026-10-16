@@ -1,0 +1,14 @@
+{
+  "registryId": "KB-REG-ACCESS-CLASSES",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section XXXIII (owner-supplied, 2026-09-26)",
+  "principle": "Access class is metadata the future integration enforces. Carrying it in a record grants nothing: nothing in the application reads these fields today, and the corpus is not live. Reference knowledge is never globally exposed during closed-book Assessment merely because it exists.",
+  "classes": [
+    { "id": "TRAINING", "referenceKnowledgeVisible": true },
+    { "id": "PRACTICE", "referenceKnowledgeVisible": true },
+    { "id": "SIMULATION", "referenceKnowledgeVisible": "PARTIAL" },
+    { "id": "ASSESSMENT_CLOSED_BOOK", "referenceKnowledgeVisible": false, "note": "Charter section XXXII: Assessment restrictions must never be weakened to ingest content." },
+    { "id": "PREMIUM_REALISTIC", "referenceKnowledgeVisible": "PARTIAL", "entitlementNote": "Entitlement is decided by the entitlement engine, not by this field." },
+    { "id": "INSTRUCTOR_ADMIN", "referenceKnowledgeVisible": true }
+  ]
+}

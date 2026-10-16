@@ -1,0 +1,181 @@
+{
+  "registryId": "KB-REG-TASK-TYPES",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section VII layer 3 (owner-supplied, 2026-09-26)",
+  "dominanceRule": "Charter section VII: MCQ must not become the dominant format. QA enforces a ceiling of 30% MCQ across any batch and across the approved corpus (tools/knowledge-corpus/kb-validate.mjs, rule TT-DOMINANCE).",
+  "evidenceBasisLegend": {
+    "SELF_CONTAINED": "The gold behaviour is derivable from the synthetic material carried inside the record itself. No external authority is required to know the answer is right. Such records may reach candidate and, after human content review, human_reviewed.",
+    "EXTERNAL_AUTHORITY": "The gold behaviour asserts something about the world (a regulation, a code set, a payer rule, a clinical threshold). It cannot rise above candidate_needs_source_verification until a registered human opens the cited source."
+  },
+  "taskTypes": [
+    {
+      "id": "MCQ",
+      "title": "Single best answer",
+      "evidenceBasis": "EITHER",
+      "minChoices": 3,
+      "maxChoices": 5,
+      "presentsChoices": true
+    },
+    {
+      "id": "MULTI_SELECT",
+      "title": "Multiple select",
+      "evidenceBasis": "EITHER",
+      "minChoices": 4,
+      "maxChoices": 6,
+      "presentsChoices": true
+    },
+    {
+      "id": "SHORT_ANSWER",
+      "title": "Short answer",
+      "evidenceBasis": "EITHER",
+      "presentsChoices": false
+    },
+    {
+      "id": "STRUCTURED_SHORT_ANSWER",
+      "title": "Structured short answer",
+      "evidenceBasis": "EITHER",
+      "presentsChoices": false
+    },
+    {
+      "id": "SEQUENCING",
+      "title": "Sequencing",
+      "evidenceBasis": "EITHER",
+      "minSteps": 3,
+      "presentsChoices": false
+    },
+    {
+      "id": "CHART_EXTRACTION",
+      "title": "Chart extraction",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": false
+    },
+    {
+      "id": "SOAP_TRANSFORMATION",
+      "title": "SOAP transformation",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": false
+    },
+    {
+      "id": "WORKFLOW_DECISION",
+      "title": "Workflow decision",
+      "evidenceBasis": "EITHER",
+      "presentsChoices": true
+    },
+    {
+      "id": "ERROR_HUNT",
+      "title": "Error hunt",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "CONTRADICTION_DETECTION",
+      "title": "Contradiction detection",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "DOCUMENTATION_CORRECTION",
+      "title": "Documentation correction",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": false
+    },
+    {
+      "id": "INFORMATION_GAP",
+      "title": "Information-gap identification",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "CALL_PROBING",
+      "title": "Call probing",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "CLOSED_LOOP_COMMUNICATION",
+      "title": "Closed-loop communication",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "HANDOFF",
+      "title": "Handoff",
+      "evidenceBasis": "EITHER",
+      "presentsChoices": true
+    },
+    {
+      "id": "REFERRAL_PACKET_REVIEW",
+      "title": "Referral packet review",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "MEDICATION_WORKFLOW_REVIEW",
+      "title": "Medication workflow review",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "presentsChoices": true
+    },
+    {
+      "id": "RESULT_ROUTING",
+      "title": "Lab/result routing",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "IMAGING_ORDER_VALIDATION",
+      "title": "Imaging order validation",
+      "evidenceBasis": "EITHER",
+      "presentsChoices": true
+    },
+    {
+      "id": "INSURANCE_VERIFICATION",
+      "title": "Insurance verification",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "presentsChoices": true
+    },
+    {
+      "id": "PRIOR_AUTHORIZATION",
+      "title": "Prior authorization workflow",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "presentsChoices": true
+    },
+    {
+      "id": "PRIVACY_JUDGMENT",
+      "title": "Privacy/security judgment",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "presentsChoices": true
+    },
+    {
+      "id": "CODING_SUPPORT",
+      "title": "Coding-support reasoning",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "requiresCodingVersion": true,
+      "presentsChoices": true
+    },
+    {
+      "id": "AUDIT_RECONSTRUCTION",
+      "title": "Audit reconstruction",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "REMEDIATION",
+      "title": "Remediation",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "SCENARIO_CONTINUATION",
+      "title": "Scenario continuation",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": true
+    },
+    {
+      "id": "DELAYED_CLUE_REASONING",
+      "title": "Delayed-clue reasoning",
+      "evidenceBasis": "SELF_CONTAINED",
+      "presentsChoices": false
+    }
+  ],
+  "choicePresentationNote": "presentsChoices marks a task shape that can legitimately be delivered as a set of options with one defensible answer. It is orthogonal to taskType MCQ: MCQ is the cognitive shape 'recall and select', while a workflow decision delivered as options is still a workflow decision. Only taskType MCQ counts against the MCQ dominance ceiling."
+}

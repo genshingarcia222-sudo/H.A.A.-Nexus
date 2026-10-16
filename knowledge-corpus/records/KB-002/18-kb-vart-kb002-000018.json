@@ -1,0 +1,772 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000018",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000069",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D03"
+      ],
+      "difficulty": "EASY",
+      "taskType": "MCQ",
+      "scenarioType": "RED_FLAG_IN_ROUTINE_QUEUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Safety recognition in administrative material",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000018"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000018#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "N1",
+            "text": "Four items: two insurance card updates, one address change, and one inbound fax cover sheet from a pharmacy.",
+            "section": "Inbox",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "N2",
+            "text": "the pharmacy's cover sheet carries a handwritten line that the patient collecting a prescription said their face had drooped on one side that morning and their speech had gone slurred",
+            "section": "Fax cover",
+            "decisive": true
+          },
+          {
+            "ref": "N3",
+            "text": "This is an administrative queue. The role may not assess a symptom or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Yevgenia Olatunji-Kvist",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "D. Eluwande is working an administrative inbox at Northgate Specialty Associates. What happens next?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Escalate the handwritten line to a named clinician at once, as written and with its source, and record the escalation.",
+          "why": "Correct: a volunteered report of new one-sided facial droop and slurred speech outranks every administrative item, and the role's task is to route it, not to rate it."
+        },
+        {
+          "id": "b",
+          "text": "Finish the three administrative items, which take a minute each, then escalate the fax.",
+          "why": "It puts routine filing ahead of a volunteered account of new neurological symptoms.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "File the cover sheet with the pharmacy correspondence and flag it for the next clinical review.",
+          "why": "Filing it defers the escalation into a queue with no named owner or time.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Telephone the patient to ask whether the symptoms are still present before escalating.",
+          "why": "Triaging the report is a clinical judgement this role may not make, and it delays the escalation.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Stop working the queue and get the handwritten line to a named clinician immediately, ahead of every administrative item. Pass it on as written, with the patient's name, the time it was reported and the source, so the clinician has the words rather than a summary. Then record what was escalated, to whom and when. Do not finish the administrative items first, do not judge how urgent it is, and do not file the cover sheet as a pharmacy document.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Escalates the handwritten line to a named clinician ahead of the administrative items.",
+          "credit": 0.34,
+          "evidenceRef": "N2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Passes the report on as written, with the source and time, rather than summarising it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the escalation and offers no assessment of urgency.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000018",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "Dr. Esperanza Nkemdirim",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "6f7f6a2615c8d342",
+        "scenarioFingerprint": "c7d2ff6c8642c6a5",
+        "competencyFingerprint": "cd40f194eb20c3e2",
+        "evidenceLayoutFingerprint": "d63d40d52bc8aab0",
+        "answerPatternFingerprint": "fa652544021760e3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000070",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D03"
+      ],
+      "difficulty": "EASY",
+      "taskType": "MCQ",
+      "scenarioType": "RED_FLAG_IN_ROUTINE_QUEUE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Safety recognition in administrative material",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000018"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000018#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "N1",
+            "text": "Four items: two insurance card updates, one address change, and one inbound fax cover sheet from a pharmacy.",
+            "section": "Inbox",
+            "recordedOn": "2027-02-23",
+            "decisive": false
+          },
+          {
+            "ref": "N3",
+            "text": "This is an administrative queue. The role may not assess a symptom or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "N2",
+            "text": "the pharmacy's cover sheet carries a handwritten line that the patient collecting a prescription said their face had drooped on one side that morning and their speech had gone slurred",
+            "section": "Fax cover",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Zacharias Ndlovu-Persson",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "P. Kirchmayer is working an administrative inbox at Larkspur Community Clinic. What happens next? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Escalate the handwritten line to a named clinician at once, as written and with its source, and record the escalation.",
+          "why": "Correct: a volunteered report of new one-sided facial droop and slurred speech outranks every administrative item, and the role's task is to route it, not to rate it."
+        },
+        {
+          "id": "c",
+          "text": "Finish the three administrative items, which take a minute each, then escalate the fax.",
+          "why": "It puts routine filing ahead of a volunteered account of new neurological symptoms.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "d",
+          "text": "File the cover sheet with the pharmacy correspondence and flag it for the next clinical review.",
+          "why": "Filing it defers the escalation into a queue with no named owner or time.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Stop working the queue and get the handwritten line to a named clinician immediately, ahead of every administrative item. Pass it on as written, with the patient's name, the time it was reported and the source, so the clinician has the words rather than a summary. Then record what was escalated, to whom and when. Do not finish the administrative items first, do not judge how urgent it is, and do not file the cover sheet as a pharmacy document.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Escalates the handwritten line to a named clinician ahead of the administrative items.",
+          "credit": 0.34,
+          "evidenceRef": "N2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Passes the report on as written, with the source and time, rather than summarising it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the escalation and offers no assessment of urgency.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000069",
+      "variantOf": "KB-QUES-KB002-000069",
+      "templateId": "KB-VART-KB002-000018",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000069"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "Dr. Fionnuala Adeoti-Krause",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "399c1f113c7f1ff2",
+        "scenarioFingerprint": "bf6cb054aa7f661d",
+        "competencyFingerprint": "cd40f194eb20c3e2",
+        "evidenceLayoutFingerprint": "0c13b1bc9031671c",
+        "answerPatternFingerprint": "81961f5d953c47b2"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000071",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D03"
+      ],
+      "difficulty": "EASY",
+      "taskType": "MCQ",
+      "scenarioType": "RED_FLAG_IN_ROUTINE_QUEUE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Safety recognition in administrative material",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000018"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000018#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "N2",
+            "text": "Routine reconciliation note from A. Nwosu-Ferrand: demographics confirmed, card image legible, and — the pharmacy's cover sheet carries a handwritten line that the patient collecting a prescription said their face had drooped on one side that morning and their speech had gone slurred — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "N1",
+            "text": "Four items: two insurance card updates, one address change, and one inbound fax cover sheet from a pharmacy.",
+            "section": "Inbox",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "N3",
+            "text": "This is an administrative queue. The role may not assess a symptom or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Anneliese Chukwuemeka-Rho",
+        "encounterLabel": "Willowbank Primary Care — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "A. Nwosu-Ferrand is working an administrative inbox at Willowbank Primary Care. What happens next? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Finish the three administrative items, which take a minute each, then escalate the fax.",
+          "why": "It puts routine filing ahead of a volunteered account of new neurological symptoms.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Escalate the handwritten line to a named clinician at once, as written and with its source, and record the escalation.",
+          "why": "Correct: a volunteered report of new one-sided facial droop and slurred speech outranks every administrative item, and the role's task is to route it, not to rate it."
+        },
+        {
+          "id": "d",
+          "text": "File the cover sheet with the pharmacy correspondence and flag it for the next clinical review.",
+          "why": "Filing it defers the escalation into a queue with no named owner or time.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Stop working the queue and get the handwritten line to a named clinician immediately, ahead of every administrative item. Pass it on as written, with the patient's name, the time it was reported and the source, so the clinician has the words rather than a summary. Then record what was escalated, to whom and when. Do not finish the administrative items first, do not judge how urgent it is, and do not file the cover sheet as a pharmacy document.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Escalates the handwritten line to a named clinician ahead of the administrative items.",
+          "credit": 0.34,
+          "evidenceRef": "N2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Passes the report on as written, with the source and time, rather than summarising it.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Records the escalation and offers no assessment of urgency.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000069",
+      "variantOf": "KB-QUES-KB002-000069",
+      "templateId": "KB-VART-KB002-000018",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000069"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "NP Gustavo Ihejirika",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "95c63500c1e6be1a",
+        "scenarioFingerprint": "c28b2fe620bcd8f5",
+        "competencyFingerprint": "cd40f194eb20c3e2",
+        "evidenceLayoutFingerprint": "0f743159e0eb2f4d",
+        "answerPatternFingerprint": "ee06ac8aba813d9f"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000072",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M03",
+        "M14"
+      ],
+      "competencyIds": [
+        "KB-D03"
+      ],
+      "sourceCompetencyIds": [
+        "D03"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MCQ",
+      "scenarioType": "RED_FLAG_IN_ROUTINE_QUEUE__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Safety recognition in administrative material",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000018"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000018#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "INBOX_QUEUE",
+        "lines": [
+          {
+            "ref": "N1",
+            "text": "Four items: two insurance card updates, one address change, and one inbound fax cover sheet from a pharmacy.",
+            "section": "Inbox",
+            "recordedOn": "2026-03-17",
+            "decisive": true
+          },
+          {
+            "ref": "N3",
+            "text": "This is an administrative queue. The role may not assess a symptom or decide how urgent it is.",
+            "section": "Role",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bartholomew Sannikov",
+        "encounterLabel": "Ashcombe Multispecialty Group — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "B. Tkachenko is working an administrative inbox at Ashcombe Multispecialty Group. What happens next? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Finish the three administrative items, which take a minute each, then escalate the fax.",
+          "why": "It puts routine filing ahead of a volunteered account of new neurological symptoms.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Escalate the handwritten line to a named clinician at once, as written and with its source, and record the escalation.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which clinician is available to receive the escalation now is not in the record, request it from PA Hyacinth Obuya-Lindfors, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which clinician is available to receive the escalation now), name PA Hyacinth Obuya-Lindfors as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which clinician is available to receive the escalation now\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "N1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Safety, red flags, and escalation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000069",
+      "variantOf": "KB-QUES-KB002-000069",
+      "templateId": "KB-VART-KB002-000018",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000069"
+      ],
+      "errorTargets": [
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_QUEUE_ORDER",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "records clerk",
+      "nextActionOwner": "PA Hyacinth Obuya-Lindfors",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "a2af2bd44c408ec6",
+        "scenarioFingerprint": "cfae3fd1ea1b1427",
+        "competencyFingerprint": "6802d59d54c8f172",
+        "evidenceLayoutFingerprint": "5371ed65cffb74d5",
+        "answerPatternFingerprint": "854c046a4bab3111"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

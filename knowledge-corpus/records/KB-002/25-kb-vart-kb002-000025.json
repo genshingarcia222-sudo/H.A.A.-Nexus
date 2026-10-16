@@ -1,0 +1,514 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000025",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-DOCT-KB002-000091",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09",
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D09",
+        "D05"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "STRUCTURED_SHORT_ANSWER",
+      "scenarioType": "EVIDENCE_PACKET_ASSEMBLY",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Authorisation evidence packets",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000025"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000025#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "The 2026-02-09 note records the indication and the treatments already tried, with dates.",
+            "section": "Chart",
+            "recordedBy": "Dr. Teodoro Haakonsen",
+            "recordedOn": "2026-02-09",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "An imaging report and a medication history are on file; a physiotherapy discharge summary is referenced in the note but not present.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "B3",
+            "text": "the requirement stated for this scenario asks for the indication, documented prior treatments with dates, the relevant imaging, and evidence of a completed conservative-therapy course, and it accepts no substitute for the last of these",
+            "section": "Payer requirement",
+            "decisive": true
+          },
+          {
+            "ref": "B4",
+            "text": "The note states physiotherapy was completed but does not give the dates or the outcome.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Sunniva Balogun-Reith",
+        "encounterLabel": "Willowbank Primary Care — inbound telephone call",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "Assemble the authorisation evidence packet for Sunniva Balogun-Reith (MRN SYN-4275). State what goes in, what does not, and what is missing.",
+      "goldBehavior": "Include the indication, the dated prior treatments and the imaging report. Exclude the medication history: the stated requirement does not ask for it, and padding a packet with unrequested records invites a broader review. Name the gap precisely — the physiotherapy discharge summary evidencing a completed conservative course is absent, and the note's bare statement that physiotherapy was completed is not the evidence the requirement asks for, since it carries neither dates nor outcome. Request the summary before submitting. Do not submit with the note standing in for it.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Includes exactly the indication, dated prior treatments and imaging, and excludes the medication history as unrequested.",
+          "credit": 0.25,
+          "evidenceRef": "B3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies the absent physiotherapy discharge summary as the missing evidence.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "States why the note's own sentence does not substitute for it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds submission until the summary is obtained.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Insurance, authorization, and administrative workflow; SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000025",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "H. Ezeagwula-Roth",
+      "auditTags": [
+        "EVIDENCE-PRESENT",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "3a4291e2163decec",
+        "scenarioFingerprint": "842046b158bcabd1",
+        "competencyFingerprint": "145dae9f1c3a1f60",
+        "evidenceLayoutFingerprint": "50543acffa936b6b",
+        "answerPatternFingerprint": "205fdf77bb3b6b36"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000092",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09",
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D09",
+        "D05"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "STRUCTURED_SHORT_ANSWER",
+      "scenarioType": "EVIDENCE_PACKET_ASSEMBLY__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Authorisation evidence packets",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000025"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000025#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "B1",
+            "text": "The 2026-03-17 note records the indication and the treatments already tried, with dates.",
+            "section": "Chart",
+            "recordedBy": "Dr. Ngozi Brandtsen",
+            "recordedOn": "2026-03-17",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "An imaging report and a medication history are on file; a physiotherapy discharge summary is referenced in the note but not present.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "B4",
+            "text": "The note states physiotherapy was completed but does not give the dates or the outcome.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "B3",
+            "text": "the requirement stated for this scenario asks for the indication, documented prior treatments with dates, the relevant imaging, and evidence of a completed conservative-therapy course, and it accepts no substitute for the last of these",
+            "section": "Payer requirement",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Thaddeus Iwuchukwu",
+        "encounterLabel": "Ashcombe Multispecialty Group — patient portal message",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "Assemble the authorisation evidence packet for Thaddeus Iwuchukwu (MRN SYN-7681). State what goes in, what does not, and what is missing. Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Include the indication, the dated prior treatments and the imaging report. Exclude the medication history: the stated requirement does not ask for it, and padding a packet with unrequested records invites a broader review. Name the gap precisely — the physiotherapy discharge summary evidencing a completed conservative course is absent, and the note's bare statement that physiotherapy was completed is not the evidence the requirement asks for, since it carries neither dates nor outcome. Request the summary before submitting. Do not submit with the note standing in for it.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Includes exactly the indication, dated prior treatments and imaging, and excludes the medication history as unrequested.",
+          "credit": 0.25,
+          "evidenceRef": "B3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies the absent physiotherapy discharge summary as the missing evidence.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "States why the note's own sentence does not substitute for it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds submission until the summary is obtained.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow; SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000091",
+      "variantOf": "KB-DOCT-KB002-000091",
+      "templateId": "KB-VART-KB002-000025",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000091"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "J. Marchesini-Ola",
+      "auditTags": [
+        "EVIDENCE-LATE",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "ae54fa5da13487c3",
+        "scenarioFingerprint": "64da76fbb04b416a",
+        "competencyFingerprint": "145dae9f1c3a1f60",
+        "evidenceLayoutFingerprint": "97c56eb851bd397d",
+        "answerPatternFingerprint": "205fdf77bb3b6b36"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-DOCT-KB002-000093",
+      "recordType": "DOCUMENTATION_TASK",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M11"
+      ],
+      "competencyIds": [
+        "KB-D09",
+        "KB-D05"
+      ],
+      "sourceCompetencyIds": [
+        "D09",
+        "D05"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "STRUCTURED_SHORT_ANSWER",
+      "scenarioType": "EVIDENCE_PACKET_ASSEMBLY__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Authorisation evidence packets",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000025"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000025#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUTHORIZATION_ARTIFACT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "B3",
+            "text": "Routine reconciliation note from M. Okonjo: demographics confirmed, card image legible, and — the requirement stated for this scenario asks for the indication, documented prior treatments with dates, the relevant imaging, and evidence of a completed conservative-therapy course, and it accepts no substitute for the last of these — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "B1",
+            "text": "The 2026-05-04 note records the indication and the treatments already tried, with dates.",
+            "section": "Chart",
+            "recordedBy": "Dr. Rurik Vandeveer",
+            "recordedOn": "2026-05-04",
+            "decisive": false
+          },
+          {
+            "ref": "B2",
+            "text": "An imaging report and a medication history are on file; a physiotherapy discharge summary is referenced in the note but not present.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "B4",
+            "text": "The note states physiotherapy was completed but does not give the dates or the outcome.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ulyana Sørensen-Adeyemi",
+        "encounterLabel": "Bellrock Community Health Center — inbound fax",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "Assemble the authorisation evidence packet for Ulyana Sørensen-Adeyemi (MRN SYN-1394). State what goes in, what does not, and what is missing. Nothing in this record is labelled as important.",
+      "goldBehavior": "Include the indication, the dated prior treatments and the imaging report. Exclude the medication history: the stated requirement does not ask for it, and padding a packet with unrequested records invites a broader review. Name the gap precisely — the physiotherapy discharge summary evidencing a completed conservative course is absent, and the note's bare statement that physiotherapy was completed is not the evidence the requirement asks for, since it carries neither dates nor outcome. Request the summary before submitting. Do not submit with the note standing in for it.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Includes exactly the indication, dated prior treatments and imaging, and excludes the medication history as unrequested.",
+          "credit": 0.25,
+          "evidenceRef": "B3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies the absent physiotherapy discharge summary as the missing evidence.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "States why the note's own sentence does not substitute for it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds submission until the summary is obtained.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Insurance, authorization, and administrative workflow; SOAP and clinical documentation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-DOCT-KB002-000091",
+      "variantOf": "KB-DOCT-KB002-000091",
+      "templateId": "KB-VART-KB002-000025",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-DOCT-KB002-000091"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": true,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "prior-authorisation specialist",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-CONCEALED",
+        "SYNTHETIC-GIVEN-POLICY"
+      ],
+      "fingerprints": {
+        "promptHash": "cbfd810de2949c0c",
+        "scenarioFingerprint": "0027b6502de3f60b",
+        "competencyFingerprint": "145dae9f1c3a1f60",
+        "evidenceLayoutFingerprint": "70835da9ca1da18e",
+        "answerPatternFingerprint": "205fdf77bb3b6b36"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

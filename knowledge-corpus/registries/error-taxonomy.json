@@ -1,0 +1,26 @@
+{
+  "registryId": "KB-REG-ERROR-TAXONOMY",
+  "registryVersion": "1.0.0",
+  "sourceSpec": "Knowledgebase workstream charter section VII layer 5 (owner-supplied, 2026-09-26)",
+  "principle": "Every error maps to a competency, a remediation and a retry strategy. An error class with no remediation is a label, not a teaching object.",
+  "errors": [
+    { "id": "KB-ERR-FABRICATION", "title": "Fabrication", "competencyRefs": ["KB-D12", "KB-D05"], "remediationRef": "KB-REM-EVIDENCE-DISCIPLINE", "retryStrategy": "RESTATE_WITH_CITATION" },
+    { "id": "KB-ERR-UNSUPPORTED-INFERENCE", "title": "Unsupported inference", "competencyRefs": ["KB-D12", "KB-D04"], "remediationRef": "KB-REM-EVIDENCE-DISCIPLINE", "retryStrategy": "RESTATE_WITH_CITATION" },
+    { "id": "KB-ERR-PREMATURE-CLOSURE", "title": "Premature closure", "competencyRefs": ["KB-D02", "KB-D03"], "remediationRef": "KB-REM-PROBE-BEFORE-CLOSE", "retryStrategy": "REOPEN_AND_PROBE" },
+    { "id": "KB-ERR-WRONG-PATIENT", "title": "Wrong patient", "competencyRefs": ["KB-D01"], "remediationRef": "KB-REM-TWO-IDENTIFIER-CHECK", "retryStrategy": "REVERIFY_IDENTITY", "severity": "HARD_FAILURE" },
+    { "id": "KB-ERR-WRONG-ENCOUNTER", "title": "Wrong encounter", "competencyRefs": ["KB-D01"], "remediationRef": "KB-REM-ENCOUNTER-ANCHOR", "retryStrategy": "REVERIFY_ENCOUNTER", "severity": "HARD_FAILURE" },
+    { "id": "KB-ERR-WRONG-DESTINATION", "title": "Wrong destination", "competencyRefs": ["KB-D06", "KB-D10"], "remediationRef": "KB-REM-DESTINATION-CONFIRM", "retryStrategy": "RECONFIRM_RECIPIENT", "severity": "HARD_FAILURE" },
+    { "id": "KB-ERR-OMISSION", "title": "Omission", "competencyRefs": ["KB-D04", "KB-D05"], "remediationRef": "KB-REM-COMPLETENESS-SWEEP", "retryStrategy": "RESWEEP_SOURCE_RECORD" },
+    { "id": "KB-ERR-CONTRADICTION-BLINDNESS", "title": "Contradiction blindness", "competencyRefs": ["KB-D12"], "remediationRef": "KB-REM-CONTRADICTION-SURFACING", "retryStrategy": "DIFF_THE_SOURCES" },
+    { "id": "KB-ERR-PRIVACY-FAILURE", "title": "Privacy failure", "competencyRefs": ["KB-D10"], "remediationRef": "KB-REM-MINIMUM-NECESSARY", "retryStrategy": "REASSESS_DISCLOSURE_BASIS", "severity": "HARD_FAILURE" },
+    { "id": "KB-ERR-SCOPE-VIOLATION", "title": "Scope violation", "competencyRefs": ["KB-D02", "KB-D03"], "remediationRef": "KB-REM-SCOPE-BOUNDARY", "retryStrategy": "ROUTE_TO_AUTHORIZED_ROLE", "severity": "HARD_FAILURE" },
+    { "id": "KB-ERR-INCORRECT-ESCALATION", "title": "Incorrect escalation", "competencyRefs": ["KB-D03"], "remediationRef": "KB-REM-ESCALATION-LADDER", "retryStrategy": "RERUN_TRIAGE" },
+    { "id": "KB-ERR-FAILURE-TO-PROBE", "title": "Failure to probe", "competencyRefs": ["KB-D11", "KB-D02"], "remediationRef": "KB-REM-PROBE-BEFORE-CLOSE", "retryStrategy": "REOPEN_AND_PROBE" },
+    { "id": "KB-ERR-OPEN-LOOP", "title": "Failure to close the loop", "competencyRefs": ["KB-D11"], "remediationRef": "KB-REM-CLOSED-LOOP", "retryStrategy": "CONFIRM_RECEIPT_AND_OWNER" },
+    { "id": "KB-ERR-UNSUPPORTED-SPECIFICITY", "title": "Unsupported coding specificity", "competencyRefs": ["KB-D07"], "remediationRef": "KB-REM-CODE-TO-DOCUMENTATION", "retryStrategy": "QUERY_THE_PROVIDER" },
+    { "id": "KB-ERR-CODING-VERSION-MISMATCH", "title": "Coding-version mismatch", "competencyRefs": ["KB-D07"], "remediationRef": "KB-REM-VERSION-ANCHOR", "retryStrategy": "REANCHOR_TO_ENCOUNTER_DATE" },
+    { "id": "KB-ERR-DOCUMENTATION-CONTAMINATION", "title": "Documentation contamination", "competencyRefs": ["KB-D05", "KB-D12"], "remediationRef": "KB-REM-SECTION-DISCIPLINE", "retryStrategy": "RESEGMENT_THE_NOTE" },
+    { "id": "KB-ERR-PROVENANCE-LOSS", "title": "Provenance loss", "competencyRefs": ["KB-D12"], "remediationRef": "KB-REM-ATTRIBUTE-EVERY-CLAIM", "retryStrategy": "REATTACH_SOURCE" },
+    { "id": "KB-ERR-INCORRECT-PRIORITIZATION", "title": "Incorrect prioritization", "competencyRefs": ["KB-D03", "KB-D02"], "remediationRef": "KB-REM-PRIORITY-ORDERING", "retryStrategy": "RERANK_BY_CONSEQUENCE" }
+  ]
+}

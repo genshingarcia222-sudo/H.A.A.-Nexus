@@ -1,0 +1,631 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000011",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000041",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE_TO_A_QUESTION",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000011"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000011#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "X1",
+            "text": "Active problems: hypertension, osteoarthritis of the hands, seasonal rhinitis.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "X2",
+            "text": "an entry dated 2026-02-09 records difficulty swallowing solids for six weeks with unintended weight loss, and no other entry in the record mentions swallowing at all",
+            "section": "History",
+            "decisive": true
+          },
+          {
+            "ref": "X3",
+            "text": "Three active medications, none started in the last year.",
+            "section": "Medications",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Yevgenia Olatunji-Kvist",
+        "encounterLabel": "Willowbank Primary Care — secure internal message",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "CNM Isolde Babatunde-Reyes has asked for the chart entries pertinent to a swallowing complaint for Yevgenia Olatunji-Kvist (MRN SYN-6418). Which entries are pertinent?",
+      "goldBehavior": "Extract the 2026-02-09 history entry: it is the only entry that addresses swallowing, and it carries both the duration and the unintended weight loss. State explicitly that the problem list and the medication list contain nothing pertinent to the question, rather than omitting them silently. Do not pad the extraction with the active problems because they are the most prominent entries, and do not drop the weight loss: it travels with the complaint.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Extracts the swallowing entry with both its duration and the unintended weight loss.",
+          "credit": 0.34,
+          "evidenceRef": "X2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the problem list and medications hold nothing pertinent, rather than omitting that finding.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not include unrelated active problems as though they were pertinent.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000011",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "a3f1c597c08f8649",
+        "scenarioFingerprint": "a16daaf081101fec",
+        "competencyFingerprint": "f956f7be75f7ed36",
+        "evidenceLayoutFingerprint": "3013df65076df3c0",
+        "answerPatternFingerprint": "223abf3b79336935"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000042",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE_TO_A_QUESTION__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000011"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000011#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "X1",
+            "text": "Active problems: hypertension, osteoarthritis of the hands, seasonal rhinitis.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "X3",
+            "text": "Three active medications, none started in the last year.",
+            "section": "Medications",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "X2",
+            "text": "an entry dated 2026-03-17 records difficulty swallowing solids for six weeks with unintended weight loss, and no other entry in the record mentions swallowing at all",
+            "section": "History",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Zacharias Ndlovu-Persson",
+        "encounterLabel": "Ashcombe Multispecialty Group — walk-in at the front desk",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "Dr. Imani Farrokhzad has asked for the chart entries pertinent to a swallowing complaint for Zacharias Ndlovu-Persson (MRN SYN-3541). Which entries are pertinent? Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Extract the 2026-03-17 history entry: it is the only entry that addresses swallowing, and it carries both the duration and the unintended weight loss. State explicitly that the problem list and the medication list contain nothing pertinent to the question, rather than omitting them silently. Do not pad the extraction with the active problems because they are the most prominent entries, and do not drop the weight loss: it travels with the complaint.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Extracts the swallowing entry with both its duration and the unintended weight loss.",
+          "credit": 0.34,
+          "evidenceRef": "X2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the problem list and medications hold nothing pertinent, rather than omitting that finding.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not include unrelated active problems as though they were pertinent.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000041",
+      "variantOf": "KB-QUES-KB002-000041",
+      "templateId": "KB-VART-KB002-000011",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000041"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "P. Kirchmayer",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "6f3382e6edcd3bc7",
+        "scenarioFingerprint": "ec912a5c0b75ecf0",
+        "competencyFingerprint": "f956f7be75f7ed36",
+        "evidenceLayoutFingerprint": "fa5bae8391573b6c",
+        "answerPatternFingerprint": "77f384c7b96dc965"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000043",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "EASY",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE_TO_A_QUESTION__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000011"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000011#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound telephone call. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "X2",
+            "text": "Routine reconciliation note from A. Nwosu-Ferrand: demographics confirmed, card image legible, and — an entry dated 2026-05-04 records difficulty swallowing solids for six weeks with unintended weight loss, and no other entry in the record mentions swallowing at all — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "A. Nwosu-Ferrand",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "X1",
+            "text": "Active problems: hypertension, osteoarthritis of the hands, seasonal rhinitis.",
+            "section": "Problem list",
+            "decisive": false
+          },
+          {
+            "ref": "X3",
+            "text": "Three active medications, none started in the last year.",
+            "section": "Medications",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Anneliese Chukwuemeka-Rho",
+        "encounterLabel": "Bellrock Community Health Center — inbound telephone call",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "Dr. Teodoro Haakonsen has asked for the chart entries pertinent to a swallowing complaint for Anneliese Chukwuemeka-Rho (MRN SYN-7095). Which entries are pertinent? Nothing in this record is labelled as important.",
+      "goldBehavior": "Extract the 2026-05-04 history entry: it is the only entry that addresses swallowing, and it carries both the duration and the unintended weight loss. State explicitly that the problem list and the medication list contain nothing pertinent to the question, rather than omitting them silently. Do not pad the extraction with the active problems because they are the most prominent entries, and do not drop the weight loss: it travels with the complaint.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Extracts the swallowing entry with both its duration and the unintended weight loss.",
+          "credit": 0.34,
+          "evidenceRef": "X2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the problem list and medications hold nothing pertinent, rather than omitting that finding.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Does not include unrelated active problems as though they were pertinent.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000041",
+      "variantOf": "KB-QUES-KB002-000041",
+      "templateId": "KB-VART-KB002-000011",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000041"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "f926bbea3e2828e9",
+        "scenarioFingerprint": "d9645189f863d10f",
+        "competencyFingerprint": "f956f7be75f7ed36",
+        "evidenceLayoutFingerprint": "00f3d4771a1dacfb",
+        "answerPatternFingerprint": "961b342ec9f28753"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000044",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M02",
+        "M04"
+      ],
+      "competencyIds": [
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CHART_EXTRACTION",
+      "scenarioType": "PERTINENCE_TO_A_QUESTION__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Pertinent chart extraction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000011"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000011#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CHART_EXCERPT",
+        "lines": [
+          {
+            "ref": "X1",
+            "text": "Active problems: hypertension, osteoarthritis of the hands, seasonal rhinitis.",
+            "section": "Problem list",
+            "decisive": true
+          },
+          {
+            "ref": "X3",
+            "text": "Three active medications, none started in the last year.",
+            "section": "Medications",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bartholomew Sannikov",
+        "encounterLabel": "Thornfield Medical Partners — patient portal message",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Dr. Ngozi Brandtsen has asked for the chart entries pertinent to a swallowing complaint for Bartholomew Sannikov (MRN SYN-4632). Which entries are pertinent? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether any entry other than the history note mentions swallowing), name Dr. Ngozi Brandtsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether any entry other than the history note mentions swallowing\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "X1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000041",
+      "variantOf": "KB-QUES-KB002-000041",
+      "templateId": "KB-VART-KB002-000011",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000041"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-INCORRECT-PRIORITIZATION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PRIORITY-ORDERING",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "B. Tkachenko",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "087011357fc8535e",
+        "scenarioFingerprint": "6cfa57d44b054d0b",
+        "competencyFingerprint": "8b915a5a8cbd5109",
+        "evidenceLayoutFingerprint": "40d25f45cc55b2ba",
+        "answerPatternFingerprint": "3b98648acb2cfc3a"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

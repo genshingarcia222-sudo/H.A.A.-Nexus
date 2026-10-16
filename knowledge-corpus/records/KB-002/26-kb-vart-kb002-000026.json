@@ -1,0 +1,597 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000026",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000094",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "WHICH_ENTRIES_SUPPORT",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation support for an assessment",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000026"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000026#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "O1",
+            "text": "Subjective: ankle pain after twisting it on a step, unable to bear weight for the first hour, now weight-bearing with a limp.",
+            "section": "Note",
+            "recordedBy": "Dr. Saoirse Mbeki-Lantz",
+            "recordedOn": "2026-06-22",
+            "decisive": false
+          },
+          {
+            "ref": "O2",
+            "text": "Objective: swelling over the lateral malleolus, tender there, no bony tenderness at the posterior malleolus, able to take four steps.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "O3",
+            "text": "the rule stated for this scenario is that an entry bears on an assessment only if it makes it more or less likely, and that a documented absence counts as much as a documented presence",
+            "section": "Assessment rule",
+            "decisive": true
+          },
+          {
+            "ref": "O4",
+            "text": "Administrative: insurance card image captured; interpreter not required.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Vikram Oyinlola-Haugen",
+        "encounterLabel": "Thornfield Medical Partners — voicemail",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Which entries in Vikram Oyinlola-Haugen's 2026-06-22 note bear on the recorded assessment? Select all that apply.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The mechanism and weight-bearing history together with the localised swelling, tenderness and the steps taken.",
+          "why": "Correct: each of these makes the assessment more or less likely."
+        },
+        {
+          "id": "b",
+          "text": "The recorded absence of the finding the assessment would predict, since it bears on the assessment as much as a positive entry.",
+          "why": "Correct: a documented negative is evidence, and omitting it distorts the picture."
+        },
+        {
+          "id": "c",
+          "text": "The administrative entry, since it establishes the encounter the assessment belongs to.",
+          "why": "Anchoring an encounter is not bearing on an assessment. Under the stated rule it moves nothing.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Only the objective findings, since an assessment must rest on what was examined.",
+          "why": "It discards the mechanism and the weight-bearing history, which are among the most informative entries here.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "e",
+          "text": "Every entry in the note, so the clinician can weigh them all.",
+          "why": "That returns the task unperformed; selecting what bears on the assessment is the task.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Select the entries that move the assessment: the mechanism and weight-bearing history, the localised swelling and tenderness, the four steps taken, and the explicitly recorded absence of posterior malleolar bony tenderness. Say why the recorded absence belongs — under the stated rule a documented negative bears on the assessment as much as a positive finding. Exclude the administrative entry: it identifies the encounter and bears on nothing clinical. Do not select every clinical-sounding line simply because it sits in the note.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Selects the mechanism, the localised findings, the steps taken and the documented absence.",
+          "credit": 0.34,
+          "evidenceRef": "O3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Justifies the documented absence explicitly under the stated rule.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Excludes the administrative entry and says why.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: SOAP and clinical documentation; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000026",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "7563e7d7f871823f",
+        "scenarioFingerprint": "122899165345c188",
+        "competencyFingerprint": "7d096c07b7e18964",
+        "evidenceLayoutFingerprint": "b61cd16851551474",
+        "answerPatternFingerprint": "e4e22723e74b215c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000095",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "WHICH_ENTRIES_SUPPORT__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation support for an assessment",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000026"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000026#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "O1",
+            "text": "Subjective: ankle pain after twisting it on a step, unable to bear weight for the first hour, now weight-bearing with a limp.",
+            "section": "Note",
+            "recordedBy": "NP Caius Ostrowski",
+            "recordedOn": "2026-08-13",
+            "decisive": false
+          },
+          {
+            "ref": "O2",
+            "text": "Objective: swelling over the lateral malleolus, tender there, no bony tenderness at the posterior malleolus, able to take four steps.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "O4",
+            "text": "Administrative: insurance card image captured; interpreter not required.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "O3",
+            "text": "the rule stated for this scenario is that an entry bears on an assessment only if it makes it more or less likely, and that a documented absence counts as much as a documented presence",
+            "section": "Assessment rule",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Wilhelmina Acheampong",
+        "encounterLabel": "Quietwater Family Health — secure internal message",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "Which entries in Wilhelmina Acheampong's 2026-08-13 note bear on the recorded assessment? Select all that apply. Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The mechanism and weight-bearing history together with the localised swelling, tenderness and the steps taken.",
+          "why": "Correct: each of these makes the assessment more or less likely."
+        },
+        {
+          "id": "b",
+          "text": "The recorded absence of the finding the assessment would predict, since it bears on the assessment as much as a positive entry.",
+          "why": "Correct: a documented negative is evidence, and omitting it distorts the picture."
+        },
+        {
+          "id": "c",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "d",
+          "text": "The administrative entry, since it establishes the encounter the assessment belongs to.",
+          "why": "Anchoring an encounter is not bearing on an assessment. Under the stated rule it moves nothing.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "e",
+          "text": "Only the objective findings, since an assessment must rest on what was examined.",
+          "why": "It discards the mechanism and the weight-bearing history, which are among the most informative entries here.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Select the entries that move the assessment: the mechanism and weight-bearing history, the localised swelling and tenderness, the four steps taken, and the explicitly recorded absence of posterior malleolar bony tenderness. Say why the recorded absence belongs — under the stated rule a documented negative bears on the assessment as much as a positive finding. Exclude the administrative entry: it identifies the encounter and bears on nothing clinical. Do not select every clinical-sounding line simply because it sits in the note.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Selects the mechanism, the localised findings, the steps taken and the documented absence.",
+          "credit": 0.34,
+          "evidenceRef": "O3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Justifies the documented absence explicitly under the stated rule.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Excludes the administrative entry and says why.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000094",
+      "variantOf": "KB-QUES-KB002-000094",
+      "templateId": "KB-VART-KB002-000026",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000094"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "c43223f4e39b2dca",
+        "scenarioFingerprint": "36b9b8dd0f9071ed",
+        "competencyFingerprint": "7d096c07b7e18964",
+        "evidenceLayoutFingerprint": "fbed6cc858a8f376",
+        "answerPatternFingerprint": "e4e22723e74b215c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000096",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M04",
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D05",
+        "KB-D04"
+      ],
+      "sourceCompetencyIds": [
+        "D05",
+        "D04"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "MULTI_SELECT",
+      "scenarioType": "WHICH_ENTRIES_SUPPORT__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Documentation support for an assessment",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000026"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000026#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "O3",
+            "text": "Routine reconciliation note from L. Haverford: demographics confirmed, card image legible, and — the rule stated for this scenario is that an entry bears on an assessment only if it makes it more or less likely, and that a documented absence counts as much as a documented presence — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "L. Haverford",
+            "recordedOn": "2026-09-01",
+            "decisive": true
+          },
+          {
+            "ref": "O1",
+            "text": "Subjective: ankle pain after twisting it on a step, unable to bear weight for the first hour, now weight-bearing with a limp.",
+            "section": "Note",
+            "recordedBy": "PA Yolanda Trevisani",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "O2",
+            "text": "Objective: swelling over the lateral malleolus, tender there, no bony tenderness at the posterior malleolus, able to take four steps.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "O4",
+            "text": "Administrative: insurance card image captured; interpreter not required.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Xavier Rautenbach-Ejiofor",
+        "encounterLabel": "Marbury Heights Clinic — walk-in at the front desk",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "Which entries in Xavier Rautenbach-Ejiofor's 2026-09-01 note bear on the recorded assessment? Select all that apply. Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The mechanism and weight-bearing history together with the localised swelling, tenderness and the steps taken.",
+          "why": "Correct: each of these makes the assessment more or less likely."
+        },
+        {
+          "id": "b",
+          "text": "The recorded absence of the finding the assessment would predict, since it bears on the assessment as much as a positive entry.",
+          "why": "Correct: a documented negative is evidence, and omitting it distorts the picture."
+        },
+        {
+          "id": "c",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "The administrative entry, since it establishes the encounter the assessment belongs to.",
+          "why": "Anchoring an encounter is not bearing on an assessment. Under the stated rule it moves nothing.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "e",
+          "text": "Only the objective findings, since an assessment must rest on what was examined.",
+          "why": "It discards the mechanism and the weight-bearing history, which are among the most informative entries here.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        }
+      ],
+      "correctChoiceIds": [
+        "a",
+        "b"
+      ],
+      "goldBehavior": "Select the entries that move the assessment: the mechanism and weight-bearing history, the localised swelling and tenderness, the four steps taken, and the explicitly recorded absence of posterior malleolar bony tenderness. Say why the recorded absence belongs — under the stated rule a documented negative bears on the assessment as much as a positive finding. Exclude the administrative entry: it identifies the encounter and bears on nothing clinical. Do not select every clinical-sounding line simply because it sits in the note.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Selects the mechanism, the localised findings, the steps taken and the documented absence.",
+          "credit": 0.34,
+          "evidenceRef": "O3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Justifies the documented absence explicitly under the stated rule.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Excludes the administrative entry and says why.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: SOAP and clinical documentation; Pertinent chart extraction. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000094",
+      "variantOf": "KB-QUES-KB002-000094",
+      "templateId": "KB-VART-KB002-000026",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000094"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "clinical documentation assistant",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "5f5c45d6881cd5a7",
+        "scenarioFingerprint": "defe9b2d68510c5c",
+        "competencyFingerprint": "7d096c07b7e18964",
+        "evidenceLayoutFingerprint": "eb8d3e9f3690468e",
+        "answerPatternFingerprint": "e4e22723e74b215c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

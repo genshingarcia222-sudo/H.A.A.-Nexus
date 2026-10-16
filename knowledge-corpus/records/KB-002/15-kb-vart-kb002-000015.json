@@ -1,0 +1,631 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000015",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000057",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M05"
+      ],
+      "competencyIds": [
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D02"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SHORT_ANSWER",
+      "scenarioType": "LAY_DESCRIPTION_TO_RECORD",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Clinical terminology in context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000015"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000015#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "L1",
+            "text": "The patient says: \"My hands go dead white and then bright red when I come in from the cold, and they ache while they change.\"",
+            "section": "Call",
+            "recordedOn": "2026-11-05",
+            "decisive": false
+          },
+          {
+            "ref": "L2",
+            "text": "the rule stated for this scenario is that a lay description is recorded in the patient's own words with a neutral clinical summary of what was described, and that naming a condition is a clinical determination this role may not make",
+            "section": "Recording rule",
+            "decisive": true
+          },
+          {
+            "ref": "L3",
+            "text": "No prior entry records any colour change in the hands.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Marisol Ekwueme-Trask",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "Marisol Ekwueme-Trask (MRN SYN-2207) describes a symptom by telephone. How should it be recorded?",
+      "goldBehavior": "Record the patient's own words, then a neutral summary: colour change in both hands on cold exposure, white then red, with aching during the change, and no prior entry on record. Route it to CNM Isolde Babatunde-Reyes for interpretation. Do not name a condition that fits the description, and do not compress the account into a single clinical term that discards the sequence and the aching.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Keeps the patient's own words and adds a neutral summary that preserves the sequence and the ache.",
+          "credit": 0.34,
+          "evidenceRef": "L2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names no condition and records that no prior entry exists.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to the clinician for interpretation.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000015",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "A. Nwosu-Ferrand",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "b3f4b175543bf8a5",
+        "scenarioFingerprint": "fd671e023f753e0f",
+        "competencyFingerprint": "bbaf3451cf342582",
+        "evidenceLayoutFingerprint": "43f27b631a60f358",
+        "answerPatternFingerprint": "57927cc69e5b4c02"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000058",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M05"
+      ],
+      "competencyIds": [
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D02"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SHORT_ANSWER",
+      "scenarioType": "LAY_DESCRIPTION_TO_RECORD__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Clinical terminology in context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000015"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000015#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "L1",
+            "text": "The patient says: \"My hands go dead white and then bright red when I come in from the cold, and they ache while they change.\"",
+            "section": "Call",
+            "recordedOn": "2026-12-08",
+            "decisive": false
+          },
+          {
+            "ref": "L3",
+            "text": "No prior entry records any colour change in the hands.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "L2",
+            "text": "the rule stated for this scenario is that a lay description is recorded in the patient's own words with a neutral clinical summary of what was described, and that naming a condition is a clinical determination this role may not make",
+            "section": "Recording rule",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Nikolai Adebayo-Frisk",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "Nikolai Adebayo-Frisk (MRN SYN-8836) describes a symptom by telephone. How should it be recorded? Read to the end of the record before answering: the material is not in the order you need it.",
+      "goldBehavior": "Record the patient's own words, then a neutral summary: colour change in both hands on cold exposure, white then red, with aching during the change, and no prior entry on record. Route it to Dr. Imani Farrokhzad for interpretation. Do not name a condition that fits the description, and do not compress the account into a single clinical term that discards the sequence and the aching.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Keeps the patient's own words and adds a neutral summary that preserves the sequence and the ache.",
+          "credit": 0.34,
+          "evidenceRef": "L2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names no condition and records that no prior entry exists.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to the clinician for interpretation.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000057",
+      "variantOf": "KB-QUES-KB002-000057",
+      "templateId": "KB-VART-KB002-000015",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000057"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "B. Tkachenko",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "c2d802703a37f22d",
+        "scenarioFingerprint": "dd783ae5196efd9b",
+        "competencyFingerprint": "bbaf3451cf342582",
+        "evidenceLayoutFingerprint": "910df4f06c171244",
+        "answerPatternFingerprint": "ce22099ba2aea22c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000059",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M05"
+      ],
+      "competencyIds": [
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D02"
+      ],
+      "difficulty": "EASY",
+      "taskType": "SHORT_ANSWER",
+      "scenarioType": "LAY_DESCRIPTION_TO_RECORD__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Clinical terminology in context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000015"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000015#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "L2",
+            "text": "Routine reconciliation note from C. Oyedepo-Mansur: demographics confirmed, card image legible, and — the rule stated for this scenario is that a lay description is recorded in the patient's own words with a neutral clinical summary of what was described, and that naming a condition is a clinical determination this role may not make — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "C. Oyedepo-Mansur",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "L1",
+            "text": "The patient says: \"My hands go dead white and then bright red when I come in from the cold, and they ache while they change.\"",
+            "section": "Call",
+            "recordedOn": "2027-01-14",
+            "decisive": false
+          },
+          {
+            "ref": "L3",
+            "text": "No prior entry records any colour change in the hands.",
+            "section": "Chart",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Odalys Mwangi-Bergström",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "Odalys Mwangi-Bergström (MRN SYN-5019) describes a symptom by telephone. How should it be recorded? Nothing in this record is labelled as important.",
+      "goldBehavior": "Record the patient's own words, then a neutral summary: colour change in both hands on cold exposure, white then red, with aching during the change, and no prior entry on record. Route it to Dr. Teodoro Haakonsen for interpretation. Do not name a condition that fits the description, and do not compress the account into a single clinical term that discards the sequence and the aching.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Keeps the patient's own words and adds a neutral summary that preserves the sequence and the ache.",
+          "credit": 0.34,
+          "evidenceRef": "L2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names no condition and records that no prior entry exists.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to the clinician for interpretation.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000057",
+      "variantOf": "KB-QUES-KB002-000057",
+      "templateId": "KB-VART-KB002-000015",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000057"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "C. Oyedepo-Mansur",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "f79e6bce9276e350",
+        "scenarioFingerprint": "28d528563d7d8d77",
+        "competencyFingerprint": "bbaf3451cf342582",
+        "evidenceLayoutFingerprint": "6232efc10b005254",
+        "answerPatternFingerprint": "1e6375a576bed6ab"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000060",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M05"
+      ],
+      "competencyIds": [
+        "KB-D02"
+      ],
+      "sourceCompetencyIds": [
+        "D02"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "SHORT_ANSWER",
+      "scenarioType": "LAY_DESCRIPTION_TO_RECORD__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Clinical terminology in context",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000015"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000015#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "CALL_TRANSCRIPT",
+        "lines": [
+          {
+            "ref": "L1",
+            "text": "The patient says: \"My hands go dead white and then bright red when I come in from the cold, and they ache while they change.\"",
+            "section": "Call",
+            "recordedOn": "2027-02-23",
+            "decisive": true
+          },
+          {
+            "ref": "L3",
+            "text": "No prior entry records any colour change in the hands.",
+            "section": "Chart",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Peregrine Oyelude",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "Peregrine Oyelude (MRN SYN-6742) describes a symptom by telephone. How should it be recorded? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (whether any prior entry records a colour change in the hands), name Dr. Ngozi Brandtsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "expectedOutput": "A written response that satisfies every acceptance criterion below, cites the packet lines it rests on, and states what the record does not establish.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"whether any prior entry records a colour change in the hands\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "L1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Clinical intent and task interpretation. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000057",
+      "variantOf": "KB-QUES-KB002-000057",
+      "templateId": "KB-VART-KB002-000015",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000057"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-PREMATURE-CLOSURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-PROBE-BEFORE-CLOSE"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "triage nurse",
+      "nextActionOwner": "E. Villaseñor-Bak",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "f6e48d80a0dd9499",
+        "scenarioFingerprint": "164b097f00447d5e",
+        "competencyFingerprint": "62c77a9e32d30e24",
+        "evidenceLayoutFingerprint": "ea6c50bb77894734",
+        "answerPatternFingerprint": "1a97d659038cb8ea"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

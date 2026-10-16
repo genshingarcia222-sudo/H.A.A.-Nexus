@@ -1,0 +1,729 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000010",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-WFLW-KB002-000037",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "EASY",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_FIELD_INCOMPLETE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000010"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000010#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "G1",
+            "text": "Dr. Esperanza Nkemdirim orders a knee radiograph with the indication \"persistent pain after a fall\", and the order is signed and dated 2026-11-05.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "G2",
+            "text": "the laterality field is blank, and the imaging department's stated intake rule for this scenario will not schedule a limb study without a side",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "G3",
+            "text": "The 2026-11-05 note's history mentions a fall onto the left side; its examination section records findings for the right knee.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ulyana Sørensen-Adeyemi",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "M. Okonjo is booking an imaging study for Ulyana Sørensen-Adeyemi (MRN SYN-1394). Can the order be scheduled as written?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Return the order to Dr. Esperanza Nkemdirim for the side to be specified, noting that the note points both ways.",
+          "why": "Correct: only the ordering clinician can supply laterality, and the chart is genuinely ambiguous."
+        },
+        {
+          "id": "b",
+          "text": "Book the right knee, since the examination section records findings there.",
+          "why": "An examination finding is not the ordered side, and the history points the other way. This is the trap.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "c",
+          "text": "Book the left knee, since the history describes a fall onto the left side.",
+          "why": "A mechanism of injury is not an order. Choosing either side here is the same error.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Book both knees so the study covers whichever side was intended.",
+          "why": "It orders imaging nobody requested and substitutes the coordinator's judgement for the clinician's.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not schedule. State that laterality is blank and that the department will not accept a limb study without it. Note that the record points both ways — the history mentions a left-sided fall, the examination records the right knee — so the chart cannot settle it either. Return the order to Dr. Esperanza Nkemdirim for the side to be specified. Do not choose the side the examination suggests, and do not book both knees to cover the ambiguity.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the blank laterality field and the intake rule that blocks scheduling.",
+          "credit": 0.34,
+          "evidenceRef": "G2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the note points both ways and therefore cannot supply the side.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Returns the order to the ordering clinician rather than resolving the side locally.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000010",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "503425868fa55007",
+        "scenarioFingerprint": "99b549c739d2e21d",
+        "competencyFingerprint": "17fc001a500dedc1",
+        "evidenceLayoutFingerprint": "9c3bd95959b15dee",
+        "answerPatternFingerprint": "707987289e3aaf83"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000038",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "EASY",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_FIELD_INCOMPLETE__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000010"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000010#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "G1",
+            "text": "Dr. Fionnuala Adeoti-Krause orders a knee radiograph with the indication \"persistent pain after a fall\", and the order is signed and dated 2026-12-08.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "G3",
+            "text": "The 2026-12-08 note's history mentions a fall onto the left side; its examination section records findings for the right knee.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "G2",
+            "text": "the laterality field is blank, and the imaging department's stated intake rule for this scenario will not schedule a limb study without a side",
+            "section": "Order",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Vikram Oyinlola-Haugen",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "R. Skibinski is booking an imaging study for Vikram Oyinlola-Haugen (MRN SYN-8250). Can the order be scheduled as written? Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Return the order to Dr. Fionnuala Adeoti-Krause for the side to be specified, noting that the note points both ways.",
+          "why": "Correct: only the ordering clinician can supply laterality, and the chart is genuinely ambiguous."
+        },
+        {
+          "id": "c",
+          "text": "Book the right knee, since the examination section records findings there.",
+          "why": "An examination finding is not the ordered side, and the history points the other way. This is the trap.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "d",
+          "text": "Book the left knee, since the history describes a fall onto the left side.",
+          "why": "A mechanism of injury is not an order. Choosing either side here is the same error.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not schedule. State that laterality is blank and that the department will not accept a limb study without it. Note that the record points both ways — the history mentions a left-sided fall, the examination records the right knee — so the chart cannot settle it either. Return the order to Dr. Fionnuala Adeoti-Krause for the side to be specified. Do not choose the side the examination suggests, and do not book both knees to cover the ambiguity.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the blank laterality field and the intake rule that blocks scheduling.",
+          "credit": 0.34,
+          "evidenceRef": "G2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the note points both ways and therefore cannot supply the side.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Returns the order to the ordering clinician rather than resolving the side locally.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000037",
+      "variantOf": "KB-WFLW-KB002-000037",
+      "templateId": "KB-VART-KB002-000010",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000037"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "e329a6c38d8a60ff",
+        "scenarioFingerprint": "094c0cca4c15d637",
+        "competencyFingerprint": "17fc001a500dedc1",
+        "evidenceLayoutFingerprint": "346ac6642e83cdd3",
+        "answerPatternFingerprint": "450f29d2d63a4842"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000039",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "EASY",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_FIELD_INCOMPLETE__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000010"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000010#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "G2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — the laterality field is blank, and the imaging department's stated intake rule for this scenario will not schedule a limb study without a side — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "G1",
+            "text": "NP Gustavo Ihejirika orders a knee radiograph with the indication \"persistent pain after a fall\", and the order is signed and dated 2027-01-14.",
+            "section": "Order",
+            "decisive": false
+          },
+          {
+            "ref": "G3",
+            "text": "The 2027-01-14 note's history mentions a fall onto the left side; its examination section records findings for the right knee.",
+            "section": "Note",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Wilhelmina Acheampong",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "T. Alvarado-Ng is booking an imaging study for Wilhelmina Acheampong (MRN SYN-5827). Can the order be scheduled as written? Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Book the right knee, since the examination section records findings there.",
+          "why": "An examination finding is not the ordered side, and the history points the other way. This is the trap.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Return the order to NP Gustavo Ihejirika for the side to be specified, noting that the note points both ways.",
+          "why": "Correct: only the ordering clinician can supply laterality, and the chart is genuinely ambiguous."
+        },
+        {
+          "id": "d",
+          "text": "Book the left knee, since the history describes a fall onto the left side.",
+          "why": "A mechanism of injury is not an order. Choosing either side here is the same error.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not schedule. State that laterality is blank and that the department will not accept a limb study without it. Note that the record points both ways — the history mentions a left-sided fall, the examination records the right knee — so the chart cannot settle it either. Return the order to NP Gustavo Ihejirika for the side to be specified. Do not choose the side the examination suggests, and do not book both knees to cover the ambiguity.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the blank laterality field and the intake rule that blocks scheduling.",
+          "credit": 0.34,
+          "evidenceRef": "G2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States that the note points both ways and therefore cannot supply the side.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Returns the order to the ordering clinician rather than resolving the side locally.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000037",
+      "variantOf": "KB-WFLW-KB002-000037",
+      "templateId": "KB-VART-KB002-000010",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000037"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "5a6f7d1f2607ce26",
+        "scenarioFingerprint": "36f253bdc2c46b9b",
+        "competencyFingerprint": "17fc001a500dedc1",
+        "evidenceLayoutFingerprint": "971b166acfad0751",
+        "answerPatternFingerprint": "dbfe286dba74ffdb"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-WFLW-KB002-000040",
+      "recordType": "WORKFLOW",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M07"
+      ],
+      "competencyIds": [
+        "KB-D06"
+      ],
+      "sourceCompetencyIds": [
+        "D06"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "IMAGING_ORDER_VALIDATION",
+      "scenarioType": "ORDER_FIELD_INCOMPLETE__CLUE_REMOVED",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Radiology and diagnostic orders",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000010"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000010#CLUE_REMOVED"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "IMAGING_ORDER",
+        "lines": [
+          {
+            "ref": "G1",
+            "text": "PA Hyacinth Obuya-Lindfors orders a knee radiograph with the indication \"persistent pain after a fall\", and the order is signed and dated 2027-02-23.",
+            "section": "Order",
+            "decisive": true
+          },
+          {
+            "ref": "G3",
+            "text": "The 2027-02-23 note's history mentions a fall onto the left side; its examination section records findings for the right knee.",
+            "section": "Note",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Xavier Rautenbach-Ejiofor",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "L. Haverford is booking an imaging study for Xavier Rautenbach-Ejiofor (MRN SYN-2963). Can the order be scheduled as written? If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Book the right knee, since the examination section records findings there.",
+          "why": "An examination finding is not the ordered side, and the history points the other way. This is the trap.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Return the order to PA Hyacinth Obuya-Lindfors for the side to be specified, noting that the note points both ways.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which knee the study is for is not in the record, request it from PA Hyacinth Obuya-Lindfors, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which knee the study is for), name PA Hyacinth Obuya-Lindfors as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which knee the study is for\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "G1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Orders, referrals, and fax workflows. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-WFLW-KB002-000037",
+      "variantOf": "KB-WFLW-KB002-000037",
+      "templateId": "KB-VART-KB002-000010",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-WFLW-KB002-000037"
+      ],
+      "errorTargets": [
+        "KB-ERR-OMISSION",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-COMPLETENESS-SWEEP",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "scheduling coordinator",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "620a452f16cee88a",
+        "scenarioFingerprint": "8ac31739432c37fc",
+        "competencyFingerprint": "f8779a36191562f4",
+        "evidenceLayoutFingerprint": "69a3405057d68169",
+        "answerPatternFingerprint": "4d050a48bf92cb8a"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

@@ -10,3 +10,10 @@ nexus-pilot-batch-001.candidates.r3.json -text
 # Without this, Windows CRLF conversion changes the bytes on checkout and the
 # integrity test fails for a reason that has nothing to do with the content.
 nexus-scribe-batch-002.candidates.json -text
+
+# Knowledgebase corpus records, registries, schema and source registry are
+# identified by SHA-256 in `knowledge-corpus/manifests/corpus-manifest.json`, and
+# `kb-manifest.mjs --check` compares those hashes. A line-ending conversion on a
+# checkout would change the bytes and report corpus drift for a reason that has
+# nothing to do with the content, so these files are never converted.
+knowledge-corpus/**/*.json -text

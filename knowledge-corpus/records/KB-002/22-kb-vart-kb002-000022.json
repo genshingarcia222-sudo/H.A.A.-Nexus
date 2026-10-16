@@ -1,0 +1,570 @@
+{
+  "batchId": "KB-002",
+  "templateId": "KB-VART-KB002-000022",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB002-000082",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "AUDIT_RECONSTRUCTION",
+      "scenarioType": "PARTIAL_TRAIL",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit reconstruction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000022"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000022#BASE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Entry 1, 2026-03-17 09:14, note created by L. Haverford. Entry 2, 2026-03-17 11:02, plan section modified, author recorded as \"system\".",
+            "section": "Trail",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "Entry 3, 2026-04-14 08:30, note signed by Dr. Basim Oyeleke-Nyström.",
+            "section": "Trail",
+            "decisive": false
+          },
+          {
+            "ref": "U3",
+            "text": "the stated behaviour of this system for the scenario is that it records \"system\" as the author whenever a change arrives through the bulk-update interface, and it does not retain which user session initiated that update",
+            "section": "System note",
+            "decisive": true
+          },
+          {
+            "ref": "U4",
+            "text": "Three user sessions were open at 11:02: L. Haverford, Dr. Basim Oyeleke-Nyström and a third account not otherwise referenced.",
+            "section": "Access log",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Ashcombe Multispecialty Group — voicemail",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "Reconstruct what the trail for Jovana Petrakis-Hume (MRN SYN-3807) does and does not establish about who changed the plan.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Attribute the change to L. Haverford, who created the note and had a session open at 11:02.",
+          "why": "Two facts that co-occur are not authorship, and this writes a guess into an audit finding.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "b",
+          "text": "The change is established, its author is not; record an unresolvable provenance gap and refer it, naming the sessions only as concurrent.",
+          "why": "Correct: it reports the limit of the evidence instead of closing it by inference."
+        },
+        {
+          "id": "c",
+          "text": "Attribute it to the third account, since the other two sessions belong to people with legitimate reasons to be in the chart.",
+          "why": "Legitimacy of access is not evidence of who acted, and the reasoning would equally indict anyone unfamiliar.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "d",
+          "text": "Accept the trail as complete: the note is signed and the signature covers the plan as it stands.",
+          "why": "A signature attests to content, not to the provenance of an intervening change.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "State what the trail establishes: the plan was modified at 11:02 on 2026-03-17 through the bulk-update interface, and the signature at entry 3 covers that modified text. State what it cannot establish: which person made the change, because the system does not retain the initiating session. Name the three concurrent sessions as concurrent only, not as candidates, and record the defect as an unresolvable provenance gap for the records owner. Do not narrow it to the likeliest of the three.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what the trail establishes from what it cannot, citing the system's stated behaviour.",
+          "credit": 0.34,
+          "evidenceRef": "U3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Notes that the later signature covers text of unknown authorship.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Treats the three open sessions as concurrent rather than as candidate authors, and records the gap.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB002-000022",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "90df7972871ea5d5",
+        "scenarioFingerprint": "213cc35c4a628ac3",
+        "competencyFingerprint": "eb6511415c61b486",
+        "evidenceLayoutFingerprint": "b51da3f128aa5e4d",
+        "answerPatternFingerprint": "4e027eadf4fad604"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000083",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "AUDIT_RECONSTRUCTION",
+      "scenarioType": "PARTIAL_TRAIL__LATE_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit reconstruction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000022"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000022#LATE_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "U1",
+            "text": "Entry 1, 2026-05-04 09:14, note created by D. Eluwande. Entry 2, 2026-05-04 11:02, plan section modified, author recorded as \"system\".",
+            "section": "Trail",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "Entry 3, 2026-06-01 08:30, note signed by Dr. Coralie Abimbola-Wexler.",
+            "section": "Trail",
+            "decisive": false
+          },
+          {
+            "ref": "U4",
+            "text": "Three user sessions were open at 11:02: D. Eluwande, Dr. Coralie Abimbola-Wexler and a third account not otherwise referenced.",
+            "section": "Access log",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-05-04; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "U3",
+            "text": "the stated behaviour of this system for the scenario is that it records \"system\" as the author whenever a change arrives through the bulk-update interface, and it does not retain which user session initiated that update",
+            "section": "System note",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Kwabena Lindqvist",
+        "encounterLabel": "Bellrock Community Health Center — secure internal message",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "Reconstruct what the trail for Kwabena Lindqvist (MRN SYN-7134) does and does not establish about who changed the plan. Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Attribute the change to D. Eluwande, who created the note and had a session open at 11:02.",
+          "why": "Two facts that co-occur are not authorship, and this writes a guess into an audit finding.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "b",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "c",
+          "text": "The change is established, its author is not; record an unresolvable provenance gap and refer it, naming the sessions only as concurrent.",
+          "why": "Correct: it reports the limit of the evidence instead of closing it by inference."
+        },
+        {
+          "id": "d",
+          "text": "Attribute it to the third account, since the other two sessions belong to people with legitimate reasons to be in the chart.",
+          "why": "Legitimacy of access is not evidence of who acted, and the reasoning would equally indict anyone unfamiliar.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "State what the trail establishes: the plan was modified at 11:02 on 2026-05-04 through the bulk-update interface, and the signature at entry 3 covers that modified text. State what it cannot establish: which person made the change, because the system does not retain the initiating session. Name the three concurrent sessions as concurrent only, not as candidates, and record the defect as an unresolvable provenance gap for the records owner. Do not narrow it to the likeliest of the three.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what the trail establishes from what it cannot, citing the system's stated behaviour.",
+          "credit": 0.34,
+          "evidenceRef": "U3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Notes that the later signature covers text of unknown authorship.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Treats the three open sessions as concurrent rather than as candidate authors, and records the gap.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000082",
+      "variantOf": "KB-QUES-KB002-000082",
+      "templateId": "KB-VART-KB002-000022",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000082"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "a70b10711695eb2b",
+        "scenarioFingerprint": "5b96003d445104bf",
+        "competencyFingerprint": "eb6511415c61b486",
+        "evidenceLayoutFingerprint": "2d2430395ff76f69",
+        "answerPatternFingerprint": "8eb248887a61be64"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB002-000084",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-002",
+      "moduleIds": [
+        "M15"
+      ],
+      "competencyIds": [
+        "KB-D12"
+      ],
+      "sourceCompetencyIds": [
+        "D12"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "AUDIT_RECONSTRUCTION",
+      "scenarioType": "PARTIAL_TRAIL__BURIED_CLUE",
+      "evidenceBasis": "SELF_CONTAINED",
+      "domain": "Audit reconstruction",
+      "jurisdictions": [
+        "UNIVERSAL"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "contentStatus": "candidate",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-CONTENT-REVIEW-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-002",
+        "derivedFrom": [
+          "KB-VART-KB002-000022"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB002-000022#BURIED_CLUE"
+      },
+      "packet": {
+        "synthetic": true,
+        "kind": "AUDIT_TRAIL",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "U3",
+            "text": "Routine reconciliation note from P. Kirchmayer: demographics confirmed, card image legible, and — the stated behaviour of this system for the scenario is that it records \"system\" as the author whenever a change arrives through the bulk-update interface, and it does not retain which user session initiated that update — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-06-22",
+            "decisive": true
+          },
+          {
+            "ref": "U1",
+            "text": "Entry 1, 2026-06-22 09:14, note created by P. Kirchmayer. Entry 2, 2026-06-22 11:02, plan section modified, author recorded as \"system\".",
+            "section": "Trail",
+            "decisive": false
+          },
+          {
+            "ref": "U2",
+            "text": "Entry 3, 2026-07-20 08:30, note signed by Dr. Dmitri Ogunsanya-Holt.",
+            "section": "Trail",
+            "decisive": false
+          },
+          {
+            "ref": "U4",
+            "text": "Three user sessions were open at 11:02: P. Kirchmayer, Dr. Dmitri Ogunsanya-Holt and a third account not otherwise referenced.",
+            "section": "Access log",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Lorelai Abubakar-Stern",
+        "encounterLabel": "Thornfield Medical Partners — walk-in at the front desk",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Reconstruct what the trail for Lorelai Abubakar-Stern (MRN SYN-4592) does and does not establish about who changed the plan. Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Attribute it to the third account, since the other two sessions belong to people with legitimate reasons to be in the chart.",
+          "why": "Legitimacy of access is not evidence of who acted, and the reasoning would equally indict anyone unfamiliar.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Attribute the change to P. Kirchmayer, who created the note and had a session open at 11:02.",
+          "why": "Two facts that co-occur are not authorship, and this writes a guess into an audit finding.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "The change is established, its author is not; record an unresolvable provenance gap and refer it, naming the sessions only as concurrent.",
+          "why": "Correct: it reports the limit of the evidence instead of closing it by inference."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "State what the trail establishes: the plan was modified at 11:02 on 2026-06-22 through the bulk-update interface, and the signature at entry 3 covers that modified text. State what it cannot establish: which person made the change, because the system does not retain the initiating session. Name the three concurrent sessions as concurrent only, not as candidates, and record the defect as an unresolvable provenance gap for the records owner. Do not narrow it to the likeliest of the three.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what the trail establishes from what it cannot, citing the system's stated behaviour.",
+          "credit": 0.34,
+          "evidenceRef": "U3"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Notes that the later signature covers text of unknown authorship.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Treats the three open sessions as concurrent rather than as candidate authors, and records the gap.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: Contradiction detection, auditability, and error control. The gold behaviour is settled by the packet carried in this record — nothing outside it is asserted — which is why the acceptance criteria point at packet lines rather than at an external rule. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB002-000082",
+      "variantOf": "KB-QUES-KB002-000082",
+      "templateId": "KB-VART-KB002-000022",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB002-000082"
+      ],
+      "errorTargets": [
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": null,
+      "encounterDate": null,
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "quality reviewer",
+      "nextActionOwner": "P. Kirchmayer",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "c9283b4dab06cab9",
+        "scenarioFingerprint": "129038e92a8c8588",
+        "competencyFingerprint": "eb6511415c61b486",
+        "evidenceLayoutFingerprint": "cfd26b46f09442a6",
+        "answerPatternFingerprint": "9cdad62ddd95e4c3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}

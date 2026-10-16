@@ -1,0 +1,2536 @@
+{
+  "batchId": "KB-001",
+  "templateId": "KB-VART-KB001-000023",
+  "generatorVersion": "kb-generate/1.0.0",
+  "records": [
+    {
+      "id": "KB-QUES-KB001-000265",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#BASE"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk",
+        "encounterLabel": "Rosemark Internal Medicine — inbound telephone call",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "Provide coding support for Arden Kowalczyk's encounter of 2026-08-13. This is a concept and workflow question; no code is to be assigned.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Query NP Caius Ostrowski for laterality and cause, and anchor the edition to the 2026-08-13 encounter date.",
+          "why": "Correct: undocumented specificity is a query, and the edition follows the date of service."
+        },
+        {
+          "id": "b",
+          "text": "Select the most specific option consistent with the gesture, since the note does indicate the outer knee.",
+          "why": "A gesture is not documentation of laterality, and \"most specific available\" is exactly the wrong selection rule.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "c",
+          "text": "Use the current edition of the code set, since that is what the payer will adjudicate against today.",
+          "why": "The edition in force on the date of service governs. Adjudication date is not service date.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "d",
+          "text": "Code the unspecified option and close the encounter without a query.",
+          "why": "Unspecified is defensible; closing without the query leaves documentable detail undocumented when it could be obtained.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Specificity is earned by documentation, not by preference. Laterality is not documented and a gesture toward the outer part of a knee does not establish which knee, so neither laterality nor cause may be inferred. The correct support action is a provider query to NP Caius Ostrowski for laterality and, if applicable, cause — not selection of a more specific option to reduce the chance of a query. Separately, anchor the code set edition to the encounter date of 2026-08-13 rather than to today, because the edition in force on the date of service governs. Record the query and the edition used so the decision is auditable.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Declines to infer laterality from the gesture.",
+          "credit": 0.25,
+          "evidenceRef": "Z2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Raises a provider query for laterality and cause rather than selecting greater specificity.",
+          "credit": 0.25,
+          "evidenceRef": "Z3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Anchors the edition to the encounter date rather than the current date.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Records the query and the edition used for auditability.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This is the family's unmutated case: the decisive evidence is present and plainly placed. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": null,
+      "variantOf": null,
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [],
+      "variantLineage": [],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-08-13",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "M. Okonjo",
+      "auditTags": [
+        "EVIDENCE-PRESENT"
+      ],
+      "fingerprints": {
+        "promptHash": "6416adc24adde4cc",
+        "scenarioFingerprint": "96bbba71629409a7",
+        "competencyFingerprint": "e4cc1055ed50cb1a",
+        "evidenceLayoutFingerprint": "490f3b8192dd234f",
+        "answerPatternFingerprint": "08ebb9b5fe1cb25e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000266",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__LATE_CLUE",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#LATE_CLUE"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: patient portal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD3",
+            "text": "BP 128/78, HR 74, temp 36.8 C, weight stable since last visit.",
+            "section": "Vitals",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Cedar Hollow Family Practice — patient portal message",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "Provide coding support for Bassey Oduya's encounter of 2026-09-01. This is a concept and workflow question; no code is to be assigned. Read to the end of the record before answering: the material is not in the order you need it.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Act on the first two entries in the record, which are routine and complete on their face.",
+          "why": "Acting on the opening entries skips the entry that changes the answer. Position in a record carries no authority.",
+          "trapType": "TRAP_QUEUE_ORDER"
+        },
+        {
+          "id": "b",
+          "text": "Query PA Yolanda Trevisani for laterality and cause, and anchor the edition to the 2026-09-01 encounter date.",
+          "why": "Correct: undocumented specificity is a query, and the edition follows the date of service."
+        },
+        {
+          "id": "c",
+          "text": "Select the most specific option consistent with the gesture, since the note does indicate the outer knee.",
+          "why": "A gesture is not documentation of laterality, and \"most specific available\" is exactly the wrong selection rule.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "d",
+          "text": "Use the current edition of the code set, since that is what the payer will adjudicate against today.",
+          "why": "The edition in force on the date of service governs. Adjudication date is not service date.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Specificity is earned by documentation, not by preference. Laterality is not documented and a gesture toward the outer part of a knee does not establish which knee, so neither laterality nor cause may be inferred. The correct support action is a provider query to PA Yolanda Trevisani for laterality and, if applicable, cause — not selection of a more specific option to reduce the chance of a query. Separately, anchor the code set edition to the encounter date of 2026-09-01 rather than to today, because the edition in force on the date of service governs. Record the query and the edition used so the decision is auditable.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Declines to infer laterality from the gesture.",
+          "credit": 0.25,
+          "evidenceRef": "Z2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Raises a provider query for laterality and cause rather than selecting greater specificity.",
+          "credit": 0.25,
+          "evidenceRef": "Z3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Anchors the edition to the encounter date rather than the current date.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Records the query and the edition used for auditability.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies LATE_CLUE — the decisive evidence arrives last, after routine material — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "EVIDENCE_ORDER"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_QUEUE_ORDER"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-09-01",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "R. Skibinski",
+      "auditTags": [
+        "EVIDENCE-LATE"
+      ],
+      "fingerprints": {
+        "promptHash": "b949d0e8676a6a8f",
+        "scenarioFingerprint": "22b940929080db0e",
+        "competencyFingerprint": "e4cc1055ed50cb1a",
+        "evidenceLayoutFingerprint": "495321c1e240ca3a",
+        "answerPatternFingerprint": "10142ba094cb40a1"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000267",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "MODERATE",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__BURIED_CLUE",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": "2026-10-01",
+      "effectiveTo": null,
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#BURIED_CLUE"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-11-05; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: inbound fax. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Routine reconciliation note from T. Alvarado-Ng: demographics confirmed, card image legible, and — elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented. — remainder of the checklist unchanged.",
+            "section": "Administrative",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-11-05",
+            "decisive": true
+          },
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Arden Kowalczyk-Reyes",
+        "encounterLabel": "Northgate Specialty Associates — inbound fax",
+        "encounterDate": "2026-11-05"
+      },
+      "prompt": "Provide coding support for Arden Kowalczyk-Reyes's encounter of 2026-11-05. This is a concept and workflow question; no code is to be assigned. Nothing in this record is labelled as important.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Select the most specific option consistent with the gesture, since the note does indicate the outer knee.",
+          "why": "A gesture is not documentation of laterality, and \"most specific available\" is exactly the wrong selection rule.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "b",
+          "text": "Treat the reconciliation note as administrative housekeeping and proceed from the clinical entries only.",
+          "why": "The deciding fact is inside that note. A heading does not determine whether an entry matters.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Query Dr. Imani Farrokhzad for laterality and cause, and anchor the edition to the 2026-11-05 encounter date.",
+          "why": "Correct: undocumented specificity is a query, and the edition follows the date of service."
+        },
+        {
+          "id": "d",
+          "text": "Use the current edition of the code set, since that is what the payer will adjudicate against today.",
+          "why": "The edition in force on the date of service governs. Adjudication date is not service date.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Specificity is earned by documentation, not by preference. Laterality is not documented and a gesture toward the outer part of a knee does not establish which knee, so neither laterality nor cause may be inferred. The correct support action is a provider query to Dr. Imani Farrokhzad for laterality and, if applicable, cause — not selection of a more specific option to reduce the chance of a query. Separately, anchor the code set edition to the encounter date of 2026-11-05 rather than to today, because the edition in force on the date of service governs. Record the query and the edition used so the decision is auditable.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Declines to infer laterality from the gesture.",
+          "credit": 0.25,
+          "evidenceRef": "Z2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Raises a provider query for laterality and cause rather than selecting greater specificity.",
+          "credit": 0.25,
+          "evidenceRef": "Z3"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Anchors the edition to the encounter date rather than the current date.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Records the query and the edition used for auditability.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies BURIED_CLUE — the decisive evidence sits inside an otherwise routine entry — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "EVIDENCE_CONCEALMENT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-OMISSION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-COMPLETENESS-SWEEP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2027",
+      "encounterDate": "2026-11-05",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "EVIDENCE-CONCEALED"
+      ],
+      "fingerprints": {
+        "promptHash": "51d51640a10ab5e2",
+        "scenarioFingerprint": "da025e9bebc4c1ce",
+        "competencyFingerprint": "e4cc1055ed50cb1a",
+        "evidenceLayoutFingerprint": "30ade5449cceb244",
+        "answerPatternFingerprint": "43f460706a6098a2"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000268",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__CLUE_REMOVED",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": "2026-10-01",
+      "effectiveTo": null,
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#CLUE_REMOVED"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-12-08; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Bassey Oduya",
+        "encounterLabel": "Larkspur Community Clinic — voicemail",
+        "encounterDate": "2026-12-08"
+      },
+      "prompt": "Provide coding support for Bassey Oduya's encounter of 2026-12-08. This is a concept and workflow question; no code is to be assigned. If the record does not settle it, say so rather than choosing the likeliest answer.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Select the most specific option consistent with the gesture, since the note does indicate the outer knee.",
+          "why": "A gesture is not documentation of laterality, and \"most specific available\" is exactly the wrong selection rule.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        },
+        {
+          "id": "b",
+          "text": "Infer the missing detail from the surrounding entries, which point consistently in one direction.",
+          "why": "Consistent surrounding entries are not the missing fact. Filling a gap by inference is unsupported inference, and it becomes indistinguishable from documented fact once written down.",
+          "trapType": "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+        },
+        {
+          "id": "c",
+          "text": "Query Dr. Teodoro Haakonsen for laterality and cause, and anchor the edition to the 2026-12-08 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: the decisive evidence is absent, so the defensible answer is to name the gap, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "State that which knee is affected, and whether a cause is documented anywhere in the encounter is not in the record, request it from Dr. Teodoro Haakonsen, and hold the task.",
+          "why": "Correct: the fact the task turns on is absent, so naming the gap and holding is the only defensible action."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "The record no longer contains the fact this task turns on. State precisely which fact is missing (which knee is affected, and whether a cause is documented anywhere in the encounter), name Dr. Teodoro Haakonsen as the person who can supply it, and hold the task open. Do not infer it from the surrounding entries and do not complete the task on the balance of probability.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Names the missing fact explicitly as \"which knee is affected, and whether a cause is documented anywhere in the encounter\" rather than describing the record as unclear.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Establishes that the remaining entries do not supply it, and states what they do establish.",
+          "credit": 0.25,
+          "evidenceRef": "Z1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Identifies who can supply it and how it will be requested.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves the task open and records that it is blocked, rather than completing it or guessing.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CLUE_REMOVED — the decisive evidence is absent, so the defensible answer is to name the gap — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "EVIDENCE_REMOVAL",
+        "MISSING_FIELD"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-PREMATURE-CLOSURE",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-PROBE-BEFORE-CLOSE",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_PLAUSIBLE_BUT_UNDOCUMENTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2027",
+      "encounterDate": "2026-12-08",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "L. Haverford",
+      "auditTags": [
+        "EVIDENCE-REMOVED",
+        "INFORMATION-GAP"
+      ],
+      "fingerprints": {
+        "promptHash": "ab257d9ac2631736",
+        "scenarioFingerprint": "620fb029055d9acd",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "d643b928a5be1e8c",
+        "answerPatternFingerprint": "64b179559bdbfa1e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000269",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__CONTRADICTION",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": "2026-10-01",
+      "effectiveTo": null,
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#CONTRADICTION"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "OP-X1",
+            "text": "Later entry by D. Eluwande (triage nurse), recorded 2027-01-14: states the opposite of the entry at Z2 — \"laterality is documented in the examination section\". No amendment, addendum or reason for the change is attached, and neither entry is signed as the correction of the other.",
+            "section": "Conflicting entry",
+            "recordedBy": "D. Eluwande",
+            "recordedOn": "2027-01-14",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-01-14; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Corrin Vasquez-Lund",
+        "encounterLabel": "Rosemark Internal Medicine — secure internal message",
+        "encounterDate": "2027-01-14"
+      },
+      "prompt": "Provide coding support for Corrin Vasquez-Lund's encounter of 2027-01-14. This is a concept and workflow question; no code is to be assigned. Two entries in this record disagree, and nothing in it says which one supersedes the other.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Surface both entries, state that neither is marked as an amendment, and route the resolution to Dr. Ngozi Brandtsen.",
+          "why": "Correct: an unexplained contradiction is escalated with both sides named, never resolved by whoever noticed it."
+        },
+        {
+          "id": "b",
+          "text": "Take the later entry, since the most recent documentation reflects the current state of the chart.",
+          "why": "Recency is not authority. Without an amendment or a stated reason, a later entry may be the error rather than the correction.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "c",
+          "text": "Reconcile the two entries into one consistent summary so downstream readers are not confused.",
+          "why": "That deletes the conflict instead of resolving it, and the reader who most needs to see it never will.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "d",
+          "text": "Query Dr. Ngozi Brandtsen for laterality and cause, and anchor the edition to the 2027-01-14 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: a second entry contradicts the decisive one and neither is plainly authoritative, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Do not reconcile the conflict silently and do not prefer the later entry merely because it is later. Quote both entries (Z2 and OP-X1), state that neither is marked as an amendment of the other, name Dr. Ngozi Brandtsen as the person authorised to resolve which stands, and hold the dependent action until it is resolved. Record the conflict so the next reader sees it too.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Quotes both conflicting entries rather than summarising the record as inconsistent.",
+          "credit": 0.25,
+          "evidenceRef": "Z2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States explicitly that neither entry is marked as superseding the other.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes the resolution to Dr. Ngozi Brandtsen instead of choosing between the entries.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Leaves a durable record of the conflict for the next reader.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies CONTRADICTION — a second entry contradicts the decisive one and neither is plainly authoritative — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "CONTRADICTION_INJECTION",
+        "SOURCE_AUTHORITY"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-CONTRADICTION-BLINDNESS"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-CONTRADICTION-SURFACING"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2027",
+      "encounterDate": "2027-01-14",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "UNRESOLVED-CONTRADICTION"
+      ],
+      "fingerprints": {
+        "promptHash": "1c43d6d2963f63f5",
+        "scenarioFingerprint": "ed18d20dfca87e79",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "6d2d2389492f1dff",
+        "answerPatternFingerprint": "a81e4e1b2fe73c6e"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000270",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__SAFETY_CLUE",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": "2026-10-01",
+      "effectiveTo": null,
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#SAFETY_CLUE"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "OP-S1",
+            "text": "While the above was being handled, the patient volunteered: \"The knee gave way completely yesterday and it's hot and swollen now.\" This was said in passing and is not in any clinical note.",
+            "section": "Reported now",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2027-02-23",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2027-02-23; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Delphine Achterberg",
+        "encounterLabel": "Cedar Hollow Family Practice — walk-in at the front desk",
+        "encounterDate": "2027-02-23"
+      },
+      "prompt": "Provide coding support for Delphine Achterberg's encounter of 2027-02-23. This is a concept and workflow question; no code is to be assigned. Something the patient said while this was being handled has not been written down anywhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Finish the administrative task first so the record is complete, then add a note about what the patient said.",
+          "why": "Ordering the routine task ahead of a volunteered red flag is the failure this case exists to teach. The note may sit unread.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Hand the volunteered statement to a clinician now, confirm acceptance, then resume the administrative task.",
+          "why": "Correct: recognition, documentation, routing and closing the loop come before routine completion."
+        },
+        {
+          "id": "c",
+          "text": "Reassure the patient that the symptom is common and unlikely to be serious, and offer the next routine appointment.",
+          "why": "That is a clinical judgment, and it is outside a support role's authorised scope however reasonable it sounds.",
+          "trapType": "TRAP_ANSWER_OUTSIDE_SCOPE"
+        },
+        {
+          "id": "d",
+          "text": "Query Dr. Rurik Vandeveer for laterality and cause, and anchor the edition to the 2027-02-23 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: a red flag appears alongside the administrative task, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Stop and route the volunteered statement to a clinician before finishing the administrative task. Repeat it back to confirm you heard it correctly, document it verbatim as reported by the patient, hand it to Dr. Rurik Vandeveer or the covering clinician now rather than into a queue, and confirm a named clinician has accepted it. Do not evaluate or grade the symptom, and do not reassure the patient. The administrative task resumes only after the handover is acknowledged.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Interrupts the administrative task rather than completing it first.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC2",
+          "requirement": "Repeats the statement back and documents it verbatim as reported, without interpreting it.",
+          "credit": 0.25,
+          "evidenceRef": "OP-S1"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Routes it to a named clinician now, not to an unattended queue, and confirms acceptance.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Stays inside scope: offers no assessment, threshold or reassurance.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits scope violation fails outright, whatever else it gets right.",
+        "Completing the administrative task before the volunteered statement reaches a named clinician fails outright.",
+        "Offering any assessment, threshold or reassurance about the symptom fails outright: it is outside the role's authorised scope."
+      ],
+      "rationale": "This variant applies SAFETY_CLUE — a red flag appears alongside the administrative task — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "URGENCY",
+        "TIME_PRESSURE",
+        "DOWNSTREAM_CONSEQUENCE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-INCORRECT-ESCALATION",
+        "KB-ERR-SCOPE-VIOLATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-ESCALATION-LADDER",
+        "KB-REM-SCOPE-BOUNDARY"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_COMPLETE_THE_TASK_ANYWAY",
+        "TRAP_ANSWER_OUTSIDE_SCOPE"
+      ],
+      "safetyFlags": [
+        "VOLUNTEERED-RED-FLAG",
+        "ESCALATION-BEFORE-ADMIN"
+      ],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2027",
+      "encounterDate": "2027-02-23",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": true,
+      "escalationRequired": true,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "Dr. Rurik Vandeveer",
+      "auditTags": [
+        "SAFETY-PRECEDENCE"
+      ],
+      "fingerprints": {
+        "promptHash": "00cc810295a53340",
+        "scenarioFingerprint": "bf965f0ec14dd225",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "05d0e68d34d3246f",
+        "answerPatternFingerprint": "a1a5e5c78b1a5538"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000271",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__WRONG_RECIPIENT",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#WRONG_RECIPIENT"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "OP-R1",
+            "text": "The request names a destination that does not match the record: the cover sheet reads \"Northgate Specialty Associates — Suite 300, fax SYN-555-0142\", while the chart's authorised destination for this patient is \"Northgate Specialty Associates — Records, fax SYN-555-0198\". Both are on practice letterhead.",
+            "section": "Destination",
+            "recordedBy": "M. Okonjo",
+            "recordedOn": "2026-02-09",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-02-09; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Emeka Solberg",
+        "encounterLabel": "Northgate Specialty Associates — inbound telephone call",
+        "encounterDate": "2026-02-09"
+      },
+      "prompt": "Provide coding support for Emeka Solberg's encounter of 2026-02-09. This is a concept and workflow question; no code is to be assigned. The destination on the request and the destination in the chart are not the same.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Send to both destinations so the material certainly reaches the right one.",
+          "why": "Sending twice doubles the disclosure and guarantees one of them is unauthorised.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "b",
+          "text": "Send to the destination on the cover sheet, since the requester knows where the material should go.",
+          "why": "The requester's cover sheet is not the authorised destination, and material sent to the wrong recipient cannot be unsent.",
+          "trapType": "TRAP_HELPFUL_OVERDISCLOSURE"
+        },
+        {
+          "id": "c",
+          "text": "Hold the transmission, confirm the authorised destination against the chart, then send only the minimum necessary.",
+          "why": "Correct: an unconfirmed destination is a disclosure risk, and a disclosure cannot be recalled."
+        },
+        {
+          "id": "d",
+          "text": "Query Dr. Saoirse Mbeki-Lantz for laterality and cause, and anchor the edition to the 2026-02-09 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: the destination on the request does not match the destination in the chart, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not transmit. Treat the mismatch as a wrong-recipient risk rather than a typo: read the recipient, channel and address back against the authorised entry in the chart, resolve which destination is authorised with Dr. Saoirse Mbeki-Lantz or the patient as policy requires, and send only the minimum necessary once the destination is confirmed. Letterhead is not authorisation.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Holds transmission rather than sending to either destination.",
+          "credit": 0.25,
+          "evidenceRef": "OP-R1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names the mismatch as a wrong-recipient and disclosure risk, not a clerical detail.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Confirms the authorised destination against the chart before sending.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Limits what is sent to the minimum necessary for the stated purpose.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong destination fails outright, whatever else it gets right.",
+        "Any response that commits privacy failure fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies WRONG_RECIPIENT — the destination on the request does not match the destination in the chart — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "DESTINATION",
+        "PRIVACY_CONSTRAINT",
+        "COMMUNICATION_CHANNEL"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-WRONG-DESTINATION",
+        "KB-ERR-PRIVACY-FAILURE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-DESTINATION-CONFIRM",
+        "KB-REM-MINIMUM-NECESSARY"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_HELPFUL_OVERDISCLOSURE"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-02-09",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "Dr. Saoirse Mbeki-Lantz",
+      "auditTags": [
+        "DESTINATION-UNCONFIRMED"
+      ],
+      "fingerprints": {
+        "promptHash": "30b653268686c67b",
+        "scenarioFingerprint": "aa2f867fcd247aac",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "08d9fb093ab4e72d",
+        "answerPatternFingerprint": "c74b6f9b3cdddf9c"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000272",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__IDENTITY_NEAR_MATCH",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#IDENTITY_NEAR_MATCH"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "OP-I1",
+            "text": "Search on the name returns two active records: Fenella Quintanilla, MRN SYN-2914, DOB 2001-05-06; and Fenella Quintanilla, MRN SYN-2915, DOB 2001-05-14. Both are established at Larkspur Community Clinic.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "OP-I2",
+            "text": "The request itself carries the name only. No MRN, no date of birth, and no encounter reference.",
+            "section": "Identity",
+            "decisive": true
+          },
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-03-17; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Fenella Quintanilla",
+        "encounterLabel": "Larkspur Community Clinic — patient portal message",
+        "encounterDate": "2026-03-17"
+      },
+      "prompt": "Provide coding support for Fenella Quintanilla's encounter of 2026-03-17. This is a concept and workflow question; no code is to be assigned. The name on the request matches two different patients.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Query NP Caius Ostrowski for laterality and cause, and anchor the edition to the 2026-03-17 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: two records match on name and differ on identifier, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Use the record whose demographics are the closest fit to the request.",
+          "why": "Closeness is exactly what produces wrong-patient events. A near match is the hazard, not the resolution.",
+          "trapType": "TRAP_NEAREST_NAME_MATCH"
+        },
+        {
+          "id": "c",
+          "text": "Use the more recently active record, since that is the one the request most likely concerns.",
+          "why": "Recent activity is not identification, and a wrong-patient filing is a hard failure however likely the guess was.",
+          "trapType": "TRAP_LATEST_NOTE_WINS"
+        },
+        {
+          "id": "d",
+          "text": "Hold the task and confirm MRN and date of birth against the request before anything attaches to a patient.",
+          "why": "Correct: two independent identifiers precede any action, and a near match is not a match."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Do not proceed on the name. Confirm two independent identifiers — MRN and date of birth — against the request before anything attaches to a patient, and obtain them from the requester or the patient rather than choosing the nearer match. If two identifiers cannot be confirmed, hold the task and say why. Anything filed under the wrong record is a wrong-patient event even if the content is correct.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Refuses to act on a name alone.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Requires two independent identifiers and names which two.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains the identifiers rather than selecting the closer-looking record.",
+          "credit": 0.25,
+          "evidenceRef": "OP-I1"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Holds the task if two identifiers cannot be confirmed.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [
+        "Any response that commits wrong patient fails outright, whatever else it gets right.",
+        "Any disclosure or transmission made before identity and authority are established fails outright, because it cannot be recalled."
+      ],
+      "rationale": "This variant applies IDENTITY_NEAR_MATCH — two records match on name and differ on identifier — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "PATIENT_IDENTITY",
+        "ENCOUNTER_CONTEXT"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-WRONG-PATIENT"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-TWO-IDENTIFIER-CHECK"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_NEAREST_NAME_MATCH",
+        "TRAP_LATEST_NOTE_WINS"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [
+        "DISCLOSURE-RISK",
+        "IDENTITY-OR-AUTHORITY-UNESTABLISHED"
+      ],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-03-17",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "NP Caius Ostrowski",
+      "auditTags": [
+        "IDENTITY-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "dea82a24a9b679c3",
+        "scenarioFingerprint": "f9a578bc86061579",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "105b5f2673825947",
+        "answerPatternFingerprint": "00c121fab68a6b50"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000273",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__OWNERSHIP_AMBIGUOUS",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#OWNERSHIP_AMBIGUOUS"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "OP-O1",
+            "text": "T. Alvarado-Ng (medical assistant) noted at end of shift: \"left for the incoming coordinator to action.\"",
+            "section": "Handoff",
+            "recordedBy": "T. Alvarado-Ng",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          },
+          {
+            "ref": "OP-O2",
+            "text": "The incoming coordinator noted the next morning: \"understood T. Alvarado-Ng was completing this before leaving.\" No one has acted since, and the item is four days old.",
+            "section": "Handoff",
+            "recordedOn": "2026-05-04",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Gideon Marchetti-Oyelaran",
+        "encounterLabel": "Rosemark Internal Medicine — inbound fax",
+        "encounterDate": "2026-05-04"
+      },
+      "prompt": "Provide coding support for Gideon Marchetti-Oyelaran's encounter of 2026-05-04. This is a concept and workflow question; no code is to be assigned. Two handoff notes each assume the other person did it, and nobody has.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Name a single owner, get explicit acknowledgement, and record the acceptance with a deadline.",
+          "why": "Correct: a handoff closes on acknowledgement by a named owner, not on a note being written."
+        },
+        {
+          "id": "b",
+          "text": "Re-send the item to the shared queue so whoever picks it up next can action it.",
+          "why": "A shared queue has no owner, which is the condition that produced the four-day gap.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "c",
+          "text": "Note in the chart that the handoff was documented by both parties and move on.",
+          "why": "Both notes exist and the work is still undone. Documentation of a handoff is not completion of one.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "d",
+          "text": "Query PA Yolanda Trevisani for laterality and cause, and anchor the edition to the 2026-05-04 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: two people each recorded that the other would take it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "a"
+      ],
+      "goldBehavior": "Treat this as an open loop, not a completed handoff. Take ownership explicitly or name the person who will, state the action and the deadline, obtain that person's acknowledgement rather than assuming it, and record the acceptance so the next reader sees a named owner. A handoff is complete when someone accepts it, not when it is written down.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Identifies that no one owns the item, citing both handoff notes.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Names a single owner and the action with a deadline.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Obtains and records explicit acknowledgement instead of assuming receipt.",
+          "credit": 0.25,
+          "evidenceRef": "OP-O2"
+        },
+        {
+          "id": "AC4",
+          "requirement": "Accounts for the four days already lost in how the item is prioritised.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies OWNERSHIP_AMBIGUOUS — two people each recorded that the other would take it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "OWNERSHIP_STATE",
+        "HANDOFF_STATE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-OPEN-LOOP"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-CLOSED-LOOP"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-05-04",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "T. Alvarado-Ng",
+      "auditTags": [
+        "OWNERSHIP-UNRESOLVED"
+      ],
+      "fingerprints": {
+        "promptHash": "d169fdc4587b933f",
+        "scenarioFingerprint": "0c862f395b144a88",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "57c1438fbcb877d1",
+        "answerPatternFingerprint": "3ac4334d88a6aebc"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000274",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "VERY_HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__STALE_PREREQUISITE",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#STALE_PREREQUISITE"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented.",
+            "section": "Note",
+            "decisive": true
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "OP-P1",
+            "text": "The provider's response to the laterality query is recorded as valid through 2026-07-13. The action this task sets up is scheduled for 2026-07-20, which is after that date. Nothing in the record flags the gap, and the scheduling screen shows the item as ready.",
+            "section": "Prerequisite",
+            "recordedOn": "2026-06-22",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-06-22; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: voicemail. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Halina Berkovits",
+        "encounterLabel": "Cedar Hollow Family Practice — voicemail",
+        "encounterDate": "2026-06-22"
+      },
+      "prompt": "Provide coding support for Halina Berkovits's encounter of 2026-06-22. This is a concept and workflow question; no code is to be assigned. The system shows this as ready to proceed.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Proceed, since the system shows the item as ready and the prerequisite was valid when it was obtained.",
+          "why": "It was valid when obtained and is not valid on the date that matters. A ready flag is a display, not a date comparison.",
+          "trapType": "TRAP_STALE_AUTHORITY"
+        },
+        {
+          "id": "b",
+          "text": "Hold the action, state that the prerequisite expires before the scheduled date, and get it renewed first.",
+          "why": "Correct: a ready indicator is not a check that the prerequisite still covers the date."
+        },
+        {
+          "id": "c",
+          "text": "Proceed and renew the prerequisite retroactively afterwards if anyone asks.",
+          "why": "Retroactive cover is not cover, and it puts the patient at the front of a cancellation.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "d",
+          "text": "Query Dr. Imani Farrokhzad for laterality and cause, and anchor the edition to the 2026-06-22 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: a prerequisite the task depends on expired before the scheduled date, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        }
+      ],
+      "correctChoiceIds": [
+        "b"
+      ],
+      "goldBehavior": "Do not rely on the ready indicator. Compare the prerequisite's validity window against the scheduled date, state that The provider's response to the laterality query expires on 2026-07-13 and the action falls on 2026-07-20, and resolve the prerequisite before the action proceeds. Tell the patient what is outstanding rather than letting them arrive to a cancellation, and record who is renewing it and by when.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Compares the prerequisite window against the scheduled date rather than trusting the ready state.",
+          "credit": 0.25,
+          "evidenceRef": "OP-P1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "States both dates explicitly.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC3",
+          "requirement": "Resolves or escalates the prerequisite before the action, naming who renews it.",
+          "credit": 0.25
+        },
+        {
+          "id": "AC4",
+          "requirement": "Informs the patient of the outstanding item before the scheduled date.",
+          "credit": 0.25
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies STALE_PREREQUISITE — a prerequisite the task depends on expired before the scheduled date — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "MISSING_PREREQUISITE",
+        "AUTHORIZATION_STATE",
+        "TIMING"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-06-22",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "Dr. Imani Farrokhzad",
+      "auditTags": [
+        "PREREQUISITE-EXPIRED"
+      ],
+      "fingerprints": {
+        "promptHash": "d0912e82069defa2",
+        "scenarioFingerprint": "c90adbd3423291a6",
+        "competencyFingerprint": "601a86af440b2edb",
+        "evidenceLayoutFingerprint": "8cc2d410df144733",
+        "answerPatternFingerprint": "a62ab76085f3ade3"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000275",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "HARD",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__PROVENANCE_STRIPPED",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#PROVENANCE_STRIPPED"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "Z1",
+            "text": "\"Knee pain.\" No side is documented, no cause is stated, and no acute injury is described.",
+            "section": "Note — Assessment",
+            "decisive": false
+          },
+          {
+            "ref": "Z3",
+            "text": "The requester asks for \"the most specific option available\" so the claim is less likely to be queried.",
+            "section": "Request",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented. — carried forward from an earlier note. No author, no date and no originating record are attached, and it has been copied into three later notes in the same form.",
+            "section": "Carried forward",
+            "decisive": true
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-08-13; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: secure internal message. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          }
+        ],
+        "patientLabel": "Ignatius Nwachukwu",
+        "encounterLabel": "Northgate Specialty Associates — secure internal message",
+        "encounterDate": "2026-08-13"
+      },
+      "prompt": "Provide coding support for Ignatius Nwachukwu's encounter of 2026-08-13. This is a concept and workflow question; no code is to be assigned. The fact you need is in the record three times and attributed nowhere.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Query Dr. Teodoro Haakonsen for laterality and cause, and anchor the edition to the 2026-08-13 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: the deciding fact is present but nobody is recorded as having said it, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Rely on it: it appears consistently in three separate notes, which is stronger than a single entry.",
+          "why": "The three notes are copies of each other, not three observations. Consistency between copies says nothing.",
+          "trapType": "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+        },
+        {
+          "id": "c",
+          "text": "Trace the fact to its originating author and note before relying on it, and mark it unverified until then.",
+          "why": "Correct: provenance is what makes a carried-forward fact usable, and repetition is not provenance."
+        },
+        {
+          "id": "d",
+          "text": "Select the most specific option consistent with the gesture, since the note does indicate the outer knee.",
+          "why": "A gesture is not documentation of laterality, and \"most specific available\" is exactly the wrong selection rule.",
+          "trapType": "TRAP_MOST_SPECIFIC_SOUNDING"
+        }
+      ],
+      "correctChoiceIds": [
+        "c"
+      ],
+      "goldBehavior": "Do not treat repetition as corroboration. Trace the fact to its originating note and author before relying on it, state that it is currently unattributed, and either reattach its origin or mark it as unverified in anything you produce. Three copies of one unattributed claim are one unattributed claim.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "States that the fact is unattributed rather than treating it as established.",
+          "credit": 0.34,
+          "evidenceRef": "Z2"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Recognises that repetition across notes is not independent corroboration.",
+          "credit": 0.33
+        },
+        {
+          "id": "AC3",
+          "requirement": "Traces it to an origin, or carries it forward explicitly marked as unverified.",
+          "credit": 0.33
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies PROVENANCE_STRIPPED — the deciding fact is present but nobody is recorded as having said it — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "SOURCE_AUTHORITY",
+        "DOCUMENTATION_STATE"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-UNSUPPORTED-INFERENCE"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-EVIDENCE-DISCIPLINE"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_CARRY_FORWARD_UNATTRIBUTED"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-08-13",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": false,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "D. Eluwande",
+      "auditTags": [
+        "PROVENANCE-MISSING"
+      ],
+      "fingerprints": {
+        "promptHash": "3267192e0bd059c8",
+        "scenarioFingerprint": "6a5952b1b647be8a",
+        "competencyFingerprint": "a426bb599b6559ba",
+        "evidenceLayoutFingerprint": "832a8844fcb0ae43",
+        "answerPatternFingerprint": "b7dd9d98647ba91d"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    },
+    {
+      "id": "KB-QUES-KB001-000276",
+      "recordType": "QUESTION",
+      "revision": 1,
+      "batchId": "KB-001",
+      "moduleIds": [
+        "M08",
+        "M20"
+      ],
+      "competencyIds": [
+        "KB-D07"
+      ],
+      "sourceCompetencyIds": [
+        "D07"
+      ],
+      "difficulty": "REALISTIC_PREMIUM",
+      "taskType": "CODING_SUPPORT",
+      "scenarioType": "SPECIFICITY_AGAINST_DOCUMENTATION__MULTI_STAGE",
+      "evidenceBasis": "EXTERNAL_AUTHORITY",
+      "domain": "ICD-10-CM coding support",
+      "jurisdictions": [
+        "US"
+      ],
+      "accessClasses": [
+        "TRAINING",
+        "PRACTICE",
+        "SIMULATION",
+        "PREMIUM_REALISTIC",
+        "INSTRUCTOR_ADMIN"
+      ],
+      "effectiveFrom": null,
+      "effectiveTo": "2026-09-30",
+      "contentStatus": "candidate_needs_source_verification",
+      "reviewStatus": "pending",
+      "flags": [
+        "HUMAN-VERIFY-REQUIRED"
+      ],
+      "verification": {
+        "humanVerificationRequired": true,
+        "humanVerifiedBy": null,
+        "humanVerifiedOn": null,
+        "locatorConfidence": "NONE"
+      },
+      "provenance": {
+        "generationMethod": "MACHINE_DRAFTED",
+        "authoredBy": "machine:claude-code-kb-workstream",
+        "authoredOn": "2026-09-26",
+        "originBatch": "KB-001",
+        "derivedFrom": [
+          "KB-VART-KB001-000023"
+        ],
+        "generatorVersion": "kb-generate/1.0.0",
+        "generatorSeed": "KB-VART-KB001-000023#MULTI_STAGE"
+      },
+      "evidence": [
+        {
+          "ref": "CDC-ICD10CM-GL-FY27",
+          "locator": "ICD-10-CM Official Guidelines for Coding and Reporting — Section I conventions and general coding guidelines",
+          "supports": "ANSWER"
+        },
+        {
+          "ref": "CDC-ICD10CM",
+          "locator": "ICD-10-CM release and effective-date listing",
+          "supports": "CONTEXT"
+        }
+      ],
+      "packet": {
+        "synthetic": true,
+        "kind": "SOAP_NOTE",
+        "lines": [
+          {
+            "ref": "OP-T1",
+            "text": "2026-09-01, walk-in at the front desk: the task opens as described — Provide coding support for Jovana Petrakis-Hume's encounter of 2026-09-01. This is a concept and workflow question; no code is to be assigned. P. Kirchmayer begins it and records the routine details.",
+            "section": "Stage 1",
+            "recordedBy": "P. Kirchmayer",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "PAD1",
+            "text": "Insurance card image on file, captured 2026-09-01; no change since prior visit.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "PAD2",
+            "text": "Preferred contact on file: walk-in at the front desk. Interpreter not required.",
+            "section": "Administrative",
+            "decisive": false
+          },
+          {
+            "ref": "OP-T2",
+            "text": "Later the same day, ownership moves to the incoming coordinator at shift change. The handoff note carries the task but not the reason it was opened.",
+            "section": "Stage 2",
+            "recordedOn": "2026-09-01",
+            "decisive": false
+          },
+          {
+            "ref": "Z2",
+            "text": "Two days later, a returned message adds the fact that changes the answer: Elsewhere the note records that the patient \"points to the outer part of the knee\". Nothing states which knee. Laterality and cause are both undocumented. It arrives in the original opener's inbox, who is now off rota for the week.",
+            "section": "Stage 3",
+            "recordedOn": "2026-09-29",
+            "decisive": true
+          },
+          {
+            "ref": "OP-T4",
+            "text": "A lateralised code was assigned from the gesture and the claim was later audited. The patient has meanwhile been told the item is in hand.",
+            "section": "Stage 4",
+            "recordedOn": "2026-09-29",
+            "decisive": true
+          }
+        ],
+        "patientLabel": "Jovana Petrakis-Hume",
+        "encounterLabel": "Larkspur Community Clinic — walk-in at the front desk",
+        "encounterDate": "2026-09-01"
+      },
+      "prompt": "Provide coding support for Jovana Petrakis-Hume's encounter of 2026-09-01. This is a concept and workflow question; no code is to be assigned. Work the encounter as it actually ran: the fact that settles it arrived two days late, in the inbox of someone who had already handed the task over, and the patient has been told it is in hand.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Query Dr. Ngozi Brandtsen for laterality and cause, and anchor the edition to the 2026-09-01 encounter date.",
+          "why": "Correct in this family's unmutated case and wrong here: a multi-stage encounter where the deciding clue arrives after ownership has moved, which changes what a defensible response has to do. Recognising that is the whole test.",
+          "trapType": "TRAP_COMPLETE_THE_TASK_ANYWAY"
+        },
+        {
+          "id": "b",
+          "text": "Apply the new fact and update the record to the correct end state, without reciting the intermediate stages.",
+          "why": "The end state is right and the history is gone. Audit reconstruction is the point: the routing failure becomes invisible and repeats.",
+          "trapType": "TRAP_SILENT_RECONCILIATION"
+        },
+        {
+          "id": "c",
+          "text": "Return the item to the original opener's inbox, since the deciding message went to them.",
+          "why": "They are off rota for the week. Routing to an unattended inbox is what already delayed this by two days.",
+          "trapType": "TRAP_SEND_AND_ASSUME"
+        },
+        {
+          "id": "d",
+          "text": "Reconstruct the stages, apply the late fact, name the current owner, and correct the patient's expectation.",
+          "why": "Correct: a late fact delivered to a former owner is a routing failure, and the audit trail has to show it."
+        }
+      ],
+      "correctChoiceIds": [
+        "d"
+      ],
+      "goldBehavior": "Reconstruct the encounter before acting. Establish in order what was known at each stage, who owned the task at each stage, and when the deciding fact arrived; state that it landed with someone no longer holding the task and was therefore never applied. Then correct the current position: apply the late fact, name the present owner, close the loop with the patient whose expectation is now wrong, and record the sequence so the gap is auditable. Do not present the outcome as though the information had been available from the start.",
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "requirement": "Separates what was known at each stage from what is known now.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T1"
+        },
+        {
+          "id": "AC2",
+          "requirement": "Identifies that the deciding fact arrived after ownership moved, and to the wrong inbox.",
+          "credit": 0.2,
+          "evidenceRef": "Z2"
+        },
+        {
+          "id": "AC3",
+          "requirement": "Applies the late fact and names the current owner.",
+          "credit": 0.2
+        },
+        {
+          "id": "AC4",
+          "requirement": "Closes the loop with the patient, whose expectation no longer matches the position.",
+          "credit": 0.2,
+          "evidenceRef": "OP-T4"
+        },
+        {
+          "id": "AC5",
+          "requirement": "Leaves an auditable sequence rather than a corrected end state with no history.",
+          "credit": 0.2
+        }
+      ],
+      "hardFailureConditions": [],
+      "rationale": "This variant applies MULTI_STAGE — a multi-stage encounter where the deciding clue arrives after ownership has moved — so the response that is correct in the family's unmutated case is a trap here. That is the point of the family: the wording barely moves and the defensible action does. Competency targeted: ICD-10-CM coding support. The gold behaviour asserts something about the world, so this record cites the source registry and is held at candidate_needs_source_verification. No source was opened when it was written, and the cited locators are unverified. The distractors are not filler: each one is a way a competent-sounding responder actually goes wrong on this material, and each carries its own explanation.",
+      "parentId": "KB-QUES-KB001-000265",
+      "variantOf": "KB-QUES-KB001-000265",
+      "templateId": "KB-VART-KB001-000023",
+      "mutationTypes": [
+        "EVIDENCE_PLACEMENT",
+        "OWNERSHIP_STATE",
+        "DOWNSTREAM_CONSEQUENCE",
+        "TIME_PRESSURE",
+        "HISTORY"
+      ],
+      "variantLineage": [
+        "KB-QUES-KB001-000265"
+      ],
+      "errorTargets": [
+        "KB-ERR-UNSUPPORTED-SPECIFICITY",
+        "KB-ERR-CODING-VERSION-MISMATCH",
+        "KB-ERR-OPEN-LOOP",
+        "KB-ERR-PROVENANCE-LOSS",
+        "KB-ERR-INCORRECT-PRIORITIZATION"
+      ],
+      "remediationTargets": [
+        "KB-REM-CODE-TO-DOCUMENTATION",
+        "KB-REM-VERSION-ANCHOR",
+        "KB-REM-CLOSED-LOOP",
+        "KB-REM-ATTRIBUTE-EVERY-CLAIM",
+        "KB-REM-PRIORITY-ORDERING"
+      ],
+      "trapTypes": [
+        "TRAP_MOST_SPECIFIC_SOUNDING",
+        "TRAP_STALE_AUTHORITY",
+        "TRAP_SILENT_RECONCILIATION",
+        "TRAP_SEND_AND_ASSUME"
+      ],
+      "safetyFlags": [],
+      "privacyFlags": [],
+      "codingVersion": "ICD-10-CM-FY2026",
+      "encounterDate": "2026-09-01",
+      "payerSpecific": false,
+      "clinicianJudgmentRequired": false,
+      "escalationRequired": true,
+      "ownerRole": "coding support specialist",
+      "nextActionOwner": "Dr. Ngozi Brandtsen",
+      "auditTags": [
+        "MULTI-STAGE",
+        "DELAYED-CLUE",
+        "OWNERSHIP-TRANSITION",
+        "AUDIT-RECONSTRUCTION"
+      ],
+      "fingerprints": {
+        "promptHash": "798562b7d65161bd",
+        "scenarioFingerprint": "727937e20a42249b",
+        "competencyFingerprint": "804afb899a909160",
+        "evidenceLayoutFingerprint": "4ed1bca0a78fcbec",
+        "answerPatternFingerprint": "241d45552303e963"
+      },
+      "createdAt": "2026-09-26",
+      "updatedAt": "2026-09-26"
+    }
+  ]
+}
