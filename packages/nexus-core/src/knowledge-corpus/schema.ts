@@ -38,7 +38,11 @@ const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "expected an ISO date (Y
 /** Record families that walk the lifecycle ladder (D12-02, D12-03). */
 // TASK arrives with O9 (2026-10-15): a free-text task is not a question with
 // its choices missing, so it gets its own family rather than a relaxed ITEM.
-export const CORPUS_FAMILIES = ["KNOWLEDGE", "ITEM", "CONTEXT", "CONCEPT", "TASK"] as const;
+// ITEM_DRAFT arrives with the 318-record draft boundary (2026-10-17): a
+// record missing a required ITEM field is not an unreviewed item, it is one
+// that cannot be expressed as an item at all, so it gets its own family
+// rather than a relaxed schema or a quieter status.
+export const CORPUS_FAMILIES = ["KNOWLEDGE", "ITEM", "CONTEXT", "CONCEPT", "TASK", "ITEM_DRAFT"] as const;
 
 /**
  * How authoritative a source is, and therefore what it may be used to support
