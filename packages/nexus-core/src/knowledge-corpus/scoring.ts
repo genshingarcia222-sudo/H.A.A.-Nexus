@@ -22,6 +22,8 @@ import type { AssessmentItem } from "./item.js";
  */
 export type ScoreReason =
   | "correct"
+  /** O9: the record is not choice-based, so this scorer must not judge it. */
+  | "not-a-choice-item"
   | "incomplete"
   | "extra-selection"
   | "unknown-choice"
@@ -48,8 +50,21 @@ export function expectedSelection(item: AssessmentItem): string[] {
 }
 
 export function scoreSelection(item: AssessmentItem, selected: readonly string[]): SelectionScore {
-  const expected = expectedSelection(item);
   const given = [...selected];
+
+  // O9: refuse anything that is not choice-based, before touching its shape.
+  //
+  // The type says AssessmentItem, but a migration output, a JSON load or a
+  // plain-JS consumer can hand this an open-response task at runtime - and
+  // reading `item.choices` on one threw rather than refusing. A crash awards no
+  // credit, so the guarantee held by accident; a caller wrapping this in
+  // try/catch would not have been able to tell a refusal from a bug. Refusing
+  // explicitly is the behaviour O9 asks for.
+  if (!Array.isArray((item as { choices?: unknown }).choices)) {
+    return { credit: 0, reason: "not-a-choice-item", expected: [], selected: given };
+  }
+
+  const expected = expectedSelection(item);
   const fail = (reason: ScoreReason): SelectionScore => ({ credit: 0, reason, expected, selected: given });
 
   if (given.length === 0) return fail("empty-selection");

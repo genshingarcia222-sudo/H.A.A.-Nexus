@@ -11,6 +11,64 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## O9 Implemented — Open Response Is a First-Class Family (2026-10-16)
+
+**O9 moves from DECIDED to IMPLEMENTED.** On the knowledgebase lane; the lane is
+**not** merged into `main` and **no record is migrated by this change**.
+
+**Why a new family rather than a flag.** Contract B's `AssessmentItemObjectSchema`
+extends the Training question bank, which requires `choices` (min 2) and a
+`correctChoiceId`. A free-text task has neither, and inventing them is what O9
+forbids. Relaxing those requirements would have weakened **D11/D12** for every
+multiple-choice consumer to accommodate a type that is not one. So open response
+gets its own family — **`TASK`** — on the same governance spine
+(`recordHeaderShape`) plus the O6 policy and O4 source-metadata shapes.
+
+**`.strict()` is the enforcement, not a style choice.** A record carrying
+`choices`, `correctChoiceId`, `correctChoiceIds` or `responseFormat` is
+**rejected**, so a choice-based record cannot masquerade as a task and a task
+cannot quietly acquire choices later. Each of those four keys has its own test.
+
+**Scoring integrity.** `OPEN_RESPONSE_SCORING_MODES` has exactly **one** member,
+`HUMAN_REVIEW_REQUIRED` — a second would make O9's prohibition unenforceable, so
+adding one has to be a deliberate, reviewable change. `acceptanceCriteria`
+weights do **not** become a scorer by being present, and a test asserts that.
+
+**A real gap this found and closed.** `scoreSelection` did not refuse an
+open-response task — it **threw** on `item.choices.map` of undefined. No credit
+was awarded, so the guarantee held *by accident*; a caller wrapping it in
+`try/catch` could not have told a refusal from a bug. It now returns an explicit
+`not-a-choice-item` refusal before touching the record's shape.
+
+**Production eligibility reuses the existing gate.** `openResponseProductionBlockers`
+applies the **same four** predicates `isCorpusProductionEligible` applies to every
+other family — lifecycle, review, the human-verify flag, applicability — so a task
+cannot reach production through a laxer gate than a question faces. A fifth reason
+is family-specific: a task whose scoring mode is not `HUMAN_REVIEW_REQUIRED` is
+malformed. `TASK` joins the `CorpusRecord` union and the corpus container gained a
+`tasks` array that defaults to empty, so existing corpora still load.
+
+**One delegated engineering decision.** `evidence` is `.default([])` rather than
+`.min(1)`. The KNOWLEDGE family requires a citation; demanding one here would
+force inventing evidence for a free-text record that genuinely has none, which O9
+forbids. The CONCEPT family already takes this treatment, so it follows an
+existing precedent — and an unsourced task still cannot ship, because production
+eligibility gates on review regardless.
+
+**Verified:** nexus-core **883 → 911** (+28 tests) · desktop **337/337** ·
+`tsc --noEmit` 0 · `pnpm -r test`/`typecheck`/`build` 0 · preflight 0 · all
+**eleven** `kb:*` gates 0. Each exit code captured per command, never through a
+pipeline. **Mutation-verified twice:** disabling the scoring guard fails 1 test;
+relaxing `.strict()` to `.passthrough()` fails 2.
+
+**Not claimed.** No record migrated — `kb:migrate` still reports **0 of 432**
+migratable, because `skillArea`, `learningObjective`, `questionType` and `source`
+remain unsourceable and that is a separate question from O9. **0 of 432 records
+are human-reviewed or production-eligible.** No automated scorer exists for open
+response and none is implied.
+
+---
+
 ## O4 Implemented and Merged; a Gate Failure Found and Repaired (2026-10-15)
 
 **O4 moves from DECIDED to IMPLEMENTED.** Landed on the knowledgebase lane as
