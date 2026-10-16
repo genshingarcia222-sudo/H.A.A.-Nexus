@@ -11,6 +11,75 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## The 114 Free-Text Records Migrate — Verified Against the Real Contract (2026-10-16)
+
+**The first records that actually move.** `kb:migrate` goes from **0 of 432
+migratable** to **114 of 432**, and the claim is verified by the contract rather
+than by the engine's own counter.
+
+**What O9 unlocked, stated precisely.** `OpenResponseTaskSchema` requires `id`,
+`revision`, `contentStatus`, `reviewStatus`, `provenance`, `kind`, `domain`,
+`prompt` and `expectedOutput` — and contract A supplies **every one**. The four
+unsourceable fields (`skillArea`, `learningObjective`, `questionType`, `source`)
+were **ITEM** requirements, so they never applied to a task. Measured: all 114
+free-text records carry every TASK-required field, none missing.
+
+**The verification that matters.** The engine is a zero-dependency `.mjs` tool
+and cannot import the Zod schema, so a count it prints about itself proves
+nothing. `taskMigration.test.ts` imports the real engine, runs the real
+transform over the real corpus, and parses **every** candidate with the real
+`OpenResponseTaskSchema` — which is `.strict()`, so one undeclared key rejects
+the record. All 114 parse, and all 114 load together in the corpus container
+with unique ids.
+
+**That test caught a real defect immediately.** All 114 initially **failed**:
+contract A's `provenance` carries `generatorVersion` and `generatorSeed`, and
+contract B's `ProvenanceSchema` is strict without them. Carrying provenance
+verbatim did not work, and the engine's own report had happily said "114
+migratable".
+
+**One delegated engineering decision follows from it.** `ProvenanceSchema` gains
+optional `generatorVersion` and `generatorSeed`. They are the same category as
+the five generation facts it already carries, and `generatorSeed` is
+specifically what makes *deterministic regeneration* checkable — without it,
+"regenerates byte-identically" cannot be verified for a migrated record. The
+alternative was dropping two provenance fields from all 432 records silently,
+which the migration rules forbid. These are **not** the class-(d) authoring
+metadata D18 §3(d) excludes: `batchId`, `packet` and `fingerprints` are pipeline
+bookkeeping about a run, while these describe the generation of the record
+itself, which is what provenance exists to record.
+
+**Nothing is invented and nothing is advanced.** Prompt and `expectedOutput`
+move verbatim; ids are carried; `reviewStatus` and `contentStatus` are carried,
+not advanced, and a vocabulary contract B does not recognise is reported as a
+blocker rather than coerced. Every candidate declares
+`scoringMode: HUMAN_REVIEW_REQUIRED`. No candidate carries a choice-only key,
+`accessClasses`, or authoring metadata. O4's band is preserved and **no numeric
+level is invented** — a TASK has no `difficultyLevel` field at all.
+
+**The ITEM path is untouched.** The remaining **318** records are still blocked
+on the four unsourceable fields, asserted explicitly so O9 cannot be mistaken
+for having solved that too. O4's crosswalk counts shift to **276 verified / 42
+ambiguous** (= 318) because a task carries only the band.
+
+**Verified:** nexus-core **911 → 926** · desktop **337/337** · `tsc` 0 ·
+`pnpm -r test`/`typecheck`/`build` 0 · preflight 0 · all **eleven** `kb:*` gates
+0, with `kb:test:migrate` **23/23**. Each exit code captured per command.
+
+**One stale assertion replaced, not weakened.** `kb-migrate.test.mjs` asserted
+the 114 were "blocked structurally" — true until O9 gave them a family. Four
+assertions replace it and assert more: all 114 migrate with none blocked, no
+record reports a choices blocker, no TASK candidate carries a choice-only key,
+and the 318 remain accounted for and still blocked.
+
+**Not claimed.** **0 of 432 records are human-reviewed or production-eligible.**
+A migration is not a reviewer, and a test asserts no candidate is `approved` or
+`production-eligible`. The 114 are **candidates**. Nothing was written into the
+canonical corpus — the engine still writes only to the git-ignored
+`knowledge-corpus/migrated/`.
+
+---
+
 ## O9 Implemented — Open Response Is a First-Class Family (2026-10-16)
 
 **O9 moves from DECIDED to IMPLEMENTED.** On the knowledgebase lane; the lane is

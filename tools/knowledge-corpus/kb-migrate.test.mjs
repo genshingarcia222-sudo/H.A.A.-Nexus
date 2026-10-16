@@ -12,6 +12,8 @@
 // `node tools/knowledge-corpus/kb-migrate.test.mjs`
 import assert from "node:assert/strict";
 import {
+  isFreeTextRecord,
+  toOpenResponseTask,
   ITEM_REQUIRED,
   RECORD_TYPE_TO_FAMILY,
   TASK_TO_MODALITY,
@@ -38,6 +40,13 @@ console.log("P9-011 migration engine tests\n");
 
 const entries = loadRecords();
 const results = entries.map((entry) => transformRecord(entry));
+// What `migrate()` actually produces: free-text records take the O9 TASK
+// route. Kept separate from `results` on purpose - the assertions above
+// describe `transformRecord` in isolation, which is still right for them to
+// describe, and conflating the two would make a failure ambiguous.
+const routed = entries.map((entry) =>
+  isFreeTextRecord(entry.record) ? toOpenResponseTask(entry) : transformRecord(entry)
+);
 const m = migrate();
 
 console.log("every record has an outcome");
@@ -197,14 +206,48 @@ test("every record is blocked on the unsourceable fields, and says so", () => {
   }
 });
 
-test("the 114 free-text records are blocked structurally, with a reason", () => {
-  const structural = results.filter((r) => r.blockedOn.some((b) => b.field === "choices"));
-  assert.equal(structural.length, 114);
-  assert.equal(m.structurallyBlocked, 114);
-  for (const r of structural) {
-    const why = r.blockedOn.find((b) => b.field === "choices").why;
-    assert.match(why, /multiple-choice/);
+// O9 replaced this. It used to assert the 114 free-text records were blocked
+// structurally because contract B's multiple-choice ITEM family could not
+// represent them - true until O9 gave them their own TASK family. The
+// replacement asserts more than the original did: that all 114 now migrate,
+// that none is blocked, and that none of them acquired choices on the way.
+test("O9: all 114 free-text records migrate as TASK, none blocked", () => {
+  const tasks = routed.filter((r) => r.target === "TASK");
+  assert.equal(tasks.length, 114, "free-text records routed to TASK");
+  assert.equal(m.openResponse.freeTextRecords, 114);
+  assert.equal(m.openResponse.migratableAsTask, 114);
+  assert.equal(m.openResponse.stillBlocked, 0);
+  for (const r of tasks) {
+    assert.deepEqual(r.blockedOn, [], `${r.id} is blocked`);
   }
+});
+
+test("O9: no record is blocked on choices any more", () => {
+  // The structural blocker O9 removed. A record still reporting it would mean
+  // a free-text record had been routed down the multiple-choice path.
+  const structural = routed.filter((r) => r.blockedOn.some((b) => b.field === "choices"));
+  assert.equal(structural.length, 0, "no routed record reports a choices blocker");
+  assert.equal(m.structurallyBlocked, 0, "and the engine's own report agrees");
+});
+
+test("O9: a TASK candidate never carries a choice-only key", () => {
+  for (const r of routed.filter((x) => x.target === "TASK")) {
+    for (const key of ["choices", "correctChoiceId", "correctChoiceIds", "responseFormat"]) {
+      assert.equal(r.candidate[key], undefined, `${r.id} leaked ${key}`);
+    }
+  }
+});
+
+test("O9: the 318 choice-based records are still accounted for and still blocked", () => {
+  // O9 must not have quietly changed the ITEM path. Those records remain
+  // blocked on the four unsourceable fields, which is a separate question.
+  const items = routed.filter((r) => r.target !== "TASK");
+  assert.equal(items.length, 318);
+  for (const r of items) {
+    assert.ok(r.blockedOn.length > 0, `${r.id} should still be blocked`);
+  }
+  assert.equal(m.migratableToday, 114);
+  assert.equal(m.recordsExamined, 432);
 });
 
 // O4 is two rules, not one, and this pins both. Before O4 was implemented no

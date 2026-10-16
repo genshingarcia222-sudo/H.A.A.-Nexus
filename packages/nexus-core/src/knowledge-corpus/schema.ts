@@ -146,7 +146,27 @@ export const ProvenanceSchema = z
     authoredBy: z.string().min(1),
     authoredOn: isoDate,
     originBatch: z.string().min(1).optional(),
-    derivedFrom: z.array(z.string().min(1)).default([])
+    derivedFrom: z.array(z.string().min(1)).default([]),
+    /**
+     * How the generator that produced this record was configured.
+     *
+     * Added 2026-10-16 as a DELEGATED-ENGINEERING-DECISION while migrating the
+     * authored corpus, which carries both on all 432 records. They are the same
+     * category as the five facts above - how this record came to exist - and
+     * `generatorSeed` is specifically what makes deterministic regeneration
+     * *checkable*: without it, "regenerates byte-identically" cannot be
+     * verified for a migrated record. The alternative was to drop two
+     * provenance fields from every record silently, which the migration rules
+     * forbid.
+     *
+     * These are **not** the class-(d) authoring metadata D18 §3(d) keeps out of
+     * the contract. `batchId`, `packet` and `fingerprints` are pipeline
+     * bookkeeping about a run; these describe the generation of the record
+     * itself, which is what `provenance` exists to record. Both optional, so no
+     * existing record or consumer changes.
+     */
+    generatorVersion: z.string().min(1).optional(),
+    generatorSeed: z.union([z.string().min(1), z.number()]).optional()
   })
   .strict()
   .superRefine((provenance, ctx) => {
