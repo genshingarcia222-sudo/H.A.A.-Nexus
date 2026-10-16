@@ -39,7 +39,13 @@ export interface DeliverabilityResult {
   window: EffectiveWindow;
 }
 
-type CorpusRecord = KnowledgeCorpus["knowledge"][number] | KnowledgeCorpus["contexts"][number] | AssessmentItem;
+// O9: a task is a corpus record, so the one production gate applies to it
+// too rather than a laxer parallel one.
+type CorpusRecord =
+  | KnowledgeCorpus["knowledge"][number]
+  | KnowledgeCorpus["contexts"][number]
+  | KnowledgeCorpus["tasks"][number]
+  | AssessmentItem;
 
 const recordId = (record: CorpusRecord): string => ("questionId" in record ? record.questionId : record.id);
 

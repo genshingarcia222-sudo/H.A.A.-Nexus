@@ -36,7 +36,9 @@ import {
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "expected an ISO date (YYYY-MM-DD)");
 
 /** Record families that walk the lifecycle ladder (D12-02, D12-03). */
-export const CORPUS_FAMILIES = ["KNOWLEDGE", "ITEM", "CONTEXT", "CONCEPT"] as const;
+// TASK arrives with O9 (2026-10-15): a free-text task is not a question with
+// its choices missing, so it gets its own family rather than a relaxed ITEM.
+export const CORPUS_FAMILIES = ["KNOWLEDGE", "ITEM", "CONTEXT", "CONCEPT", "TASK"] as const;
 
 /**
  * How authoritative a source is, and therefore what it may be used to support
@@ -237,7 +239,7 @@ export const CorpusVerificationSchema = VerificationRecordSchema.extend({
  * a person checked?". Any content change bumps the revision and resets human
  * verification (D12-21), because a reviewer verified specific words.
  */
-const recordHeaderShape = {
+export const recordHeaderShape = {
   id: z.string().min(1),
   revision: z.number().int().min(1),
   contentStatus: z.enum(CONTENT_STATUSES),
