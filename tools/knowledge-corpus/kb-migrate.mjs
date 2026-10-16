@@ -181,6 +181,132 @@ export function loadRecords(files = recordFiles()) {
  * could not be supplied. A record with an empty `blockedOn` is fully migratable
  * today; one with entries is not, and the entries say exactly why.
  */
+
+/**
+ * O9 — the fields an open-response TASK may carry, and nothing else.
+ *
+ * `OpenResponseTaskSchema` is `.strict()`, so emitting one key it does not
+ * declare rejects the whole record. This list is therefore part of the contract
+ * rather than documentation, and `kb-migrate.task.test.ts` validates the
+ * engine's actual output against the real Zod schema so the two cannot drift.
+ */
+export const TASK_POLICY_FIELDS = [
+  "safetyFlags",
+  "privacyFlags",
+  "escalationRequired",
+  "clinicianJudgmentRequired",
+  "hardFailureConditions",
+  "jurisdictions",
+  "payerSpecific",
+  "encounterDate",
+  "goldBehavior",
+  "acceptanceCriteria",
+  "errorTargets",
+  "remediationTargets",
+  "trapTypes",
+  "steps",
+  "moduleIds",
+  "evidenceBasis"
+];
+
+/** Contract A record types that become an open-response TASK kind. */
+export const TASK_KINDS = ["DOCUMENTATION_TASK", "WORKFLOW", "SCENARIO", "QUESTION"];
+
+/** Lifecycle and review vocabularies contract B accepts, checked not coerced. */
+const B_CONTENT_STATUSES = [
+  "candidate",
+  "source-verified",
+  "content-reviewed",
+  "approved",
+  "production-eligible",
+  "blocked",
+  "retired"
+];
+const B_REVIEW_STATUSES = ["pending", "in-review", "changes-requested", "approved", "rejected"];
+
+/**
+ * A free-text record: zero choices and something expected instead.
+ *
+ * Measured, not assumed - all 114 such records carry an `expectedOutput`, and
+ * every record that carries one has zero choices.
+ */
+export function isFreeTextRecord(a) {
+  const choices = Array.isArray(a.choices) ? a.choices : [];
+  return choices.length === 0;
+}
+
+/**
+ * Transform one free-text record into an open-response TASK candidate (O9).
+ *
+ * Nothing is invented. Text moves verbatim, the lifecycle and review states are
+ * carried rather than advanced, and a vocabulary contract B does not recognise
+ * is reported as a blocker instead of being coerced into one it does.
+ */
+export function toOpenResponseTask(entry, registry = loadDifficultyRegistry()) {
+  const a = entry.record;
+  const blockedOn = [];
+  const candidate = { family: "TASK", scoringMode: "HUMAN_REVIEW_REQUIRED" };
+
+  const carry = (bField, aField = bField) => {
+    const v = a[aField];
+    if (v !== undefined && v !== null) candidate[bField] = v;
+  };
+
+  // --- identity and the governance spine, verbatim ---------------------
+  carry("id");
+  carry("revision");
+  carry("provenance");
+  carry("domain");
+  carry("prompt");
+  carry("expectedOutput");
+  carry("rationale");
+  carry("flags");
+  carry("evidence");
+  carry("supersedes");
+  carry("applicability");
+  // The disposition table's rename: competencyIds -> competencyRefs.
+  if (Array.isArray(a.competencyIds)) candidate.competencyRefs = a.competencyIds;
+
+  // --- lifecycle and review: checked against B's vocabulary ------------
+  if (B_CONTENT_STATUSES.includes(a.contentStatus)) {
+    candidate.contentStatus = a.contentStatus;
+  } else {
+    blockedOn.push({
+      field: "contentStatus",
+      why: `"${a.contentStatus}" is not one of contract B's content statuses, and coercing it would invent a lifecycle state`
+    });
+  }
+  if (B_REVIEW_STATUSES.includes(a.reviewStatus)) {
+    candidate.reviewStatus = a.reviewStatus;
+  } else {
+    blockedOn.push({
+      field: "reviewStatus",
+      why: `"${a.reviewStatus}" is not one of contract B's review statuses, and coercing it would invent a review state`
+    });
+  }
+
+  // --- O9: the kind -----------------------------------------------------
+  if (TASK_KINDS.includes(a.recordType)) {
+    candidate.kind = a.recordType;
+  } else {
+    blockedOn.push({
+      field: "kind",
+      why: `recordType "${a.recordType}" is not an open-response kind O9 covers`
+    });
+  }
+
+  // --- O6: the carried policy fields, by their own names ----------------
+  for (const field of TASK_POLICY_FIELDS) {
+    if (a[field] !== undefined) candidate[field] = a[field];
+  }
+
+  // --- O4: the band is preserved; a TASK carries no numeric level -------
+  const difficulty = crosswalkDifficulty(a.difficulty, registry);
+  if (difficulty.band !== null) candidate.difficultyBand = difficulty.band;
+
+  return { id: a.id, recordType: a.recordType, taskType: a.taskType, candidate, blockedOn, target: "TASK" };
+}
+
 export function transformRecord(entry, registry = loadDifficultyRegistry()) {
   const a = entry.record;
   const blockedOn = [];
@@ -258,7 +384,10 @@ export function transformRecord(entry, registry = loadDifficultyRegistry()) {
 export function migrate({ write = false } = {}) {
   const entries = loadRecords();
   const registry = loadDifficultyRegistry();
-  const results = entries.map((e) => transformRecord(e, registry));
+  // O9: a free-text record is a TASK, not an item with its choices missing.
+  const results = entries.map((e) =>
+    isFreeTextRecord(e.record) ? toOpenResponseTask(e, registry) : transformRecord(e, registry)
+  );
 
   const migratable = results.filter((r) => r.blockedOn.length === 0);
   const blocked = results.filter((r) => r.blockedOn.length > 0);
@@ -273,6 +402,8 @@ export function migrate({ write = false } = {}) {
   }
 
   const structural = blocked.filter((r) => r.blockedOn.some((b) => b.field === "choices"));
+  const tasks = results.filter((r) => r.target === "TASK");
+  const tasksMigratable = tasks.filter((r) => r.blockedOn.length === 0);
 
   // O4 outcomes, counted rather than asserted.
   const difficulty = { VERIFIED: 0, AMBIGUOUS: 0, ABSENT: 0, INVALID_BAND: 0 };
@@ -308,6 +439,11 @@ export function migrate({ write = false } = {}) {
     structurallyBlocked: structural.length,
     byField: [...byField.values()].sort((a, b) => b.records - a.records),
     wrote: write ? OUT_DIR : null,
+    openResponse: {
+      freeTextRecords: tasks.length,
+      migratableAsTask: tasksMigratable.length,
+      stillBlocked: tasks.length - tasksMigratable.length
+    },
     difficultyCrosswalk: difficulty,
     difficultyBandsPreserved: Object.fromEntries([...bandsPreserved.entries()].sort()),
     difficultyRegistry: `${registry.registryId} ${registry.registryVersion}`,
@@ -330,6 +466,11 @@ function render(m) {
   L.push(`  blocked                   ${m.blocked}`);
   L.push(`  every record accounted for ${m.everyRecordAccountedFor ? "yes" : "NO"}`);
   L.push("");
+  L.push("O9 OPEN RESPONSE");
+  L.push(`  free-text records          ${m.openResponse.freeTextRecords}`);
+  L.push(`  migratable as TASK         ${m.openResponse.migratableAsTask}`);
+  L.push(`  still blocked              ${m.openResponse.stillBlocked}`);
+  L.push("");
   L.push(`O4 DIFFICULTY  (registry ${m.difficultyRegistry})`);
   L.push(`  verified numeric level   ${m.difficultyCrosswalk.VERIFIED}`);
   L.push(`  ambiguous, left unset    ${m.difficultyCrosswalk.AMBIGUOUS}`);
@@ -346,10 +487,9 @@ function render(m) {
     for (const line of wrap(b.why, 72)) L.push(`      ${line}`);
   }
   L.push("");
-  L.push(`STRUCTURAL: ${m.structurallyBlocked} records are free-text or structured-output tasks.`);
-  L.push("  Contract B's ITEM family extends a MULTIPLE-CHOICE question bank, so it");
-  L.push("  cannot represent them at all. Giving it one is a content-model decision,");
-  L.push("  not an implementation detail, and it is not taken here.");
+  L.push(`STRUCTURAL: ${m.structurallyBlocked} records remain blocked on choices.`);
+  L.push("  O9 resolved the free-text case: those records now migrate to the TASK");
+  L.push("  family instead of being forced into the multiple-choice ITEM family.");
   L.push("");
   if (m.wrote) L.push(`wrote candidates and blockers to ${path.relative(REPO_ROOT, m.wrote)}`);
   return L.join("\n");
