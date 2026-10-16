@@ -381,13 +381,147 @@ export function transformRecord(entry, registry = loadDifficultyRegistry()) {
   return { id: a.id, recordType: a.recordType, taskType: a.taskType, candidate, blockedOn };
 }
 
+
+/**
+ * The ITEM production requirements a draft is allowed to declare unresolved.
+ *
+ * Mirrors `ITEM_PRODUCTION_REQUIREMENTS` in `item-draft.ts`, which is a closed
+ * enum - so a blocker name this list does not cover becomes a validation error
+ * rather than a silent entry in a list nobody checks.
+ */
+export const DRAFT_UNRESOLVABLE_FIELDS = [
+  "skillArea",
+  "learningObjective",
+  "questionType",
+  "source",
+  "difficultyLevel",
+  "modality"
+];
+
+/**
+ * Turn a blocked choice-based record into an ITEM draft.
+ *
+ * The 318 choice-based authored records are missing four fields the ITEM
+ * contract requires, so they cannot be items. Rather than relax that contract
+ * or invent the fields, they are staged as `ITEM_DRAFT` with the missing
+ * requirements named in `unresolved`.
+ *
+ * `blockedOn` is the input: whatever `transformRecord` could not satisfy becomes
+ * the draft's declared unresolved list, so the two can never disagree. A
+ * blocker outside `DRAFT_UNRESOLVABLE_FIELDS` is kept as a blocker instead -
+ * the record stays unmigrated and says why, rather than being staged with its
+ * real problem renamed into something the draft schema happens to accept.
+ */
+export function toItemDraft(entry, itemResult) {
+  const a = entry.record;
+  const blockedOn = [];
+  const candidate = { family: "ITEM_DRAFT" };
+
+  const carry = (bField, aField = bField) => {
+    const v = a[aField];
+    if (v !== undefined && v !== null) candidate[bField] = v;
+  };
+
+  carry("id");
+  carry("revision");
+  carry("provenance");
+  carry("domain");
+  carry("question", "prompt");
+  carry("choices");
+  carry("rationale");
+  carry("flags");
+  carry("evidence");
+  carry("supersedes");
+  carry("applicability");
+  if (Array.isArray(a.competencyIds)) candidate.competencyRefs = a.competencyIds;
+
+  // Lifecycle and review are checked against contract B's vocabulary, not
+  // carried blindly. 24 records declare `candidate_needs_source_verification`,
+  // which contract B does not define. Mapping it to `candidate` would be
+  // defensible-looking and would discard the "needs source verification"
+  // signal, and this value gates production - so the record is blocked and
+  // named instead of being quietly relabelled.
+  if (B_CONTENT_STATUSES.includes(a.contentStatus)) {
+    candidate.contentStatus = a.contentStatus;
+  } else {
+    blockedOn.push({
+      field: "contentStatus",
+      why: `"${a.contentStatus}" is not one of contract B's content statuses; coercing it would discard a lifecycle signal that gates production`
+    });
+  }
+  if (B_REVIEW_STATUSES.includes(a.reviewStatus)) {
+    candidate.reviewStatus = a.reviewStatus;
+  } else {
+    blockedOn.push({
+      field: "reviewStatus",
+      why: `"${a.reviewStatus}" is not one of contract B's review statuses, and coercing it would invent a review state`
+    });
+  }
+
+  // O5: the answer, exactly as the item route resolves it.
+  if (itemResult.candidate.correctChoiceId !== undefined) {
+    candidate.correctChoiceId = itemResult.candidate.correctChoiceId;
+  }
+  if (itemResult.candidate.correctChoiceIds !== undefined) {
+    candidate.correctChoiceIds = itemResult.candidate.correctChoiceIds;
+  }
+
+  // O6: the carried policy fields.
+  for (const field of TASK_POLICY_FIELDS) {
+    if (a[field] !== undefined) candidate[field] = a[field];
+  }
+  // O4: the band travels; a draft carries no numeric level either, because the
+  // level is one of the things that is unresolved.
+  if (itemResult.candidate.difficultyBand !== undefined) {
+    candidate.difficultyBand = itemResult.candidate.difficultyBand;
+  }
+  // A level O4 verified is real evidence and travels with the draft; only an
+  // unverified one appears in `unresolved`, below.
+  if (itemResult.candidate.difficultyLevel !== undefined) {
+    candidate.difficultyLevel = itemResult.candidate.difficultyLevel;
+  }
+
+  // The unresolved list IS the item route's blockers, de-duplicated.
+  const unresolved = [];
+  for (const b of itemResult.blockedOn) {
+    if (DRAFT_UNRESOLVABLE_FIELDS.includes(b.field)) {
+      if (!unresolved.includes(b.field)) unresolved.push(b.field);
+    } else {
+      blockedOn.push(b);
+    }
+  }
+  if (unresolved.length === 0) {
+    blockedOn.push({
+      field: "unresolved",
+      why: "nothing is unresolved, so this record is an ITEM rather than a draft"
+    });
+  } else {
+    candidate.unresolved = unresolved;
+  }
+
+  return {
+    id: a.id,
+    recordType: a.recordType,
+    taskType: a.taskType,
+    candidate,
+    blockedOn,
+    target: "ITEM_DRAFT"
+  };
+}
+
 export function migrate({ write = false } = {}) {
   const entries = loadRecords();
   const registry = loadDifficultyRegistry();
-  // O9: a free-text record is a TASK, not an item with its choices missing.
-  const results = entries.map((e) =>
-    isFreeTextRecord(e.record) ? toOpenResponseTask(e, registry) : transformRecord(e, registry)
-  );
+  // Three routes, explicit and independently testable:
+  //   free text        -> TASK       (O9)
+  //   complete item    -> ITEM       (the production contract, unchanged)
+  //   incomplete item  -> ITEM_DRAFT (staged, with its blockers named)
+  const results = entries.map((e) => {
+    if (isFreeTextRecord(e.record)) return toOpenResponseTask(e, registry);
+    const item = transformRecord(e, registry);
+    if (item.blockedOn.length === 0) return { ...item, target: "ITEM" };
+    return toItemDraft(e, item);
+  });
 
   const migratable = results.filter((r) => r.blockedOn.length === 0);
   const blocked = results.filter((r) => r.blockedOn.length > 0);
@@ -404,6 +538,14 @@ export function migrate({ write = false } = {}) {
   const structural = blocked.filter((r) => r.blockedOn.some((b) => b.field === "choices"));
   const tasks = results.filter((r) => r.target === "TASK");
   const tasksMigratable = tasks.filter((r) => r.blockedOn.length === 0);
+  const drafts = results.filter((r) => r.target === "ITEM_DRAFT");
+  const draftsRepresented = drafts.filter((r) => r.blockedOn.length === 0);
+  const unresolvedCounts = new Map();
+  for (const d of draftsRepresented) {
+    for (const f of d.candidate.unresolved ?? []) {
+      unresolvedCounts.set(f, (unresolvedCounts.get(f) ?? 0) + 1);
+    }
+  }
 
   // O4 outcomes, counted rather than asserted.
   const difficulty = { VERIFIED: 0, AMBIGUOUS: 0, ABSENT: 0, INVALID_BAND: 0 };
@@ -411,7 +553,12 @@ export function migrate({ write = false } = {}) {
   for (const r of results) {
     const level = r.candidate.difficultyLevel;
     const entry = r.blockedOn.find((b) => b.field === "difficultyLevel");
+    // A draft moves its unverified level into `unresolved`, so the crosswalk
+    // outcome has to be read from there too or this report under-counts - it
+    // read 0 verified while 276 had been verified.
+    const unresolvedLevel = (r.candidate.unresolved ?? []).includes("difficultyLevel");
     if (level !== undefined) difficulty.VERIFIED += 1;
+    else if (unresolvedLevel) difficulty.AMBIGUOUS += 1;
     else if (entry?.crosswalkStatus) difficulty[entry.crosswalkStatus] += 1;
     const band = r.candidate.difficultyBand;
     if (band) bandsPreserved.set(band, (bandsPreserved.get(band) ?? 0) + 1);
@@ -439,6 +586,20 @@ export function migrate({ write = false } = {}) {
     structurallyBlocked: structural.length,
     byField: [...byField.values()].sort((a, b) => b.records - a.records),
     wrote: write ? OUT_DIR : null,
+    itemDrafts: {
+      incompleteItems: drafts.length,
+      representedAsDraft: draftsRepresented.length,
+      stillBlocked: drafts.length - draftsRepresented.length,
+      unresolvedByField: Object.fromEntries([...unresolvedCounts.entries()].sort()),
+      blockedIds: drafts.filter((r) => r.blockedOn.length > 0).map((r) => r.id),
+      blockedReasons: Object.fromEntries(
+        [
+          ...new Set(
+            drafts.flatMap((r) => r.blockedOn.map((b) => `${b.field}: ${b.why}`))
+          )
+        ].map((s) => [s, drafts.filter((r) => r.blockedOn.some((b) => `${b.field}: ${b.why}` === s)).length])
+      )
+    },
     openResponse: {
       freeTextRecords: tasks.length,
       migratableAsTask: tasksMigratable.length,
@@ -465,6 +626,18 @@ function render(m) {
   L.push(`  fully migratable today    ${m.migratableToday}`);
   L.push(`  blocked                   ${m.blocked}`);
   L.push(`  every record accounted for ${m.everyRecordAccountedFor ? "yes" : "NO"}`);
+  L.push("");
+  L.push("ITEM DRAFTS  (structurally incomplete, staged not produced)");
+  L.push(`  incomplete items           ${m.itemDrafts.incompleteItems}`);
+  L.push(`  represented as draft       ${m.itemDrafts.representedAsDraft}`);
+  L.push(`  still blocked              ${m.itemDrafts.stillBlocked}`);
+  for (const [reason, n] of Object.entries(m.itemDrafts.blockedReasons)) {
+    L.push(`    ${n} record(s): ${reason}`);
+  }
+  L.push("  unresolved requirements:");
+  for (const [field, n] of Object.entries(m.itemDrafts.unresolvedByField)) {
+    L.push(`    ${field.padEnd(22)} ${String(n).padStart(4)}`);
+  }
   L.push("");
   L.push("O9 OPEN RESPONSE");
   L.push(`  free-text records          ${m.openResponse.freeTextRecords}`);

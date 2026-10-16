@@ -11,6 +11,78 @@ phase order in `docs/HAA_Nexus_Architecture_Package.md`).
 
 ---
 
+## The ITEM Draft Boundary — 294 of 318 Staged, 24 Blocked and Named (2026-10-17)
+
+**Outcome B: partial migration, verified.** `kb:migrate` goes from 114 of 432 to
+**408 of 432** — 114 TASK plus **294 ITEM drafts** — with **24 blocked and
+reported by id and reason**. No count was rounded up to reach a target.
+
+**Why a new family rather than a status.** The lifecycle
+(`candidate → … → production-eligible`) expresses how far *review* has got, not
+structural completeness. The 318 choice-based records are missing `skillArea`,
+`learningObjective`, `questionType` and `source`, which
+`AssessmentItemObjectSchema` **requires** — so such a record does not parse as
+an ITEM at **any** `contentStatus`. Setting it to `candidate` would not make it
+representable, only make the failure quieter. The three options were: relax the
+ITEM schema (**rejected** — weakens D11/D12 for every multiple-choice
+consumer), invent the four fields (**rejected** — fabrication), or give the
+incomplete records their own representation. This is the third.
+
+**`ITEM_DRAFT`**, a sibling family on the same governance spine, `.strict()`,
+with `unresolved` **non-empty by construction** — a draft always names the
+requirements it has not met, and a draft with nothing unresolved is rejected
+because that is an item. Staged in a separate `itemDrafts` array so nothing
+consuming `items` can receive one.
+
+**Verified per-record, not per-group.** All 318 lack the same four fields
+(`{4: 318}` measured directly), so the grouping is real. Unresolved
+distribution: `skillArea` 294 · `learningObjective` 294 · `questionType` 294 ·
+`source` 294 · `difficultyLevel` **42**. Only 42 because O4 verified a level for
+the rest — and those **252 verified levels are carried onto the drafts**, since
+discarding real evidence would be as wrong as inventing it.
+
+**The 24 blocked records, and why they are not forced through.** They declare
+`contentStatus: "candidate_needs_source_verification"`, which contract B does
+not define. Mapping it to `candidate` looks defensible and would discard the
+"needs source verification" signal — and this value gates production. So they
+are blocked, reported with ids and the exact reason, and left for the owner to
+resolve: either contract B gains the status, or the mapping is confirmed
+deliberately. **Never distort the evidence to achieve a target count.**
+
+**One contained contract extension.** The authored choices carry a per-choice
+`trapType` (954 of 1,287 choice objects) that `QuestionChoiceSchema` does not
+declare. Dropping it would discard real pedagogical data from every distractor;
+extending the shared question-bank schema would change a D11/D12 contract to
+serve a staging representation. So `DraftChoiceSchema` extends it **in the draft
+family only**, and the production item contract is untouched.
+
+**Crossed the schema boundary.** `itemDraftMigration.test.ts` imports the real
+engine, reproduces its three-way routing over the real corpus, and parses every
+draft with the real `.strict()` `ItemDraftSchema`. **All 294 parse; all 294 load
+in the container.** Negative tests prove no draft parses as a production ITEM,
+promotion is refused while anything is unresolved — **including when review has
+approved it**, because completeness and approval are different things — an empty
+or invented or repeated `unresolved` entry is rejected, and the 24 blocked
+records emit nothing that validates.
+
+**Verified:** nexus-core **926 → 954** · desktop **337/337** · `tsc` /
+`typecheck` / `build` / preflight all 0 · all **eleven** `kb:*` gates 0 with
+`kb:test:migrate` **23/23**. Each exit code captured per command.
+**Mutation-verified:** allowing an empty `unresolved` list fails 1 test; letting
+promotion ignore unresolved requirements fails 2. **Source corpus untouched**,
+confirmed by `git status` on `knowledge-corpus/records`.
+
+**Two stale assertions replaced, not weakened**, both mine from the previous
+package: the tool suite's routing now mirrors all three routes, and the
+"318 still blocked" assertion now pins both halves of the split.
+
+**Not claimed.** **0 of 432 records are human-reviewed or production-eligible.**
+A draft is not an item, a migration is not a reviewer, and tests assert no
+candidate is `approved` or `production-eligible`. Nothing was written into the
+canonical corpus.
+
+---
+
 ## The 114 Free-Text Records Migrate — Verified Against the Real Contract (2026-10-16)
 
 **The first records that actually move.** `kb:migrate` goes from **0 of 432

@@ -13,6 +13,7 @@
 import assert from "node:assert/strict";
 import {
   isFreeTextRecord,
+  toItemDraft,
   toOpenResponseTask,
   ITEM_REQUIRED,
   RECORD_TYPE_TO_FAMILY,
@@ -44,9 +45,12 @@ const results = entries.map((entry) => transformRecord(entry));
 // route. Kept separate from `results` on purpose - the assertions above
 // describe `transformRecord` in isolation, which is still right for them to
 // describe, and conflating the two would make a failure ambiguous.
-const routed = entries.map((entry) =>
-  isFreeTextRecord(entry.record) ? toOpenResponseTask(entry) : transformRecord(entry)
-);
+const routed = entries.map((entry) => {
+  if (isFreeTextRecord(entry.record)) return toOpenResponseTask(entry);
+  const item = transformRecord(entry);
+  if (item.blockedOn.length === 0) return { ...item, target: "ITEM" };
+  return toItemDraft(entry, item);
+});
 const m = migrate();
 
 console.log("every record has an outcome");
@@ -238,16 +242,29 @@ test("O9: a TASK candidate never carries a choice-only key", () => {
   }
 });
 
-test("O9: the 318 choice-based records are still accounted for and still blocked", () => {
-  // O9 must not have quietly changed the ITEM path. Those records remain
-  // blocked on the four unsourceable fields, which is a separate question.
+test("the 318 choice-based records are all accounted for, now as drafts", () => {
+  // Updated when the draft boundary landed. These used to be blocked outright;
+  // 294 are now staged as ITEM_DRAFT with their unresolved requirements named,
+  // and 24 stay blocked on a lifecycle status contract B does not define. The
+  // assertion is stronger than the original: it pins both halves of the split
+  // rather than only "all blocked".
   const items = routed.filter((r) => r.target !== "TASK");
   assert.equal(items.length, 318);
-  for (const r of items) {
-    assert.ok(r.blockedOn.length > 0, `${r.id} should still be blocked`);
+  const represented = items.filter((r) => r.blockedOn.length === 0);
+  const blocked = items.filter((r) => r.blockedOn.length > 0);
+  assert.equal(represented.length, 294, "represented as drafts");
+  assert.equal(blocked.length, 24, "blocked on an unrecognised lifecycle status");
+  for (const r of represented) {
+    assert.equal(r.candidate.family, "ITEM_DRAFT");
+    assert.ok((r.candidate.unresolved ?? []).length > 0, `${r.id} must name what is unresolved`);
   }
-  assert.equal(m.migratableToday, 114);
+  for (const r of blocked) {
+    assert.ok(r.blockedOn.some((b) => b.field === "contentStatus"), `${r.id}`);
+  }
+  // None of them became a production item, which is the point of the boundary.
+  assert.equal(items.filter((r) => r.target === "ITEM").length, 0);
   assert.equal(m.recordsExamined, 432);
+  assert.equal(m.migratableToday, 408, "114 tasks + 294 drafts");
 });
 
 // O4 is two rules, not one, and this pins both. Before O4 was implemented no

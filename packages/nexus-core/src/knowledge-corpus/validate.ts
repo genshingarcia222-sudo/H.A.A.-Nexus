@@ -9,6 +9,7 @@ import {
 import type { AssessmentConcept, CaseContext, CompetencyNode, KnowledgeRecord, SourceRecord } from "./schema.js";
 import { AssessmentItemSchema } from "./item.js";
 import { OpenResponseTaskSchema } from "./open-response.js";
+import { ItemDraftSchema } from "./item-draft.js";
 import type { AssessmentItem } from "./item.js";
 import { CONCEPT_ID_PATTERN, CONTEXT_ID_PATTERN, ITEM_ID_PATTERN, KNOWLEDGE_ID_PATTERN, parsePinnedRef } from "./ids.js";
 import { ReviewRecordSchema, ReviewerSchema, checkReviewChain } from "./review.js";
@@ -41,6 +42,14 @@ export const KnowledgeCorpusSchema = z
     items: z.array(AssessmentItemSchema).default([]),
     /** O9: free-text tasks. A separate array because a task is not an item. */
     tasks: z.array(OpenResponseTaskSchema).default([]),
+    /**
+     * Structurally incomplete ITEM candidates, staged apart from `items`.
+     *
+     * Separate so that nothing consuming `items` can receive one: a draft is
+     * not a production item and never reaches a delivery path by sitting in
+     * the same array as one.
+     */
+    itemDrafts: z.array(ItemDraftSchema).default([]),
     competencies: z.array(CompetencyNodeSchema).default([]),
     reviewers: z.array(ReviewerSchema).default([]),
     /** Append-only: a changed mind is a new record, never an edited one. */
